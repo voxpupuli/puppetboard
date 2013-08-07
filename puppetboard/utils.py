@@ -40,22 +40,13 @@ def yield_or_stop(generator):
     generators and handle certain errors.
 
     Since this is also used in streaming responses where we can't just abort
-    a request we always yield empty and then raise StopIteration.
+    a request we raise StopIteration.
     """
     while True:
         try:
             yield next(generator)
         except StopIteration:
             raise
-        except ExperimentalDisabledError:
-            yield
-            raise StopIteration
-        except EmptyResponseError:
-            yield
-            raise StopIteration
-        except ConnectionError:
-            yield
-            raise StopIteration
-        except HTTPError:
-            yield
+        except (ExperimentalDisabledError, EmptyResponseError,
+            ConnectionError, HTTPError):
             raise StopIteration
