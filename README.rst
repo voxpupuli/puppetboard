@@ -26,8 +26,7 @@ Because this project is powered by Flask we are restricted to:
 Word of caution
 ===============
 
-Puppetboard is very, very young, it's less than a week's worth of
-efforts but it works fairly well.
+Puppetboard is very, very young but it works fairly well.
 
 That being said a lot of the code is very exeprimental, just trying
 to figure out what works and what not, what we need to do different
@@ -129,8 +128,8 @@ messages have a look at this post by `Tim Pope`_.
 Screenshots
 ===========
 
-.. image:: https://raw.github.com/nedap/puppetboard/master/screenshots/broken.png
-   :alt: Error message
+.. image:: https://raw.github.com/nedap/puppetboard/master/screenshots/node.png
+   :alt: Node without experimental endpoints endabled
    :width: 1024
    :height: 700
    :align: center
@@ -143,12 +142,6 @@ Screenshots
 
 .. image:: https://raw.github.com/nedap/puppetboard/master/screenshots/no-experimental.png
    :alt: Accessing disabled experimental feature
-   :width: 1024
-   :height: 700
-   :align: center
-
-.. image:: https://raw.github.com/nedap/puppetboard/master/screenshots/node.png
-   :alt: Node without experimental endpoints endabled
    :width: 1024
    :height: 700
    :align: center
@@ -182,6 +175,15 @@ With experimental endpoints
 
 .. image:: https://raw.github.com/nedap/puppetboard/master/screenshots/node-experimental.png
    :alt: Node view with experimental endpoints enabled
+   :width: 1024
+   :height: 700
+   :align: center
+
+Error page
+----------
+
+.. image:: https://raw.github.com/nedap/puppetboard/master/screenshots/broken.png
+   :alt: Error message
    :width: 1024
    :height: 700
    :align: center
