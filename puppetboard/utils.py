@@ -4,7 +4,7 @@ from __future__ import unicode_literals
 from requests.exceptions import HTTPError, ConnectionError
 from pypuppetdb.errors import EmptyResponseError, ExperimentalDisabledError
 
-from flask import abort, flash
+from flask import abort
 
 def get_or_abort(func, *args, **kwargs):
     """Execute the function with its arguments and handle the possible
