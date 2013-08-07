@@ -17,7 +17,11 @@ Because this project is powered by Flask we are restricted to:
     * Python 2.6
     * Python 2.7
 
-.. image:: https://www.dropbox.com/s/5dzocpvsl7uoub7/node-experimental.png
+.. image:: https://raw.github.com/nedap/puppetboard/master/screenshots/node-experimental.png
+   :alt: View of a node
+   :width: 1024
+   :height: 700
+   :align: center
 
 Word of caution
 ===============
@@ -125,16 +129,59 @@ messages have a look at this post by `Tim Pope`_.
 Screenshots
 ===========
 
-.. image:: https://www.dropbox.com/s/lnueotxs6m4c3xk/broken.png
-.. image:: https://www.dropbox.com/s/z4tyme9yw9dqy48/facts.png
-.. image:: https://www.dropbox.com/s/r3l8uum74h91j1e/no-experimental.png
-.. image:: https://www.dropbox.com/s/jy1rrcm3rf3vazg/node.png
-.. image:: https://www.dropbox.com/s/bh0h95rgegavung/nodes.png
-.. image:: https://www.dropbox.com/s/yeqs0j1rgpvxcvo/overview.png
-.. image:: https://www.dropbox.com/s/61tfrvkkst2im2v/query.png
+.. image:: https://raw.github.com/nedap/puppetboard/master/screenshots/broken.png
+   :alt: Error message
+   :width: 1024
+   :height: 700
+   :align: center
+
+.. image:: https://raw.github.com/nedap/puppetboard/master/screenshots/facts.png
+   :alt: Facts view
+   :width: 1024
+   :height: 700
+   :align: center
+
+.. image:: https://raw.github.com/nedap/puppetboard/master/screenshots/no-experimental.png
+   :alt: Accessing disabled experimental feature
+   :width: 1024
+   :height: 700
+   :align: center
+
+.. image:: https://raw.github.com/nedap/puppetboard/master/screenshots/node.png
+   :alt: Node without experimental endpoints endabled
+   :width: 1024
+   :height: 700
+   :align: center
+
+.. image:: https://raw.github.com/nedap/puppetboard/master/screenshots/nodes.png
+   :alt: Nodes table without experimental endpoints enabled
+   :width: 1024
+   :height: 700
+   :align: center
+
+.. image:: https://raw.github.com/nedap/puppetboard/master/screenshots/overview.png
+   :alt: Overview / Index / Homepage
+   :width: 1024
+   :height: 700
+   :align: center
+
+.. image:: https://raw.github.com/nedap/puppetboard/master/screenshots/query.png
+   :alt: Query view
+   :width: 1024
+   :height: 700
+   :align: center
 
 With experimental endpoints
 ---------------------------
 
-.. image:: https://www.dropbox.com/s/4d67108n8fenobb/nodes-experimental.png
-.. image:: https://www.dropbox.com/s/5dzocpvsl7uoub7/node-experimental.png
+.. image:: https://raw.github.com/nedap/puppetboard/master/screenshots/nodes-experimental.png
+   :alt: Nodes table with experimental endpoints enabled
+   :width: 1024
+   :height: 700
+   :align: center
+
+.. image:: https://raw.github.com/nedap/puppetboard/master/screenshots/node-experimental.png
+   :alt: Node view with experimental endpoints enabled
+   :width: 1024
+   :height: 700
+   :align: center
