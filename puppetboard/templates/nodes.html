@@ -1,0 +1,50 @@
+{% extends 'layout.html' %}
+{% block content %}
+<div class="alert alert-info">
+  PuppetDB currently only returns active nodes.
+</div>
+      {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+      {% for category, message in messages %}
+        <div class="alert alert-{{category}}">
+          {{message}}
+        </div>
+      {% endfor %}
+      {% endif %}
+      {% endwith %}
+<div class="hide" style="margin-bottom:20px">
+<input autofocus="autofocus" style="width:100%" type="text" class="filter-table input-medium search-query" placeholder="Type here to filter">
+</div>
+<table class='nodes table table-striped table-condensed'>
+  <thead>
+    <tr>
+      <th>Hostname</th>
+      <th>Catalog compiled at</th>
+      {% if config.PUPPETDB_EXPERIMENTAL %}
+      <th>Last report</th>
+      <th>&nbsp;</th>
+      {% endif %}
+    </tr>
+  </thead>
+  <tbody class="searchable">
+    {% for node in nodes %}
+    <tr>
+      <td><a href="{{url_for('node', node_name=node.name)}}">{{node.name}}</a></td>
+      <td rel="utctimestamp">{{node.catalog_timestamp}}</td>
+      {% if config.PUPPETDB_EXPERIMENTAL %}
+      <td>
+        {% if node.report_timestamp %}
+        <span rel="utctimestamp">{{ node.report_timestamp }}</span>
+        {% else %}
+          <i class="icon icon-ban-circle"></i>
+        {% endif %}
+      </td>
+      <td>
+        <a class="btn btn-small btn-primary" href="{{url_for('reports_node', node=node.name)}}">Reports</a>
+      </td>
+      {% endif %}
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% endblock content %}

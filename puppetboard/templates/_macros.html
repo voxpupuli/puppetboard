@@ -1,0 +1,77 @@
+{% macro facts_table(facts, autofocus=False, condensed=False, show_node=False, margin_top=20, margin_bottom=20) -%}
+<div class="filter" style="margin-bottom:{{margin_bottom}}px;margin-top:{{margin_top}}px;">
+  <input {% if autofocus %} autofocus="autofocus" {% endif %} style="width:100%" type="text" class="filter-table input-medium search-query" placeholder="Type here to filter">
+</div>
+<table class="filter-table table table-striped {% if condensed %}table-condensed{% endif%}" style="table-layout:fixed">
+  <thead>
+    <tr>
+      <th>Fact</th>
+      <th>Value</th>
+    </tr>
+  </thead>
+  <tbody class="searchable">
+    {% for fact in facts %}
+    <tr>
+      {% if show_node %}
+        <td>{{fact.node}}</td>
+      {% else %}
+        <td>{{fact.name}}</td>
+      {% endif %}
+      <td style="word-wrap:break-word">{{fact.value}}</td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+{%- endmacro %}
+
+{% macro reports_table(reports, nodename, condensed=False, hash_truncate=False, show_conf_col=True, show_agent_col=True, show_host_col=True) -%}
+<div class="alert alert-info">
+  Only showing the last ten reports.
+</div>
+<table class='table table-striped {% if condensed %}table-condensed{% endif %}'>
+  <thead>
+    <tr>
+      <th>Start time</th>
+      <th>Run time</th>
+      <th>Full report</th>
+      {% if show_conf_col %}
+        <th>Configuration version</th>
+      {% endif %}
+      {% if show_agent_col %}
+        <th>Agent version</th>
+      {% endif %}
+      {% if show_host_col %}
+        <th>Hostname</th>
+      {% endif %}
+    <tr>
+  </thead>
+  <tbody>
+  {% for report in reports %}
+    {% if hash_truncate %}
+    {% set rep_hash = "%s&hellip;"|format(report.hash_[0:6])|safe %}
+    {% else %}
+    {% set rep_hash = report.hash_ %}
+    {% endif %}
+    {% if report.failed %}
+    <tr class="error">
+    {% else %}
+    <tr>
+    {% endif %}
+    <td rel="utctimestamp">{{report.start}}</td>
+      <td>{{report.run_time}}</td>
+
+      <td><a href="{{url_for('report', node=nodename, report_id=report.hash_)}}">{{rep_hash}}</a></td>
+      {% if show_conf_col %}
+        <td>{{report.version}}</td>
+      {% endif %}
+      {% if show_agent_col %}
+        <td>{{report.agent_version}}</td>
+      {% endif %}
+      {% if show_host_col %}
+        <td>{{nodename}}</td>
+      {% endif %}
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+{%- endmacro %}

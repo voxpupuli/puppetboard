@@ -1,0 +1,16 @@
+{% extends 'layout.html' %}
+{% block row_fluid %}
+<div class="container" style="margin-bottom:55px;">
+  <div class="row">
+    <div class="span12">
+      <h2>Internal Server Error</h2>
+      <p>This error usually occurs because:
+        <ul>
+          <li>We were unable to reach PuppetDB;</li>
+          <Li>The query to be executed was malformed resulting in an incorrectly encoded request.</li>
+      </ul></p>
+      <p>Please have a look at the log output for further information.</p>
+    </div>
+  </div>
+</div>
+{% endblock %}

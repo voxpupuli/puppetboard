@@ -1,0 +1,5 @@
+{% extends 'layout.html' %}
+{% import '_macros.html' as macros %}
+{% block content %}
+{{ macros.reports_table(reports, nodename, condensed=False, hash_truncate=False, show_conf_col=True, show_agent_col=True, show_host_col=True)}}
+{% endblock content %}

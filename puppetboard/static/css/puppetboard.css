@@ -1,0 +1,51 @@
+body {
+  padding-top: 60px;
+}
+th.headerSortUp {
+  position: relative
+}
+th.headerSortDown {
+  position: relative
+}
+th.header {
+  position: relative
+}
+th.header:after {
+  content: "\f0dc"; 
+  font-family: FontAwesome;
+  font-style: normal;
+  font-weight: normal;
+  text-decoration: inherit;
+  color: #000;
+  font-size: 18px;
+  padding-right: 0.5em;
+  float:right;
+}
+th.headerSortUp:after {
+  content: "\f0de"; 
+  font-family: FontAwesome;
+  font-style: normal;
+  font-weight: normal;
+  text-decoration: inherit;
+  color: #000;
+  font-size: 18px;
+  padding-right: 0.5em;
+  float:right;
+}
+th.headerSortDown:after {
+  content: "\f0dd"; 
+  font-family: FontAwesome;
+  font-style: normal;
+  font-weight: normal;
+  text-decoration: inherit;
+  color: #000;
+  font-size: 18px;
+  padding-right: 0.5em;
+  float:right;
+}
+.stat {
+  margin-bottom: 40px;
+}
+.navbar .brand:hover {
+  color: #fff;
+}
