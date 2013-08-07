@@ -140,12 +140,6 @@ Screenshots
    :height: 700
    :align: center
 
-.. image:: https://raw.github.com/nedap/puppetboard/master/screenshots/no-experimental.png
-   :alt: Accessing disabled experimental feature
-   :width: 1024
-   :height: 700
-   :align: center
-
 .. image:: https://raw.github.com/nedap/puppetboard/master/screenshots/nodes.png
    :alt: Nodes table without experimental endpoints enabled
    :width: 1024
@@ -181,6 +175,12 @@ With experimental endpoints
 
 Error page
 ----------
+
+.. image:: https://raw.github.com/nedap/puppetboard/master/screenshots/no-experimental.png
+   :alt: Accessing disabled experimental feature
+   :width: 1024
+   :height: 700
+   :align: center
 
 .. image:: https://raw.github.com/nedap/puppetboard/master/screenshots/broken.png
    :alt: Error message
