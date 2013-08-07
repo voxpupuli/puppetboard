@@ -173,6 +173,12 @@ With experimental endpoints
    :height: 700
    :align: center
 
+.. image:: https://raw.github.com/nedap/puppetboard/master/screenshots/report.png
+   :alt: Nodes table with experimental endpoints enabled
+   :width: 1024
+   :height: 700
+   :align: center
+
 Error page
 ----------
 
