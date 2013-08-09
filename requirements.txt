@@ -5,6 +5,6 @@ MarkupSafe==0.18
 WTForms==1.0.4
 Werkzeug==0.9.3
 itsdangerous==0.22
-pypuppetdb==0.0.1
+pypuppetdb==0.0.2
 pytz==2013b
 requests==1.2.3
