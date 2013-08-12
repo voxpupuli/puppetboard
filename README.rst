@@ -101,12 +101,12 @@ Some people have already started building things with and around Puppetboard.
 
 * https://github.com/hunner/puppetboard-vagrant
 
-`Krum Spencer`_ created a Puppet module to install Puppetboard with:
+`Spencer Krum`_ created a Puppet module to install Puppetboard with:
 
 * https://github.com/nibalizer/puppet-module-puppetboard
 
 .. _Hunter Haugen: https://github.com/hunner
-.. _Krum Spencer: https://github.com/nibalizer
+.. _Spencer Krum: https://github.com/nibalizer
 
 Contributing
 ============
