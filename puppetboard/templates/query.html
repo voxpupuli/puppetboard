@@ -23,7 +23,7 @@
         <div class="control-group {% if form.query.errors %} error {% endif %}">
           {{form.query.label(class_="control-label")}}
           <div class="controls">
-            {{form.query(class_="input-block-level", autofocus="autofocus", rows=5, placeholder="\"=\", \"name\" \"hostname\"")}}
+            {{form.query(class_="input-block-level", autofocus="autofocus", rows=5, placeholder="\"=\", \"name\", \"hostname\"")}}
             {% if form.query.errors %}
             <span class="help-inline">{% for error in form.query.errors %}{{error}}{% endfor %}</span>
             {% endif %}
