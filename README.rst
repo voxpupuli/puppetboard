@@ -98,9 +98,11 @@ Third party
 Some people have already started building things with and around Puppetboard.
 
 `Hunter Haugen`_ has provided a Vagrant setup:
+
 * https://github.com/hunner/puppetboard-vagrant
 
 `Krum Spencer`_ created a Puppet module to install Puppetboard with:
+
 * https://github.com/nibalizer/puppet-module-puppetboard
 
 .. _Hunter Haugen: https://github.com/hunner
