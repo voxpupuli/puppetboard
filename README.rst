@@ -105,6 +105,10 @@ Some people have already started building things with and around Puppetboard.
 
 * https://github.com/nibalizer/puppet-module-puppetboard
 
+You can install it with:
+
+    puppet module install nibalizer-puppetboard
+
 .. _Hunter Haugen: https://github.com/hunner
 .. _Spencer Krum: https://github.com/nibalizer
 
