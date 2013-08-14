@@ -83,9 +83,9 @@ def index():
     metrics = {
       'num_nodes': num_nodes['Value'],
       'num_resources': num_resources['Value'],
-      'avg_resources_node': "{:10.6f}".format(avg_resources_node['Value']),
+      'avg_resources_node': "{0:10.6f}".format(avg_resources_node['Value']),
       'mean_failed_commands': mean_failed_commands['MeanRate'],
-      'mean_command_time': "{:10.6f}".format(mean_command_time['MeanRate']),
+      'mean_command_time': "{0:10.6f}".format(mean_command_time['MeanRate']),
       }
     return render_template('index.html', metrics=metrics)
 
