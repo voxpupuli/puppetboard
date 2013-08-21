@@ -196,3 +196,15 @@ def query():
                 query='[{0}]'.format(form.query.data))
         return render_template('query.html', form=form, result=result)
     return render_template('query.html', form=form)
+
+@app.route('/metrics')
+def metrics():
+  metrics = puppetdb._query('metrics', path='mbeans')
+  for key,value in metrics.iteritems():
+    metrics[key]=value.split('/')[3]
+  return render_template('metrics.html', metrics=metrics)
+
+@app.route('/metric/<metric>')
+def metric(metric):
+  metric = puppetdb.metric(metric)
+  return render_template('metric.html', metric=metric)
