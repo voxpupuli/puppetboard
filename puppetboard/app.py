@@ -202,9 +202,9 @@ def metrics():
   metrics = puppetdb._query('metrics', path='mbeans')
   for key,value in metrics.iteritems():
     metrics[key]=value.split('/')[3]
-  return render_template('metrics.html', metrics=metrics)
+  return render_template('metrics.html', metrics=sorted(metrics.items()))
 
 @app.route('/metric/<metric>')
 def metric(metric):
   metric = puppetdb.metric(metric)
-  return render_template('metric.html', metric=metric)
+  return render_template('metric.html', metric=sorted(metric.items()))
