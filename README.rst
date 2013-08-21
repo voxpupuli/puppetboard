@@ -23,6 +23,8 @@ Because this project is powered by Flask we are restricted to:
    :height: 700
    :align: center
 
+.. contents::
+
 Word of caution
 ===============
 
