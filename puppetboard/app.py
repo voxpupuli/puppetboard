@@ -4,6 +4,7 @@ from __future__ import absolute_import
 import os
 import logging
 import collections
+import urllib
 
 from flask import (
     Flask, render_template, abort, url_for,
@@ -206,5 +207,6 @@ def metrics():
 
 @app.route('/metric/<metric>')
 def metric(metric):
+  name = urllib.unquote(metric)
   metric = puppetdb.metric(metric)
-  return render_template('metric.html', metric=sorted(metric.items()))
+  return render_template('metric.html', name=name, metric=sorted(metric.items()))

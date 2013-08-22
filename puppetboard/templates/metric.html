@@ -1,6 +1,10 @@
 {% extends 'layout.html' %}
 {% block content %}
-<h1>Metric</h1>
+<div class="page-header">
+  <h1>Metric
+    <small>{{name}}</small>
+  </h1>
+</div>
 <table class="table table-striped">
   <tbody>
     {% for key,value in metric %}
