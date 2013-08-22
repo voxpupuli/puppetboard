@@ -173,6 +173,18 @@ Screenshots
    :height: 700
    :align: center
 
+.. image:: https://raw.github.com/nedap/puppetboard/master/screenshots/metrics.png
+   :alt: Query view
+   :width: 1024
+   :height: 700
+   :align: center
+
+.. image:: https://raw.github.com/nedap/puppetboard/master/screenshots/metric.png
+   :alt: Query view
+   :width: 1024
+   :height: 700
+   :align: center
+
 .. image:: https://raw.github.com/nedap/puppetboard/master/screenshots/query.png
    :alt: Query view
    :width: 1024
