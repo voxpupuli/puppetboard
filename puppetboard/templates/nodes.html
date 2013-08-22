@@ -40,7 +40,9 @@
         {% endif %}
       </td>
       <td>
+        {% if node.report_timestamp %}
         <a class="btn btn-small btn-primary" href="{{url_for('reports_node', node=node.name)}}">Reports</a>
+        {% endif %}
       </td>
       {% endif %}
     </tr>
