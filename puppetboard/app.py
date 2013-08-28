@@ -180,9 +180,12 @@ def facts():
 def fact(fact):
     """Fetches the specific fact from PuppetDB and displays its value per
     node for which this fact is known."""
+    # we can only consume the generator once, lists can be doubly consumed
+    # om nom nom
+    localfacts = [ f for f in yield_or_stop(puppetdb.facts(name=fact)) ]
     return Response(stream_with_context(stream_template('fact.html',
         name=fact,
-        facts=yield_or_stop(puppetdb.facts(name=fact)))))
+        facts=localfacts)))
 
 @app.route('/query', methods=('GET', 'POST'))
 def query():
