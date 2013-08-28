@@ -27,6 +27,29 @@
   </tbody>
 </table>
 {%- endmacro %}
+{% macro facts_graph(facts, autofocus=False, condensed=False, show_node=False, margin_top=20, margin_bottom=20) -%}
+<script src="{{url_for('static', filename='js/Chart.js')}}"></script>
+<canvas id="factChart" width="400" height="400"></canvas>
+<script type="text/javascript">
+var data = [
+{% set color_list = ["#F38630", "#E0E4CC", "#69D2E7", "#D11151", "#787BE3", "#B59370", "#B30202"] %}
+{% for fact in facts|groupby('value') %}
+    {
+    label: "{{ fact.grouper }}",
+    color: "{{ color_list|random }}",
+    value: {{ fact.list|length }}
+    },
+{% endfor %}
+    {
+    value: 0,
+    color: "#000000"
+    }
+  ]
+  var ctx = document.getElementById("factChart").getContext("2d");
+  var myNewChart = new Chart(ctx).Pie(data);
+  new Chart(ctx).Pie(data);
+</script>
+{%- endmacro %}
 
 {% macro reports_table(reports, nodename, condensed=False, hash_truncate=False, show_conf_col=True, show_agent_col=True, show_host_col=True) -%}
 <div class="alert alert-info">
