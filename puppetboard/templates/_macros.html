@@ -23,6 +23,63 @@
   </tbody>
 </table>
 {%- endmacro %}
+{% macro facts_graph(facts, autofocus=False, condensed=False, show_node=False, margin_top=20, margin_bottom=20) -%}
+<script src="{{url_for('static', filename='js/Chart.js')}}"></script>
+<canvas id="factChart" width="400" height="400"></canvas>
+<script type="text/javascript">
+  var colors = [ "#F38630", "#E0E4CC", "#69D2E7", "#D11151", "#787BE3", "#B59370", "#B30202" ];
+  var len_colors = colors.length;
+  var data = [
+{% for fact in facts|groupby('value') %}
+    {
+    label: "{{ fact.grouper }}",
+    value: {{ fact.list|length }}
+    },
+{% endfor %}
+    {
+    value: 0,
+    }
+  ]
+  for (var i = 0; i < data.length; i++) {
+    data[i].color = colors[i % len_colors];
+  }
+  var sorted_data = data.sort(function(a,b) { return parseFloat(b.value) - parseFloat(a.value)});
+  var top7 = sorted_data.slice(0,7);
+  var bottom = data.slice(7, -1);
+  var bottom_sum = 0;
+  for (var i = 0; i < bottom.length; i++) {
+    bottom_sum += bottom[i].value;
+  }
+  top7.push({ label: "Other", value: bottom_sum, color: "#B30202" });
+  var ctx = document.getElementById("factChart").getContext("2d");
+  new Chart(ctx).Pie(top7);
+</script>
+{%- endmacro %}
+{% macro facts_graph_value(facts, autofocus=False, condensed=False, show_node=False, margin_top=20, margin_bottom=20) -%}
+<script src="{{url_for('static', filename='js/Chart.js')}}"></script>
+<canvas id="factChart_value" width="400" height="400"></canvas>
+<script type="text/javascript">
+  var colors = [ "#F38630", "#E0E4CC", "#69D2E7", "#D11151", "#787BE3", "#B59370", "#B30202" ];
+  var len_colors = colors.length;
+  var data = [
+{% for fact in facts|groupby('value') %}
+    {
+    label: "{{ fact.grouper }}",
+    value: {{ fact.list|length }}
+    },
+{% endfor %}
+    {
+    value: 0,
+    }
+  ]
+
+  for (var i = 0; i < data.length; i++) {
+    data[i].color = colors[i % len_colors];
+  }
+  var ctx = document.getElementById("factChart_value").getContext("2d");
+  new Chart(ctx).Pie(data.sort(function(a,b) { return parseInt(a.label) - parseInt(b.label)}));
+</script>
+{%- endmacro %}
 
 {% macro reports_table(reports, nodename, condensed=False, hash_truncate=False, show_conf_col=True, show_agent_col=True, show_host_col=True) -%}
 <div class="alert alert-info">
