@@ -77,7 +77,7 @@
     data[i].color = colors[i % len_colors];
   }
   var ctx = document.getElementById("factChart_value").getContext("2d");
-  new Chart(ctx).Pie(data.sort(function(a,b) { return parseFloat(a.label) - parseFloat(b.label)}));
+  new Chart(ctx).Pie(data.sort(function(a,b) { return parseInt(a.label) - parseInt(b.label)}));
 </script>
 {%- endmacro %}
 
