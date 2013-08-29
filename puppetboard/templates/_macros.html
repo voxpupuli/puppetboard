@@ -46,8 +46,32 @@ var data = [
     }
   ]
   var ctx = document.getElementById("factChart").getContext("2d");
-  var myNewChart = new Chart(ctx).Pie(data);
-  new Chart(ctx).Pie(data);
+  new Chart(ctx).Pie(data.sort(function(a,b) { return parseFloat(a.value) - parseFloat(b.value)}));
+</script>
+{%- endmacro %}
+{% macro facts_graph_value(facts, autofocus=False, condensed=False, show_node=False, margin_top=20, margin_bottom=20) -%}
+<script src="{{url_for('static', filename='js/Chart.js')}}"></script>
+<canvas id="factChart_value" width="400" height="400"></canvas>
+<script type="text/javascript">
+  var colors = [ "#F38630", "#E0E4CC", "#69D2E7", "#D11151", "#787BE3", "#B59370", "#B30202" ];
+  var len_colors = colors.length;
+  var data = [
+{% for fact in facts|groupby('value') %}
+    {
+    label: "{{ fact.grouper }}",
+    value: {{ fact.list|length }}
+    },
+{% endfor %}
+    {
+    value: 0,
+    }
+  ]
+
+  for (var i = 0; i < data.length; i++) {
+    data[i].color = colors[i % len_colors];
+  }
+  var ctx = document.getElementById("factChart_value").getContext("2d");
+  new Chart(ctx).Pie(data.sort(function(a,b) { return parseFloat(a.label) - parseFloat(b.label)}));
 </script>
 {%- endmacro %}
 
