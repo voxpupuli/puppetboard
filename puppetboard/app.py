@@ -51,6 +51,10 @@ def stream_template(template_name, **context):
 def bad_request(e):
     return render_template('400.html'), 400
 
+@app.errorhandler(403)
+def bad_request(e):
+    return render_template('403.html'), 400
+
 @app.errorhandler(404)
 def not_found(e):
     return render_template('404.html'), 404
@@ -191,12 +195,16 @@ def query():
     of the possible exceptions are being handled just yet. This will return
     the JSON of the response or a message telling you what whent wrong /
     why nothing was returned."""
-    form = QueryForm()
-    if form.validate_on_submit():
-        result = get_or_abort(puppetdb._query, form.endpoints.data,
-                query='[{0}]'.format(form.query.data))
-        return render_template('query.html', form=form, result=result)
-    return render_template('query.html', form=form)
+    if app.config['ENABLE_QUERY']:
+      form = QueryForm()
+      if form.validate_on_submit():
+          result = get_or_abort(puppetdb._query, form.endpoints.data,
+                  query='[{0}]'.format(form.query.data))
+          return render_template('query.html', form=form, result=result)
+      return render_template('query.html', form=form)
+    else:
+        log.warn('Access to query interface disabled by administrator..')
+        abort(403)
 
 @app.route('/metrics')
 def metrics():
