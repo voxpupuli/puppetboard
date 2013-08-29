@@ -43,8 +43,16 @@
   for (var i = 0; i < data.length; i++) {
     data[i].color = colors[i % len_colors];
   }
+  var sorted_data = data.sort(function(a,b) { return parseFloat(b.value) - parseFloat(a.value)});
+  var top7 = sorted_data.slice(0,7);
+  var bottom = data.slice(7, -1);
+  var bottom_sum = 0;
+  for (var i = 0; i < bottom.length; i++) {
+    bottom_sum += bottom[i].value;
+  }
+  top7.push({ label: "Other", value: bottom_sum, color: "#B30202" });
   var ctx = document.getElementById("factChart").getContext("2d");
-  new Chart(ctx).Pie(data.sort(function(a,b) { return parseFloat(a.value) - parseFloat(b.value)}));
+  new Chart(ctx).Pie(top7);
 </script>
 {%- endmacro %}
 {% macro facts_graph_value(facts, autofocus=False, condensed=False, show_node=False, margin_top=20, margin_bottom=20) -%}
