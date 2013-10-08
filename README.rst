@@ -107,7 +107,7 @@ be found on `IRCnet`_ and `Freenode`_ and idles in #puppet.
 There's now also the #puppetboard channel on `Freenode`_ where we hang out
 and answer questions related to pypuppetdb and Puppetboard.
 
-.. _issue: https://github.com/nedap/pypuppetdb/issues
+.. _issue: https://github.com/nedap/puppetboard/issues
 .. _@daenney: https://github.com/daenney
 .. _IRCnet: http://www.ircnet.org
 .. _Freenode: http://freenode.net
