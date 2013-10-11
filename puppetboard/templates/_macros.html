@@ -5,7 +5,11 @@
 <table class="filter-table table table-striped {% if condensed %}table-condensed{% endif%}" style="table-layout:fixed">
   <thead>
     <tr>
+      {% if show_node %}
+      <th>Node</th>
+      {% else %}
       <th>Fact</th>
+      {% endif %}
       <th>Value</th>
     </tr>
   </thead>
@@ -13,9 +17,9 @@
     {% for fact in facts %}
     <tr>
       {% if show_node %}
-        <td>{{fact.node}}</td>
+        <td><a href="{{url_for('node', node_name=fact.node)}}">{{fact.node}}</a></td>
       {% else %}
-        <td>{{fact.name}}</td>
+        <td><a href="{{url_for('fact', fact=fact.name)}}">{{fact.name}}</a></td>
       {% endif %}
       <td style="word-wrap:break-word">{{fact.value}}</td>
     </tr>
