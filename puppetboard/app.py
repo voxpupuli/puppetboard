@@ -12,7 +12,6 @@ from flask import (
     )
 
 from pypuppetdb import connect
-from pypuppetdb.errors import ExperimentalDisabledError
 
 from puppetboard.forms import QueryForm
 from puppetboard.utils import (
@@ -27,13 +26,13 @@ app.config.from_envvar('PUPPETBOARD_SETTINGS', silent=True)
 app.secret_key = os.urandom(24)
 
 puppetdb = connect(
+        api_version=app.config['PUPPETDB_API'],
         host=app.config['PUPPETDB_HOST'],
         port=app.config['PUPPETDB_PORT'],
         ssl=app.config['PUPPETDB_SSL'],
         ssl_key=app.config['PUPPETDB_KEY'],
         ssl_cert=app.config['PUPPETDB_CERT'],
-        timeout=app.config['PUPPETDB_TIMEOUT'],
-        experimental=app.config['PUPPETDB_EXPERIMENTAL'])
+        timeout=app.config['PUPPETDB_TIMEOUT'],)
 
 numeric_level = getattr(logging, app.config['LOGLEVEL'].upper(), None)
 if not isinstance(numeric_level, int):
@@ -58,7 +57,8 @@ def not_found(e):
 
 @app.errorhandler(412)
 def precond_failed(e):
-    """We're slightly abusing 412 to handle ExperimentalDisabled errors."""
+    """We're slightly abusing 412 to handle missing features
+    depending on the API version."""
     return render_template('412.html'), 412
 
 @app.errorhandler(500)
@@ -112,7 +112,7 @@ def node(node_name):
     """
     node = get_or_abort(puppetdb.node, node_name)
     facts =  node.facts()
-    if app.config['PUPPETDB_EXPERIMENTAL']:
+    if app.config['PUPPETDB_API'] > 2:
         reports = ten_reports(node.reports())
     else:
         reports = iter([])
@@ -123,21 +123,21 @@ def node(node_name):
 def reports():
     """Doesn't do much yet but is meant to show something like the reports of
     the last half our, something like that."""
-    if app.config['PUPPETDB_EXPERIMENTAL']:
+    if app.config['PUPPETDB_API'] > 2:
         return render_template('reports.html')
     else:
-        log.warn('Access to experimental endpoint not allowed.')
+        log.warn('PuppetDB API prior to v3 cannot access reports.')
         abort(412)
 
 @app.route('/reports/<node>')
 def reports_node(node):
     """Fetches all reports for a node and processes them eventually rendering
     a table displaying those reports."""
-    if app.config['PUPPETDB_EXPERIMENTAL']:
+    if app.config['PUPPETDB_API'] > 2:
         reports = ten_reports(yield_or_stop(
             puppetdb.reports('["=", "certname", "{0}"]'.format(node))))
     else:
-        log.warn('Access to experimental endpoint not allowed.')
+        log.warn('PuppetDB API prior to v3 cannot access reports.')
         abort(412)
     return render_template('reports_node.html', reports=reports,
             nodename=node)
@@ -146,10 +146,10 @@ def reports_node(node):
 def report(node, report_id):
     """Displays a single report including all the events associated with that
     report and their status."""
-    if app.config['PUPPETDB_EXPERIMENTAL']:
+    if app.config['PUPPETDB_API'] > 2:
         reports = puppetdb.reports('["=", "certname", "{0}"]'.format(node))
     else:
-        log.warn('Access to experimental endpoint not allowed.')
+        log.warn('PuppetDB API prior to v3 cannot access reports.')
         abort(412)
 
     for report in reports:

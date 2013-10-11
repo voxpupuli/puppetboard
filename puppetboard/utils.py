@@ -2,7 +2,7 @@ from __future__ import absolute_import
 from __future__ import unicode_literals
 
 from requests.exceptions import HTTPError, ConnectionError
-from pypuppetdb.errors import EmptyResponseError, ExperimentalDisabledError
+from pypuppetdb.errors import EmptyResponseError
 
 from flask import abort
 
@@ -18,8 +18,6 @@ def get_or_abort(func, *args, **kwargs):
         abort(e.response.status_code)
     except ConnectionError:
         abort(500)
-    except ExperimentalDisabledError:
-        abort(412)
     except EmptyResponseError:
         abort(204)
 
@@ -47,6 +45,5 @@ def yield_or_stop(generator):
             yield next(generator)
         except StopIteration:
             raise
-        except (ExperimentalDisabledError, EmptyResponseError,
-            ConnectionError, HTTPError):
+        except (EmptyResponseError, ConnectionError, HTTPError):
             raise StopIteration

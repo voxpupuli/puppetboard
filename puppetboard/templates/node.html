@@ -27,7 +27,7 @@
       </tbody>
     </table>
   </div>
-  {% if config.PUPPETDB_EXPERIMENTAL %}
+  {% if config.PUPPETDB_API > 2 %}
   <div class="span4">
     <h1>Facts</h1>
     {{macros.facts_table(facts, condensed=True, margin_top=10)}}
