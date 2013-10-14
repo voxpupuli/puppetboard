@@ -17,7 +17,7 @@ Because this project is powered by Flask we are restricted to:
     * Python 2.6
     * Python 2.7
 
-.. image:: https://raw.github.com/nedap/puppetboard/master/screenshots/node-experimental.png
+.. image:: https://raw.github.com/nedap/puppetboard/master/screenshots/node-v3.png
    :alt: View of a node
    :width: 1024
    :height: 700
@@ -68,6 +68,7 @@ and ``uwsgi`` can deal with.
 
   * Apache mod_wsgi configuration: http://flask.pocoo.org/docs/deploying/mod_wsgi/
   * uwsgi configuration: ``uwsgi --http :9090 --wsgi-file /path/to/puppetboard/wsgi.py``
+  * Passenger
 
 In the case of uwsgi you'll of course need something like nginx in front of it to
 proxy the requests to it.
@@ -75,6 +76,31 @@ proxy the requests to it.
 Don't forget that you also need to serve the ``static/`` folder on the
 ``/static`` URL of your vhost. (I'm considering embedding the little additional
 Javascript and CSS this application has so no one has to bother with that).
+
+Passenger
+^^^^^^^^^
+From within the Puppetboard checkout:
+
+.. code-block:: bash
+   mkdir public
+   mkdir tmp
+   ln -s wsgi.py passenger_wsgi.py
+
+The apache vhost configuration:
+
+.. code-block::
+   <VirtualHost *:80>
+       ServerName puppetboard.example.tld
+       DocumentRoot /path/to/puppetboard/public
+
+       RackAutoDetect On
+       Alias /static /path/to/puppetboard/static
+       <Directory /path/to/puppetboard/>
+                Options None
+                Order allow,deny
+                allow from all
+       </Directory>
+   </VirtualHost>
 
 Configuration
 =============
@@ -208,16 +234,16 @@ Screenshots
    :height: 700
    :align: center
 
-With experimental endpoints
----------------------------
-
-.. image:: https://raw.github.com/nedap/puppetboard/master/screenshots/nodes-experimental.png
+API v3
+------
+           
+.. image:: https://raw.github.com/nedap/puppetboard/master/screenshots/nodes-v3.png
    :alt: Nodes table with experimental endpoints enabled
    :width: 1024
    :height: 700
    :align: center
 
-.. image:: https://raw.github.com/nedap/puppetboard/master/screenshots/node-experimental.png
+.. image:: https://raw.github.com/nedap/puppetboard/master/screenshots/node-v3.png
    :alt: Node view with experimental endpoints enabled
    :width: 1024
    :height: 700
@@ -225,21 +251,6 @@ With experimental endpoints
 
 .. image:: https://raw.github.com/nedap/puppetboard/master/screenshots/report.png
    :alt: Nodes table with experimental endpoints enabled
-   :width: 1024
-   :height: 700
-   :align: center
-
-Error page
-----------
-
-.. image:: https://raw.github.com/nedap/puppetboard/master/screenshots/no-experimental.png
-   :alt: Accessing disabled experimental feature
-   :width: 1024
-   :height: 700
-   :align: center
-
-.. image:: https://raw.github.com/nedap/puppetboard/master/screenshots/broken.png
-   :alt: Error message
    :width: 1024
    :height: 700
    :align: center
