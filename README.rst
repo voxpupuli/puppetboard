@@ -82,6 +82,7 @@ Passenger
 From within the Puppetboard checkout:
 
 .. code-block:: bash
+
    mkdir public
    mkdir tmp
    ln -s wsgi.py passenger_wsgi.py
@@ -89,6 +90,7 @@ From within the Puppetboard checkout:
 The apache vhost configuration:
 
 .. code-block::
+
    <VirtualHost *:80>
        ServerName puppetboard.example.tld
        DocumentRoot /path/to/puppetboard/public
