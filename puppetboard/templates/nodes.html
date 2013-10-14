@@ -20,7 +20,7 @@
     <tr>
       <th>Hostname</th>
       <th>Catalog compiled at</th>
-      {% if config.PUPPETDB_EXPERIMENTAL %}
+      {% if config.PUPPETDB_API > 2 %}
       <th>Last report</th>
       <th>&nbsp;</th>
       {% endif %}
@@ -31,7 +31,7 @@
     <tr>
       <td><a href="{{url_for('node', node_name=node.name)}}">{{node.name}}</a></td>
       <td rel="utctimestamp">{{node.catalog_timestamp}}</td>
-      {% if config.PUPPETDB_EXPERIMENTAL %}
+      {% if config.PUPPETDB_API > 2 %}
       <td>
         {% if node.report_timestamp %}
         <span rel="utctimestamp">{{ node.report_timestamp }}</span>
