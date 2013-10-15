@@ -11,7 +11,7 @@ if not me in sys.path:
 
 logfilename = os.path.join('/tmp/', 'puppetboard_passenger_wsgi.log')
 # configure the logging
-logging.basicConfig(filename=logfilename, level=logging.DEBUG)
+logging.basicConfig(filename=logfilename, level=logging.INFO)
 
 try:
   from puppetboard.app import app as application
