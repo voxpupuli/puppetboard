@@ -49,3 +49,6 @@ th.headerSortDown:after {
 .navbar .brand:hover {
   color: #fff;
 }
+.table tbody tr.error>td {
+  background-color: #f2dede;
+}
