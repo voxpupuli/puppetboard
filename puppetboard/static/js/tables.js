@@ -8,11 +8,11 @@
 
   $('.nodes').tablesorter({
     headers: {
-      3: {
+      4: {
         sorter: false
       }
     },
-    sortList: [[0, 0]]
+    sortList: [[1, 0]]
   });
 
   $('.facts').tablesorter({

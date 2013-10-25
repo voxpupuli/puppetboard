@@ -8,7 +8,7 @@ import urllib
 
 from flask import (
     Flask, render_template, abort, url_for,
-    Response, stream_with_context,
+    Response, stream_with_context, redirect,
     )
 
 from pypuppetdb import connect
@@ -71,8 +71,9 @@ def server_error(e):
 
 @app.route('/')
 def index():
-    """This view generates the index page and displays a set of metrics fetched
-    from PuppetDB."""
+    """This view generates the index page and displays a set of metrics and latest reports on 
+    nodes fetched from PuppetDB.
+    """
     # TODO: Would be great if we could parallelize this somehow, doing these
     # requests in sequence is rather pointless.
     num_nodes = get_or_abort(puppetdb.metric, 
@@ -85,6 +86,8 @@ def index():
       'com.puppetlabs.puppetdb.command:type=global,name=fatal')
     mean_command_time = get_or_abort(puppetdb.metric,
       'com.puppetlabs.puppetdb.command:type=global,name=processing-time')
+    mean_command_time = get_or_abort(puppetdb.metric,
+      'com.puppetlabs.puppetdb.command:type=global,name=processing-time')
     metrics = {
       'num_nodes': num_nodes['Value'],
       'num_resources': num_resources['Value'],
@@ -92,7 +95,13 @@ def index():
       'mean_failed_commands': mean_failed_commands['MeanRate'],
       'mean_command_time': "{0:10.6f}".format(mean_command_time['MeanRate']),
       }
-    return render_template('index.html', metrics=metrics)
+
+    latest_event_count = puppetdb._query('aggregate-event-counts', query='["=", "latest-report?", true]', summarize_by='certname')
+    latest_event_count['noopskip'] = latest_event_count['noops']+latest_event_count['skips']
+    
+    latest_events = puppetdb._query('event-counts', query='["=", "latest-report?", true]', summarize_by='certname')
+
+    return render_template('index.html', metrics=metrics, latest_event_count=latest_event_count, latest_events=latest_events)
 
 @app.route('/nodes')
 def nodes():
@@ -105,8 +114,19 @@ def nodes():
     works. Once pagination is in place we can change this but we'll need to
     provide a search feature instead.
     """
+    latest_events = puppetdb._query('event-counts', query='["=", "latest-report?", true]', summarize_by='certname')
+    nodes = []
+    for node in yield_or_stop(puppetdb.nodes()):
+        # check if node name is contained in any of the event-counts (grouped by certname)
+        status = [s for s in latest_events if s['subject']['title'] == node.name]
+        if status:
+            node.status = status[0]
+        else:
+            node.status = None
+        nodes.append(node)
+
     return Response(stream_with_context(stream_template('nodes.html',
-        nodes=yield_or_stop(puppetdb.nodes()))))
+        nodes=nodes)))
 
 @app.route('/node/<node_name>')
 def node(node_name):
@@ -146,10 +166,26 @@ def reports_node(node):
     return render_template('reports_node.html', reports=reports,
             nodename=node)
 
+@app.route('/report/latest/<node_name>')
+def report_latest(node_name):
+    """Redirect to the latest report of a given node. This is a workaround
+    as long as PuppetDB can't filter reports for latest-report? field. This
+    feature has been requested: http://projects.puppetlabs.com/issues/21554
+    """
+    # TODO: use limit parameter in _query to get just one report
+    node = get_or_abort(puppetdb.node, node_name)
+    if app.config['PUPPETDB_API'] > 2:
+        reports = ten_reports(node.reports())
+    else:
+        reports = iter([])
+    report = list(yield_or_stop(reports))[0]
+    return redirect(url_for('report', node=node_name, report_id=report))
+
 @app.route('/report/<node>/<report_id>')
 def report(node, report_id):
     """Displays a single report including all the events associated with that
-    report and their status."""
+    report and their status.
+    """
     if app.config['PUPPETDB_API'] > 2:
         reports = puppetdb.reports('["=", "certname", "{0}"]'.format(node))
     else:

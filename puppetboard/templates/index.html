@@ -1,11 +1,27 @@
 {% extends 'layout.html' %}
 {% block row_fluid %}
-<div class="span12">
-  <div class='alert alert-info'>
-    We need something fancy here.
-  </div>
-</div>
 <div class="container" style="margin-bottom:55px;">
+  <div class="row">
+    <h2>Statistics</h2>
+    <hr />
+  </div>
+  <div class="row">
+    <div class="span12">
+      <div class="span4 stat">
+        <h1 class="error">{{latest_event_count['failures']}} Failures</h1>
+        <span>in the latest node reports</span>
+      </div>
+      <div class="span4 stat">
+        <h1 class="success">{{latest_event_count['successes']}} Successes</h1>
+        <span>in the latest node reports</span>
+      </div>
+      <div class="span4 stat">
+        <h1 class="noop">{{latest_event_count['noopskip']}} Noop/Skip</h1>
+        <span>in the latest node reports</span>
+      </div>
+    </div>
+  </div>
+
   <div class="row">
     <div class="span12">
       <div class="span4 stat">
@@ -32,6 +48,26 @@
         <h1>{{metrics['mean_command_time']}}s</h1>
         <span>Mean command execution time</span>
       </div>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="span12">
+      <h2>Latest Reports with events</h2>
+      <hr />
+	<table class='nodes table table-striped table-condensed'>
+	  <tbody class="searchable">
+	    {% for event in latest_events %}
+	    <tr>
+        
+        <td>{% if event['failures'] %}<span class="label label-important numtag">{{event['failures']}}</span>{% endif%}</td>
+        <td>{% if event['successes'] %}<span class="label label-success numtag">{{event['successes']}}</span>{% endif%}</td>
+	      <td style="width:730px;"><a href="{{url_for('node', node_name=event['subject']['title'])}}">{{event['subject']['title']}}</a></td>
+	      <td><a class="btn btn-small btn-primary" href="{{url_for('report_latest', node_name=event['subject']['title'])}}">Latest Report</a></td>
+	    </tr>
+	    {% endfor %}
+	  </tbody>
+	</table>
     </div>
   </div>
 </div>

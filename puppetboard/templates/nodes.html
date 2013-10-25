@@ -18,6 +18,7 @@
 <table class='nodes table table-striped table-condensed'>
   <thead>
     <tr>
+      <th width>Status</th>
       <th>Hostname</th>
       <th>Catalog compiled at</th>
       {% if config.PUPPETDB_API > 2 %}
@@ -29,6 +30,16 @@
   <tbody class="searchable">
     {% for node in nodes %}
     <tr>
+            <td><a href="{{url_for('report_latest', node_name=node.name)}}">
+        {% if node.status %}
+          {% if node.status['failures'] %}<span class="label label-important">{{node.status['failures']}}</span>{% endif %}
+          {% if node.status['successes'] %}<span class="label label-success">{{node.status['successes']}}</span>{% endif %}
+          {% if node.status['noops'] or node.status['skips'] %}<span class="label">{{node.status['skips']+node.status['noops']}}</span>{% endif %}
+        {% else %}
+          <span class="label">0</span>
+        {% endif %}
+</a>
+      </td>
       <td><a href="{{url_for('node', node_name=node.name)}}">{{node.name}}</a></td>
       <td rel="utctimestamp">{{node.catalog_timestamp}}</td>
       {% if config.PUPPETDB_API > 2 %}
