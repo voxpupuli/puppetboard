@@ -65,3 +65,8 @@ h1.noop {
   width:20px;
   text-align:center;
 }
+.label-nothing {
+  background-color:#ddd;
+  width:20px;
+  color:#ddd;
+}

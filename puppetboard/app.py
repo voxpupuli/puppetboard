@@ -5,6 +5,7 @@ import os
 import logging
 import collections
 import urllib
+from datetime import datetime, timedelta
 
 from flask import (
     Flask, render_template, abort, url_for,
@@ -101,7 +102,15 @@ def index():
     
     latest_events = puppetdb._query('event-counts', query='["=", "latest-report?", true]', summarize_by='certname')
 
-    return render_template('index.html', metrics=metrics, latest_event_count=latest_event_count, latest_events=latest_events)
+    unreported = []
+    for node in puppetdb.nodes():
+        node_last_seen = node.report_timestamp.replace(tzinfo=None)
+        if node_last_seen  < (datetime.utcnow()-timedelta(hours=app.config['UNRESPONSIVE_HOURS'])):
+            delta = (datetime.utcnow()-node_last_seen)
+            node.noresponse = str(delta.days) + "d " + str(int(delta.seconds/3600)) +"h " + str(int((delta.seconds%3600)/60))+ "m"
+            unreported.append(node)
+
+    return render_template('index.html', metrics=metrics, latest_event_count=latest_event_count, latest_events=latest_events, unreported=unreported, unreported_time=app.config['UNRESPONSIVE_HOURS'])
 
 @app.route('/nodes')
 def nodes():

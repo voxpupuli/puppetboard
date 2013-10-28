@@ -5,5 +5,5 @@ MarkupSafe==0.18
 WTForms==1.0.4
 Werkzeug==0.9.3
 itsdangerous==0.22
-git+https://github.com/juliushaertl/pypuppetdb.git@feature-v3-newapis#egg=pypuppetdb
+git+https://github.com/nedap/pypuppetdb#egg=pypuppetdb
 requests==1.2.3

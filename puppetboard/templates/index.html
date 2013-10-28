@@ -8,16 +8,16 @@
   <div class="row">
     <div class="span12">
       <div class="span4 stat">
-        <h1 class="error">{{latest_event_count['failures']}} Failures</h1>
-        <span>in the latest node reports</span>
+        <h1 class="error">{{latest_event_count['failures']}} <small>Failed</small></h1>
+        <span>nodes in the latest reports</span>
       </div>
       <div class="span4 stat">
-        <h1 class="success">{{latest_event_count['successes']}} Successes</h1>
-        <span>in the latest node reports</span>
+        <h1 class="success">{{latest_event_count['successes']}} <small>Succeeded</small></h1>
+        <span>nodes in the latest reports</span>
       </div>
       <div class="span4 stat">
-        <h1 class="noop">{{latest_event_count['noopskip']}} Noop/Skip</h1>
-        <span>in the latest node reports</span>
+        <h1 class="noop">{{ unreported|length }} <small>Unreported</small></h1>
+        <span>nodes in the last {{ unreported_time }} hours</span>
       </div>
     </div>
   </div>
@@ -53,21 +53,34 @@
 
   <div class="row">
     <div class="span12">
+      <h2>Nodes without Report since {{ unreported_time }} hours</h2>
+    	<table class='nodes table table-striped table-condensed'>
+	      <tbody class="searchable">
+	        {% for node in unreported %}
+    	    <tr>
+            <td style="width:110px;"><span class="label label-important">No Report</span></td>
+            <td>{{ node.noresponse }}</td>
+            <td><a href="{{url_for('node', node_name=node.name)}}">{{ node.name }}</a></td>
+            <td style="width:120px;"><a class="btn btn-small btn-primary" href="{{url_for('report_latest', node_name=node.name)}}">Latest Report</a></td>
+	        </tr>
+    	    {% endfor %}
+    	  </tbody>
+    	</table>
       <h2>Latest Reports with events</h2>
-      <hr />
-	<table class='nodes table table-striped table-condensed'>
-	  <tbody class="searchable">
-	    {% for event in latest_events %}
-	    <tr>
-        
-        <td>{% if event['failures'] %}<span class="label label-important numtag">{{event['failures']}}</span>{% endif%}</td>
-        <td>{% if event['successes'] %}<span class="label label-success numtag">{{event['successes']}}</span>{% endif%}</td>
-	      <td style="width:730px;"><a href="{{url_for('node', node_name=event['subject']['title'])}}">{{event['subject']['title']}}</a></td>
-	      <td><a class="btn btn-small btn-primary" href="{{url_for('report_latest', node_name=event['subject']['title'])}}">Latest Report</a></td>
-	    </tr>
-	    {% endfor %}
-	  </tbody>
-	</table>
+    	<table class='nodes table table-striped table-condensed'>
+    	  <tbody class="searchable">
+    	    {% for event in latest_events %}
+	        <tr>
+            <td style="width:110px;">
+              {% if event['failures'] %}<span class="label label-important numtag">{{event['failures']}}</span>{% else %}<span class="label numtag">0</span>{% endif%}
+              {% if event['successes'] %}<span class="label label-success numtag">{{event['successes']}}</span>{% else %}<span class="label numtag">0</span>{% endif%}
+            </td>
+	          <td style="width:700px;"><a href="{{url_for('node', node_name=event['subject']['title'])}}">{{event['subject']['title']}}</a></td>
+    	      <td style="width:120px;"><a class="btn btn-small btn-primary" href="{{url_for('report_latest', node_name=event['subject']['title'])}}">Latest Report</a></td>
+    	    </tr>
+    	    {% endfor %}
+    	  </tbody>
+    	</table>
     </div>
   </div>
 </div>
