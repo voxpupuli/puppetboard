@@ -52,3 +52,21 @@ th.headerSortDown:after {
 .table tbody tr.error>td {
   background-color: #f2dede;
 }
+h1.error {
+  color: rgb(223, 46, 27);
+}
+h1.success {
+  color: #18BC9C;
+}
+h1.noop {
+  color:#aaa;
+}
+.numtag {
+  width:20px;
+  text-align:center;
+}
+.label-nothing {
+  background-color:#ddd;
+  width:20px;
+  color:#ddd;
+}
