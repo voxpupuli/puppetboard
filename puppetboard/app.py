@@ -137,10 +137,7 @@ def node(node_name):
     """
     node = get_or_abort(puppetdb.node, node_name)
     facts =  node.facts()
-    if app.config['PUPPETDB_API'] > 2:
-        reports = ten_reports(node.reports())
-    else:
-        reports = iter([])
+    reports = ten_reports(node.reports())
     return render_template('node.html', node=node, facts=yield_or_stop(facts),
             reports=yield_or_stop(reports))
 
@@ -148,22 +145,14 @@ def node(node_name):
 def reports():
     """Doesn't do much yet but is meant to show something like the reports of
     the last half our, something like that."""
-    if app.config['PUPPETDB_API'] > 2:
-        return render_template('reports.html')
-    else:
-        log.warn('PuppetDB API prior to v3 cannot access reports.')
-        abort(412)
+    return render_template('reports.html')
 
 @app.route('/reports/<node>')
 def reports_node(node):
     """Fetches all reports for a node and processes them eventually rendering
     a table displaying those reports."""
-    if app.config['PUPPETDB_API'] > 2:
-        reports = ten_reports(yield_or_stop(
-            puppetdb.reports('["=", "certname", "{0}"]'.format(node))))
-    else:
-        log.warn('PuppetDB API prior to v3 cannot access reports.')
-        abort(412)
+    reports = ten_reports(yield_or_stop(
+        puppetdb.reports('["=", "certname", "{0}"]'.format(node))))
     return render_template('reports_node.html', reports=reports,
             nodename=node)
 
@@ -175,10 +164,7 @@ def report_latest(node_name):
     """
     # TODO: use limit parameter in _query to get just one report
     node = get_or_abort(puppetdb.node, node_name)
-    if app.config['PUPPETDB_API'] > 2:
-        reports = ten_reports(node.reports())
-    else:
-        reports = iter([])
+    reports = ten_reports(node.reports())
     report = list(yield_or_stop(reports))[0]
     return redirect(url_for('report', node=node_name, report_id=report))
 
@@ -187,11 +173,7 @@ def report(node, report_id):
     """Displays a single report including all the events associated with that
     report and their status.
     """
-    if app.config['PUPPETDB_API'] > 2:
-        reports = puppetdb.reports('["=", "certname", "{0}"]'.format(node))
-    else:
-        log.warn('PuppetDB API prior to v3 cannot access reports.')
-        abort(412)
+    reports = puppetdb.reports('["=", "certname", "{0}"]'.format(node))
 
     for report in reports:
         if report.hash_ == report_id:

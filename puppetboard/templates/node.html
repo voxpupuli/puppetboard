@@ -18,16 +18,13 @@
           <td>Facts retrieved at</td>
           <td rel="utctimestamp">{{node.facts_timestamp}}</td>
         </tr>
-        {% if config.PUPPETDB_EXPERIMENTAL %}
         <tr>
           <td>Report uploaded at</td>
           <td rel="utctimestamp">{{node.report_timestamp}}</td>
         </tr>
-        {% endif %}
       </tbody>
     </table>
   </div>
-  {% if config.PUPPETDB_API > 2 %}
   <div class="span4">
     <h1>Facts</h1>
     {{macros.facts_table(facts, condensed=True, margin_top=10)}}
@@ -36,11 +33,5 @@
     <h1>Reports</h1>
     {{ macros.reports_table(reports, node.name, condensed=True, hash_truncate=True, show_conf_col=False, show_agent_col=False, show_host_col=False)}}
   </div>
-  {% else %}
-  <div class="span8">
-    <h1>Facts</h1>
-    {{macros.facts_table(facts, condensed=True, margin_top=10)}}
-  </div>
-  {% endif %}
 </div>
 {% endblock content %}
