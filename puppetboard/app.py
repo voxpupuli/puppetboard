@@ -83,16 +83,10 @@ def index():
       'com.puppetlabs.puppetdb.query.population:type=default,name=num-resources')
     avg_resources_node = get_or_abort(puppetdb.metric,
       'com.puppetlabs.puppetdb.query.population:type=default,name=avg-resources-per-node')
-    mean_failed_commands = get_or_abort(puppetdb.metric,
-      'com.puppetlabs.puppetdb.command:type=global,name=fatal')
-    mean_command_time = get_or_abort(puppetdb.metric,
-      'com.puppetlabs.puppetdb.command:type=global,name=processing-time')
     metrics = {
       'num_nodes': num_nodes['Value'],
       'num_resources': num_resources['Value'],
       'avg_resources_node': "{0:10.6f}".format(avg_resources_node['Value']),
-      'mean_failed_commands': mean_failed_commands['MeanRate'],
-      'mean_command_time': "{0:10.6f}".format(mean_command_time['MeanRate']),
       }
 
     latest_event_count = puppetdb._query('aggregate-event-counts', query='["=", "latest-report?", true]', summarize_by='certname')
