@@ -87,8 +87,6 @@ def index():
       'com.puppetlabs.puppetdb.command:type=global,name=fatal')
     mean_command_time = get_or_abort(puppetdb.metric,
       'com.puppetlabs.puppetdb.command:type=global,name=processing-time')
-    mean_command_time = get_or_abort(puppetdb.metric,
-      'com.puppetlabs.puppetdb.command:type=global,name=processing-time')
     metrics = {
       'num_nodes': num_nodes['Value'],
       'num_resources': num_resources['Value'],
