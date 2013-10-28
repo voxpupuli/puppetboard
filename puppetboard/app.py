@@ -102,7 +102,7 @@ def index():
             node.noresponse = str(delta.days) + "d " + str(int(delta.seconds/3600)) +"h " + str(int((delta.seconds%3600)/60))+ "m"
             unreported.append(node)
 
-    return render_template('index.html', metrics=metrics, latest_event_count=latest_event_count, latest_events=latest_events, unreported=unreported, unreported_time=app.config['UNRESPONSIVE_HOURS'])
+    return render_template('index.html', metrics=metrics, latest_event_count=latest_event_count, latest_events=latest_events, unreported=unreported)
 
 @app.route('/nodes')
 def nodes():

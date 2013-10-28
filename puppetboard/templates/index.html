@@ -2,22 +2,21 @@
 {% block row_fluid %}
 <div class="container" style="margin-bottom:55px;">
   <div class="row">
-    <h2>Statistics</h2>
-    <hr />
-  </div>
-  <div class="row">
     <div class="span12">
       <div class="span4 stat">
-        <h1 class="error">{{latest_event_count['failures']}} <small>Failed</small></h1>
-        <span>nodes in the latest reports</span>
+        <h1 class="error">{{latest_event_count['failures']}} <small>node(s)</small></h1>
+        <span>with failures in latest reports</span>
       </div>
       <div class="span4 stat">
-        <h1 class="success">{{latest_event_count['successes']}} <small>Succeeded</small></h1>
-        <span>nodes in the latest reports</span>
+        <h1 class="success">{{latest_event_count['successes']}} <small>node(s)</small></h1>
+        <span>with successes in latest reports</span>
       </div>
       <div class="span4 stat">
-        <h1 class="noop">{{ unreported|length }} <small>Unreported</small></h1>
-        <span>nodes in the last {{ unreported_time }} hours</span>
+        <h1 class="noop">{{ unreported|length }} <small>unreported</small></h1>
+        <span>
+          {% if unreported|length == 1 %} node {% else %} nodes {% endif %}
+          in the last {{ config.UNRESPONSIVE_HOURS }} hours
+        </span>
       </div>
     </div>
   </div>
@@ -41,7 +40,7 @@
 
   <div class="row">
     <div class="span12">
-      <h2>Nodes without Report since {{ unreported_time }} hours</h2>
+      <h2>Nodes unresponsive in the last {{ config.UNRESPONSIVE_HOURS }} hours</h2>
     	<table class='nodes table table-striped table-condensed'>
 	      <tbody class="searchable">
 	        {% for node in unreported %}
@@ -54,7 +53,7 @@
     	    {% endfor %}
     	  </tbody>
     	</table>
-      <h2>Latest Reports with events</h2>
+      <h2>Latest reports with events</h2>
     	<table class='nodes table table-striped table-condensed'>
     	  <tbody class="searchable">
     	    {% for event in latest_events %}
