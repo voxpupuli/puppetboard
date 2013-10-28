@@ -27,7 +27,7 @@ app.config.from_envvar('PUPPETBOARD_SETTINGS', silent=True)
 app.secret_key = os.urandom(24)
 
 puppetdb = connect(
-        api_version=app.config['PUPPETDB_API'],
+        api_version=3,
         host=app.config['PUPPETDB_HOST'],
         port=app.config['PUPPETDB_PORT'],
         ssl=app.config['PUPPETDB_SSL'],
