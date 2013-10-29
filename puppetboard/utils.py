@@ -6,6 +6,7 @@ from pypuppetdb.errors import EmptyResponseError
 
 from flask import abort
 
+
 def get_or_abort(func, *args, **kwargs):
     """Execute the function with its arguments and handle the possible
     errors that might occur.

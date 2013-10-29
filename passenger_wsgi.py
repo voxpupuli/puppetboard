@@ -14,7 +14,6 @@ logfilename = os.path.join('/tmp/', 'puppetboard_passenger_wsgi.log')
 logging.basicConfig(filename=logfilename, level=logging.INFO)
 
 try:
-  from puppetboard.app import app as application
+    from puppetboard.app import app as application
 except Exception, inst:
-  logging.exception("Error: %s", str(type(inst)))
-
+    logging.exception("Error: %s", str(type(inst)))

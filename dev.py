@@ -5,5 +5,5 @@ from puppetboard.app import app
 from puppetboard.default_settings import DEV_LISTEN_HOST, DEV_LISTEN_PORT
 
 if __name__ == '__main__':
-    app.debug=True
+    app.debug = True
     app.run(DEV_LISTEN_HOST, DEV_LISTEN_PORT)
