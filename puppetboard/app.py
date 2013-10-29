@@ -96,6 +96,8 @@ def index():
 
     unreported = []
     for node in puppetdb.nodes():
+        if not node.report_timestamp:
+            continue
         node_last_seen = node.report_timestamp.replace(tzinfo=None)
         if node_last_seen  < (datetime.utcnow()-timedelta(hours=app.config['UNRESPONSIVE_HOURS'])):
             delta = (datetime.utcnow()-node_last_seen)
