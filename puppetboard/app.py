@@ -72,12 +72,12 @@ def server_error(e):
 
 @app.route('/')
 def index():
-    """This view generates the index page and displays a set of metrics and latest reports on 
+    """This view generates the index page and displays a set of metrics and latest reports on
     nodes fetched from PuppetDB.
     """
     # TODO: Would be great if we could parallelize this somehow, doing these
     # requests in sequence is rather pointless.
-    num_nodes = get_or_abort(puppetdb.metric, 
+    num_nodes = get_or_abort(puppetdb.metric,
       'com.puppetlabs.puppetdb.query.population:type=default,name=num-nodes')
     num_resources = get_or_abort(puppetdb.metric,
       'com.puppetlabs.puppetdb.query.population:type=default,name=num-resources')
@@ -91,26 +91,27 @@ def index():
 
     latest_event_count = puppetdb._query('aggregate-event-counts', query='["=", "latest-report?", true]', summarize_by='certname')
     latest_event_count['noopskip'] = latest_event_count['noops']+latest_event_count['skips']
-    
+
     latest_events = puppetdb._query('event-counts', query='["=", "latest-report?", true]', summarize_by='certname')
 
     unreported = []
     for node in puppetdb.nodes():
-        if not node.report_timestamp:
-            continue
-        node_last_seen = node.report_timestamp.replace(tzinfo=None)
-        if node_last_seen  < (datetime.utcnow()-timedelta(hours=app.config['UNRESPONSIVE_HOURS'])):
-            delta = (datetime.utcnow()-node_last_seen)
-            node.noresponse = str(delta.days) + "d " + str(int(delta.seconds/3600)) +"h " + str(int((delta.seconds%3600)/60))+ "m"
+        try:
+            node_last_seen = node.report_timestamp.replace(tzinfo=None)
+            if node_last_seen  < (datetime.utcnow()-timedelta(hours=app.config['UNRESPONSIVE_HOURS'])):
+                delta = (datetime.utcnow()-node_last_seen)
+                node.noresponse = str(delta.days) + "d " + str(int(delta.seconds/3600)) +"h " + str(int((delta.seconds%3600)/60))+ "m"
+                unreported.append(node)
+        except AttributeError:
             unreported.append(node)
 
     return render_template('index.html', metrics=metrics, latest_event_count=latest_event_count, latest_events=latest_events, unreported=unreported)
 
 @app.route('/nodes')
 def nodes():
-    """Fetch all (active) nodes from PuppetDB and stream a table displaying 
+    """Fetch all (active) nodes from PuppetDB and stream a table displaying
     those nodes.
-    
+
     Downside of the streaming aproach is that since we've already sent our
     headers we can't abort the request if we detect an error. Because of this
     we'll end up with an empty table instead because of how yield_or_stop
