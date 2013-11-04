@@ -39,15 +39,24 @@
   <tbody>
     {% for event in events %}
     {% if not event.failed and event.item['old'] != event.item['new'] %}
-      <tr class='success'>
+      <tr id='event-{{loop.index}}' class='success event'>
     {% elif event.failed %}
-      <tr class='error'>
+      <tr id='event-{{loop.index}}' class='error event'>
     {% endif %}
       <td>{{event.item['type']}}[{{event.item['title']}}]</td>
       <td>{{event.status}}</td>
       <td>{{event.item['old']}}</td>
       <td>{{event.item['new']}}</td>
     </tr>
+    {% if event.item['message'] %}
+    <tr>
+      <td class='message' colspan='4'>
+        <div id='message-event-{{loop.index}}'>
+          {{event.item['message']}}
+        </div>
+      </td>
+    </tr>
+    {% endif %}
     {% endfor %}
   </tbody>
 </table>
@@ -57,6 +66,10 @@
   <script type='text/javascript'>
     jQuery(function ($) {
       $("[rel=tooltip]").tooltip();
+      $(".event").click(function() {
+        $("#message-" + this.id).slideToggle(200);
+        return false;
+      });
     });
   </script>
 {% endblock script %}
