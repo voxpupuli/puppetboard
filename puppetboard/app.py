@@ -10,6 +10,7 @@ from datetime import datetime, timedelta
 from flask import (
     Flask, render_template, abort, url_for,
     Response, stream_with_context, redirect,
+    request
     )
 
 from pypuppetdb import connect
@@ -147,6 +148,7 @@ def nodes():
     works. Once pagination is in place we can change this but we'll need to
     provide a search feature instead.
     """
+    status_arg = request.args.get('status', '')
     latest_events = puppetdb._query(
         'event-counts',
         query='["=", "latest-report?", true]',
@@ -161,8 +163,12 @@ def nodes():
         if status:
             node.status = status[0]
         else:
-            node.status = None
-        nodes.append(node)
+            node.status = {}
+        if status_arg:
+            if node.status.has_key(status_arg) and node.status[status_arg]:
+                nodes.append(node)
+        else:
+            nodes.append(node)
 
     return Response(stream_with_context(
         stream_template('nodes.html', nodes=nodes)))
