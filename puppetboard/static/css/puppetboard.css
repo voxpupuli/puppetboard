@@ -61,6 +61,18 @@ h1.success {
 h1.noop {
   color:#aaa;
 }
+tr.event {
+  cursor: pointer;
+}
+td.message {
+  padding: 0;
+  border: 0;
+  background-color: #FFFFE9;
+}
+div[id^='message-event'] {
+  display: none;
+  padding: 4px 15px 4px 15px;
+}
 .label-count {
   width:25px;
   text-align:center;
