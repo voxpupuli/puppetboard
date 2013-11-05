@@ -274,7 +274,7 @@ def query():
 
 @app.route('/metrics')
 def metrics():
-    metrics = puppetdb._query('metrics', path='mbeans')
+    metrics = get_or_abort(puppetdb._query, 'metrics', path='mbeans')
     for key, value in metrics.iteritems():
         metrics[key] = value.split('/')[3]
     return render_template('metrics.html', metrics=sorted(metrics.items()))
