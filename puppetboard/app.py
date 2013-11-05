@@ -250,6 +250,12 @@ def fact(fact):
         name=fact,
         facts=localfacts)))
 
+@app.route('/fact/<fact>/<value>')
+def fact_value(fact, value):
+    """On asking for fact/value get all nodes with that fact."""
+    facts = get_or_abort(puppetdb.facts, fact, value)
+    localfacts = [f for f in yield_or_stop(facts)]
+    return render_template('fact.html', name=fact, value=value, facts=localfacts)
 
 @app.route('/query', methods=('GET', 'POST'))
 def query():

@@ -1,4 +1,4 @@
-{% macro facts_table(facts, autofocus=False, condensed=False, show_node=False, margin_top=20, margin_bottom=20) -%}
+{% macro facts_table(facts, autofocus=False, condensed=False, show_node=False, show_value=True, link_facts=False, margin_top=20, margin_bottom=20) -%}
 <div class="filter" style="margin-bottom:{{margin_bottom}}px;margin-top:{{margin_top}}px;">
   <input {% if autofocus %} autofocus="autofocus" {% endif %} style="width:100%" type="text" class="filter-table input-medium search-query" placeholder="Type here to filter">
 </div>
@@ -10,7 +10,9 @@
       {% else %}
       <th>Fact</th>
       {% endif %}
+      {% if show_value %}
       <th>Value</th>
+      {% endif %}
     </tr>
   </thead>
   <tbody class="searchable">
@@ -21,7 +23,15 @@
       {% else %}
         <td><a href="{{url_for('fact', fact=fact.name)}}">{{fact.name}}</a></td>
       {% endif %}
-      <td style="word-wrap:break-word">{{fact.value}}</td>
+      {% if show_value %}
+      <td style="word-wrap:break-word">
+        {% if link_facts %}
+          <a href="{{url_for('fact_value', fact=fact.name, value=fact.value)}}">{{fact.value}}</a>
+        {% else %}
+          {{fact.value}}
+        {% endif %}
+      </td>
+      {% endif %}
     </tr>
     {% endfor %}
   </tbody>
