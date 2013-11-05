@@ -103,7 +103,7 @@ def index():
         'avg_resources_node': "{0:10.6f}".format(avg_resources_node['Value']),
         }
 
-    nodes = puppetdb.nodes(with_status=True)
+    nodes = puppetdb.nodes(unreported=app.config['UNRESPONSIVE_HOURS'], with_status=True)
 
     nodes_overview = []
     stats = {
