@@ -11,7 +11,11 @@
     {% for key,value in metric %}
     <tr>
       <td>{{key}}</td>
-      <td>{{value}}</td>
+      {% if value is mapping %}
+        <td><pre>{{value|jsonprint}}</pre></td>
+      {% else %}
+        <td>{{value}}</td>
+      {% endif %}
     </tr>
     {% endfor %}
   </tbody>

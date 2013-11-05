@@ -18,7 +18,7 @@ from pypuppetdb import connect
 from puppetboard.forms import QueryForm
 from puppetboard.utils import (
     get_or_abort, yield_or_stop,
-    ten_reports,
+    ten_reports, jsonprint
     )
 
 
@@ -26,6 +26,8 @@ app = Flask(__name__)
 app.config.from_object('puppetboard.default_settings')
 app.config.from_envvar('PUPPETBOARD_SETTINGS', silent=True)
 app.secret_key = os.urandom(24)
+
+app.jinja_env.filters['jsonprint'] = jsonprint
 
 puppetdb = connect(
     api_version=3,

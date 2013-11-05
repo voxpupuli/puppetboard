@@ -1,10 +1,15 @@
 from __future__ import absolute_import
 from __future__ import unicode_literals
 
+import json
+
 from requests.exceptions import HTTPError, ConnectionError
 from pypuppetdb.errors import EmptyResponseError
 
 from flask import abort
+
+def jsonprint(value):
+  return json.dumps(value, indent=2, separators=(',', ': ') )
 
 
 def get_or_abort(func, *args, **kwargs):
