@@ -5,7 +5,7 @@
   <div class="row">
     <div class="span12">
       <div class="span4 stat">
-       <a href="nodes?status=failures">
+       <a href="nodes?status=failed">
          <h1 class="error">{{stats['failed']}}
            <small>{% if stats['failed']== 1 %} node {% else %} nodes {% endif %}</small>
          </h1>
@@ -13,7 +13,7 @@
        <span>with status failed</span>
       </div>
       <div class="span4 stat">
-        <a href="nodes?status=successes">
+        <a href="nodes?status=changed">
           <h1 class="success">{{stats['changed']}}
             <small>{% if stats['changed']== 1 %} node {% else %} nodes {% endif %}</small>
           </h1>
@@ -21,9 +21,11 @@
         <span>with status changed</span>
       </div>
       <div class="span4 stat">
-        <h1 class="noop">{{ stats['unreported'] }}
-          <small>{% if stats['unreported']== 1 %} node {% else %} nodes {% endif %}</small>
-        </h1>
+        <a href="nodes?status=unreported">
+          <h1 class="noop">{{ stats['unreported'] }}
+            <small>{% if stats['unreported']== 1 %} node {% else %} nodes {% endif %}</small>
+          </h1>
+        </a>
         <span>
           unreported in the last {{ config.UNRESPONSIVE_HOURS }} hours
         </span>

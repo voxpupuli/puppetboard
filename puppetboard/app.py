@@ -111,7 +111,7 @@ def index():
         'unreported': 0,
         }
 
-    for node in list(nodes):
+    for node in nodes:
         if node.status == 'unreported':
             stats['unreported'] += 1
         elif node.status == 'changed':
@@ -144,27 +144,13 @@ def nodes():
     provide a search feature instead.
     """
     status_arg = request.args.get('status', '')
-    latest_events = puppetdb._query(
-        'event-counts',
-        query='["=", "latest-report?", true]',
-        summarize_by='certname')
     nodes = []
-    for node in yield_or_stop(puppetdb.nodes()):
-        # check if node name is contained in any of the
-        # event-counts (grouped by certname)
-        status = [
-            s for s in latest_events if
-            s['subject']['title'] == node.name]
-        if status:
-            node.status = status[0]
-        else:
-            node.status = {}
+    for node in yield_or_stop(puppetdb.nodes(with_status=True)):
         if status_arg:
-            if node.status.has_key(status_arg) and node.status[status_arg]:
+            if node.status == status_arg:
                 nodes.append(node)
         else:
             nodes.append(node)
-    nodes = puppetdb.nodes(with_status=True)
     return Response(stream_with_context(
         stream_template('nodes.html', nodes=nodes)))
 
