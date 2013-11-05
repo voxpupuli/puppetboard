@@ -29,10 +29,14 @@
     {% for node in nodes %}
     <tr>
       <td><a href="{{url_for('report_latest', node_name=node.name)}}">
-	  {% if node.status['failures'] %}<span class="label numtag label-important">{{node.status['failures']}}</span>{% else %}<span class="label label-nothing">0</span>{% endif %}
-          {% if node.status['successes'] %}<span class="label numtag label-success">{{node.status['successes']}}</span>{% else %}<span class="label label-nothing">0</span>{% endif %}
-          {% if node.status['noops'] or node.status['skips'] %}<span class="label numtag">{{node.status['skips']+node.status['noops']}}</span>{% else %}<span class="label label-nothing">0</span>{% endif %}
+          <span class="label label-status label-{{ node.status }}">{{ node.status }}</span>
         </a>
+        {% if node.status=='unreported'%}
+          <span class="label label-time label-unreported"> {{ node.unreported_time }} </label>
+        {% else %}
+          {% if node.events['failures'] %}<span class="label label-count label-important">{{node.events['failures']}}</span>{% else %}<span class="label label-count">0</span>{% endif%}
+          {% if node.events['successes'] %}<span class="label label-count label-success">{{node.events['successes']}}</span>{% else %}<span class="label label-count">0</span>{% endif%}
+        {% endif %}
       </td>
       <td><a href="{{url_for('node', node_name=node.name)}}">{{node.name}}</a></td>
       <td rel="utctimestamp">{{node.catalog_timestamp}}</td>

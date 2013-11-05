@@ -61,12 +61,29 @@ h1.success {
 h1.noop {
   color:#aaa;
 }
-.numtag {
-  width:20px;
+.label-count {
+  width:25px;
+  text-align:center;
+}
+.label-time {
+  width:73px;
+  text-align:center;
+}
+.label-status {
+  width:100px;
   text-align:center;
 }
 .label-nothing {
   background-color:#ddd;
-  width:20px;
   color:#ddd;
+}
+.label.label-failed {
+  background-color: rgb(231, 76, 60);
+}
+.label.label-changed {
+  background-color: rgb(24, 188, 156);
+}
+.label.label-unreported {
+  background-color: rgb(231, 76, 60);
+  background-color: rgb(129, 145, 146);
 }

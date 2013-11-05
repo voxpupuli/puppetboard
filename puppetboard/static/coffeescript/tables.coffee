@@ -2,13 +2,20 @@ $ = jQuery
 $ ->
 $('.nodes').tablesorter(
     headers:
-        3:
+        4:
             sorter: false
-    sortList: [[0,0]]
+    sortList: [[1,0]]
 )
 
 $('.facts').tablesorter(
     sortList: [[0,0]]
+)
+
+$('.dashboard').tablesorter(
+    headers:
+        2:
+            sorter: false
+    sortList: [[0, 1]]
 )
 
 $('input.filter-table').parent('div').removeClass('hide')

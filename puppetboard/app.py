@@ -101,40 +101,35 @@ def index():
         'avg_resources_node': "{0:10.6f}".format(avg_resources_node['Value']),
         }
 
-    latest_event_count = puppetdb._query(
-        'aggregate-event-counts',
-        query='["=", "latest-report?", true]',
-        summarize_by='certname')
+    nodes = puppetdb.nodes(with_status=True)
 
-    latest_event_count['noopskip'] = (
-        latest_event_count['noops'] + latest_event_count['skips'])
+    nodes_overview = []
+    stats = {
+        'changed': 0,
+        'unchanged': 0,
+        'failed': 0,
+        'unreported': 0,
+        }
 
-    latest_events = puppetdb._query(
-        'event-counts',
-        query='["=", "latest-report?", true]',
-        summarize_by='certname')
+    for node in nodes:
+        if node.status == 'unreported':
+            stats['unreported'] += 1
+        elif node.status == 'changed':
+            stats['changed'] += 1
+        elif node.status == 'failed':
+            stats['failed'] += 1
+        else:
+            stats['unchanged'] += 1
 
-    unreported = []
-    unresponsive_window = datetime.utcnow() - (
-        timedelta(hours=app.config['UNRESPONSIVE_HOURS']))
-    for node in puppetdb.nodes():
-        try:
-            node_last_seen = node.report_timestamp.replace(tzinfo=None)
-            if node_last_seen < unresponsive_window:
-                delta = (datetime.utcnow() - node_last_seen)
-                node.noresponse = str(delta.days) + "d "
-                node.noresponse += str(int(delta.seconds / 3600)) + "h "
-                node.noresponse += str(int((delta.seconds % 3600) / 60)) + "m"
-                unreported.append(node)
-        except AttributeError:
-            unreported.append(node)
+        if node.status != 'unchanged':
+            nodes_overview.append(node)
 
     return render_template(
         'index.html',
         metrics=metrics,
-        latest_event_count=latest_event_count,
-        latest_events=latest_events,
-        unreported=unreported)
+        nodes=nodes_overview,
+        stats=stats
+        )
 
 
 @app.route('/nodes')
@@ -149,27 +144,13 @@ def nodes():
     provide a search feature instead.
     """
     status_arg = request.args.get('status', '')
-    latest_events = puppetdb._query(
-        'event-counts',
-        query='["=", "latest-report?", true]',
-        summarize_by='certname')
     nodes = []
-    for node in yield_or_stop(puppetdb.nodes()):
-        # check if node name is contained in any of the
-        # event-counts (grouped by certname)
-        status = [
-            s for s in latest_events if
-            s['subject']['title'] == node.name]
-        if status:
-            node.status = status[0]
-        else:
-            node.status = {}
+    for node in yield_or_stop(puppetdb.nodes(with_status=True)):
         if status_arg:
-            if node.status.has_key(status_arg) and node.status[status_arg]:
+            if node.status == status_arg:
                 nodes.append(node)
         else:
             nodes.append(node)
-
     return Response(stream_with_context(
         stream_template('nodes.html', nodes=nodes)))
 
