@@ -2,6 +2,9 @@
 {% block content %}
 <div class="page-header">
   <h1>Metric
+    {% if name|length > 100 %}
+      {% set name = "%s&hellip;"|format(name[:100])|safe %}
+    {% endif %}
     <small>{{name}}</small>
   </h1>
 </div>
