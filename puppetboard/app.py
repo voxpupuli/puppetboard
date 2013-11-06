@@ -147,7 +147,7 @@ def nodes():
     """
     status_arg = request.args.get('status', '')
     nodes = []
-    for node in yield_or_stop(puppetdb.nodes(with_status=True)):
+    for node in yield_or_stop(puppetdb.nodes(unreported=app.config['UNRESPONSIVE_HOURS'], with_status=True)):
         if status_arg:
             if node.status == status_arg:
                 nodes.append(node)
