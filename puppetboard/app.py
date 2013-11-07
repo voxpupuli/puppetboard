@@ -103,7 +103,9 @@ def index():
         'avg_resources_node': "{0:10.6f}".format(avg_resources_node['Value']),
         }
 
-    nodes = puppetdb.nodes(unreported=app.config['UNRESPONSIVE_HOURS'], with_status=True)
+    nodes = puppetdb.nodes(
+        unreported=app.config['UNRESPONSIVE_HOURS'],
+        with_status=True)
 
     nodes_overview = []
     stats = {
@@ -146,8 +148,11 @@ def nodes():
     provide a search feature instead.
     """
     status_arg = request.args.get('status', '')
+    nodelist = puppetdb.nodes(
+        unreported=app.config['UNRESPONSIVE_HOURS'],
+        with_status=True)
     nodes = []
-    for node in yield_or_stop(puppetdb.nodes(unreported=app.config['UNRESPONSIVE_HOURS'], with_status=True)):
+    for node in yield_or_stop(nodelist):
         if status_arg:
             if node.status == status_arg:
                 nodes.append(node)
@@ -252,12 +257,18 @@ def fact(fact):
         name=fact,
         facts=localfacts)))
 
+
 @app.route('/fact/<fact>/<value>')
 def fact_value(fact, value):
     """On asking for fact/value get all nodes with that fact."""
     facts = get_or_abort(puppetdb.facts, fact, value)
     localfacts = [f for f in yield_or_stop(facts)]
-    return render_template('fact.html', name=fact, value=value, facts=localfacts)
+    return render_template(
+        'fact.html',
+        name=fact,
+        value=value,
+        facts=localfacts)
+
 
 @app.route('/query', methods=('GET', 'POST'))
 def query():
