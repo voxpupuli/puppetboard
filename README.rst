@@ -20,7 +20,7 @@ Because this project is powered by Flask we are restricted to:
     * Python 2.6
     * Python 2.7
 
-.. image:: https://raw.github.com/nedap/puppetboard/master/screenshots/node-v3.png
+.. image:: https://raw.github.com/nedap/puppetboard/master/screenshots/overview.png
    :alt: View of a node
    :width: 1024
    :height: 700
@@ -197,8 +197,32 @@ messages have a look at this post by `Tim Pope`_.
 Screenshots
 ===========
 
+.. image:: https://raw.github.com/nedap/puppetboard/master/screenshots/overview.png
+   :alt: Overview / Index / Homepage
+   :width: 1024
+   :height: 700
+   :align: center
+
+.. image:: https://raw.github.com/nedap/puppetboard/master/screenshots/nodes.png
+   :alt: Nodes view, all active nodes
+   :width: 1024
+   :height: 700
+   :align: center
+
 .. image:: https://raw.github.com/nedap/puppetboard/master/screenshots/node.png
-   :alt: Node without experimental endpoints endabled
+   :alt: Single node page / overview
+   :width: 1024
+   :height: 700
+   :align: center
+
+.. image:: https://raw.github.com/nedap/puppetboard/master/screenshots/report.png
+   :alt: Report view
+   :width: 1024
+   :height: 700
+   :align: center
+
+.. image:: https://raw.github.com/nedap/puppetboard/master/screenshots/report_message.png
+   :alt: Report view with message
    :width: 1024
    :height: 700
    :align: center
@@ -209,26 +233,26 @@ Screenshots
    :height: 700
    :align: center
 
-.. image:: https://raw.github.com/nedap/puppetboard/master/screenshots/nodes.png
-   :alt: Nodes table without experimental endpoints enabled
+.. image:: https://raw.github.com/nedap/puppetboard/master/screenshots/fact.png
+   :alt: Single fact, with graphs
    :width: 1024
    :height: 700
    :align: center
 
-.. image:: https://raw.github.com/nedap/puppetboard/master/screenshots/overview.png
-   :alt: Overview / Index / Homepage
+.. image:: https://raw.github.com/nedap/puppetboard/master/screenshots/fact_value.png
+   :alt: All nodes that have this fact with that value
    :width: 1024
    :height: 700
    :align: center
 
 .. image:: https://raw.github.com/nedap/puppetboard/master/screenshots/metrics.png
-   :alt: Query view
+   :alt: Metrics view
    :width: 1024
    :height: 700
    :align: center
 
 .. image:: https://raw.github.com/nedap/puppetboard/master/screenshots/metric.png
-   :alt: Query view
+   :alt: Single metric
    :width: 1024
    :height: 700
    :align: center
@@ -239,23 +263,8 @@ Screenshots
    :height: 700
    :align: center
 
-API v3
-------
-           
-.. image:: https://raw.github.com/nedap/puppetboard/master/screenshots/nodes-v3.png
-   :alt: Nodes table with experimental endpoints enabled
-   :width: 1024
-   :height: 700
-   :align: center
-
-.. image:: https://raw.github.com/nedap/puppetboard/master/screenshots/node-v3.png
-   :alt: Node view with experimental endpoints enabled
-   :width: 1024
-   :height: 700
-   :align: center
-
-.. image:: https://raw.github.com/nedap/puppetboard/master/screenshots/report.png
-   :alt: Nodes table with experimental endpoints enabled
+.. image:: https://raw.github.com/nedap/puppetboard/master/screenshots/broken.png
+   :alt: Error page
    :width: 1024
    :height: 700
    :align: center
