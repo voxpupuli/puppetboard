@@ -80,9 +80,9 @@
               <td><a href="{{url_for('node', node_name=node.name)}}">{{ node.name }}</a></td>
               <td>
                 {% if node.unreported_time != None or node.status != 'unreported' %}
-                  <a class="btn btn-small btn-primary" href="{{url_for('report_latest', node_name=node.name)}}">Latest Report</a>
+                  <a class="btn btn-small btn-primary btn-lastreport" href="{{url_for('report_latest', node_name=node.name)}}">Latest Report</a>
                 {% else %}
-                  <a class="btn btn-small"> No Report </a>
+                  <a class="btn btn-small btn-lastreport"> No Report </a>
                 {% endif %}
               </td>
             </tr>

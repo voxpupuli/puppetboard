@@ -205,13 +205,13 @@ def report_latest(node_name):
     """
     node = get_or_abort(puppetdb.node, node_name)
     reports = get_or_abort(puppetdb._query, 'reports',
-                           query='["=","certname","' + node_name + '"]',
+                           query='["=","certname","{0}"]'.format(node_name),
                            limit=1)
     if len(reports) > 0:
         report = reports[0]['hash']
         return redirect(url_for('report', node=node_name, report_id=report))
     else:
-        abort(500)
+        abort(404)
 
 
 @app.route('/report/<node>/<report_id>')

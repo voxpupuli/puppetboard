@@ -99,3 +99,6 @@ div[id^='message-event'] {
   background-color: rgb(231, 76, 60);
   background-color: rgb(129, 145, 146);
 }
+.btn-lastreport {
+  width:100px;
+}
