@@ -58,7 +58,7 @@ Run it
 Development
 -----------
 
-You can run in it in development mode by simple executing:
+You can run it in development mode by simply executing:
 
 .. code-block:: bash
 
