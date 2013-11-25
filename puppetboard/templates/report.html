@@ -48,7 +48,6 @@
       <td>{{event.item['old']}}</td>
       <td>{{event.item['new']}}</td>
     </tr>
-    {% if event.item['message'] %}
     <tr>
       <td class='message' colspan='4'>
         <div id='message-event-{{loop.index}}'>
@@ -56,7 +55,6 @@
         </div>
       </td>
     </tr>
-    {% endif %}
     {% endfor %}
   </tbody>
 </table>
