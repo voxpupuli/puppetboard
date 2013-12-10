@@ -12,7 +12,7 @@
   </thead>
   <tbody>
     <tr>
-      <td>{{report.node}}</td>
+      <td><a href="{{url_for('node', node_name=report.node)}}">{{ report.node }}</a></td>
       <td>
         {{report.version}}
       </td>
