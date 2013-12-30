@@ -70,7 +70,7 @@
 </script>
 {%- endmacro %}
 {% macro facts_graph_value(facts, autofocus=False, condensed=False, show_node=False, margin_top=20, margin_bottom=20) -%}
-<script src="{{url_for('static', filename='js/Chart.js')}}"></script>
+<script src="{{url_for('static', filename='js/flotr2.min.js')}}"></script>
 <canvas id="factChart_value" width="300" height="300"></canvas>
 <script type="text/javascript">
   var colors = ["#9B59B6", "#3498DB", "#2ECC71", "#1ABC9C", "#F1C40F", "#E67E22", "#E74C3C"];
@@ -79,19 +79,66 @@
 {% for fact in facts|groupby('value') %}
     {
     label: "{{ fact.grouper }}",
-    value: {{ fact.list|length }}
+    data: {{ fact.list|length }}
     },
 {% endfor %}
     {
-    value: 0,
+    data: 0,
     }
   ]
 
-  for (var i = 0; i < data.length; i++) {
-    data[i].color = colors[i % len_colors];
-  }
-  var ctx = document.getElementById("factChart_value").getContext("2d");
-  new Chart(ctx).Pie(data.sort(function(a,b) { return parseInt(a.label) - parseInt(b.label)}));
+  //for (var i = 0; i < data.length; i++) {
+  //  data[i].color = colors[i % len_colors];
+  //}
+(function basic_pie(container) {
+
+    var d1 = [ [0, 4] ], d2 = [ [0, 3] ], d3 = [ [0, 1.03] ], d4 = [ [0, 3.5] ], graph;
+
+    graph = Flotr.draw(container, 
+//   [{
+//        data: d1,
+//        label: 'Comedy'
+//    }, {
+//        data: d2,
+//        label: 'Action'
+//    }, {
+//        data: d3,
+//        label: 'Romance',
+//        pie: {
+//            explode: 50
+//        }
+//    }, {
+//        data: d4,
+//        label: 'Drama'
+//    }], 
+       data,
+       {
+        HtmlText: false,
+        grid: {
+            verticalLines: false,
+            horizontalLines: false
+        },
+        xaxis: {
+            showLabels: false
+        },
+        yaxis: {
+            showLabels: false
+        },
+        pie: {
+            show: true,
+            explode: 6
+        },
+        mouse: {
+            track: true
+        },
+        legend: {
+            position: 'se',
+            backgroundColor: '#D2E8FF'
+        }
+    });
+})(document.getElementById("factChart_value"));
+  //var ctx = document.getElementById(").getContext("2d");
+  //new Chart(ctx).Pie(data.sort(function(a,b) { return parseInt(a.label) - parseInt(b.label)}));
 </script>
 {%- endmacro %}
 
