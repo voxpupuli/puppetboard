@@ -38,83 +38,47 @@
 </table>
 {%- endmacro %}
 {% macro facts_graph(facts, autofocus=False, condensed=False, show_node=False, margin_top=20, margin_bottom=20) -%}
-<script src="{{url_for('static', filename='js/Chart.js')}}"></script>
-<canvas id="factChart" width="300" height="300"></canvas>
-<script type="text/javascript">
-  var colors = ["#9B59B6", "#3498DB", "#2ECC71", "#1ABC9C", "#F1C40F", "#E67E22", "#E74C3C"];
-  var len_colors = colors.length;
-  var data = [
-{% for fact in facts|groupby('value') %}
-    {
-    label: "{{ fact.grouper }}",
-    value: {{ fact.list|length }}
-    },
-{% endfor %}
-    {
-    value: 0,
-    }
-  ]
-  for (var i = 0; i < data.length; i++) {
-    data[i].color = colors[i % len_colors];
-  }
-  var sorted_data = data.sort(function(a,b) { return parseFloat(b.value) - parseFloat(a.value)});
-  var top7 = sorted_data.slice(0,7);
-  var bottom = data.slice(7, -1);
-  var bottom_sum = 0;
-  for (var i = 0; i < bottom.length; i++) {
-    bottom_sum += bottom[i].value;
-  }
-  top7.push({ label: "Other", value: bottom_sum, color: "#B30202" });
-  var ctx = document.getElementById("factChart").getContext("2d");
-  new Chart(ctx).Pie(top7);
-</script>
-{%- endmacro %}
-{% macro facts_graph_value(facts, autofocus=False, condensed=False, show_node=False, margin_top=20, margin_bottom=20) -%}
 <script src="{{url_for('static', filename='js/flotr2.min.js')}}"></script>
-<canvas id="factChart_value" width="300" height="300"></canvas>
+<script src="{{url_for('static', filename='js/Chart.js')}}"></script>
+<!-- <canvas id="factChart" width="300" height="300"></canvas> -->
+<div id="factChart" style="width: 300px; height: 300px;float: left; margin-left: 300px"></div> 
 <script type="text/javascript">
-  var colors = ["#9B59B6", "#3498DB", "#2ECC71", "#1ABC9C", "#F1C40F", "#E67E22", "#E74C3C"];
-  var len_colors = colors.length;
-  var data = [
+(function () {
+  //var colors = ["#9B59B6", "#3498DB", "#2ECC71", "#1ABC9C", "#F1C40F", "#E67E22", "#E74C3C"];
+var container = document.getElementById('factChart');
+var graph;
+var data = [
 {% for fact in facts|groupby('value') %}
     {
     label: "{{ fact.grouper }}",
-    data: {{ fact.list|length }}
+    data: [ [ 0, {{ fact.list|length }} ] ]
     },
 {% endfor %}
     {
-    data: 0,
+    label: "others",
+    data: [ [ 0, 0 ] ]
     }
   ]
+data.pop();
+var sorted_data = data.sort(function(a,b) { return parseFloat(b.data[0][1]) - parseFloat(a.data[0][1])});
+var top7 = sorted_data.slice(0,7);
+var bottom = data.slice(7, -1);
+var bottom_sum = 0;
+for (var i = 0; i < bottom.length; i++) {
+  bottom_sum += bottom[i].data[0][1];
+}
 
-  //for (var i = 0; i < data.length; i++) {
-  //  data[i].color = colors[i % len_colors];
-  //}
-(function basic_pie(container) {
+//top7.push({ label: "Other", value: [ [ 0, bottom_sum ] ] });
 
-    var d1 = [ [0, 4] ], d2 = [ [0, 3] ], d3 = [ [0, 1.03] ], d4 = [ [0, 3.5] ], graph;
+//alert(top7[top7.length-1]['value']);
 
-    graph = Flotr.draw(container, 
-//   [{
-//        data: d1,
-//        label: 'Comedy'
-//    }, {
-//        data: d2,
-//        label: 'Action'
-//    }, {
-//        data: d3,
-//        label: 'Romance',
-//        pie: {
-//            explode: 50
-//        }
-//    }, {
-//        data: d4,
-//        label: 'Drama'
-//    }], 
-       data,
+  graph = Flotr.draw(container, 
+       top7,
+//      data,
        {
         HtmlText: false,
         grid: {
+            outlineWidth: 0,
             verticalLines: false,
             horizontalLines: false
         },
@@ -136,9 +100,64 @@
             backgroundColor: '#D2E8FF'
         }
     });
-})(document.getElementById("factChart_value"));
-  //var ctx = document.getElementById(").getContext("2d");
-  //new Chart(ctx).Pie(data.sort(function(a,b) { return parseInt(a.label) - parseInt(b.label)}));
+})();
+</script>
+{%- endmacro %}
+{% macro facts_graph_value(facts, autofocus=False, condensed=False, show_node=False, margin_top=20, margin_bottom=20) -%}
+<script src="{{url_for('static', filename='js/flotr2.min.js')}}"></script>
+<div id="factChart_value" style="width: 300px; height: 300px;"></div> 
+<!-- <div id="factChart_value"></div>  -->
+<!--<canvas id="factChart_value" width="300" height="300"></canvas> -->
+<script type="text/javascript">
+(function () {
+  //var colors = ["#9B59B6", "#3498DB", "#2ECC71", "#1ABC9C", "#F1C40F", "#E67E22", "#E74C3C"];
+
+var container = document.getElementById('factChart_value');
+
+var graph;
+
+var data = [
+{% for fact in facts|groupby('value') %}
+    {
+    label: "{{ fact.grouper }}",
+    data: [ [ 0, {{ fact.list|length }} ] ]
+    },
+{% endfor %}
+    {
+    label: "science",
+    data: [ [ 0, 0 ] ]
+    }
+  ]
+data.pop();
+
+    graph = Flotr.draw(container, 
+       data,
+       {
+        HtmlText: false,
+        grid: {
+            outlineWidth: 0,
+            verticalLines: false,
+            horizontalLines: false
+        },
+        xaxis: {
+            showLabels: false
+        },
+        yaxis: {
+            showLabels: false
+        },
+        pie: {
+            show: true,
+            explode: 6
+        },
+        mouse: {
+            track: true
+        },
+        legend: {
+            position: 'se',
+            backgroundColor: '#D2E8FF'
+        }
+    });
+})();
 </script>
 {%- endmacro %}
 
