@@ -100,7 +100,7 @@ def index():
     metrics = {
         'num_nodes': num_nodes['Value'],
         'num_resources': num_resources['Value'],
-        'avg_resources_node': "{0:10.6f}".format(avg_resources_node['Value']),
+        'avg_resources_node': "{0:10.0f}".format(avg_resources_node['Value']),
         }
 
     nodes = puppetdb.nodes(
