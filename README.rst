@@ -172,7 +172,7 @@ If you don't need to change any settings you can skip the creation of the
 Now create a ``wsgi.py`` with the following content in the newly created
 puppetboard directory:
 
-.. code-block::
+.. code-block:: python
 
     from __future__ import absolute_import
     import os
@@ -185,7 +185,7 @@ Make sure this file is owned by the user and group the webserver runs as.
 
 The last thing we need to do is configure Apache:
 
-.. code-block::
+.. code-block:: apache
 
     <VirtualHost *:80>
         ServerName puppetboard.example.tld
@@ -240,7 +240,7 @@ If you don't need to change any settings you can skip the creation of the
 Now create a ``passenger_wsgi.py`` with the following content in the newly
 created puppetboard directory:
 
-.. code-block::
+.. code-block:: python
 
     from __future__ import absolute_import
     import os
@@ -264,7 +264,7 @@ this setting will take precedence over it.
 
 Now the only thing left to do is configure Apache:
 
-.. code-block::
+.. code-block:: apache
 
    <VirtualHost *:80>
        ServerName puppetboard.example.tld
@@ -311,7 +311,7 @@ If you don't need to change any settings you can skip the creation of the
 Now create a ``wsgi.py`` with the following content in the newly created
 puppetboard directory:
 
-.. code-block::
+.. code-block:: python
 
     from __future__ import absolute_import
     import os
@@ -333,7 +333,7 @@ Feel free to change the port to something other than ``9090``.
 
 The last thing we need to do is configure nginx to proxy the requests:
 
-.. code-block::
+.. code-block:: nginx
 
    upstream puppetboard {
        server 127.0.0.1:9090;
@@ -372,7 +372,7 @@ Apache
 
 Inside the ``VirtualHost``:
 
-.. code-block::
+.. code-block:: apache
 
     <Location "/">
         AuthType Basic
@@ -387,7 +387,7 @@ nginx
 
 Inside the ``location / {}`` block that has the ``uwsgi_pass`` directive:
 
-.. code-block::
+.. code-block:: nginx
 
     auth_basic "Puppetboard";
     auth_basic_user_file /path/to/a/file.htpasswd;
