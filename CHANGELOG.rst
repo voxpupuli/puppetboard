@@ -4,6 +4,11 @@ Changelog
 
 This is the changelog for Puppetboard.
 
+0.0.4
+=====
+
+* Fix the sorting of the different tables containing facts.
+
 0.0.3
 =====
 This release introduces a few big changes. The most obvious one is the
