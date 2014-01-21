@@ -17,9 +17,6 @@ with codecs.open('README.rst', encoding='utf-8') as f:
 with codecs.open('CHANGELOG.rst', encoding='utf-8') as f:
     CHANGELOG = f.read()
 
-with codecs.open('LICENSE', encoding='utf-8') as f:
-    LICENSE = f.read()
-
 setup(
     name='puppetboard',
     version=VERSION,
@@ -27,7 +24,7 @@ setup(
     author_email='daniele.sluijters+pypi@gmail.com',
     packages=find_packages(),
     url='https://github.com/nedap/puppetboard',
-    license=LICENSE,
+    license='Apache License 2.0',
     description='Web frontend for PuppetDB',
     include_package_data=True,
     long_description='\n'.join((README, CHANGELOG)),

@@ -8,6 +8,9 @@ This is the changelog for Puppetboard.
 =====
 
 * Fix the sorting of the different tables containing facts.
+* Fix the license in our ``setup.py``. The license shouldn't be longer than
+  200 characters. We were including the full license tripping up tools like
+  bdist_rpm.
 
 0.0.3
 =====
