@@ -429,7 +429,7 @@ You can install it with:
 .. _Spencer Krum: https://github.com/nibalizer
 
 Packages
-^^^^^^^^
+--------
 An OpenBSD port is being maintained by `Jasper Lievisse Adriaanse`_ and can be
 viewed `here`_.
 
