@@ -428,6 +428,14 @@ You can install it with:
 .. _Hunter Haugen: https://github.com/hunner
 .. _Spencer Krum: https://github.com/nibalizer
 
+Packages
+^^^^^^^^
+An OpenBSD port is being maintained by `Jasper Lievisse Adriaanse`_ and can be
+viewed `here`_.
+
+.. _Jasper Lievisse Adriaanse: https://github.com/jasperla
+.. _here: http://www.openbsd.org/cgi-bin/cvsweb/ports/www/puppetboard/
+
 Contributing
 ============
 We welcome contributions to this project. However, there are a few ground
