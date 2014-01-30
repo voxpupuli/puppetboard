@@ -1,0 +1,39 @@
+{% extends 'layout.html' %}
+{% import '_macros.html' as macros %}
+{% block row_fluid %}
+<div class="container" style="margin-bottom:55px;">
+
+  <div class="row">
+    <div class="span12">
+      <div class="span4 stat">
+          <h4>Classes</h4>
+          {{ macros.eventbars('class',events_class) }}
+          <h4>Nodes</h4>
+          {{ macros.eventbars('certname',events_nodes) }}
+          <h4>Resources</h4>
+          {{ macros.eventbars('resource',events_resources) }}
+      </div>
+      <div class="span8 stat">
+          <h4>{{event_sum}} with {{event_type}}</h4>
+          {% for id in events %}
+                <div class="event-detail">
+                    <h5>{{id}}</h3>
+                    {% for e in events[id] %}
+                    <div class="event-list-detail">
+                    <p>
+                        {% if id != e['certname'] %}{{e['certname']}}{% endif %}
+                        {% if event_sum != 'resource' %}
+                            {{ e['resource-type'] }}[{{e['resource-title']}}]
+                         {% endif %}</p>
+                        <dl>{% for key in e%}
+                            <dt>{{key}}</dt><dd>{{e[key] }}</dd>{% endfor%}
+                        </dl>
+                    </div>
+                    {% endfor %}
+          </div>
+          {% endfor %}
+     </div>
+    </div>
+  </div>
+</div>
+{% endblock row_fluid %}

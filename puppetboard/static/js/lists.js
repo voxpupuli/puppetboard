@@ -24,4 +24,9 @@
     }
   });
 
+  $('.event-list-detail dl').hide();
+  $('.event-list-detail').click(function() {
+    $(this).find('dl').slideToggle();
+  });
+
 }).call(this);
