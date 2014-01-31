@@ -179,7 +179,7 @@ def node(node_name):
         reports=yield_or_stop(reports))
 
 
-@app.route('/events')
+@app.route('/events/')
 def events():
     events_class = eventcount_percentage(puppetdb, "containing-class")
     events_nodes = eventcount_percentage(puppetdb, "certname")
