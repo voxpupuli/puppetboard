@@ -133,8 +133,10 @@ You can run it in development mode by simply executing:
    $ python dev.py
 
 Use ``PUPPETBOARD_SETTINGS`` to change the different settings or patch
-``default_settings.py`` directly. Take care not to include your local
-changes on that file when submitting patches for Puppetboard.
+``default_settings.py`` directly. Take care not to include your local changes on
+that file when submitting patches for Puppetboard. Place a settings.py file
+inside the base directory of the git repository that will be used, if the
+environment variable is not set.
 
 Production
 ----------
