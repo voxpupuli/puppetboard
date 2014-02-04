@@ -85,7 +85,7 @@ needs to be configured `to do that`_.
 
 In order to get the reports to show up in Puppetboard you need to configure
 your environment to store those reports in PuppetDB. Have a look at
-`the documentaiton`_ about this, specifically the *Enabling report storage*
+`the documentation`_ about this, specifically the *Enabling report storage*
 section.
 
 .. _to do that: https://docs.puppetlabs.com/puppetdb/latest/connect_puppet_master.html#step-2-edit-config-files
