@@ -78,6 +78,19 @@ Configuration
 =============
 The following instructions will help you configure Puppetboard and your HTTPD.
 
+Puppet
+------
+Puppetboard is built completely around PuppetDB which means your environment
+needs to be configured `to do that`_.
+
+In order to get the reports to show up in Puppetboard you need to configure
+your environment to store those reports in PuppetDB. Have a look at
+`the documentaiton`_ about this, specifically the *Enabling report storage*
+section.
+
+.. _to do that: https://docs.puppetlabs.com/puppetdb/latest/connect_puppet_master.html#step-2-edit-config-files
+.. _the documentation: https://docs.puppetlabs.com/puppetdb/latest/connect_puppet_master.html#edit-puppetconf
+
 Settings
 --------
 Puppetboard will look for a file pointed at by the ``PUPPETBOARD_SETTINGS``
