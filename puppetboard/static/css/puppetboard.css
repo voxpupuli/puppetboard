@@ -102,3 +102,94 @@ div[id^='message-event'] {
 .btn-lastreport {
   width:100px;
 }
+.statusbar {
+  width:100%;
+  background-color:#eee;
+  height:15px;
+  overflow:hidden;
+}
+.statusbar span {
+  width:40px;
+  height:100%;
+  display:block;
+}
+.statusbar .failures {
+  background-color:#a00;
+}
+.statusbar .changes {
+  background-color:#0a0;
+}
+.statusbar .noops {
+  background-color:#aaa;
+}
+.statusbar .skips {
+  background-color:#ccc;
+}
+.event-sidebar {
+  overflow:hidden;
+  display:block;
+  width:100%;
+  margin:0px;
+  padding:0px;
+}
+.event-sidebar a {
+  color:#000;
+  display:block;
+}
+.event-sidebar li {
+  margin-bottom:5px;
+  padding:7px;
+  padding-top:2px;
+  border:1px solid #fff;
+  opacity:0.7;
+}
+.event-sidebar li:hover,
+.event-sidebar li.active {
+  border:1px solid #aaa;
+  opacity:0.9;
+}
+.event-detail {
+  font-weight:900;
+  padding:10px;
+  margin-bottom:5px;
+}
+.event-list-detail {
+  padding:0px;
+  margin:0px;
+  padding-bottom:10px;
+}
+.event-detail h5 {
+  font-weight:900;
+  margin:0px;
+  padding:5px;
+}
+.event-list-detail p {
+  background-color:#dfdfdf;
+  border:1px solid #aaa;
+  border-left:1px solid #aaa;
+  border-right:1px solid #aaa;
+  font-weight:100;
+  margin:0px;
+  padding:5px;
+}
+.event-list-detail dl {
+  background-color:#eee;
+  margin:0px;
+  clear:both;
+  overflow:hidden;
+}
+.event-list-detail dt {
+  font-weight:100;
+  float:left;
+  text-align:right;
+  margin-right:10px;
+  width:150px;
+  padding:5px;
+  margin:0px;
+}
+.event-list-detail dd {
+  padding:5px;
+  margin:0;
+  float:left;
+  width:441px;
+}

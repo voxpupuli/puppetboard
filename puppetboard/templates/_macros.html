@@ -146,3 +146,37 @@
   </tbody>
 </table>
 {%- endmacro %}
+
+{% macro eventbars(event_sum,event_type,summary,events) -%}
+<ul class="event-sidebar">
+    <li{% if event_sum == summary and event_type == 'failure' %} class="active"{% endif%}>
+    <a href="/events/{{summary}}/failure">
+        {{ events['failures'] }} 
+        failures <div class="statusbar">
+            <span class="failures" style="width: {{events['failures_per']}}%;"> </span></div></li>
+    </a>
+    <li{% if event_sum == summary and event_type == 'success' %} class="active"{% endif%}>
+    <a href="/events/{{summary}}/success">
+        {{ events['successes'] }} 
+        successes <div class="statusbar">
+            <span class="changes" style="width: {{events['successes_per']}}%;"> </span></div>
+    </a>
+    </li>
+    <li{% if event_sum == summary and event_type == 'noop' %} class="active"{% endif%}>
+    <a href="/events/{{summary}}/noop">
+        {{ events['noops'] }} 
+        noops <div class="statusbar">
+            <span class="noops" style="width: {{events['noops_per']}}%;"> </span></div>
+    </a>
+    </li>
+    <li{% if event_sum == summary and event_type == 'skipped' %} class="active"{% endif%}>
+    <a href="/events/{{summary}}/skipped">
+        {{ events['skips'] }} 
+        skips <div class="statusbar">
+            <span class="skips" style="width: {{events['skips_per']}}%;"> </span></div>
+    </a>
+    </li>
+</ul>
+{%- endmacro %}
+
+

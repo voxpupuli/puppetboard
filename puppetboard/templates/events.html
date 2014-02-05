@@ -1,0 +1,56 @@
+{% extends 'layout.html' %}
+{% import '_macros.html' as macros %}
+{% block row_fluid %}
+<div class="container" style="margin-bottom:55px;">
+
+  <div class="row">
+    <div class="span12">
+      <div class="span4 stat">
+          <h4>Classes</h4>
+          {{ macros.eventbars(event_sum,event_type,'class',events_class) }}
+          <h4>Nodes</h4>
+          {{ macros.eventbars(event_sum,event_type,'certname',events_nodes) }}
+          <h4>Resources</h4>
+          {{ macros.eventbars(event_sum,event_type,'resource',events_resources) }}
+      </div>
+      <div class="span8 stat">
+          {% if event_sum and event_type %}
+             <h4>{{event_sum}} with {{event_type}}</h4>
+          {% endif %}
+          {% for id in events %}
+                <div class="event-detail">
+                    <h5>
+                        {% if event_sum == 'certname' %}
+                            <a href="{{url_for('node', node_name=id)}}">{{ id }}</a>
+                        {% else %}
+                            {{ id }}
+                        {% endif %}
+                    </h5>
+                    {% for e in events[id] %}
+                    <div class="event-list-detail">
+                    <p>
+                        {% if event_sum != 'certname' %}
+                        <a href="{{url_for('node', node_name=e['certname'])}}">{{e['certname']}}</a>
+                        {% endif %}
+                        {% if event_sum != 'resource' %}
+                            {{ e['resource-type'] }}[{{e['resource-title']}}]
+                         {% endif %}</p>
+                        <dl>{% for key in e%}
+                            <dt>{{key}}</dt>
+                            <dd>
+                                {% if e[key] is iterable and e[key] is not string %}
+                                    {% for i in e[key] %}{{i}} {{e[key][i]}}<br />{% endfor%}
+                                {% else %}
+                                    {{e[key] }}
+                                {% endif %}
+                                </dd>{% endfor%}
+                        </dl>
+                    </div>
+                    {% endfor %}
+          </div>
+          {% endfor %}
+     </div>
+    </div>
+  </div>
+</div>
+{% endblock row_fluid %}

@@ -17,6 +17,7 @@ from pypuppetdb import connect
 
 from puppetboard.forms import QueryForm
 from puppetboard.utils import (
+    eventcount_percentage,
     get_or_abort, yield_or_stop,
     ten_reports, jsonprint
     )
@@ -176,6 +177,49 @@ def node(node_name):
         node=node,
         facts=yield_or_stop(facts),
         reports=yield_or_stop(reports))
+
+
+@app.route('/events/')
+def events():
+    events_class = eventcount_percentage(puppetdb, "containing-class")
+    events_nodes = eventcount_percentage(puppetdb, "certname")
+    events_resources = eventcount_percentage(puppetdb, "resource")
+
+    return render_template('events.html',
+                           events_class = events_class,
+                           events_resources = events_resources,
+                           events_nodes = events_nodes)
+
+@app.route('/events/<event_sum>/<event_type>')
+def events_detail(event_sum, event_type):
+    events_class = eventcount_percentage(puppetdb, "containing-class")
+    events_nodes = eventcount_percentage(puppetdb, "certname")
+    events_resources = eventcount_percentage(puppetdb, "resource")
+    ev = puppetdb._query('events',query='["and",["=","latest-report?","true"],["=","status","%s"]]' % event_type)
+    events = {}
+
+    for e in ev:
+        if event_sum == 'class':
+           identifier = e['containing-class']
+        elif event_sum == 'resource':
+            identifier = '{0}[{1}]'.format(e['resource-type'], e['resource-title'])
+        elif event_sum == 'certname':
+            identifier = e['certname']
+        else:
+            identifier = None
+
+        if identifier not in events:
+            events[identifier] = [e]
+        else:
+            events[identifier].append(e)
+
+    return render_template('events.html',
+                           events = events,
+                           events_class = events_class,
+                           events_resources = events_resources,
+                           events_nodes = events_nodes,
+                           event_sum=event_sum,
+                           event_type=event_type)
 
 
 @app.route('/reports')
