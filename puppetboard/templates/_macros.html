@@ -66,7 +66,7 @@
   }
   top7.push({ label: "Other", value: bottom_sum, color: "#B30202" });
   var ctx = document.getElementById("factChart").getContext("2d");
-  new Chart(ctx).Pie(top7);
+  new Chart(ctx).Pie(top7, {'animation': false});
 </script>
 {%- endmacro %}
 {% macro facts_graph_value(facts, autofocus=False, condensed=False, show_node=False, margin_top=20, margin_bottom=20) -%}
@@ -91,7 +91,7 @@
     data[i].color = colors[i % len_colors];
   }
   var ctx = document.getElementById("factChart_value").getContext("2d");
-  new Chart(ctx).Pie(data.sort(function(a,b) { return parseInt(a.label) - parseInt(b.label)}));
+  new Chart(ctx).Pie(data.sort(function(a,b) { return parseInt(a.label) - parseInt(b.label)}), {'animation':false});
 </script>
 {%- endmacro %}
 
