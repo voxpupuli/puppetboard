@@ -61,6 +61,36 @@ The complete path on Debian systems would be:
 You will need this path in order to configure your HTTPD and WSGI-capable
 application server.
 
+Packages
+^^^^^^^^
+Native packages for your operating system will be provided in the near future.
+
++------------------+-----------+--------------------------------------------+
+| OS               | Status    |                                            |
++==================+===========+============================================+
+| Debian 6/Squeeze | planned   | Requires Backports                         |
++------------------+-----------+--------------------------------------------+
+| Debian 7/Wheezy  | planned   |                                            |
++------------------+-----------+--------------------------------------------+
+| Ubuntu 13.04     | planned   |                                            |
++------------------+-----------+--------------------------------------------+
+| Ubuntu 13.10     | planned   |                                            |
++------------------+-----------+--------------------------------------------+
+| CentOS/RHEL 5    | n/a       | Python 2.4                                 |
++------------------+-----------+--------------------------------------------+
+| CentOS/RHEL 6    | planned   |                                            |
++------------------+-----------+--------------------------------------------+
+| `ArchLinux`_     | available | Maintained by `Niels Abspoel`_             |
++------------------+-----------+--------------------------------------------+
+| `OpenBSD`_       | available | Maintained by `Jasper Lievisse Adriaanse`_ |
++------------------+-----------+--------------------------------------------+
+
+.. _ArchLinux: https://aur.archlinux.org/packages/python2-puppetboard/
+.. _Niels Abspoel: https://github.com/aboe76
+.. _Jasper Lievisse Adriaanse: https://github.com/jasperla
+.. _OpenBSD: http://www.openbsd.org/cgi-bin/cvsweb/ports/www/puppetboard/
+
+
 Development
 -----------
 
