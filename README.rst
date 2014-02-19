@@ -78,13 +78,15 @@ Native packages for your operating system will be provided in the near future.
 +------------------+-----------+--------------------------------------------+
 | CentOS/RHEL 5    | n/a       | Python 2.4                                 |
 +------------------+-----------+--------------------------------------------+
-| CentOS/RHEL 6    | planned   |                                            |
+| `CentOS/RHEL 6`_ | available | Maintained by `Johan De Wit`_              |
 +------------------+-----------+--------------------------------------------+
 | `ArchLinux`_     | available | Maintained by `Niels Abspoel`_             |
 +------------------+-----------+--------------------------------------------+
 | `OpenBSD`_       | available | Maintained by `Jasper Lievisse Adriaanse`_ |
 +------------------+-----------+--------------------------------------------+
 
+.. _CentOS/RHEL 6: https://github.com/johan-open-future/puppetboard-rpm
+.. _Johan De Wit: https://github.com/johan-open-future
 .. _ArchLinux: https://aur.archlinux.org/packages/python2-puppetboard/
 .. _Niels Abspoel: https://github.com/aboe76
 .. _Jasper Lievisse Adriaanse: https://github.com/jasperla
