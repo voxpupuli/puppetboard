@@ -3,7 +3,7 @@
 <h1>Metrics</h1>
 <ul>
   {% for key,value in metrics %}
-  <li><a href="{{url_for('metric', metric=value)}}">{{key}}</li>
+  <li><a href="{{url_for('metric', metric=key)}}">{{key}}</li>
   {% endfor %}
 </ul>
 {% endblock content %}
