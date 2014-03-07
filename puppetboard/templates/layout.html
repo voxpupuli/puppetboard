@@ -3,9 +3,10 @@
   <head>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Puppet&#7427;oard</title>
-    <link href="//netdna.bootstrapcdn.com/bootswatch/2.3.2/flatly/bootstrap.min.css" rel="stylesheet">
-    <link href="//netdna.bootstrapcdn.com/font-awesome/3.2.1/css/font-awesome.min.css" rel="stylesheet">
     <link href="{{url_for('static', filename='css/puppetboard.css')}}" rel="stylesheet">
+    <link href="{{url_for('static', filename='css/bootstrap.min.css')}}" rel="stylesheet">
+    <link href="{{url_for('static', filename='css/font-awesome.min.css')}}" rel="stylesheet">
+	
   </head>
 
   <body>
@@ -55,9 +56,9 @@
       </div>
     </div>
 
-    <script src="//code.jquery.com/jquery-1.10.0.min.js"></script>
-    <script src="//netdna.bootstrapcdn.com/twitter-bootstrap/2.3.2/js/bootstrap.min.js"></script>
-    <script src="//cdn.jsdelivr.net/tablesorter/2.0.3/jquery.tablesorter.min.js"></script>
+    <script src="{{ url_for('static', filename='js/jquery-1.10.0.min.js')}}"></script>
+    <script src="{{ url_for('static', filename='js/bootstrap.min.js')}}"></script>
+    <script src="{{ url_for('static', filename='js/jquery.tablesorter.min.js')}}"></script>
     <script src="{{ url_for('static', filename='js/moment.js')}}"></script>
     <script src="{{ url_for('static', filename='js/timestamps.js')}}"></script>
     <script src="{{url_for('static', filename='js/tables.js')}}"></script>
