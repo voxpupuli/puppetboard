@@ -1,8 +1,8 @@
 {% macro facts_table(facts, autofocus=False, condensed=False, show_node=False, show_value=True, link_facts=False, margin_top=20, margin_bottom=20) -%}
-<div class="filter" style="margin-bottom:{{margin_bottom}}px;margin-top:{{margin_top}}px;">
-  <input {% if autofocus %} autofocus="autofocus" {% endif %} style="width:100%" type="text" class="filter-table input-medium search-query" placeholder="Type here to filter">
+<div class="ui fluid icon input hide" style="margin-bottom:20px">
+  <input {% if autofocus %} autofocus="autofocus" {% endif %} class="filter-table" placeholder="Type here to filter...">
 </div>
-<table class="filter-table facts table table-striped {% if condensed %}table-condensed{% endif%}" style="table-layout:fixed">
+<table class="filter-table facts ui basic table facts {% if condensed %}compact{% endif%}" style="table-layout: fixed;">
   <thead>
     <tr>
       {% if show_node %}
@@ -96,10 +96,10 @@
 {%- endmacro %}
 
 {% macro reports_table(reports, nodename, condensed=False, hash_truncate=False, show_conf_col=True, show_agent_col=True, show_host_col=True) -%}
-<div class="alert alert-info">
+<div class="ui info message">
   Only showing the last ten reports.
 </div>
-<table class='table table-striped {% if condensed %}table-condensed{% endif %}'>
+<table class='ui table basic {% if condensed %}compact{% endif %}'>
   <thead>
     <tr>
       <th>Start time</th>
@@ -119,7 +119,7 @@
   <tbody>
   {% for report in reports %}
     {% if hash_truncate %}
-    {% set rep_hash = "%s&hellip;"|format(report.hash_[0:6])|safe %}
+    {% set rep_hash = "%s&hellip;"|format(report.hash_[0:10])|safe %}
     {% else %}
     {% set rep_hash = report.hash_ %}
     {% endif %}
@@ -139,7 +139,7 @@
         <td>{{report.agent_version}}</td>
       {% endif %}
       {% if show_host_col %}
-        <td>{{nodename}}</td>
+        <td><a href="{{url_for('node', node_name=report.node)}}">{{ report.node }}</a></td>
       {% endif %}
     </tr>
     {% endfor %}

@@ -1,56 +1,53 @@
 {% extends 'layout.html' %}
 {% block content %}
-<div class="alert alert-info">
-  PuppetDB currently only returns active nodes.
+<div class="ui fluid icon input hide" style="margin-bottom:20px">
+  <input autofocus="autofocus" class="filter-table" placeholder="Type here to filter...">
 </div>
-      {% with messages = get_flashed_messages(with_categories=true) %}
-      {% if messages %}
-      {% for category, message in messages %}
-        <div class="alert alert-{{category}}">
-          {{message}}
-        </div>
-      {% endfor %}
-      {% endif %}
-      {% endwith %}
-<div class="hide" style="margin-bottom:20px">
-<input autofocus="autofocus" style="width:100%" type="text" class="filter-table input-medium search-query" placeholder="Type here to filter">
-</div>
-<table class='nodes table table-striped table-condensed'>
+<table class='ui compact basic table nodes'>
   <thead>
     <tr>
       <th>Status</th>
       <th>Hostname</th>
-      <th>Catalog compiled at</th>
-      <th>Last report</th>
+      <th>Catalog</th>
+      <th>Report</th>
       <th>&nbsp;</th>
     </tr>
   </thead>
   <tbody class="searchable">
     {% for node in nodes %}
     <tr>
-      <td><a href="{{url_for('report_latest', node_name=node.name)}}">
-          <span class="label label-status label-{{ node.status }}">{{ node.status }}</span>
-        </a>
-        {% if node.status=='unreported'%}
-          <span class="label label-time label-unreported"> {{ node.unreported_time }} </label>
-        {% else %}
-          {% if node.events['failures'] %}<span class="label label-count label-important">{{node.events['failures']}}</span>{% else %}<span class="label label-count">0</span>{% endif%}
-          {% if node.events['successes'] %}<span class="label label-count label-success">{{node.events['successes']}}</span>{% else %}<span class="label label-count">0</span>{% endif%}
-        {% endif %}
+      <td>
+        <a class="ui small status label
+          {% if node.status == 'failed' %}
+            red
+          {% elif node.status == 'changed' %}
+            green
+          {% elif node.status == 'unreported' %}
+            black
+          {% endif %}
+          " href="{{url_for('report_latest', node_name=node.name)}}">
+            {{node.status}}
+          </a>
+          {% if node.status=='unreported'%}
+            <span class="ui small label status"> {{ node.unreported_time }} </label>
+          {% else %}
+          <span>{% if node.events['failures'] %}<span class="ui small count label red">{{node.events['failures']}}</span>{% else %}<span class="ui small count label">0</span>{% endif%}
+            {% if node.events['successes'] %}<span class="ui small count label green">{{node.events['successes']}}</span>{% else %}<span class="ui small count label">0</span>{% endif%}</span>
+          {% endif %}
       </td>
       <td><a href="{{url_for('node', node_name=node.name)}}">{{node.name}}</a></td>
       <td rel="utctimestamp">{{node.catalog_timestamp}}</td>
       <td>
         {% if node.report_timestamp %}
-        <span rel="utctimestamp">{{ node.report_timestamp }}</span>
+        <a href="{{url_for('report_latest', node_name=node.name)}}" rel='utctimestamp'>{{ node.report_timestamp }}</a>
         {% else %}
-          <i class="icon icon-ban-circle"></i>
+          <i class="large ban circle icon"></i>
         {% endif %}
       </td>
       <td>
         {% if node.report_timestamp %}
-        <a class="btn btn-small btn-primary"  href="{{url_for('report_latest', node_name=node.name)}}">Latest Report</a>
-        <a class="btn btn-small btn-primary" href="{{url_for('reports_node', node=node.name)}}">Reports</a>
+        <a title='Reports' href="{{url_for('reports_node', node=node.name)}}"><i class='large darkblue book icon'></i></a>
+        <i class='large darkblue trash icon'></i>
         {% endif %}
       </td>
     </tr>

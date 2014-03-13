@@ -1,0 +1,9 @@
+/*
+	A simple, lightweight jQuery plugin for creating sortable tables.
+	https://github.com/kylefox/jquery-tablesort
+	Version 0.0.2
+*/
+$(function(){var a=window.jQuery;a.tablesort=function(d,c){var e=this;this.$table=d;this.$thead=this.$table.find("thead");this.settings=a.extend({},a.tablesort.defaults,c);this.$table.find("th").bind("click.tablesort",function(){e.sort(a(this))});this.direction=this.$th=this.index=null};a.tablesort.prototype={sort:function(d,c){var e=new Date,b=this,g=this.$table,n=0<this.$thead.length?g.find("tbody tr"):g.find("tr").has("td"),m=g.find("tr td:nth-of-type("+(d.index()+1)+")"),h=d.data().sortBy,k=[],
+l=m.map(function(c,e){return h?"function"===typeof h?h(a(d),a(e),b):h:null!=a(this).data().sortValue?a(this).data().sortValue:a(this).text()});if(0!==l.length){b.$table.find("th").removeClass(b.settings.asc+" "+b.settings.desc);this.direction="asc"!==c&&"desc"!==c?"asc"===this.direction?"desc":"asc":c;c="asc"==this.direction?1:-1;b.$table.trigger("tablesort:start",[b]);b.log("Sorting by "+this.index+" "+this.direction);for(var f=0,p=l.length;f<p;f++)k.push({index:f,cell:m[f],row:n[f],value:l[f]});
+k.sort(function(a,b){return a.value>b.value?1*c:a.value<b.value?-1*c:0});a.each(k,function(a,b){g.append(b.row)});d.addClass(b.settings[b.direction]);b.log("Sort finished in "+((new Date).getTime()-e.getTime())+"ms");b.$table.trigger("tablesort:complete",[b])}},log:function(d){(a.tablesort.DEBUG||this.settings.debug)&&console&&console.log&&console.log("[tablesort] "+d)},destroy:function(){this.$table.find("th").unbind("click.tablesort");this.$table.data("tablesort",null);return null}};a.tablesort.DEBUG=
+!1;a.tablesort.defaults={debug:a.tablesort.DEBUG,asc:"sorted ascending",desc:"sorted descending"};a.fn.tablesort=function(d){var c,e;return this.each(function(){c=a(this);(e=c.data("tablesort"))&&e.destroy();c.data("tablesort",new a.tablesort(c,d))})}});

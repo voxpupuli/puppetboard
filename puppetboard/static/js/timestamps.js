@@ -16,7 +16,7 @@ jQuery(function ($) {
       if (result == '') {
         tstamp.text('Unknown');
       } else {
-        tstamp.text(localise_timestamp(tstring).format('LLLL'));
+        tstamp.text(localise_timestamp(tstring).format('MMM DD YYYY - HH:mm:ss'));
       };
   });
 

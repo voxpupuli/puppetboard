@@ -1,61 +1,43 @@
 {% extends 'layout.html' %}
-{% block row_fluid %}
-<div class="span12">
-  <div class="alert">
-    This is highly experimental and will likely set your server on fire.
-  </div>
+{% block content %}
+<h2>Compose</h2>
+{% with messages = get_flashed_messages(with_categories=true) %}
+{% if messages %}
+{% for category, message in messages %}
+<div class="ui {{category}} message">
+  {{message}}
 </div>
-<div class="container" style="margin-bottom:55px;">
-  <div class="row">
-    <div class="span12">
-      <h2>Compose</h2>
-      {% with messages = get_flashed_messages(with_categories=true) %}
-      {% if messages %}
-      {% for category, message in messages %}
-        <div class="alert alert-{{category}}">
-          {{message}}
+{% endfor %}
+{% endif %}
+{% endwith %}
+<div class="ui form">
+  <form method="POST" action="{{ url_for('query')}}"
+    {{ form.csrf_token }}
+    <div class="field {% if form.query.errors %} error {% endif %}">
+      {{form.query(autofocus="autofocus", rows=5, placeholder="Enter your query: [\"=\", \"name\", \"hostname\"]. You may omit the opening and closing bracket.")}}
+    </div>
+    <div class="inline fields">
+      {% for subfield in form.endpoints %}
+      <div class="field">
+        <div class="ui radio checkbox">
+          {{subfield }}
+          {{subfield.label}}
         </div>
+      </div>
       {% endfor %}
-      {% endif %}
-      {% endwith %}
-      <form class="form-horizontal" method="POST" action="{{ url_for('query')}}">
-        {{ form.csrf_token }}
-        <div class="control-group {% if form.query.errors %} error {% endif %}">
-          {{form.query.label(class_="control-label")}}
-          <div class="controls">
-            {{form.query(class_="input-block-level", autofocus="autofocus", rows=5, placeholder="\"=\", \"name\", \"hostname\"")}}
-            {% if form.query.errors %}
-            <span class="help-inline">{% for error in form.query.errors %}{{error}}{% endfor %}</span>
-            {% endif %}
-          </div>
-        </div>
-        <div class="control-group {% if form.endpoints.errors %} error {% endif %}">
-          {{form.endpoints.label(class_="control-label")}}
-          <div class="controls">
-            {% for subfield in form.endpoints %}
-            {{subfield.label(class_="radio inline")}}
-            {{subfield }}
-            {% endfor %}
-            {% if form.endpoints.errors %}
-            <span class="help-inline">{% for error in form.endpoints.errors %}{{error}}{% endfor %}</span>
-            {% endif %}
-          </div>
-        </div>
-        <div class="form-actions">
-            <button type="submit" class="btn btn-primary">Yes I'm sure</button>
-            <button type="button" class="btn">No thanks</button>
-        </div>
-        {{ form.hidden_tag() }}
-      </form>
     </div>
-  </div>
-  {% if result %}
-  <div class="row">
-    <div class="span12">
-      <h2>Result</h2>
-      <pre><code>{{result|jsonprint}}</code></pre>
-    </div>
-  </div>
-  {% endif %}
+    {{ form.hidden_tag() }}
+    <input type=submit class="ui submit button" value='Submit'>
+    <input type=reset class="ui red submit button" value='Cancel'>
+  </form>
 </div>
-{% endblock row_fluid %}
+
+{% if result %}
+<div class="row">
+  <div class="span12">
+    <h2>Result</h2>
+      <pre><code>{{result|jsonprint}}</code></pre>
+  </div>
+</div>
+{% endif %}
+{% endblock content %}

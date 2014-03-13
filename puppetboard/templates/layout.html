@@ -2,66 +2,52 @@
 <html lang="en">
   <head>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Puppet&#7427;oard</title>
-    <link href="//netdna.bootstrapcdn.com/bootswatch/2.3.2/flatly/bootstrap.min.css" rel="stylesheet">
-    <link href="//netdna.bootstrapcdn.com/font-awesome/3.2.1/css/font-awesome.min.css" rel="stylesheet">
-    <link href="{{url_for('static', filename='css/puppetboard.css')}}" rel="stylesheet">
+    <title>Puppetboard</title>
+    <link href="//cdnjs.cloudflare.com/ajax/libs/semantic-ui/0.12.0/css/semantic.min.css" rel="stylesheet">
+    <link href='//fonts.googleapis.com/css?family=Open+Sans' rel='stylesheet' type='text/css'>
+    <link href="//cdnjs.cloudflare.com/ajax/libs/jquery.tablesorter/2.13.3/css/filter.formatter.css" rel="stylesheet">
+    <link href="{{ url_for('static', filename='css/puppetboard.css')}}" rel="stylesheet">
   </head>
 
   <body>
-    <div style="font-variant:small-caps"  class="navbar navbar-fixed-top">
-      <div class="navbar-inner">
-        <div class="container">
-          <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
-          </a>
-          <span style="margin-top:-2px;" class="brand">Puppetboard</span>
-          <div class="nav-collapse collapse">
-            <ul class="nav">
-              {%- for endpoint, caption in [
-              ('index', 'Overview'),
-              ('nodes', 'Nodes'),
-              ('facts', 'Facts'),
-              ('reports', 'Reports'),
-              ('metrics', 'Metrics'),
-              ('query', 'Query'),
-                ] %}
-                  <li{% if endpoint == request.endpoint %} class=active{% endif
-                    %}><a href="{{ url_for(endpoint) }}">{{ caption }}</a></li>
-                {%- endfor %}
-            </ul>
-          </div>
-        </div>
+    <nav class="ui fixed darkblue inverted menu">
+      <div class="title item">
+        Puppetboard
       </div>
-    </div>
-    {% block container %}
-    <div class="container-fluid" style="margin-bottom:55px;">
-      <div class="row-fluid">
-        {% block row_fluid %}
-        <div class="span12">
-          {% block content %} {% endblock content %}
-        </div>
-        {% endblock row_fluid %}
+      {%- for endpoint, caption in [
+      ('index', 'Overview'),
+      ('nodes', 'Nodes'),
+      ('facts', 'Facts'),
+      ('reports', 'Reports'),
+      ('metrics', 'Metrics'),
+      ('query', 'Query'),
+      ] %}
+      <a {% if endpoint == request.endpoint %} class="active item" {% else %} class="item" {% endif %}
+        href="{{ url_for(endpoint) }}">{{ caption }}</a>
+      {%- endfor %}
+    </nav>
+    <div class="ui grid padding-bottom">
+      <div class="one wide column"></div>
+      <div class="fourteen wide column">
+        {% block content %} {% endblock content %}
       </div>
-    </div>
-    {% endblock container %}
-    <div class="navbar navbar-fixed-bottom" style="background-color:rgb(249, 249, 249);">
-      <div class="navbar" style="height:55px;margin-bottom:0;">
-        <div class="container-fluid" style="line-height:55px;">
-          Copyright © 2013 <a href="https://github.com/daenney">Daniele Sluijters</a>. <span style="float:right">Live from PuppetDB.</span>
-        </div>
-      </div>
+      <div class="one wide column"></div>
     </div>
 
-    <script src="//code.jquery.com/jquery-1.10.0.min.js"></script>
-    <script src="//netdna.bootstrapcdn.com/twitter-bootstrap/2.3.2/js/bootstrap.min.js"></script>
-    <script src="//cdn.jsdelivr.net/tablesorter/2.0.3/jquery.tablesorter.min.js"></script>
-    <script src="{{ url_for('static', filename='js/moment.js')}}"></script>
+    <footer class="ui absolute fixed bottom">
+      <div>
+      Copyright © 2013-2014 <a href="https://github.com/daenney">Daniele Sluijters</a>. <span style="float:right">Live from PuppetDB.</span>
+    </div>
+    </footer>
+
+    <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/semantic-ui/0.12.0/javascript/semantic.min.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/moment.js/2.5.1/moment.min.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/jquery.tablesorter/2.13.3/jquery.tablesorter.min.js"></script>
     <script src="{{ url_for('static', filename='js/timestamps.js')}}"></script>
-    <script src="{{url_for('static', filename='js/tables.js')}}"></script>
     <script src="{{url_for('static', filename='js/lists.js')}}"></script>
+    <script src="{{url_for('static', filename='js/tables.js')}}"></script>
+
     {% block script %} {% endblock script %}
   </body>
 </html>
