@@ -63,3 +63,13 @@ th.tablesorter-headerDesc::after {
 .ui.darkblue.header, i.darkblue {
   color:#2C3E50;
 }
+
+.ui.labels .darkblue.label::before, .ui.darkblue.labels .label::before, .ui.darkblue.label::before {
+  background-color:#2C3E50;
+}
+
+.ui.darkblue.labels .label, .ui.darkblue.label {
+  background-color:#2C3E50;
+  border-color:#2C3E50;
+  color:#FFF;
+}

@@ -5,7 +5,7 @@
 </div>
 <div style="-moz-column-count:4; -webkit-column-count:4; column-count:4;">
   {%- for key,facts_list in facts_dict %}
-  <span class='ui label purple'>{{key}}</span>
+  <span class='ui label darkblue'>{{key}}</span>
   <ul class="searchable">
     {%- for fact in facts_list %}
     <li><a href="{{url_for('fact', fact=fact)}}">{{fact}}</a></li>
