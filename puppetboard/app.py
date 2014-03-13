@@ -4,7 +4,10 @@ from __future__ import absolute_import
 import os
 import logging
 import collections
-import urllib
+try:
+    from urllib import unquote
+except ImportError:
+    from urllib.parse import unquote
 from datetime import datetime, timedelta
 
 from flask import (
@@ -305,7 +308,7 @@ def metrics():
 
 @app.route('/metric/<metric>')
 def metric(metric):
-    name = urllib.unquote(metric)
+    name = unquote(metric)
     metric = puppetdb.metric(metric)
     return render_template(
         'metric.html',
