@@ -287,10 +287,14 @@ def query():
     if app.config['ENABLE_QUERY']:
         form = QueryForm()
         if form.validate_on_submit():
+            if form.query.data[0] == '[':
+                query = form.query.data
+            else:
+                query = '[{0}]'.format(form.query.data)
             result = get_or_abort(
                 puppetdb._query,
                 form.endpoints.data,
-                query='[{0}]'.format(form.query.data))
+                query=query)
             return render_template('query.html', form=form, result=result)
         return render_template('query.html', form=form)
     else:
