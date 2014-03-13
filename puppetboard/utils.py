@@ -20,7 +20,7 @@ def get_or_abort(func, *args, **kwargs):
     """
     try:
         return func(*args, **kwargs)
-    except HTTPError, e:
+    except HTTPError as e:
         abort(e.response.status_code)
     except ConnectionError:
         abort(500)
