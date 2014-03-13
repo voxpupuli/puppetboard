@@ -9,6 +9,7 @@ try:
 except ImportError:
     from urllib.parse import unquote
 from datetime import datetime, timedelta
+from multiprocessing.dummy import Pool as ThreadPool 
 
 from flask import (
     Flask, render_template, abort, url_for,
@@ -91,19 +92,17 @@ def index():
     # TODO: Would be great if we could parallelize this somehow, doing these
     # requests in sequence is rather pointless.
     prefix = 'com.puppetlabs.puppetdb.query.population'
-    num_nodes = get_or_abort(
-        puppetdb.metric,
-        "{0}{1}".format(prefix, ':type=default,name=num-nodes'))
-    num_resources = get_or_abort(
-        puppetdb.metric,
-        "{0}{1}".format(prefix, ':type=default,name=num-resources'))
-    avg_resources_node = get_or_abort(
-        puppetdb.metric,
-        "{0}{1}".format(prefix, ':type=default,name=avg-resources-per-node'))
+    pool = ThreadPool()
+    endpoints = [
+                "{0}{1}".format(prefix, ':type=default,name=num-nodes'),
+                "{0}{1}".format(prefix, ':type=default,name=num-resources'),
+                "{0}{1}".format(prefix, ':type=default,name=avg-resources-per-node'),
+                ]
+    fetched_metrics = pool.map(puppetdb.metric, endpoints)
     metrics = {
-        'num_nodes': num_nodes['Value'],
-        'num_resources': num_resources['Value'],
-        'avg_resources_node': "{0:10.0f}".format(avg_resources_node['Value']),
+        'num_nodes': fetched_metrics[0]['Value'],
+        'num_resources': fetched_metrics[1]['Value'],
+        'avg_resources_node': "{0:10.0f}".format(fetched_metrics[2]['Value']),
         }
 
     nodes = puppetdb.nodes(
