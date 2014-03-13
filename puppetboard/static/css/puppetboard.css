@@ -1,104 +1,57 @@
 body {
-  padding-top: 60px;
+  margin: 0;
+  font-family: "Open Sans", sans-serif;
 }
-th.headerSortUp {
-  position: relative
+
+a {
+  color: #564F8A;
+  text-decoration: none;
 }
-th.headerSortDown {
-  position: relative
+
+h1.ui.header.no-margin-bottom {
+  margin-bottom: 0;
 }
-th.header {
-  position: relative
+
+.tablesorter-header-inner {
+  float: left;
 }
-th.header:after {
-  content: "\f0dc"; 
-  font-family: FontAwesome;
-  font-style: normal;
-  font-weight: normal;
-  text-decoration: inherit;
-  color: #000;
-  font-size: 18px;
-  padding-right: 0.5em;
-  float:right;
+
+th.tablesorter-headerAsc::after {
+  content: '\25b4' !important;
+  float: right;
 }
-th.headerSortUp:after {
-  content: "\f0de"; 
-  font-family: FontAwesome;
-  font-style: normal;
-  font-weight: normal;
-  text-decoration: inherit;
-  color: #000;
-  font-size: 18px;
-  padding-right: 0.5em;
-  float:right;
+
+th.tablesorter-headerDesc::after {
+  content: '\25be' !important;
+  float: right;
 }
-th.headerSortDown:after {
-  content: "\f0dd"; 
-  font-family: FontAwesome;
-  font-style: normal;
-  font-weight: normal;
-  text-decoration: inherit;
-  color: #000;
-  font-size: 18px;
-  padding-right: 0.5em;
-  float:right;
+
+.ui.grid.padding-bottom {
+  padding-bottom: 40px !important;
 }
-.stat {
-  margin-bottom: 40px;
+
+.status {
+  width: 47%;
+  text-align: center;
+  display: block;
 }
-.navbar .brand:hover {
-  color: #fff;
+.count {
+  width: 21%;
+  text-align: center;
+  display: block;
 }
-.table tbody tr.error>td {
-  background-color: #f2dede;
+
+.no-margin-top {
+  margin-top: -35px !important;
 }
-h1.error {
-  color: rgb(223, 46, 27);
+
+.absolute {
+  position: fixed;
+  bottom: 0;
+  width: 100%;
+  background: #E8E8E8;
 }
-h1.success {
-  color: #18BC9C;
-}
-h1.noop {
-  color:#aaa;
-}
-tr.event {
-  cursor: pointer;
-}
-td.message {
-  padding: 0;
-  border: 0;
-  background-color: #FFFFE9;
-}
-div[id^='message-event'] {
-  display: none;
-  padding: 4px 15px 4px 15px;
-}
-.label-count {
-  width:25px;
-  text-align:center;
-}
-.label-time {
-  width:73px;
-  text-align:center;
-}
-.label-status {
-  width:100px;
-  text-align:center;
-}
-.label-nothing {
-  background-color:#ddd;
-  color:#ddd;
-}
-.label.label-failed {
-  background-color: rgb(231, 76, 60);
-}
-.label.label-changed {
-  background-color: rgb(24, 188, 156);
-}
-.label.label-unreported {
-  background-color: rgb(231, 76, 60);
-  background-color: rgb(129, 145, 146);
-}
-.btn-lastreport {
-  width:100px;
+
+.absolute div {
+  padding: 1em;
 }

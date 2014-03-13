@@ -1,102 +1,106 @@
 {% extends 'layout.html' %}
-{% block row_fluid %}
-<div class="container" style="margin-bottom:55px;">
-
-  <div class="row">
-    <div class="span12">
-      <div class="span4 stat">
-       <a href="nodes?status=failed">
-         <h1 class="error">{{stats['failed']}}
-           <small>{% if stats['failed']== 1 %} node {% else %} nodes {% endif %}</small>
-         </h1>
-       </a>
-       <span>with status failed</span>
-      </div>
-      <div class="span4 stat">
-        <a href="nodes?status=changed">
-          <h1 class="success">{{stats['changed']}}
-            <small>{% if stats['changed']== 1 %} node {% else %} nodes {% endif %}</small>
-          </h1>
-        </a>
-        <span>with status changed</span>
-      </div>
-      <div class="span4 stat">
-        <a href="nodes?status=unreported">
-          <h1 class="noop">{{ stats['unreported'] }}
-            <small>{% if stats['unreported']== 1 %} node {% else %} nodes {% endif %}</small>
-          </h1>
-        </a>
-        <span>
-          unreported in the last {{ config.UNRESPONSIVE_HOURS }} hours
-        </span>
-      </div>
+{% block content %}
+<div class="ui vertical grid">
+  <div class="three column row">
+    <div class="column">
+      <a href="nodes?status=failed">
+        <h1 class="ui red header no-margin-bottom">
+          {{stats['failed']}}
+          <small>{% if stats['failed']== 1 %} node {% else %} nodes {% endif %}</small>
+        </h1>
+      </a>
+      <span>with status failed</span>
+    </div>
+    <div class="column">
+      <a href="nodes?status=changed">
+        <h1 class="ui header green no-margin-bottom">
+          {{stats['changed']}}
+          <small>{% if stats['changed']== 1 %} node {% else %} nodes {% endif %}</small>
+        </h1>
+      </a>
+      <span>with status changed</span>
+    </div>
+    <div class="column">
+      <a href="nodes?status=unreported">
+        <h1 class="ui header black no-margin-bottom">
+          {{ stats['unreported'] }}
+          <small>{% if stats['unreported']== 1 %} node {% else %} nodes {% endif %}</small>
+        </h1>
+      </a>
+      <span>unreported in the last {{ config.UNRESPONSIVE_HOURS }} hours</span>
     </div>
   </div>
-
-  <div class="row">
-    <div class="span12">
-      <div class="span4 stat">
-        <h1>{{metrics['num_nodes']}}</h1>
-        <span>Population</span>
-      </div>
-      <div class="span4 stat">
-        <h1>{{metrics['num_resources']}}</h1>
-        <span>Resources managed</span>
-      </div>
-      <div class="span4 stat">
-        <h1>{{metrics['avg_resources_node']}}</h1>
-        <span>Avg. resources/node</span>
-      </div>
+  <div class="three column row">
+    <div class="column">
+      <h1 class="ui header purple no-margin-bottom">{{metrics['num_nodes']}}</h1>
+      <span>Population</span>
+    </div>
+    <div class="column">
+      <h1 class="ui header purple no-margin-bottom">{{metrics['num_resources']}}</h1>
+      <span>Resources managed</span>
+    </div>
+    <div class="column">
+      <h1 class="ui header purple no-margin-bottom">{{metrics['avg_resources_node']}}</h1>
+      <span>Avg. resources/node</span>
     </div>
   </div>
-
-  <div class="row">
-    <div class="span12">
+  <div class="ui divider">
+  </div>
+  <div class="one column row no-margin-top">
+    <div class="column">
       {% if nodes %}
-        <h2>Nodes status detail ({{nodes|length}})</h2>
-        <table class='dashboard table table-striped table-condensed'>
-            <thead>
-              <tr>
-              <th style="min-width:220px;">Status</th>
-              <th style="width:600px;">Hostname</th>
-              <th style="width:120px;"></th>
-              </tr>
-            </thead>
-          <tbody class="searchable">
-            {% for node in nodes %}
-              {% if node.status != 'unchanged' %}
-            <tr>
-              <td>
-               <a href="{{url_for('report_latest', node_name=node.name)}}">
-                 <span class="label label-status label-{{node.status}}">{{node.status}}</span>
-                 </a>
-                 {% if node.status=='unreported'%}
-                     <span class="label label-time label-unreported"> {{ node.unreported_time }} </label>
-                  {% else %}
-                     {% if node.events['failures'] %}<span class="label label-important label-count">{{node.events['failures']}}</span>{% else %}<span class="label label-count">0</span>{% endif%}
-                     {% if node.events['successes'] %}<span class="label label-success label-count">{{node.events['successes']}}</span>{% else %}<span class="label label-count">0</span>{% endif%}
-                  {% endif %}
-              </td>
-              <td><a href="{{url_for('node', node_name=node.name)}}">{{ node.name }}</a></td>
-              <td>
-                {% if node.unreported_time != None or node.status != 'unreported' %}
-                  <a class="btn btn-small btn-primary btn-lastreport" href="{{url_for('report_latest', node_name=node.name)}}">Latest Report</a>
-                {% else %}
-                  <a class="btn btn-small btn-lastreport"> No Report </a>
+      <h2>Nodes status detail ({{nodes|length}})</h2>
+      <table class='ui compact basic table dashboard'>
+        <thead>
+          <tr>
+            <th class="five wide">Status</th>
+            <th class="ten wide">Hostname</th>
+            <th class="one wide"></th>
+          </tr>
+        </thead>
+        <tbody class="searchable">
+          {% for node in nodes %}
+          {% if node.status != 'unchanged' %}
+          <tr>
+            <td>
+              <a class="ui small status label
+                {% if node.status == 'failed' %}
+                  red
+                {% elif node.status == 'changed' %}
+                  green
+                {% elif node.status == 'unreported' %}
+                  black
                 {% endif %}
-              </td>
-            </tr>
-              {% endif %}
-            {% endfor %}
-          </tbody>
-        </table>
+                " href="{{url_for('report_latest', node_name=node.name)}}">
+                  {{node.status}}
+                </a>
+                {% if node.status=='unreported'%}
+                  <span class="ui small label status"> {{ node.unreported_time }} </label>
+                {% else %}
+                   {% if node.events['failures'] %}<span class="ui small count label red">{{node.events['failures']}}</span>{% else %}<span class="ui small count label">0</span>{% endif%}
+                   {% if node.events['successes'] %}<span class="ui small count label green">{{node.events['successes']}}</span>{% else %}<span class="ui small count label">0</span>{% endif%}
+                {% endif %}
+            </td>
+            <td>
+              <a href="{{url_for('node', node_name=node.name)}}">{{ node.name }}</a>
+            </td>
+            <td>
+              <a title="Latest Report" href="{{url_for('report_latest', node_name=node.name)}}">
+                <i class="large tasks purple icon"></i>
+              </a>
+            </td>
+          </tr>
+          {% endif %}
+          {% endfor %}
+        </tbody>
+      </table>
       {% else %}
-        <h2>Nodes status detail</h2>
-        <div class="alert alert-info">
-          Nothing seems to be changing.
-        </div>
+      <h2>Nodes status detail</h2>
+      <div class="ui info message">
+        Nothing seems to be changing.
+      </div>
       {% endif %}
     </div>
   </div>
 </div>
-{% endblock row_fluid %}
+{% endblock content %}

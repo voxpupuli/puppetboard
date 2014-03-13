@@ -1,7 +1,7 @@
 {% extends 'layout.html' %}
 {% block content %}
 <h1>Summary</h1>
-<table class='table table-striped'>
+<table class='ui basic table'>
   <thead>
     <tr>
       <th>Hostname</th>
@@ -27,7 +27,7 @@
 </table>
 
 <h1>Events</h1>
-<table class='table table-striped table-condensed'>
+<table class='ui basic table compact'>
   <thead>
     <tr>
       <th>Resource</th>
@@ -39,22 +39,22 @@
   <tbody>
     {% for event in events %}
     {% if not event.failed and event.item['old'] != event.item['new'] %}
-      <tr id='event-{{loop.index}}' class='success event'>
+      <tr id='event-{{loop.index}}' class='positive'>
     {% elif event.failed %}
-      <tr id='event-{{loop.index}}' class='error event'>
+      <tr id='event-{{loop.index}}' class='error'>
     {% endif %}
       <td>{{event.item['type']}}[{{event.item['title']}}]</td>
       <td>{{event.status}}</td>
       <td>{{event.item['old']}}</td>
       <td>{{event.item['new']}}</td>
     </tr>
-    <tr>
+    {#    <tr>
       <td class='message' colspan='4'>
         <div id='message-event-{{loop.index}}'>
           {{event.item['message']}}
         </div>
       </td>
-    </tr>
+    </tr>#}
     {% endfor %}
   </tbody>
 </table>
