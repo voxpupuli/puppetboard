@@ -4,7 +4,7 @@ body {
 }
 
 a {
-  color: #564F8A;
+  color: #2C3E50;
   text-decoration: none;
 }
 
@@ -54,4 +54,12 @@ th.tablesorter-headerDesc::after {
 
 .absolute div {
   padding: 1em;
+}
+
+.ui.menu.darkblue {
+  background-color:#2C3E50;
+}
+
+.ui.darkblue.header, i.darkblue {
+  color:#2C3E50;
 }
