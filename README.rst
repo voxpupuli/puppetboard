@@ -206,7 +206,7 @@ First we need to create the necessary directories:
 Copy Puppetboard's ``default_settings.py`` to the newly created puppetboard
 directory and name the file ``settings.py``. This file will be available
 at the path Puppetboard was installed, for example:
-``/usr/local/lib/python2.7/lib/dist-packages/puppetboard/default_settings.py``.
+``/usr/local/lib/pythonX.Y/lib/dist-packages/puppetboard/default_settings.py``.
 
 Change the settings that need changing to match your environment and delete
 or comment with a ``#`` the rest of the entries.
@@ -241,9 +241,9 @@ Here is a sample configuration for Debian and Ubuntu:
         ErrorLog /var/log/apache2/puppetboard.error.log
         CustomLog /var/log/apache2/puppetboard.access.log combined
 
-        Alias /static /usr/local/lib/python2.7/dist-packages/puppetboard/static
+        Alias /static /usr/local/lib/pythonX.Y/dist-packages/puppetboard/static
 
-        <Directory /usr/local/lib/python2.7/dist-packages/puppetboard>
+        <Directory /usr/local/lib/pythonX.Y/dist-packages/puppetboard>
             WSGIProcessGroup puppetboard
             WSGIApplicationGroup %{GLOBAL}
             Order deny,allow
@@ -262,9 +262,9 @@ Here is a sample configuration for Fedora:
         ErrorLog /var/log/httpd/puppetboard.error.log
         CustomLog /var/log/httpd/puppetboard.access.log combined
 
-        Alias /static /usr/lib/python2.7/site-packages/puppetboard/static
+        Alias /static /usr/lib/pythonX.Y/site-packages/puppetboard/static
 
-        <Directory /usr/lib/python2.7/site-packages/puppetboard>
+        <Directory /usr/lib/pythonX.Y/site-packages/puppetboard>
             WSGIProcessGroup puppetboard
             WSGIApplicationGroup %{GLOBAL}
             Require all granted
@@ -272,9 +272,9 @@ Here is a sample configuration for Fedora:
     </VirtualHost>
 
 
-Note the directory path, it's the path to where pip installed Puppetboard. We
-also alias the ``/static`` path so that Apache will serve the static files
-like the included CSS and Javascript.
+Note the directory path, it's the path to where pip installed Puppetboard; X.Y
+must be replaced with your python version. We also alias the ``/static`` path 
+so that Apache will serve the static files like the included CSS and Javascript.
 
 Apache + mod_passenger
 ^^^^^^^^^^^^^^^^^^^^^^
@@ -296,7 +296,7 @@ First we need to create the necessary directories:
 Copy Puppetboard's ``default_settings.py`` to the newly created puppetboard
 directory and name the file ``settings.py``. This file will be available
 at the path Puppetboard was installed, for example:
-``/usr/local/lib/python2.7/lib/dist-packages/puppetboard/default_settings.py``.
+``/usr/local/lib/pythonX.Y/lib/dist-packages/puppetboard/default_settings.py``.
 
 Change the settings that need changing to match your environment and delete
 or comment with a ``#`` the rest of the entries.
@@ -340,7 +340,7 @@ Now the only thing left to do is configure Apache:
        CustomLog /var/log/apache2/puppetboard.access.log combined
 
        RackAutoDetect On
-       Alias /static /usr/local/lib/python2.7/dist-packages/puppetboard/static
+       Alias /static /usr/local/lib/pythonX.Y/dist-packages/puppetboard/static
    </VirtualHost>
 
 Note the ``/static`` alias path, it's the path to where pip installed
@@ -366,7 +366,7 @@ First we need to create the necessary directories:
 Copy Puppetboard's ``default_settings.py`` to the newly created puppetboard
 directory and name the file ``settings.py``. This file will be available
 at the path Puppetboard was installed, for example:
-``/usr/local/lib/python2.7/lib/dist-packages/puppetboard/default_settings.py``.
+``/usr/local/lib/pythonX.Y/lib/dist-packages/puppetboard/default_settings.py``.
 
 Change the settings that need changing to match your environment and delete
 or comment with a ``#`` the rest of the entries.
@@ -411,7 +411,7 @@ The last thing we need to do is configure nginx to proxy the requests:
        charset     utf-8;
 
        location /static {
-           alias /usr/local/lib/python2.7/dist-packages/puppetboard/static;
+           alias /usr/local/lib/pythonX.Y/dist-packages/puppetboard/static;
        }
 
        location / {
