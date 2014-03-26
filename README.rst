@@ -55,8 +55,9 @@ This will install Puppetboard and take care of the dependencies. If you
 do this Puppetboard will be installed in the so called site-packages or
 dist-packages of your Python distribution.
 
-The complete path on Debian systems would be:
-``/usr/local/lib/python2.X/lib/dist-packages/puppetboard``.
+The complete path on Debian and Ubuntu systems would be ``/usr/local/lib/pythonX.Y/lib/dist-packages/puppetboard`` and on Fedora would be ``/usr/lib/pythonX.Y/lib/site-packages/puppetboard``
+
+where X and Y are replaced by your major and minor python versions.
 
 You will need this path in order to configure your HTTPD and WSGI-capable
 application server.
@@ -201,12 +202,11 @@ First we need to create the necessary directories:
 .. code-block:: bash
 
    $ mkdir -p /var/www/puppetboard
-   $ chown www-data:www-data /var/www/puppetboard
 
 Copy Puppetboard's ``default_settings.py`` to the newly created puppetboard
 directory and name the file ``settings.py``. This file will be available
 at the path Puppetboard was installed, for example:
-``/usr/local/lib/python2.X/lib/dist-packages/puppetboard/default_settings.py``.
+``/usr/local/lib/pythonX.Y/lib/dist-packages/puppetboard/default_settings.py``.
 
 Change the settings that need changing to match your environment and delete
 or comment with a ``#`` the rest of the entries.
@@ -226,9 +226,11 @@ puppetboard directory:
     os.environ['PUPPETBOARD_SETTINGS'] = '/var/www/puppetboard/settings.py'
     from puppetboard.app import app as application
 
-Make sure this file is owned by the user and group the webserver runs as.
+Make sure this file is readable by the user the webserver runs as.
 
-The last thing we need to do is configure Apache:
+The last thing we need to do is configure Apache.
+
+Here is a sample configuration for Debian and Ubuntu:
 
 .. code-block:: apache
 
@@ -239,9 +241,9 @@ The last thing we need to do is configure Apache:
         ErrorLog /var/log/apache2/puppetboard.error.log
         CustomLog /var/log/apache2/puppetboard.access.log combined
 
-        Alias /static /usr/local/lib/python2.X/dist-packages/puppetboard/static
+        Alias /static /usr/local/lib/pythonX.Y/dist-packages/puppetboard/static
 
-        <Directory /usr/local/lib/python2.X/dist-packages/puppetboard>
+        <Directory /usr/local/lib/pythonX.Y/dist-packages/puppetboard>
             WSGIProcessGroup puppetboard
             WSGIApplicationGroup %{GLOBAL}
             Order deny,allow
@@ -249,9 +251,30 @@ The last thing we need to do is configure Apache:
         </Directory>
     </VirtualHost>
 
-Note the directory path, it's the path to where pip installed Puppetboard. We
-also alias the ``/static`` path so that Apache will serve the static files
-like the included CSS and Javascript.
+Here is a sample configuration for Fedora:
+
+.. code-block:: apache
+
+    <VirtualHost *:80>
+        ServerName puppetboard.example.tld
+        WSGIDaemonProcess puppetboard user=apache group=apache threads=5
+        WSGIScriptAlias / /var/www/puppetboard/wsgi.py
+        ErrorLog /var/log/httpd/puppetboard.error.log
+        CustomLog /var/log/httpd/puppetboard.access.log combined
+
+        Alias /static /usr/lib/pythonX.Y/site-packages/puppetboard/static
+
+        <Directory /usr/lib/pythonX.Y/site-packages/puppetboard>
+            WSGIProcessGroup puppetboard
+            WSGIApplicationGroup %{GLOBAL}
+            Require all granted
+        </Directory>
+    </VirtualHost>
+
+
+Note the directory path, it's the path to where pip installed Puppetboard; X.Y
+must be replaced with your python version. We also alias the ``/static`` path 
+so that Apache will serve the static files like the included CSS and Javascript.
 
 Apache + mod_passenger
 ^^^^^^^^^^^^^^^^^^^^^^
@@ -269,12 +292,11 @@ First we need to create the necessary directories:
 .. code-block:: bash
 
    $ mkdir -p /var/www/puppetboard/{tmp,public}
-   $ chown -R www-data:www-data /var/www/puppetboard
 
 Copy Puppetboard's ``default_settings.py`` to the newly created puppetboard
 directory and name the file ``settings.py``. This file will be available
 at the path Puppetboard was installed, for example:
-``/usr/local/lib/python2.X/lib/dist-packages/puppetboard/default_settings.py``.
+``/usr/local/lib/pythonX.Y/lib/dist-packages/puppetboard/default_settings.py``.
 
 Change the settings that need changing to match your environment and delete
 or comment with a ``#`` the rest of the entries.
@@ -318,7 +340,7 @@ Now the only thing left to do is configure Apache:
        CustomLog /var/log/apache2/puppetboard.access.log combined
 
        RackAutoDetect On
-       Alias /static /usr/local/lib/python2.X/dist-packages/puppetboard/static
+       Alias /static /usr/local/lib/pythonX.Y/dist-packages/puppetboard/static
    </VirtualHost>
 
 Note the ``/static`` alias path, it's the path to where pip installed
@@ -340,12 +362,11 @@ First we need to create the necessary directories:
 .. code-block:: bash
 
    $ mkdir -p /var/www/puppetboard
-   $ chown www-data:www-data /var/www/puppetboard
 
 Copy Puppetboard's ``default_settings.py`` to the newly created puppetboard
 directory and name the file ``settings.py``. This file will be available
 at the path Puppetboard was installed, for example:
-``/usr/local/lib/python2.X/lib/dist-packages/puppetboard/default_settings.py``.
+``/usr/local/lib/pythonX.Y/lib/dist-packages/puppetboard/default_settings.py``.
 
 Change the settings that need changing to match your environment and delete
 or comment with a ``#`` the rest of the entries.
@@ -390,7 +411,7 @@ The last thing we need to do is configure nginx to proxy the requests:
        charset     utf-8;
 
        location /static {
-           alias /usr/local/lib/python2.X/dist-packages/puppetboard/static;
+           alias /usr/local/lib/pythonX.Y/dist-packages/puppetboard/static;
        }
 
        location / {
