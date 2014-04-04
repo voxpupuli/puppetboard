@@ -427,6 +427,57 @@ CSS and Javascript.
 Because nginx natively supports the uwsgi protocol we use ``uwsgi_pass``
 instead of the traditional ``proxy_pass``.
 
+nginx + gunicorn
+^^^^^^^^^^^^^
+You can use gunicorn instead of uwsgi if you prefer, the process doesn't 
+differ too much. As we can't use ``uwsgi_pass`` with gunicorn, the nginx configuration file is going to differ a bit:
+
+.. code-block:: nginx
+
+    upstream puppetboard {
+        server 127.0.0.1:9090;
+    }
+
+    server {
+        listen      80;
+        server_name puppetboard.example.tld;
+        charset     utf-8;
+    
+        location /static {
+            alias /usr/local/lib/pythonX.Y/dist-packages/puppetboard/static;
+        }
+    
+        location / {
+            add_header Access-Control-Allow-Origin *;
+            proxy_pass_header Server;
+            proxy_set_header Host $http_host;
+            proxy_redirect off;
+            proxy_set_header X-Real-IP $remote_addr;
+            proxy_set_header X-Scheme $scheme;
+            proxy_connect_timeout 10;
+            proxy_read_timeout 10;
+            proxy_pass 127.0.0.1:9090;
+        }
+    }
+
+Now, for running it with gunicorn:
+
+.. code-block:: bash
+
+   $ cd /usr/local/lib/pythonX.Y/dist-packages/puppetboard
+   $ gunicorn -b 127.0.0.1:9090 puppetboard.app:app
+
+As we may want to serve in the background, and we need ``PUPPETBOARD_SETTINGS`` as an environment variable, is recommendable to run this under supervisor. An example supervisor config with basic settings is the following:
+
+.. code-block:: ini
+
+    [program:puppetboard]
+    command=gunicorn -b 127.0.0.1:9090 puppetboard.app:app
+    user=www-data
+    stdout_logfile=/var/log/supervisor/puppetboard/puppetboard.out
+    stderr_logfile=/var/log/supervisor/puppetboard/puppetboard.err
+    environment=PUPPETBOARD_SETTINGS="/var/www/puppetboard/settings.py"
+
 Security
 --------
 
