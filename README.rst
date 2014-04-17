@@ -313,7 +313,7 @@ created puppetboard directory:
     import os
     import logging
 
-    logging.basicConfig(filename=/path/to/file/for/logging, level=logging.INFO)
+    logging.basicConfig(filename='/path/to/file/for/logging', level=logging.INFO)
 
     # Needed if a settings.py file exists
     os.environ['PUPPETBOARD_SETTINGS'] = '/var/www/puppetboard/settings.py'
