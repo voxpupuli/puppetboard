@@ -1,3 +1,4 @@
+{% import '_macros.html' as macros %}
 <!DOCTYPE html>
 <html lang="en">
   <head>
@@ -34,11 +35,7 @@
       <div class="one wide column"></div>
     </div>
 
-    <footer class="ui absolute fixed bottom">
-      <div>
-      Copyright © 2013-2014 <a href="https://github.com/daenney">Daniele Sluijters</a>. <span style="float:right">Live from PuppetDB.</span>
-    </div>
-    </footer>
+      {{ macros.vanity_bar(vanity_bar) }}
 
     <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
     <script src="//cdnjs.cloudflare.com/ajax/libs/semantic-ui/0.12.0/javascript/semantic.min.js"></script>

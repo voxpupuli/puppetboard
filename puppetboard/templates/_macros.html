@@ -146,3 +146,12 @@
   </tbody>
 </table>
 {%- endmacro %}
+{% macro vanity_bar(vanity_bar) -%}
+{% if vanity_bar %} 
+<footer class="ui absolute fixed bottom">
+  <div>
+  Copyright © 2013-2014 <a href="https://github.com/daenney">Daniele Sluijters</a>. <span style="float:right">Live from PuppetDB.</span>
+</div>
+</footer>
+{% endif %}
+{%- endmacro %}

@@ -58,29 +58,34 @@ def stream_template(template_name, **context):
 
 @app.errorhandler(400)
 def bad_request(e):
-    return render_template('400.html'), 400
+    return render_template('400.html',
+    vanity_bar=app.config['VANITY_BAR']), 400
 
 
 @app.errorhandler(403)
 def bad_request(e):
-    return render_template('403.html'), 400
+    return render_template('403.html',
+    vanity_bar=app.config['VANITY_BAR']), 404
 
 
 @app.errorhandler(404)
 def not_found(e):
-    return render_template('404.html'), 404
+    return render_template('404.html',
+    vanity_bar=app.config['VANITY_BAR']), 404
 
 
 @app.errorhandler(412)
 def precond_failed(e):
     """We're slightly abusing 412 to handle missing features
     depending on the API version."""
-    return render_template('412.html'), 412
+    return render_template('412.html',
+    vanity_bar=app.config['VANITY_BAR']), 412
 
 
 @app.errorhandler(500)
 def server_error(e):
-    return render_template('500.html'), 500
+    return render_template('500.html',
+    vanity_bar=app.config['VANITY_BAR']), 500
 
 
 @app.route('/')
@@ -135,7 +140,8 @@ def index():
         'index.html',
         metrics=metrics,
         nodes=nodes_overview,
-        stats=stats
+        stats=stats,
+        vanity_bar=app.config['VANITY_BAR']
         )
 
 
@@ -162,7 +168,8 @@ def nodes():
         else:
             nodes.append(node)
     return Response(stream_with_context(
-        stream_template('nodes.html', nodes=nodes)))
+        stream_template('nodes.html', nodes=nodes,
+        vanity_bar=app.config['VANITY_BAR'])))
 
 
 @app.route('/node/<node_name>')
@@ -178,6 +185,7 @@ def node(node_name):
         'node.html',
         node=node,
         facts=yield_or_stop(facts),
+        vanity_bar=app.config['VANITY_BAR'],
         reports=yield_or_stop(reports))
 
 
@@ -185,7 +193,8 @@ def node(node_name):
 def reports():
     """Doesn't do much yet but is meant to show something like the reports of
     the last half our, something like that."""
-    return render_template('reports.html')
+    return render_template('reports.html',
+        vanity_bar=app.config['VANITY_BAR'])
 
 
 @app.route('/reports/<node>')
@@ -197,6 +206,7 @@ def reports_node(node):
     return render_template(
         'reports_node.html',
         reports=reports,
+        vanity_bar=app.config['VANITY_BAR'],
         nodename=node)
 
 
@@ -204,7 +214,7 @@ def reports_node(node):
 def report_latest(node_name):
     """Redirect to the latest report of a given node. This is a workaround
     as long as PuppetDB can't filter reports for latest-report? field. This
-    feature has been requested: http://projects.puppetlabs.com/issues/21554
+    feature has been requested: https://tickets.puppetlabs.com/browse/PDB-203
     """
     node = get_or_abort(puppetdb.node, node_name)
     reports = get_or_abort(puppetdb._query, 'reports',
@@ -231,6 +241,7 @@ def report(node, report_id):
             return render_template(
                 'report.html',
                 report=report,
+                vanity_bar=app.config['VANITY_BAR'],
                 events=yield_or_stop(events))
     else:
         abort(404)
@@ -249,7 +260,9 @@ def facts():
         facts_dict[letter] = letter_list
 
     sorted_facts_dict = sorted(facts_dict.items())
-    return render_template('facts.html', facts_dict=sorted_facts_dict)
+    return render_template('facts.html',
+        vanity_bar=app.config['VANITY_BAR'],
+        facts_dict=sorted_facts_dict)
 
 
 @app.route('/fact/<fact>')
@@ -262,6 +275,7 @@ def fact(fact):
     return Response(stream_with_context(stream_template(
         'fact.html',
         name=fact,
+        vanity_bar=app.config['VANITY_BAR'],
         facts=localfacts)))
 
 
@@ -274,6 +288,7 @@ def fact_value(fact, value):
         'fact.html',
         name=fact,
         value=value,
+        vanity_bar=app.config['VANITY_BAR'],
         facts=localfacts)
 
 
@@ -295,8 +310,12 @@ def query():
                 puppetdb._query,
                 form.endpoints.data,
                 query=query)
-            return render_template('query.html', form=form, result=result)
-        return render_template('query.html', form=form)
+            return render_template('query.html', form=form, 
+                vanity_bar=app.config['VANITY_BAR'],
+                result=result)
+        return render_template('query.html', 
+            vanity_bar=app.config['VANITY_BAR'],
+            form=form)
     else:
         log.warn('Access to query interface disabled by administrator..')
         abort(403)
@@ -307,7 +326,9 @@ def metrics():
     metrics = get_or_abort(puppetdb._query, 'metrics', path='mbeans')
     for key, value in metrics.items():
         metrics[key] = value.split('/')[3]
-    return render_template('metrics.html', metrics=sorted(metrics.items()))
+    return render_template('metrics.html', 
+        vanity_bar=app.config['VANITY_BAR'],
+        metrics=sorted(metrics.items()))
 
 
 @app.route('/metric/<metric>')
@@ -317,4 +338,5 @@ def metric(metric):
     return render_template(
         'metric.html',
         name=name,
+        vanity_bar=app.config['VANITY_BAR'],
         metric=sorted(metric.items()))
