@@ -28,17 +28,6 @@ def get_or_abort(func, *args, **kwargs):
         abort(204)
 
 
-def ten_reports(reports):
-    """Helper to yield the first then reports from the reports generator.
-
-    This is an ugly solution at best...
-    """
-    for count, report in enumerate(reports):
-        if count == 10:
-            raise StopIteration
-        yield report
-
-
 def limit_reports(reports, limit):
     """Helper to yield a number of from the reports generator.
 
