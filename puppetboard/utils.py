@@ -39,6 +39,16 @@ def ten_reports(reports):
         yield report
 
 
+def limit_reports(reports, limit):
+    """Helper to yield a number of from the reports generator.
+
+    This is an ugly solution at best...
+    """
+    for count, report in enumerate(reports):
+        if count == limit:
+            raise StopIteration
+        yield report
+
 def yield_or_stop(generator):
     """Similar in intent to get_or_abort this helper will iterate over our
     generators and handle certain errors.

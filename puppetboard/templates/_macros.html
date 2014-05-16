@@ -95,9 +95,13 @@
 </script>
 {%- endmacro %}
 
-{% macro reports_table(reports, nodename, condensed=False, hash_truncate=False, show_conf_col=True, show_agent_col=True, show_host_col=True) -%}
+
+
+{% macro reports_table(reports, nodename, reports_count, condensed=False, hash_truncate=False, show_conf_col=True, show_agent_col=True, show_host_col=True) -%}
 <div class="ui info message">
-  Only showing the last ten reports.
+
+  Only showing the last {{reports_count}} reports.
+
 </div>
 <table class='ui table basic {% if condensed %}compact{% endif %}'>
   <thead>

@@ -28,7 +28,7 @@
     </div>
     <div class='row'>
       <h1>Reports</h1>
-      {{ macros.reports_table(reports, node.name, condensed=True, hash_truncate=True, show_conf_col=False, show_agent_col=False, show_host_col=False)}}
+      {{ macros.reports_table(reports, node.name, reports_count, condensed=True, hash_truncate=True, show_conf_col=False, show_agent_col=False, show_host_col=False)}}
     </div>
   </div>
   <div class='column'>
