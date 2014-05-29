@@ -1,7 +1,7 @@
 {% extends 'layout.html' %}
 {% block content %}
 <div class="ui vertical grid">
-  <div class="three column row">
+  <div class="four column row">
     <div class="column">
       <a href="nodes?status=failed">
         <h1 class="ui red header no-margin-bottom">
@@ -10,6 +10,15 @@
         </h1>
       </a>
       <span>with status failed</span>
+    </div>
+    <div class="column">
+      <a href="nodes?status=noop">
+        <h1 class="ui header purple no-margin-bottom">
+          {{stats['noop']}}
+          <small>{% if stats['noop']== 1 %} node {% else %} nodes {% endif %}</small>
+        </h1>
+      </a>
+      <span>with status pending</span>
     </div>
     <div class="column">
       <a href="nodes?status=changed">
@@ -30,7 +39,9 @@
       <span>unreported in the last {{ config.UNRESPONSIVE_HOURS }} hours</span>
     </div>
   </div>
-  <div class="three column row">
+  <div class="four column row">
+    <div class="column">
+    </div>
     <div class="column">
       <h1 class="ui header darkblue no-margin-bottom">{{metrics['num_nodes']}}</h1>
       <span>Population</span>
@@ -70,6 +81,8 @@
                   green
                 {% elif node.status == 'unreported' %}
                   black
+                {% elif node.status == 'noop' %}
+                  blue
                 {% endif %}
                 " href="{{url_for('report_latest', node_name=node.name)}}">
                   {{node.status}}
