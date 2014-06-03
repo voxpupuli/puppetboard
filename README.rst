@@ -30,7 +30,7 @@ Word of caution
 
 Puppetboard is very, very young but it works fairly well.
 
-That being said a lot of the code is very exeprimental, just trying
+That being said a lot of the code is very experimental, just trying
 to figure out what works and what not, what we need to do different
 and what features we need on the PuppetDB side of things.
 
