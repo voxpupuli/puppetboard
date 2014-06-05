@@ -393,7 +393,7 @@ Now we need to start uwsgi:
 
 .. code-block:: bash
 
-   $ uwsgi --http :9090 --wsgi-file /var/www/puppetboard/wsgi.py
+   $ uwsgi --socket :9090 --wsgi-file /var/www/puppetboard/wsgi.py
 
 Feel free to change the port to something other than ``9090``.
 
