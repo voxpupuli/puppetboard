@@ -81,6 +81,10 @@ Native packages for your operating system will be provided in the near future.
 +------------------+-----------+--------------------------------------------+
 | CentOS/RHEL 6    | planned   |                                            |
 +------------------+-----------+--------------------------------------------+
+| OpenSuSE 12/13   | available | Maintained on `OpenSuSE Build Service`_    |
++------------------+-----------+--------------------------------------------+
+| SuSE LE 11 SP3   | available | Maintained on `OpenSuSE Build Service`_    |
++------------------+-----------+--------------------------------------------+
 | `ArchLinux`_     | available | Maintained by `Niels Abspoel`_             |
 +------------------+-----------+--------------------------------------------+
 | `OpenBSD`_       | available | Maintained by `Jasper Lievisse Adriaanse`_ |
@@ -90,6 +94,7 @@ Native packages for your operating system will be provided in the near future.
 .. _Niels Abspoel: https://github.com/aboe76
 .. _Jasper Lievisse Adriaanse: https://github.com/jasperla
 .. _OpenBSD: http://www.openbsd.org/cgi-bin/cvsweb/ports/www/puppetboard/
+.. _OpenSUSE Build Service: https://build.opensuse.org/package/show/systemsmanagement:puppet/python-puppetboard
 
 
 Development
@@ -273,7 +278,7 @@ Here is a sample configuration for Fedora:
 
 
 Note the directory path, it's the path to where pip installed Puppetboard; X.Y
-must be replaced with your python version. We also alias the ``/static`` path 
+must be replaced with your python version. We also alias the ``/static`` path
 so that Apache will serve the static files like the included CSS and Javascript.
 
 Apache + mod_passenger
@@ -429,7 +434,7 @@ instead of the traditional ``proxy_pass``.
 
 nginx + gunicorn
 ^^^^^^^^^^^^^
-You can use gunicorn instead of uwsgi if you prefer, the process doesn't 
+You can use gunicorn instead of uwsgi if you prefer, the process doesn't
 differ too much. As we can't use ``uwsgi_pass`` with gunicorn, the nginx configuration file is going to differ a bit:
 
 .. code-block:: nginx
@@ -442,11 +447,11 @@ differ too much. As we can't use ``uwsgi_pass`` with gunicorn, the nginx configu
         listen      80;
         server_name puppetboard.example.tld;
         charset     utf-8;
-    
+
         location /static {
             alias /usr/local/lib/pythonX.Y/dist-packages/puppetboard/static;
         }
-    
+
         location / {
             add_header Access-Control-Allow-Origin *;
             proxy_pass_header Server;
