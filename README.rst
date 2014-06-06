@@ -81,9 +81,9 @@ Native packages for your operating system will be provided in the near future.
 +------------------+-----------+--------------------------------------------+
 | CentOS/RHEL 6    | planned   |                                            |
 +------------------+-----------+--------------------------------------------+
-| OpenSuSE 12/13   | available | Maintained on `OpenSuSE Build Service`_    |
+| `OpenSuSE 12/13` | available | Maintained on `OpenSuSE Build Service`_    |
 +------------------+-----------+--------------------------------------------+
-| SuSE LE 11 SP3   | available | Maintained on `OpenSuSE Build Service`_    |
+| `SuSE LE 11 SP3` | available | Maintained on `OpenSuSE Build Service`_    |
 +------------------+-----------+--------------------------------------------+
 | `ArchLinux`_     | available | Maintained by `Niels Abspoel`_             |
 +------------------+-----------+--------------------------------------------+
@@ -94,7 +94,9 @@ Native packages for your operating system will be provided in the near future.
 .. _Niels Abspoel: https://github.com/aboe76
 .. _Jasper Lievisse Adriaanse: https://github.com/jasperla
 .. _OpenBSD: http://www.openbsd.org/cgi-bin/cvsweb/ports/www/puppetboard/
-.. _OpenSUSE Build Service: https://build.opensuse.org/package/show/systemsmanagement:puppet/python-puppetboard
+.. _OpenSuSE Build Service: https://build.opensuse.org/package/show/systemsmanagement:puppet/python-puppetboard
+.. _OpenSuSE 12/13: https://build.opensuse.org/package/show/systemsmanagement:puppet/python-puppetboard
+.. _SuSE LE 11 SP3: https://build.opensuse.org/package/show/systemsmanagement:puppet/python-puppetboard
 
 
 Development
