@@ -30,7 +30,7 @@ Word of caution
 
 Puppetboard is very, very young but it works fairly well.
 
-That being said a lot of the code is very exeprimental, just trying
+That being said a lot of the code is very experimental, just trying
 to figure out what works and what not, what we need to do different
 and what features we need on the PuppetDB side of things.
 
@@ -66,30 +66,37 @@ Packages
 ^^^^^^^^
 Native packages for your operating system will be provided in the near future.
 
-+------------------+-----------+--------------------------------------------+
-| OS               | Status    |                                            |
-+==================+===========+============================================+
-| Debian 6/Squeeze | planned   | Requires Backports                         |
-+------------------+-----------+--------------------------------------------+
-| Debian 7/Wheezy  | planned   |                                            |
-+------------------+-----------+--------------------------------------------+
-| Ubuntu 13.04     | planned   |                                            |
-+------------------+-----------+--------------------------------------------+
-| Ubuntu 13.10     | planned   |                                            |
-+------------------+-----------+--------------------------------------------+
-| CentOS/RHEL 5    | n/a       | Python 2.4                                 |
-+------------------+-----------+--------------------------------------------+
-| CentOS/RHEL 6    | planned   |                                            |
-+------------------+-----------+--------------------------------------------+
-| `ArchLinux`_     | available | Maintained by `Niels Abspoel`_             |
-+------------------+-----------+--------------------------------------------+
-| `OpenBSD`_       | available | Maintained by `Jasper Lievisse Adriaanse`_ |
-+------------------+-----------+--------------------------------------------+
++-------------------+-----------+--------------------------------------------+
+| OS                | Status    |                                            |
++===================+===========+============================================+
+| Debian 6/Squeeze  | planned   | Requires Backports                         |
++-------------------+-----------+--------------------------------------------+
+| Debian 7/Wheezy   | planned   |                                            |
++-------------------+-----------+--------------------------------------------+
+| Ubuntu 13.04      | planned   |                                            |
++-------------------+-----------+--------------------------------------------+
+| Ubuntu 13.10      | planned   |                                            |
++-------------------+-----------+--------------------------------------------+
+| CentOS/RHEL 5     | n/a       | Python 2.4                                 |
++-------------------+-----------+--------------------------------------------+
+| CentOS/RHEL 6     | planned   |                                            |
++-------------------+-----------+--------------------------------------------+
+| `OpenSuSE 12/13`_ | available | Maintained on `OpenSuSE Build Service`_    |
++-------------------+-----------+--------------------------------------------+
+| `SuSE LE 11 SP3`_ | available | Maintained on `OpenSuSE Build Service`_    |
++-------------------+-----------+--------------------------------------------+
+| `ArchLinux`_      | available | Maintained by `Niels Abspoel`_             |
++-------------------+-----------+--------------------------------------------+
+| `OpenBSD`_        | available | Maintained by `Jasper Lievisse Adriaanse`_ |
++-------------------+-----------+--------------------------------------------+
 
 .. _ArchLinux: https://aur.archlinux.org/packages/python2-puppetboard/
 .. _Niels Abspoel: https://github.com/aboe76
 .. _Jasper Lievisse Adriaanse: https://github.com/jasperla
 .. _OpenBSD: http://www.openbsd.org/cgi-bin/cvsweb/ports/www/puppetboard/
+.. _OpenSuSE Build Service: https://build.opensuse.org/package/show/systemsmanagement:puppet/python-puppetboard
+.. _OpenSuSE 12/13: https://build.opensuse.org/package/show/systemsmanagement:puppet/python-puppetboard
+.. _SuSE LE 11 SP3: https://build.opensuse.org/package/show/systemsmanagement:puppet/python-puppetboard
 
 
 Development
@@ -273,7 +280,7 @@ Here is a sample configuration for Fedora:
 
 
 Note the directory path, it's the path to where pip installed Puppetboard; X.Y
-must be replaced with your python version. We also alias the ``/static`` path 
+must be replaced with your python version. We also alias the ``/static`` path
 so that Apache will serve the static files like the included CSS and Javascript.
 
 Apache + mod_passenger
@@ -393,7 +400,7 @@ Now we need to start uwsgi:
 
 .. code-block:: bash
 
-   $ uwsgi --http :9090 --wsgi-file /var/www/puppetboard/wsgi.py
+   $ uwsgi --socket :9090 --wsgi-file /var/www/puppetboard/wsgi.py
 
 Feel free to change the port to something other than ``9090``.
 
@@ -429,7 +436,7 @@ instead of the traditional ``proxy_pass``.
 
 nginx + gunicorn
 ^^^^^^^^^^^^^
-You can use gunicorn instead of uwsgi if you prefer, the process doesn't 
+You can use gunicorn instead of uwsgi if you prefer, the process doesn't
 differ too much. As we can't use ``uwsgi_pass`` with gunicorn, the nginx configuration file is going to differ a bit:
 
 .. code-block:: nginx
@@ -442,11 +449,11 @@ differ too much. As we can't use ``uwsgi_pass`` with gunicorn, the nginx configu
         listen      80;
         server_name puppetboard.example.tld;
         charset     utf-8;
-    
+
         location /static {
             alias /usr/local/lib/pythonX.Y/dist-packages/puppetboard/static;
         }
-    
+
         location / {
             add_header Access-Control-Allow-Origin *;
             proxy_pass_header Server;

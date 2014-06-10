@@ -24,6 +24,8 @@
             green
           {% elif node.status == 'unreported' %}
             black
+          {% elif node.status == 'noop' %}
+            blue
           {% endif %}
           " href="{{url_for('report_latest', node_name=node.name)}}">
             {{node.status}}

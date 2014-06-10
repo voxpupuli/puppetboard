@@ -116,6 +116,7 @@ def index():
         'unchanged': 0,
         'failed': 0,
         'unreported': 0,
+	'noop': 0
         }
 
     for node in nodes:
@@ -125,6 +126,8 @@ def index():
             stats['changed'] += 1
         elif node.status == 'failed':
             stats['failed'] += 1
+        elif node.status == 'noop':
+            stats['noop'] += 1
         else:
             stats['unchanged'] += 1
 
