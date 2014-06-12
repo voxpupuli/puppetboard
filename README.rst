@@ -174,6 +174,17 @@ Other settings that might be interesting:
 
 .. _pypuppetdb documentation: http://pypuppetdb.readthedocs.org/en/v0.1.0/quickstart.html#ssl
 
+Puppet Enterprise
+-----------------
+
+Puppet Enterprise maintains a certificate white-list for which certificates
+are allowed to access data from PuppetDB. This whitelist is maintained in
+``/etc/puppetlabs/puppetdb/certificate-whitelist`` and you have to add the
+certificate name to that file.
+
+Afterwards you'll need to restart ``pe-puppetdb`` and you should be able to
+query PuppetDB freely now.
+
 Development
 -----------
 
