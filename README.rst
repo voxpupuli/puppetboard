@@ -630,12 +630,6 @@ Screenshots
    :height: 700
    :align: center
 
-.. image:: https://raw.github.com/nedap/puppetboard/master/screenshots/report_message.png
-   :alt: Report view with message
-   :width: 1024
-   :height: 700
-   :align: center
-
 .. image:: https://raw.github.com/nedap/puppetboard/master/screenshots/facts.png
    :alt: Facts view
    :width: 1024

@@ -21,7 +21,7 @@ from pypuppetdb import connect
 from puppetboard.forms import QueryForm
 from puppetboard.utils import (
     get_or_abort, yield_or_stop,
-    ten_reports, jsonprint
+    limit_reports, jsonprint
     )
 
 
@@ -176,12 +176,13 @@ def node(node_name):
     """
     node = get_or_abort(puppetdb.node, node_name)
     facts = node.facts()
-    reports = ten_reports(node.reports())
+    reports = limit_reports(node.reports(), app.config['REPORTS_COUNT'])
     return render_template(
         'node.html',
         node=node,
         facts=yield_or_stop(facts),
-        reports=yield_or_stop(reports))
+        reports=yield_or_stop(reports),
+        reports_count=app.config['REPORTS_COUNT'])
 
 
 @app.route('/reports')
@@ -195,12 +196,13 @@ def reports():
 def reports_node(node):
     """Fetches all reports for a node and processes them eventually rendering
     a table displaying those reports."""
-    reports = ten_reports(yield_or_stop(
-        puppetdb.reports('["=", "certname", "{0}"]'.format(node))))
+    reports = limit_reports(yield_or_stop(
+        puppetdb.reports('["=", "certname", "{0}"]'.format(node))), app.config['REPORTS_COUNT'])
     return render_template(
         'reports_node.html',
         reports=reports,
-        nodename=node)
+        nodename=node,
+        reports_count=app.config['REPORTS_COUNT'])
 
 
 @app.route('/report/latest/<node_name>')
