@@ -45,6 +45,20 @@ Puppetboard is now packaged and available on PyPi.
 Production
 ----------
 
+Puppet module
+^^^^^^^^^^^^^
+There is a `Puppet module`_ by `Spencer Krum`_ that takes care of installing Puppetboard for you.
+
+You can install it with:
+
+    puppet module install nibalizer-puppetboard
+
+.. _Spencer Krum: https://github.com/nibalize
+.. _Puppet module: https://forge.puppetlabs.com/nibalizer/puppetboard
+
+Manual
+^^^^^^
+
 To install it simply issue the following command:
 
 .. code-block:: bash
@@ -552,16 +566,7 @@ Some people have already started building things with and around Puppetboard.
 
 * https://github.com/hunner/puppetboard-vagrant
 
-`Spencer Krum`_ created a Puppet module to install Puppetboard with:
-
-* https://github.com/nibalizer/puppet-module-puppetboard
-
-You can install it with:
-
-    puppet module install nibalizer-puppetboard
-
 .. _Hunter Haugen: https://github.com/hunner
-.. _Spencer Krum: https://github.com/nibalizer
 
 Packages
 --------
