@@ -53,7 +53,7 @@ You can install it with:
 
     puppet module install nibalizer-puppetboard
 
-.. _Spencer Krum: https://github.com/nibalize
+.. _Spencer Krum: https://github.com/nibalizer
 .. _Puppet module: https://forge.puppetlabs.com/nibalizer/puppetboard
 
 Manual
