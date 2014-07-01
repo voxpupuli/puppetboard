@@ -27,7 +27,9 @@ from puppetboard.utils import (
 
 app = Flask(__name__)
 app.config.from_object('puppetboard.default_settings')
+graph_facts = app.config['GRAPH_FACTS']
 app.config.from_envvar('PUPPETBOARD_SETTINGS', silent=True)
+graph_facts += app.config['GRAPH_FACTS']
 app.secret_key = os.urandom(24)
 
 app.jinja_env.filters['jsonprint'] = jsonprint
@@ -116,7 +118,7 @@ def index():
         'unchanged': 0,
         'failed': 0,
         'unreported': 0,
-	'noop': 0
+        'noop': 0
         }
 
     for node in nodes:
@@ -263,10 +265,14 @@ def fact(fact):
     node for which this fact is known."""
     # we can only consume the generator once, lists can be doubly consumed
     # om nom nom
+    render_graph = False
+    if fact in graph_facts:
+        render_graph = True
     localfacts = [f for f in yield_or_stop(puppetdb.facts(name=fact))]
     return Response(stream_with_context(stream_template(
         'fact.html',
         name=fact,
+        render_graph=render_graph,
         facts=localfacts)))
 
 
