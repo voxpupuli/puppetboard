@@ -2,8 +2,7 @@
 {% import '_macros.html' as macros %}
 {% block content %}
 <h1>{{name}}{% if value %}/{{value}}{% endif %} ({{facts|length}})</h1>
-{#{{macros.facts_graph(facts, autofocus=True, show_node=True, margin_bottom=10)}}#
-{{macros.facts_graph_value(facts, autofocus=True, show_node=True, margin_bottom=10)}}#}
+{{macros.facts_graph(facts, autofocus=True, show_node=True, margin_bottom=10)}}
 {% if value %}
 {{macros.facts_table(facts, autofocus=True, show_node=True, show_value=False, margin_bottom=10)}}
 {% else %}
