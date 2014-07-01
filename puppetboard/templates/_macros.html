@@ -53,11 +53,16 @@
     value: 0,
     }
   ]
-  var fact_values = data.map(function(item) { return [item.label, item.value]; }).filter(function(item){return item[0];});
+  var fact_values = data.map(function(item) { return [item.label, item.value]; }).filter(function(item){return item[0];}).sort(function(a,b){return a[1] - b[1];});
+  var realdata = fact_values.slice(0, 15);
+  var otherdata = fact_values.slice(15);
+  if (otherdata.length > 0) {
+    realdata.push(["other", otherdata.reduce(function(a,b){return a + b[1];},0)]);
+  }
   var chart = c3.generate({
       bindto: '#factChart',
       data: {
-          columns: fact_values,
+          columns: realdata,
           type : 'pie',
       }
   });
