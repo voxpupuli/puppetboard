@@ -3,9 +3,22 @@
   <head>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Puppetboard</title>
-    <link href="//cdnjs.cloudflare.com/ajax/libs/semantic-ui/0.12.0/css/semantic.min.css" rel="stylesheet">
+    {% if config.OFFLINE_MODE %}
+    <link href="{{ url_for('static', filename='css/semantic.min.css')}}" rel="stylesheet">
+    <style>
+      @font-face {
+        font-family: 'Open Sans';
+        font-style: normal;
+        font-weight: 400;
+        src: local('Open Sans'), local('OpenSans'), url({{ url_for('static', filename='fonts/Open_Sans.woff')}}) format('woff');
+      }
+    </style>
+    <link href="{{ url_for('static', filename='css/jquery.tablesorter.filter.formatter.css')}}" rel="stylesheet">
+    {% else %}
+    <link href="//cdnjs.cloudflare.com/ajax/libs/semantic-ui/0.16.1/css/semantic.min.css" rel="stylesheet">
     <link href='//fonts.googleapis.com/css?family=Open+Sans' rel='stylesheet' type='text/css'>
-    <link href="//cdnjs.cloudflare.com/ajax/libs/jquery.tablesorter/2.13.3/css/filter.formatter.css" rel="stylesheet">
+    <link href="//cdnjs.cloudflare.com/ajax/libs/jquery.tablesorter/2.17.2/css/filter.formatter.css" rel="stylesheet">
+    {% endif %}
     <link href="{{ url_for('static', filename='css/puppetboard.css')}}" rel="stylesheet">
   </head>
 
@@ -40,13 +53,24 @@
     </div>
     </footer>
 
-    <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
-    <script src="//cdnjs.cloudflare.com/ajax/libs/semantic-ui/0.12.0/javascript/semantic.min.js"></script>
+    {% if config.OFFLINE_MODE %}
+    <script src="{{ url_for('static', filename='js/jquery.min.js')}}"></script>
+    <script src="{{ url_for('static', filename='js/semantic.min.js')}}"></script>
     {% if config.LOCALISE_TIMESTAMP %}
-      <script src="//cdnjs.cloudflare.com/ajax/libs/moment.js/2.5.1/moment.min.js"></script>
+      <script src="{{ url_for('static', filename='js/moment.min.js')}}"></script>
+    {% endif %}
+    <script src="{{url_for('static', filename='js/jquery.tablesorter.min.js')}}"></script>
+    {% else %}
+    <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/semantic-ui/0.16.1/javascript/semantic.min.js"></script>
+    {% if config.LOCALISE_TIMESTAMP %}
+      <script src="//cdnjs.cloudflare.com/ajax/libs/moment.js/2.7.0/moment.min.js"></script>
+    {% endif %}
+    <script src="//cdnjs.cloudflare.com/ajax/libs/jquery.tablesorter/2.17.2/jquery.tablesorter.min.js"></script>
+    {% endif %}
+    {% if config.LOCALISE_TIMESTAMP %}
       <script src="{{ url_for('static', filename='js/timestamps.js')}}"></script>
     {% endif %}
-    <script src="//cdnjs.cloudflare.com/ajax/libs/jquery.tablesorter/2.13.3/jquery.tablesorter.min.js"></script>
     <script src="{{url_for('static', filename='js/lists.js')}}"></script>
     <script src="{{url_for('static', filename='js/tables.js')}}"></script>
 
