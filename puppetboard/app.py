@@ -226,11 +226,15 @@ def report_latest(node_name):
 def report(node, report_id):
     """Displays a single report including all the events associated with that
     report and their status.
+
+    The report_id may be the puppetdb's report hash or the 
+    configuration_version. This allows for better integration
+    into puppet-hipchat.
     """
     reports = puppetdb.reports('["=", "certname", "{0}"]'.format(node))
 
     for report in reports:
-        if report.hash_ == report_id:
+        if report.hash_ == report_id or report.version == report_id:
             events = puppetdb.events('["=", "report", "{0}"]'.format(
                 report.hash_))
             return render_template(
