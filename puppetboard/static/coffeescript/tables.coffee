@@ -18,6 +18,13 @@ $('.dashboard').tablesorter(
     sortList: [[0, 1]]
 )
 
+$('.catalog').tablesorter(
+    headers:
+        1:
+            sorter: false
+    sortList: [[0, 0]]
+)
+
 $('input.filter-table').parent('div').removeClass('hide')
 $("input.filter-table").on "keyup", (e) ->
   rex = new RegExp($(this).val(), "i")
