@@ -27,9 +27,6 @@
   });
 
   $('.catalog').tablesorter({
-    headers: {
-      1: {sorter: false }
-    },
     sortList: [[0, 0]]
   })
 
