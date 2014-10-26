@@ -324,13 +324,6 @@ def metric(metric):
         name=name,
         metric=sorted(metric.items()))
 
-@app.route('/catalog')
-def catalog():
-    """The catalogs endpoint in PuppetDB requires a node name in the path.
-
-    If a user removes a node name from the URL return a 404"""
-    abort(404)
-
 @app.route('/catalog/<node_name>')
 def catalog_node(node_name):
     """Fetches from PuppetDB the compiled catalog of a given node."""
