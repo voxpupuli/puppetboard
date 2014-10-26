@@ -327,5 +327,9 @@ def metric(metric):
 @app.route('/catalog/<node_name>')
 def catalog_node(node_name):
     """Fetches from PuppetDB the compiled catalog of a given node."""
-    catalog = puppetdb.catalog(node=node_name)
-    return render_template('catalog.html', catalog=catalog)
+    if app.config['ENABLE_CATALOG']:
+        catalog = puppetdb.catalog(node=node_name)
+        return render_template('catalog.html', catalog=catalog)
+    else:
+        log.warn('Access to catalog interface disabled by administrator')
+        abort(403)
