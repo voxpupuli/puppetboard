@@ -38,4 +38,24 @@
     {% endfor %}
   </tbody>
 </table>
+
+<h1>Edges</h1>
+<table class="ui basic table compact catalog">
+  <thead>
+    <tr>
+      <th>Source</th>
+      <th>Relationship</th>
+      <th>Target</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for edge in catalog.get_edges() %}
+    <tr>
+      <td>{{edge.source}}</td>
+      <td>{{edge.relationship}}</td>
+      <td>{{edge.target}}</td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
 {% endblock content %}
