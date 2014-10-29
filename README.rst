@@ -165,6 +165,7 @@ least have to change the following settings:
 By default PuppetDB requires SSL to be used when a non-local client wants to
 connect. Therefor you'll also have to supply the following settings:
 
+* ``PUPPETDB_SSL_VERIFY = /path/to/ca/keyfile.pem``
 * ``PUPPETDB_KEY = /path/to/private/keyfile.pem``
 * ``PUPPETDB_CERT = /path/to/public/keyfile.crt``
 
