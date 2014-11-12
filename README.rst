@@ -223,6 +223,7 @@ scenarios:
 * Apache + mod_wsgi
 * Apache + mod_passenger
 * uwsgi + nginx
+* nginx + gunicorn
 
 If you deploy Puppetboard through a different setup we'd welcome a pull
 request that adds the instructions to this section.
