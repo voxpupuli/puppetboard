@@ -209,7 +209,7 @@ def reports_node(node):
 def report_latest(node_name):
     """Redirect to the latest report of a given node. This is a workaround
     as long as PuppetDB can't filter reports for latest-report? field. This
-    feature has been requested: http://projects.puppetlabs.com/issues/21554
+    feature has been requested: https://tickets.puppetlabs.com/browse/PDB-203
     """
     node = get_or_abort(puppetdb.node, node_name)
     reports = get_or_abort(puppetdb._query, 'reports',
