@@ -36,6 +36,7 @@
       ('inventory', 'Inventory'),
       ('catalogs', 'Catalogs'),
       ('query', 'Query'),
+      ('radiator', 'Radiator')
       ] %}
       <a {% if endpoint == request.endpoint %} class="active item" {% else %} class="item" {% endif %}
         href="{{ url_for(endpoint, env=current_env) }}">{{ caption }}</a>
