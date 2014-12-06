@@ -222,7 +222,7 @@ scenarios:
 
 * Apache + mod_wsgi
 * Apache + mod_passenger
-* uwsgi + nginx
+* nginx + uwsgi
 * nginx + gunicorn
 
 If you deploy Puppetboard through a different setup we'd welcome a pull
@@ -511,6 +511,33 @@ As we may want to serve in the background, and we need ``PUPPETBOARD_SETTINGS`` 
     stdout_logfile=/var/log/supervisor/puppetboard/puppetboard.out
     stderr_logfile=/var/log/supervisor/puppetboard/puppetboard.err
     environment=PUPPETBOARD_SETTINGS="/var/www/puppetboard/settings.py"
+
+
+For newer systems with systemd (for example CentOS7), you can use the following service file (``/usr/lib/systemd/system/gunicorn@.service``):
+
+.. code-block:: ini
+
+    [Unit]
+    Description=gunicorn daemon for %i
+    After=network.target
+
+    [Service]
+    ExecStart=/usr/bin/gunicorn --config /etc/sysconfig/gunicorn/%i.conf %i
+    ExecReload=/bin/kill -s HUP $MAINPID
+    PrivateTmp=true
+    User=gunicorn
+    Group=gunicorn
+
+And the corresponding gunicorn config (``/etc/sysconfig/gunicorn/puppetboard.app\:app.conf``):
+
+.. code-block:: ini
+
+    import multiprocessing
+
+    bind    = '127.0.0.1:9090'
+    workers = multiprocessing.cpu_count() * 2 + 1
+    chdir   = '/usr/lib/python2.7/site-packages/puppetboard'
+    raw_env = ['PUPPETBOARD_SETTINGS=/var/www/puppetboard/settings.py', 'http_proxy=']
 
 Security
 --------
