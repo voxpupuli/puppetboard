@@ -55,6 +55,36 @@
                 </div>
             </td>
         </tr>
+        <tr class='noop '>
+            <td class='count_column'>
+                <span class='count'>{{stats['noop']}}</span>
+            </td>
+            <td>
+                <div>
+                    <p class='label'>
+                        <span>No-Op</span>
+                    </p>
+                    <p class='percent' style='width:{{stats['noop_percent']}}%'>
+                        <span>No-Op</span>
+                    </p>
+                </div>
+            </td>
+        </tr>
+        <tr class='skipped '>
+            <td class='count_column'>
+                <span class='count'>{{stats['skipped']}}</span>
+            </td>
+            <td>
+                <div>
+                    <p class='label'>
+                        <span>Skipped</span>
+                    </p>
+                    <p class='percent' style='width:{{stats['skipped_percent']}}%'>
+                        <span>Skipped</span>
+                    </p>
+                </div>
+            </td>
+        </tr>
         <tr class='unchanged '>
             <td class='count_column'>
                 <span class='count'>{{stats['unchanged']}}</span>

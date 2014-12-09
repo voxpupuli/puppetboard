@@ -44,7 +44,7 @@ ul {
 }
 
 body.radiator_controller {
-  font-size: 1141%;
+  font-size: 1000%;
   line-height: 1;
   font-family: "Helvetica Neue",Arial,Helvetica,sans-serif;
   background-color: #000; }
@@ -75,12 +75,12 @@ body.radiator_controller {
       color: #cc2211; }
     body.radiator_controller table.node_summary tr.failed .label {
       border-left: 1px #333 dashed; }
-    body.radiator_controller table.node_summary tr.pending .percent {
+    body.radiator_controller table.node_summary tr.noop .percent {
       background-color: #ee7722;
       border-radius: 0 3px 3px 0; }
-    body.radiator_controller table.node_summary tr.pending .label, body.radiator_controller table.node_summary tr.pending .count {
+    body.radiator_controller table.node_summary tr.noop .label, body.radiator_controller table.node_summary tr.noop .count {
       color: #ee7722; }
-    body.radiator_controller table.node_summary tr.pending .label {
+    body.radiator_controller table.node_summary tr.noop .label {
       border-left: 1px #333 dashed; }
     body.radiator_controller table.node_summary tr.changed .percent {
       background-color: #006699;
@@ -96,12 +96,12 @@ body.radiator_controller {
       color: #009933; }
     body.radiator_controller table.node_summary tr.unchanged .label {
       border-left: 1px #333 dashed; }
-    body.radiator_controller table.node_summary tr.unreported .percent {
+    body.radiator_controller table.node_summary tr.skipped .percent {
       background-color: #aaaaaa;
       border-radius: 0 3px 3px 0; }
-    body.radiator_controller table.node_summary tr.unreported .label, body.radiator_controller table.node_summary tr.unreported .count {
+    body.radiator_controller table.node_summary tr.skipped .label, body.radiator_controller table.node_summary tr.skipped .count {
       color: #aaaaaa; }
-    body.radiator_controller table.node_summary tr.unreported .label {
+    body.radiator_controller table.node_summary tr.skipped .label {
       border-left: 1px #333 dashed; }
     body.radiator_controller table.node_summary tr.total {
       color: #fff;

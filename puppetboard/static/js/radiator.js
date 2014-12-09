@@ -9,9 +9,9 @@ function resizeMe() {
 
   var newFontSize;
   if (percentageHeight < percentageWidth) {
-    newFontSize = Math.floor("1141" * percentageHeight) - 30;
+    newFontSize = Math.floor("810" * percentageHeight) - 30;
   } else {
-    newFontSize = Math.floor("1141" * percentageWidth) - 30;
+    newFontSize = Math.floor("810" * percentageWidth) - 30;
   }
   $("body").css("font-size", newFontSize + "%")
 }
