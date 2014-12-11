@@ -10,21 +10,6 @@
 </head>
 <body class='radiator_controller radiator_index_action no-sidebar'>
     <table class='node_summary'>
-        <tr class='unreported '>
-            <td class='count_column'>
-                <span class='count'>{{stats['unreported']}}</span>
-            </td>
-            <td>
-                <div>
-                    <p class='label'>
-                        <span>Unreported</span>
-                    </p>
-                    <p class='percent' style='width:{{stats['unreported_percent']}}%'>
-                        <span>Unreported</span>
-                    </p>
-                </div>
-            </td>
-        </tr>
         <tr class='failed '>
             <td class='count_column'>
                 <span class='count'>{{stats['failed']}}</span>
@@ -40,17 +25,17 @@
                 </div>
             </td>
         </tr>
-        <tr class='changed '>
+        <tr class='unreported '>
             <td class='count_column'>
-                <span class='count'>{{stats['changed']}}</span>
+                <span class='count'>{{stats['unreported']}}</span>
             </td>
             <td>
                 <div>
                     <p class='label'>
-                        <span>Changed</span>
+                        <span>Unreported</span>
                     </p>
-                    <p class='percent' style='width:{{stats['changed_percent']}}%'>
-                        <span>Changed</span>
+                    <p class='percent' style='width:{{stats['unreported_percent']}}%'>
+                        <span>Unreported</span>
                     </p>
                 </div>
             </td>
@@ -62,25 +47,25 @@
             <td>
                 <div>
                     <p class='label'>
-                        <span>No-Op</span>
+                        <span>Pending</span>
                     </p>
                     <p class='percent' style='width:{{stats['noop_percent']}}%'>
-                        <span>No-Op</span>
+                        <span>Pending</span>
                     </p>
                 </div>
             </td>
         </tr>
-        <tr class='skipped '>
+        <tr class='changed '>
             <td class='count_column'>
-                <span class='count'>{{stats['skipped']}}</span>
+                <span class='count'>{{stats['changed']}}</span>
             </td>
             <td>
                 <div>
                     <p class='label'>
-                        <span>Skipped</span>
+                        <span>Changed</span>
                     </p>
-                    <p class='percent' style='width:{{stats['skipped_percent']}}%'>
-                        <span>Skipped</span>
+                    <p class='percent' style='width:{{stats['changed_percent']}}%'>
+                        <span>Changed</span>
                     </p>
                 </div>
             </td>
