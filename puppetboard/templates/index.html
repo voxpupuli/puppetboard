@@ -66,6 +66,9 @@
           <tr>
             <th class="five wide">Status</th>
             <th class="ten wide">Hostname</th>
+            {% for nodes_fact in config.NODES_FACTS -%}
+            <th>{{nodes_fact}}</th>
+            {% endfor -%}
             <th class="one wide"></th>
           </tr>
         </thead>
@@ -97,6 +100,13 @@
             <td>
               <a href="{{url_for('node', node_name=node.name)}}">{{ node.name }}</a>
             </td>
+            {% for node_fact in config.NODES_FACTS -%}
+            {% if node.fact(node_fact) -%}
+            <td>{{node.fact(node_fact).value}}</td>
+            {% else -%}
+            <td></td>
+            {% endif -%}
+            {% endfor -%}
             <td>
               <a title="Latest Report" href="{{url_for('report_latest', node_name=node.name)}}">
                 <i class="large tasks darkblue icon"></i>
