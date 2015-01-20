@@ -490,7 +490,7 @@ differ too much. As we can't use ``uwsgi_pass`` with gunicorn, the nginx configu
             proxy_set_header X-Scheme $scheme;
             proxy_connect_timeout 10;
             proxy_read_timeout 10;
-            proxy_pass 127.0.0.1:9090;
+            proxy_pass http://127.0.0.1:9090;
         }
     }
 
