@@ -26,6 +26,10 @@
     sortList: [[0, 1]]
   });
 
+  $('.catalog').tablesorter({
+    sortList: [[0, 0]]
+  })
+
   $('input.filter-table').parent('div').removeClass('hide');
 
   $("input.filter-table").on("keyup", function(e) {
