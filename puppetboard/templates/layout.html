@@ -47,6 +47,10 @@
       <div class="one wide column"></div>
     </div>
 
+    <div id="scroll-btn-top">
+      <i class="large arrow up icon"></i>
+    </div>
+
     <footer class="ui absolute fixed bottom">
       <div>
       Copyright © 2013-2014 <a href="https://github.com/daenney">Daniele Sluijters</a>. <span style="float:right">Live from PuppetDB.</span>
@@ -73,6 +77,7 @@
     {% endif %}
     <script src="{{url_for('static', filename='js/lists.js')}}"></script>
     <script src="{{url_for('static', filename='js/tables.js')}}"></script>
+    <script src="{{url_for('static', filename='js/scroll.top.js')}}"></script>
 
     {% block script %} {% endblock script %}
   </body>
