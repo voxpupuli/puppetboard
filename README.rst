@@ -599,11 +599,12 @@ Some people have already started building things with and around Puppetboard.
 
 Packages
 --------
-An OpenBSD port is being maintained by `Jasper Lievisse Adriaanse`_ and can be
-viewed `here`_.
+* An OpenBSD port is being maintained by `Jasper Lievisse Adriaanse`_ and can be viewed `here <http://www.openbsd.org/cgi-bin/cvsweb/ports/www/puppetboard/>`_.
+
+* A Docker image is being maintained by `Julien K.`_ and can be viewed `here <https://registry.hub.docker.com/u/kassis/puppetboard/>`_.
 
 .. _Jasper Lievisse Adriaanse: https://github.com/jasperla
-.. _here: http://www.openbsd.org/cgi-bin/cvsweb/ports/www/puppetboard/
+.. _Julien K.: https://github.com/juliengk
 
 Contributing
 ============
