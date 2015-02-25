@@ -276,6 +276,10 @@ Here is a sample configuration for Debian and Ubuntu:
         CustomLog /var/log/apache2/puppetboard.access.log combined
 
         Alias /static /usr/local/lib/pythonX.Y/dist-packages/puppetboard/static
+        Directory /usr/lib/python2.X/dist-packages/puppetboard/static>
+            Satisfy Any
+            Allow from all
+        </Directory>
 
         <Directory /usr/local/lib/pythonX.Y/dist-packages/puppetboard>
             WSGIProcessGroup puppetboard
@@ -296,7 +300,11 @@ Here is a sample configuration for Fedora:
         ErrorLog /var/log/httpd/puppetboard.error.log
         CustomLog /var/log/httpd/puppetboard.access.log combined
 
-        Alias /static /usr/lib/pythonX.Y/site-packages/puppetboard/static
+        Alias /static /usr/local/lib/pythonX.Y/site-packages/puppetboard/static
+        Directory /usr/lib/python2.X/site-packages/puppetboard/static>
+            Satisfy Any
+            Allow from all
+        </Directory>
 
         <Directory /usr/lib/pythonX.Y/site-packages/puppetboard>
             WSGIProcessGroup puppetboard
