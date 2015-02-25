@@ -2,7 +2,7 @@
 <div class="ui fluid icon input hide" style="margin-bottom:20px">
   <input {% if autofocus %} autofocus="autofocus" {% endif %} class="filter-table" placeholder="Type here to filter...">
 </div>
-<table class="filter-table facts ui basic table facts {% if condensed %}compact{% endif%}" style="table-layout: fixed;">
+<table class="filter-table facts ui basic table facts {% if condensed %}compact{% endif %}" style="table-layout: fixed;">
   <thead>
     <tr>
       {% if show_node %}
@@ -19,14 +19,14 @@
     {% for fact in facts %}
     <tr>
       {% if show_node %}
-        <td><a href="{{url_for('node', node_name=fact.node)}}">{{fact.node}}</a></td>
+        <td><a href="{{ url_for('node', node_name=fact.node) }}">{{ fact.node }}</a></td>
       {% else %}
-        <td><a href="{{url_for('fact', fact=fact.name)}}">{{fact.name}}</a></td>
+        <td><a href="{{ url_for('fact', fact=fact.name) }}">{{ fact.name }}</a></td>
       {% endif %}
       {% if show_value %}
       <td style="word-wrap:break-word">
         {% if link_facts %}
-          <a href="{{url_for('fact_value', fact=fact.name, value=fact.value)}}">{{fact.value}}</a>
+          <a href="{{ url_for('fact_value', fact=fact.name, value=fact.value) }}">{{ fact.value }}</a>
         {% else %}
           {{fact.value}}
         {% endif %}
@@ -37,9 +37,10 @@
   </tbody>
 </table>
 {%- endmacro %}
+
 {% macro facts_graph(facts, autofocus=False, condensed=False, show_node=False, margin_top=20, margin_bottom=20) -%}
-<script src="{{url_for('static', filename='js/d3.min.js')}}"></script>
-<script src="{{url_for('static', filename='js/c3.min.js')}}"></script>
+<script src="{{ url_for('static', filename='js/d3.min.js') }}"></script>
+<script src="{{ url_for('static', filename='js/c3.min.js') }}"></script>
 <div id="factChart" width="300" height="300"></div>
 <script type="text/javascript">
   var data = [
@@ -53,11 +54,11 @@
     value: 0,
     }
   ]
-  var fact_values = data.map(function(item) { return [item.label, item.value]; }).filter(function(item){return item[0];}).sort(function(a,b){return a[1] - b[1];});
+  var fact_values = data.map(function(item) { return [item.label, item.value]; }).filter(function(item) { return item[0]; }).sort(function(a,b) { return a[1] - b[1]; });
   var realdata = fact_values.slice(0, 15);
   var otherdata = fact_values.slice(15);
   if (otherdata.length > 0) {
-    realdata.push(["other", otherdata.reduce(function(a,b){return a + b[1];},0)]);
+    realdata.push(["other", otherdata.reduce(function(a,b) {return a + b[1]; },0)]);
   }
   var chart = c3.generate({
       bindto: '#factChart',
@@ -68,6 +69,23 @@
   });
 
 </script>
+{%- endmacro %}
+
+{% macro classes_table(classes, condensed=True) -%}
+<table class='ui table basic {% if condensed %}compact{% endif %}'>
+  <thead>
+    <tr>
+      <th>Class</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for class in classes|sort %}
+      <tr{% if loop.index > 10 %} class="full" {% endif %}>
+        <td>{{ class }}</td>
+      </tr>
+    {% endfor %}
+  </tbody>
+</table>
 {%- endmacro %}
 
 {% macro reports_table(reports, nodename, reports_count, condensed=False, hash_truncate=False, show_conf_col=True, show_agent_col=True, show_host_col=True) -%}
@@ -105,18 +123,18 @@
     {% else %}
     <tr>
     {% endif %}
-    <td rel="utctimestamp">{{report.start}}</td>
-      <td>{{report.run_time}}</td>
+    <td rel="utctimestamp">{{ report.start }}</td>
+      <td>{{ report.run_time }}</td>
 
-      <td><a href="{{url_for('report', node=nodename, report_id=report.hash_)}}">{{rep_hash}}</a></td>
+      <td><a href="{{ url_for('report', node=nodename, report_id=report.hash_) }}">{{ rep_hash }}</a></td>
       {% if show_conf_col %}
-        <td>{{report.version}}</td>
+        <td>{{ report.version }}</td>
       {% endif %}
       {% if show_agent_col %}
-        <td>{{report.agent_version}}</td>
+        <td>{{ report.agent_version }}</td>
       {% endif %}
       {% if show_host_col %}
-        <td><a href="{{url_for('node', node_name=report.node)}}">{{ report.node }}</a></td>
+        <td><a href="{{ url_for('node', node_name=report.node) }}">{{ report.node }}</a></td>
       {% endif %}
     </tr>
     {% endfor %}

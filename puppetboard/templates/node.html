@@ -9,31 +9,56 @@
         <tbody>
           <tr>
             <th>Hostname</th>
-            <td style="word-wrap:break-word"><b>{{node.name}}</b></td>
+            <td style="word-wrap:break-word"><b>{{ node.name }}</b></td>
           </tr>
           <tr>
             <th>Facts &nbsp;&nbsp;&nbsp;&nbsp;<i title='uploaded at' class=' upload icon'></i></th>
-            <td rel="utctimestamp">{{node.facts_timestamp}}</td>
+            <td rel="utctimestamp">{{ node.facts_timestamp }}</td>
           </tr>
           <tr>
             <th>Catalog <i title='uploaded at' class=' upload icon'></i></th>
-            <td rel="utctimestamp">{{node.catalog_timestamp}}</td>
+            <td rel="utctimestamp">{{ node.catalog_timestamp }}</td>
           </tr>
           <tr>
             <th>Report &nbsp;<i title='uploaded at' class=' upload icon'></i></th>
-            <td rel="utctimestamp">{{node.report_timestamp}}</td>
+            <td rel="utctimestamp">{{ node.report_timestamp }}</td>
           </tr>
         </tbody>
       </table>
     </div>
     <div class='row'>
+      <h1>Classes</h1>
+      {{ macros.classes_table(classes, condensed=True) }}
+      <div class="more ui top attached button"><i class="angle down icon"></i></div>
+      <div class="less ui top attached button"><i class="angle up icon"></i></div>
+    </div>
+    <div class='row'>
       <h1>Reports</h1>
-      {{ macros.reports_table(reports, node.name, reports_count, condensed=True, hash_truncate=True, show_conf_col=False, show_agent_col=False, show_host_col=False)}}
+      {{ macros.reports_table(reports, node.name, reports_count, condensed=True, hash_truncate=True, show_conf_col=False, show_agent_col=False, show_host_col=False) }}
     </div>
   </div>
   <div class='column'>
     <h1>Facts</h1>
-    {{macros.facts_table(facts, link_facts=True, condensed=True)}}
+    {{ macros.facts_table(facts, link_facts=True, condensed=True) }}
   </div>
 </div>
 {% endblock content %}
+{% block script %}
+<script>
+  jQuery(function($) {
+    $(".full").hide();
+    $(".less").hide();
+
+    $(".more").click(function() {
+          $(".full").show();
+          $(".less").show();
+          $(".more").hide();
+    });
+    $(".less").click(function() {
+          $(".full").hide();
+          $(".less").hide();
+          $(".more").show();
+    });
+  });
+</script>
+{% endblock script %}
