@@ -276,7 +276,7 @@ Here is a sample configuration for Debian and Ubuntu:
         CustomLog /var/log/apache2/puppetboard.access.log combined
 
         Alias /static /usr/local/lib/pythonX.Y/dist-packages/puppetboard/static
-        Directory /usr/lib/python2.X/dist-packages/puppetboard/static>
+        <Directory /usr/lib/python2.X/dist-packages/puppetboard/static>
             Satisfy Any
             Allow from all
         </Directory>
@@ -301,7 +301,7 @@ Here is a sample configuration for Fedora:
         CustomLog /var/log/httpd/puppetboard.access.log combined
 
         Alias /static /usr/local/lib/pythonX.Y/site-packages/puppetboard/static
-        Directory /usr/lib/python2.X/site-packages/puppetboard/static>
+        <Directory /usr/lib/python2.X/site-packages/puppetboard/static>
             Satisfy Any
             Allow from all
         </Directory>
