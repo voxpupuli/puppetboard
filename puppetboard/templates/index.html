@@ -5,8 +5,8 @@
     <div class="column">
       <a href="nodes?status=failed">
         <h1 class="ui red header no-margin-bottom">
-          {{stats['failed']}}
-          <small>{% if stats['failed']== 1 %} node {% else %} nodes {% endif %}</small>
+          {{ stats['failed'] }}
+          <small>{% if stats['failed'] == 1 %} node {% else %} nodes {% endif %}</small>
         </h1>
       </a>
       <span>with status failed</span>
@@ -14,7 +14,7 @@
     <div class="column">
       <a href="nodes?status=noop">
         <h1 class="ui header purple no-margin-bottom">
-          {{stats['noop']}}
+          {{ stats['noop'] }}
           <small>{% if stats['noop']== 1 %} node {% else %} nodes {% endif %}</small>
         </h1>
       </a>
@@ -23,8 +23,8 @@
     <div class="column">
       <a href="nodes?status=changed">
         <h1 class="ui header green no-margin-bottom">
-          {{stats['changed']}}
-          <small>{% if stats['changed']== 1 %} node {% else %} nodes {% endif %}</small>
+          {{ stats['changed'] }}
+          <small>{% if stats['changed'] == 1 %} node {% else %} nodes {% endif %}</small>
         </h1>
       </a>
       <span>with status changed</span>
@@ -33,7 +33,7 @@
       <a href="nodes?status=unreported">
         <h1 class="ui header black no-margin-bottom">
           {{ stats['unreported'] }}
-          <small>{% if stats['unreported']== 1 %} node {% else %} nodes {% endif %}</small>
+          <small>{% if stats['unreported'] == 1 %} node {% else %} nodes {% endif %}</small>
         </h1>
       </a>
       <span>unreported in the last {{ config.UNRESPONSIVE_HOURS }} hours</span>
@@ -43,15 +43,15 @@
     <div class="column">
     </div>
     <div class="column">
-      <h1 class="ui header darkblue no-margin-bottom">{{metrics['num_nodes']}}</h1>
+      <h1 class="ui header darkblue no-margin-bottom">{{ metrics['num_nodes'] }}</h1>
       <span>Population</span>
     </div>
     <div class="column">
-      <h1 class="ui header darkblue no-margin-bottom">{{metrics['num_resources']}}</h1>
+      <h1 class="ui header darkblue no-margin-bottom">{{ metrics['num_resources'] }}</h1>
       <span>Resources managed</span>
     </div>
     <div class="column">
-      <h1 class="ui header darkblue no-margin-bottom">{{metrics['avg_resources_node']}}</h1>
+      <h1 class="ui header darkblue no-margin-bottom">{{ metrics['avg_resources_node'] }}</h1>
       <span>Avg. resources/node</span>
     </div>
   </div>
@@ -60,13 +60,13 @@
   <div class="one column row no-margin-top">
     <div class="column">
       {% if nodes %}
-      <h2>Nodes status detail ({{nodes|length}})</h2>
+      <h2>Nodes status detail ({{ nodes|length }})</h2>
       <table class='ui compact basic table dashboard'>
         <thead>
           <tr>
             <th class="five wide">Status</th>
             <th class="ten wide">Hostname</th>
-            <th class="one wide"></th>
+            <th class="one wide">&nbsp;</th>
           </tr>
         </thead>
         <tbody class="searchable">
@@ -74,31 +74,41 @@
           {% if node.status != 'unchanged' %}
           <tr>
             <td>
-              <a class="ui small status label
-                {% if node.status == 'failed' %}
-                  red
-                {% elif node.status == 'changed' %}
-                  green
-                {% elif node.status == 'unreported' %}
-                  black
-                {% elif node.status == 'noop' %}
-                  blue
-                {% endif %}
-                " href="{{url_for('report_latest', node_name=node.name)}}">
-                  {{node.status}}
-                </a>
-                {% if node.status=='unreported'%}
-                  <span class="ui small label status"> {{ node.unreported_time }} </label>
-                {% else %}
-                   {% if node.events['failures'] %}<span class="ui small count label red">{{node.events['failures']}}</span>{% else %}<span class="ui small count label">0</span>{% endif%}
-                   {% if node.events['successes'] %}<span class="ui small count label green">{{node.events['successes']}}</span>{% else %}<span class="ui small count label">0</span>{% endif%}
-                {% endif %}
+              <div class="ui grid status">
+                <div class="center aligned two column row">
+                  <div class="column">
+                      <a class="ui small label status
+                        {% if node.status == 'failed' %}
+                          red
+                        {% elif node.status == 'changed' %}
+                          green
+                        {% elif node.status == 'unreported' %}
+                          black
+                        {% elif node.status == 'noop' %}
+                          blue
+                        {% endif %}
+                        " href="{{ url_for('report_latest', node_name=node.name) }}">
+                          {{ node.status }}
+                      </a>
+                  </div>
+                  <div class="column">
+                    {% if node.status == 'unreported' %}
+                      <span class="ui small label status unreported">{{ node.unreported_time }}</label>
+                    {% else %}
+                      <span class="ui small labels status">
+                        {% if node.events['failures'] %}<span class="ui red label status efail">{{ node.events['failures'] }}</span>{% else %}<span class="ui label status efail">0</span>{% endif %}
+                        {% if node.events['successes'] %}<span class="ui green label status esuccess">{{ node.events['successes'] }}</span>{% else %}<span class="ui label status esuccess">0</span>{% endif %}
+                      </span>
+                    {% endif %}
+                  </div>
+                </div>
+              </div>
             </td>
             <td>
-              <a href="{{url_for('node', node_name=node.name)}}">{{ node.name }}</a>
+              <a href="{{ url_for('node', node_name=node.name) }}">{{ node.name }}</a>
             </td>
             <td>
-              <a title="Latest Report" href="{{url_for('report_latest', node_name=node.name)}}">
+              <a title="Latest Report" href="{{ url_for('report_latest', node_name=node.name) }}">
                 <i class="large tasks darkblue icon"></i>
               </a>
             </td>
