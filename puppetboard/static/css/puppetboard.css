@@ -57,19 +57,64 @@ th.tablesorter-headerDesc::after {
 }
 
 .ui.menu.darkblue {
-  background-color:#2C3E50;
+  background-color: #2C3E50;
 }
 
 .ui.darkblue.header, i.darkblue {
-  color:#2C3E50;
+  color: #2C3E50;
 }
 
 .ui.labels .darkblue.label::before, .ui.darkblue.labels .label::before, .ui.darkblue.label::before {
-  background-color:#2C3E50;
+  background-color: #2C3E50;
 }
 
 .ui.darkblue.labels .label, .ui.darkblue.label {
-  background-color:#2C3E50;
-  border-color:#2C3E50;
-  color:#FFF;
+  background-color: #2C3E50;
+  border-color: #2C3E50;
+  color: #FFF;
+}
+
+#scroll-btn-top {
+  position: fixed;
+  overflow: hidden;
+  z-index: 99999999;
+  opacity: 0;
+  visibility: hidden;
+  width: 50px;
+  height: 48px;
+  line-height: 48px;
+  right: 30px;
+  bottom: 85px;
+  padding-top: 2px;
+  background-color: #777777;
+  text-align: center;
+  color: #EEE;
+  border-top-left-radius: 10px;
+  border-top-right-radius: 10px;
+  border-bottom-right-radius: 10px;
+  border-bottom-left-radius: 10px;
+  -webkit-transition: all 0.5s ease-in-out;
+  -moz-transition: all 0.5s ease-in-out;
+  -ms-transition: all 0.5s ease-in-out;
+  -o-transition: all 0.5s ease-in-out;
+  transition: all 0.5s ease-in-out;
+}
+
+#scroll-btn-top:hover {
+  background-color: #888;
+}
+
+#scroll-btn-top.show {
+  visibility: visible;
+  cursor: pointer;
+  opacity: 1.0;
+}
+
+#scroll-btn-top i {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  margin: 0;
+  margin-right: -50%;
+  transform: translate(-50%, -50%)
 }
