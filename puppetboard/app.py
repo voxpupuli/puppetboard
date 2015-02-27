@@ -58,6 +58,14 @@ def stream_template(template_name, **context):
     return rv
 
 
+@app.context_processor
+def utility_processor():
+    def now(format='%m/%d/%Y %H:%M:%S'):
+        """returns the formated datetime"""
+        return datetime.now().strftime(format)
+    return dict(now=now)
+
+
 @app.errorhandler(400)
 def bad_request(e):
     return render_template('400.html'), 400
@@ -229,7 +237,7 @@ def report(node, report_id):
     """Displays a single report including all the events associated with that
     report and their status.
 
-    The report_id may be the puppetdb's report hash or the 
+    The report_id may be the puppetdb's report hash or the
     configuration_version. This allows for better integration
     into puppet-hipchat.
     """
