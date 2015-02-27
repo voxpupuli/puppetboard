@@ -4,22 +4,22 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Puppetboard</title>
     {% if config.OFFLINE_MODE %}
-    <link href="{{ url_for('static', filename='css/semantic.min.css')}}" rel="stylesheet">
+    <link href="{{ url_for('static', filename='css/semantic.min.css') }}" rel="stylesheet">
     <style>
       @font-face {
         font-family: 'Open Sans';
         font-style: normal;
         font-weight: 400;
-        src: local('Open Sans'), local('OpenSans'), url({{ url_for('static', filename='fonts/Open_Sans.woff')}}) format('woff');
+        src: local('Open Sans'), local('OpenSans'), url({{ url_for('static', filename='fonts/Open_Sans.woff') }}) format('woff');
       }
     </style>
-    <link href="{{ url_for('static', filename='css/jquery.tablesorter.filter.formatter.css')}}" rel="stylesheet">
+    <link href="{{ url_for('static', filename='css/jquery.tablesorter.filter.formatter.css') }}" rel="stylesheet">
     {% else %}
     <link href="//cdnjs.cloudflare.com/ajax/libs/semantic-ui/0.16.1/css/semantic.min.css" rel="stylesheet">
     <link href='//fonts.googleapis.com/css?family=Open+Sans' rel='stylesheet' type='text/css'>
     <link href="//cdnjs.cloudflare.com/ajax/libs/jquery.tablesorter/2.17.2/css/filter.formatter.css" rel="stylesheet">
     {% endif %}
-    <link href="{{ url_for('static', filename='css/puppetboard.css')}}" rel="stylesheet">
+    <link href="{{ url_for('static', filename='css/puppetboard.css') }}" rel="stylesheet">
   </head>
 
   <body>
@@ -38,6 +38,7 @@
       <a {% if endpoint == request.endpoint %} class="active item" {% else %} class="item" {% endif %}
         href="{{ url_for(endpoint) }}">{{ caption }}</a>
       {%- endfor %}
+      <div class="item" style="float:right"><a href="https://github.com/puppet-community/puppetboard" target="_blank">v0.0.4</a></div>
     </nav>
     <div class="ui grid padding-bottom">
       <div class="one wide column"></div>
@@ -53,17 +54,17 @@
 
     <footer class="ui absolute fixed bottom">
       <div>
-      Copyright © 2013-2014 <a href="https://github.com/daenney">Daniele Sluijters</a>. <span style="float:right">Live from PuppetDB.</span>
-    </div>
+	Copyright &copy; 2013-{{ now('%Y') }} <a href="https://github.com/daenney" target="_blank">Daniele Sluijters</a>. <span style="float:right">Live from PuppetDB.</span>
+      </div>
     </footer>
 
     {% if config.OFFLINE_MODE %}
-    <script src="{{ url_for('static', filename='js/jquery.min.js')}}"></script>
-    <script src="{{ url_for('static', filename='js/semantic.min.js')}}"></script>
+    <script src="{{ url_for('static', filename='js/jquery.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/semantic.min.js') }}"></script>
     {% if config.LOCALISE_TIMESTAMP %}
-      <script src="{{ url_for('static', filename='js/moment.min.js')}}"></script>
+      <script src="{{ url_for('static', filename='js/moment.min.js') }}"></script>
     {% endif %}
-    <script src="{{url_for('static', filename='js/jquery.tablesorter.min.js')}}"></script>
+    <script src="{{ url_for('static', filename='js/jquery.tablesorter.min.js') }}"></script>
     {% else %}
     <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
     <script src="//cdnjs.cloudflare.com/ajax/libs/semantic-ui/0.16.1/javascript/semantic.min.js"></script>
@@ -75,9 +76,9 @@
     {% if config.LOCALISE_TIMESTAMP %}
       <script src="{{ url_for('static', filename='js/timestamps.js')}}"></script>
     {% endif %}
-    <script src="{{url_for('static', filename='js/lists.js')}}"></script>
-    <script src="{{url_for('static', filename='js/tables.js')}}"></script>
-    <script src="{{url_for('static', filename='js/scroll.top.js')}}"></script>
+    <script src="{{ url_for('static', filename='js/lists.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/tables.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/scroll.top.js') }}"></script>
 
     {% block script %} {% endblock script %}
   </body>
