@@ -30,7 +30,8 @@ setup(
     long_description='\n'.join((README, CHANGELOG)),
     install_requires=[
         "Flask >= 0.10.1",
-        "Flask-WTF >= 0.9.4",
+        "Flask-WTF >= 0.9.4, <= 0.9.5",
+        "WTForms < 2.0",
         "pypuppetdb >= 0.1.0",
         ],
     keywords="puppet puppetdb puppetboard",
