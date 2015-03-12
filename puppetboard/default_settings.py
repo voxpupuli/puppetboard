@@ -23,3 +23,4 @@ GRAPH_FACTS = ['architecture',
                'osfamily',
                'puppetversion',
                'processorcount']
+NODES_FACTS = []
