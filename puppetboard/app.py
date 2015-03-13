@@ -15,6 +15,8 @@ from flask import (
     Response, stream_with_context, redirect,
     request
     )
+from flask_wtf.csrf import CsrfProtect
+from functools import wraps
 
 from pypuppetdb import connect
 
@@ -24,13 +26,15 @@ from puppetboard.utils import (
     limit_reports, jsonprint
     )
 
-
+csrf = CsrfProtect()
 app = Flask(__name__)
+csrf.init_app(app)
+
 app.config.from_object('puppetboard.default_settings')
 graph_facts = app.config['GRAPH_FACTS']
 app.config.from_envvar('PUPPETBOARD_SETTINGS', silent=True)
 graph_facts += app.config['GRAPH_FACTS']
-app.secret_key = os.urandom(24)
+app.secret_key = app.config['SECRET_KEY']
 
 app.jinja_env.filters['jsonprint'] = jsonprint
 
@@ -91,6 +95,15 @@ def precond_failed(e):
 @app.errorhandler(500)
 def server_error(e):
     return render_template('500.html'), 500
+
+
+def secret_key_required(f):
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        if app.secret_key is None:
+            return render_template('secret_key_missing.html')
+        return f(*args, **kwargs)
+    return decorated_function
 
 
 @app.route('/')
@@ -301,6 +314,7 @@ def fact_value(fact, value):
 
 
 @app.route('/query', methods=('GET', 'POST'))
+@secret_key_required
 def query():
     """Allows to execute raw, user created querries against PuppetDB. This is
     currently highly experimental and explodes in interesting ways since none
