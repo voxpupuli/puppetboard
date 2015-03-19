@@ -184,14 +184,30 @@ def node(node_name):
     node. This includes facts and reports but not Resources as that is too
     heavy to do within a single request.
     """
+    ignore_empty_reports = app.config['IGNORE_EMPTY_REPORTS']
     node = get_or_abort(puppetdb.node, node_name)
     facts = node.facts()
-    reports = limit_reports(node.reports(), app.config['REPORTS_COUNT'])
+    events_hash = []
+    if ignore_empty_reports:
+        events_hash = [
+            event[u'report']
+            for event in puppetdb._query(
+                'events',
+                query='["=", "certname", "{0}"]'.format(node_name)
+                )
+        ]
+    reports = limit_reports(
+        node.reports(),
+        app.config['REPORTS_COUNT'],
+        events_hash
+        )
+
     return render_template(
         'node.html',
         node=node,
         facts=yield_or_stop(facts),
         reports=yield_or_stop(reports),
+        ignore_empty_reports=ignore_empty_reports,
         reports_count=app.config['REPORTS_COUNT'])
 
 
@@ -206,12 +222,23 @@ def reports():
 def reports_node(node):
     """Fetches all reports for a node and processes them eventually rendering
     a table displaying those reports."""
+    ignore_empty_reports = app.config['IGNORE_EMPTY_REPORTS']
+    events_hash = []
+    if ignore_empty_reports:
+        events_hash = [
+            event[u'report']
+            for event in puppetdb._query(
+                'events',
+                query='["=", "certname", "{0}"]'.format(node)
+                )
+        ]
     reports = limit_reports(yield_or_stop(
-        puppetdb.reports('["=", "certname", "{0}"]'.format(node))), app.config['REPORTS_COUNT'])
+        puppetdb.reports('["=", "certname", "{0}"]'.format(node))), app.config['REPORTS_COUNT'], events_hash)
     return render_template(
         'reports_node.html',
         reports=reports,
         nodename=node,
+        ignore_empty_reports=ignore_empty_reports,
         reports_count=app.config['REPORTS_COUNT'])
 
 

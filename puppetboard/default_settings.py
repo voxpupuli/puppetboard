@@ -11,6 +11,7 @@ ENABLE_QUERY = True
 LOCALISE_TIMESTAMP = True
 LOGLEVEL = 'info'
 REPORTS_COUNT = 10
+IGNORE_EMPTY_REPORTS = False
 OFFLINE_MODE = False
 GRAPH_FACTS = ['architecture',
                'domain',
