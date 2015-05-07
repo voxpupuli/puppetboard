@@ -1,0 +1,37 @@
+{% extends 'layout.html' %}
+{% block content %}
+<div class="alert alert-info">
+  PuppetDB currently only returns active nodes.
+</div>
+      {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+      {% for category, message in messages %}
+        <div class="alert alert-{{category}}">
+          {{message}}
+        </div>
+      {% endfor %}
+      {% endif %}
+      {% endwith %}
+<div class="hide" style="margin-bottom:20px">
+<input autofocus="autofocus" style="width:100%" type="text" class="filter-table input-medium search-query" placeholder="Type here to filter">
+</div>
+<table class='inventory table table-striped table-condensed'>
+  <thead>
+    <tr>
+      {% for description in fact_desc %}
+      <th>{{description}}</th>
+      {% endfor %}
+    </tr>
+  </thead>
+  <tbody class="searchable">
+    {% for nodename in nodedata %}
+    <tr>
+ 
+      {% for item in nodedata[nodename] %}
+      <td>{{item}}</td>
+      {% endfor %}
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% endblock content %}
