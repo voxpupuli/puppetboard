@@ -228,7 +228,8 @@ def report_latest(node_name):
                            limit=1)
     if len(reports) > 0:
         report = reports[0]['hash']
-        return redirect(url_for('report', node=node_name, report_id=report))
+        return redirect(
+            url_for('report', node_name=node_name, report_id=report))
     else:
         abort(404)
 
