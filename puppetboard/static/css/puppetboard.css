@@ -26,10 +26,6 @@ th.tablesorter-headerDesc::after {
   float: right;
 }
 
-.ui.grid.padding-bottom {
-  padding-bottom: 40px !important;
-}
-
 .status {
   width: 47%;
   text-align: center;
