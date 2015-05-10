@@ -21,7 +21,9 @@
 
   $('.dashboard').tablesorter({
     headers: {
-        2: { sorter: false }
+      3: {
+        sorter: false
+      }
     },
     sortList: [[0, 1]]
   });

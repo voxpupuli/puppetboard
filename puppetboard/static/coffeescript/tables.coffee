@@ -13,7 +13,7 @@ $('.facts').tablesorter(
 
 $('.dashboard').tablesorter(
     headers:
-        2:
+        3:
             sorter: false
     sortList: [[0, 1]]
 )
