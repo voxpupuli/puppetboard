@@ -17,38 +17,48 @@
     {% for node in nodes %}
     <tr>
       <td>
-        <a class="ui small status label
-          {% if node.status == 'failed' %}
-            red
-          {% elif node.status == 'changed' %}
-            green
-          {% elif node.status == 'unreported' %}
-            black
-          {% elif node.status == 'noop' %}
-            blue
-          {% endif %}
-          " href="{{url_for('report_latest', node_name=node.name)}}">
-            {{node.status}}
-          </a>
-          {% if node.status=='unreported'%}
-            <span class="ui small label status"> {{ node.unreported_time }} </label>
-          {% else %}
-          <span>{% if node.events['failures'] %}<span class="ui small count label red">{{node.events['failures']}}</span>{% else %}<span class="ui small count label">0</span>{% endif%}
-            {% if node.events['successes'] %}<span class="ui small count label green">{{node.events['successes']}}</span>{% else %}<span class="ui small count label">0</span>{% endif%}</span>
-          {% endif %}
+        <div class="ui grid status">
+          <div class="center aligned two column row">
+            <div class="column">
+              <a class="ui small label status
+                {% if node.status == 'failed' %}
+                  red
+                {% elif node.status == 'changed' %}
+                  green
+                {% elif node.status == 'unreported' %}
+                  black
+                {% elif node.status == 'noop' %}
+                  blue
+                {% endif %}
+                " href="{{ url_for('report_latest', node_name=node.name) }}">
+                  {{ node.status }}
+              </a>
+            </div>
+            <div class="column">
+              {% if node.status == 'unreported' %}
+                <span class="ui small label status unreported">{{ node.unreported_time }}</label>
+              {% else %}
+                <span class="ui small labels status">
+                  {% if node.events['failures'] %}<span class="ui small label red status nodes efail">{{ node.events['failures'] }}</span>{% else %}<span class="ui small label status nodes efail">0</span>{% endif %}
+                  {% if node.events['successes'] %}<span class="ui small label green status nodes esuccess">{{ node.events['successes'] }}</span>{% else %}<span class="ui small label status nodes esuccess">0</span>{% endif %}
+                </span>
+              {% endif %}
+            </div>
+          </div>
+        </div>
       </td>
-      <td><a href="{{url_for('node', node_name=node.name)}}">{{node.name}}</a></td>
-      <td rel="utctimestamp">{{node.catalog_timestamp}}</td>
+      <td><a href="{{ url_for('node', node_name=node.name) }}">{{ node.name }}</a></td>
+      <td rel="utctimestamp">{{ node.catalog_timestamp }}</td>
       <td>
         {% if node.report_timestamp %}
-        <a href="{{url_for('report_latest', node_name=node.name)}}" rel='utctimestamp'>{{ node.report_timestamp }}</a>
+        <a href="{{ url_for('report_latest', node_name=node.name) }}" rel='utctimestamp'>{{ node.report_timestamp }}</a>
         {% else %}
           <i class="large ban circle icon"></i>
         {% endif %}
       </td>
       <td>
         {% if node.report_timestamp %}
-        <a title='Reports' href="{{url_for('reports_node', node=node.name)}}"><i class='large darkblue book icon'></i></a>
+        <a title='Reports' href="{{ url_for('reports_node', node=node.name) }}"><i class='large darkblue book icon'></i></a>
         <i class='large darkblue trash icon'></i>
         {% endif %}
       </td>

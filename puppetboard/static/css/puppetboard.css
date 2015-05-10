@@ -30,17 +30,6 @@ th.tablesorter-headerDesc::after {
   padding-bottom: 40px !important;
 }
 
-.status {
-  width: 47%;
-  text-align: center;
-  display: block;
-}
-.count {
-  width: 21%;
-  text-align: center;
-  display: block;
-}
-
 .no-margin-top {
   margin-top: -35px !important;
 }
@@ -86,7 +75,7 @@ th.tablesorter-headerDesc::after {
   right: 30px;
   bottom: 85px;
   padding-top: 2px;
-  background-color: #777777;
+  background-color: #777;
   text-align: center;
   color: #EEE;
   border-top-left-radius: 10px;
@@ -117,4 +106,40 @@ th.tablesorter-headerDesc::after {
   margin: 0;
   margin-right: -50%;
   transform: translate(-50%, -50%)
+}
+
+.ui.grid.status {
+  height: 30px;
+}
+
+a.ui.small.label.status {
+  width: 100%;
+  margin-top: 0;
+}
+
+span.ui.small.label.status.unreported {
+  width: 100%;
+  margin-top: 0;
+}
+
+span.ui.small.labels.status {
+  width: 100%;
+}
+
+span.ui.red.label.status.efail, span.ui.label.status.efail, span.ui.green.label.status.esuccess, span.ui.label.status.esuccess {
+  width: 48%;
+  margin-top: 0;
+}
+
+span.ui.red.label.status.nodes.efail, span.ui.label.status.nodes.efail, span.ui.green.label.status.nodes.esuccess, span.ui.label.status.nodes.esuccess {
+  width: 46%;
+  margin-top: 0;
+}
+
+span.ui.red.label.status.efail, span.ui.label.status.efail {
+  float: left;
+}
+
+span.ui.green.label.status.esuccess, span.ui.label.status.esuccess {
+  float: right;
 }
