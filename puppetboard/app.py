@@ -1,6 +1,7 @@
 from __future__ import unicode_literals
 from __future__ import absolute_import
 
+import re
 import os
 import logging
 import collections
@@ -184,13 +185,23 @@ def node(node_name):
     node. This includes facts and reports but not Resources as that is too
     heavy to do within a single request.
     """
+    def classes(name):
+        for resource in puppetdb.catalog(name).resources:
+            match = re.match( r'Class\[(.*)\]', resource, re.M|re.I)
+            if match:
+                c = match.group(1)
+                if c != 'main':
+                    yield c
+
     node = get_or_abort(puppetdb.node, node_name)
     facts = node.facts()
+    classes = classes(node_name)
     reports = limit_reports(node.reports(), app.config['REPORTS_COUNT'])
     return render_template(
         'node.html',
         node=node,
         facts=yield_or_stop(facts),
+        classes=yield_or_stop(classes),
         reports=yield_or_stop(reports),
         reports_count=app.config['REPORTS_COUNT'])
 
