@@ -13,7 +13,7 @@ and is built with the help of the `Flask`_ microframework.
 .. _Puppet Dashboard: http://docs.puppetlabs.com/dashboard/
 .. _Flask: http://flask.pocoo.org
 
-Because this project is powered by Flask we are restricted to:
+At the current time of writing, Puppetboard supports the following Python versions:
     * Python 2.6
     * Python 2.7
 
