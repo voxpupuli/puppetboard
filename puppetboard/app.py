@@ -1,7 +1,6 @@
 from __future__ import unicode_literals
 from __future__ import absolute_import
 
-import os
 import logging
 import collections
 try:
@@ -15,6 +14,7 @@ from flask import (
     Response, stream_with_context, redirect,
     request
     )
+from flask_wtf.csrf import CsrfProtect
 
 from pypuppetdb import connect
 
@@ -26,11 +26,13 @@ from puppetboard.utils import (
 
 
 app = Flask(__name__)
+CsrfProtect(app)
+
 app.config.from_object('puppetboard.default_settings')
 graph_facts = app.config['GRAPH_FACTS']
 app.config.from_envvar('PUPPETBOARD_SETTINGS', silent=True)
 graph_facts += app.config['GRAPH_FACTS']
-app.secret_key = os.urandom(24)
+app.secret_key = app.config['SECRET_KEY']
 
 app.jinja_env.filters['jsonprint'] = jsonprint
 

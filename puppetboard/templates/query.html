@@ -4,29 +4,28 @@
 {% with messages = get_flashed_messages(with_categories=true) %}
 {% if messages %}
 {% for category, message in messages %}
-<div class="ui {{category}} message">
-  {{message}}
+<div class="ui {{ category }} message">
+  {{ message }}
 </div>
 {% endfor %}
 {% endif %}
 {% endwith %}
 <div class="ui form">
-  <form method="POST" action="{{ url_for('query')}}"
+  <form method="POST" action="{{ url_for('query') }}">
     {{ form.csrf_token }}
     <div class="field {% if form.query.errors %} error {% endif %}">
-      {{form.query(autofocus="autofocus", rows=5, placeholder="Enter your query: [\"=\", \"name\", \"hostname\"]. You may omit the opening and closing bracket.")}}
+      {{ form.query(autofocus="autofocus", rows=5, placeholder="Enter your query: [\"=\", \"name\", \"hostname\"]. You may omit the opening and closing bracket.") }}
     </div>
     <div class="inline fields">
       {% for subfield in form.endpoints %}
       <div class="field">
         <div class="ui radio checkbox">
-          {{subfield }}
-          {{subfield.label}}
+          {{ subfield }}
+          {{ subfield.label }}
         </div>
       </div>
       {% endfor %}
     </div>
-    {{ form.hidden_tag() }}
     <input type=submit class="ui submit button" value='Submit'>
     <input type=reset class="ui red submit button" value='Cancel'>
   </form>
@@ -36,7 +35,7 @@
 <div class="row">
   <div class="span12">
     <h2>Result</h2>
-      <pre><code>{{result|jsonprint}}</code></pre>
+      <pre><code>{{ result|jsonprint }}</code></pre>
   </div>
 </div>
 {% endif %}
