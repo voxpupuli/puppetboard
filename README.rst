@@ -174,6 +174,8 @@ For information about how to generate the correct keys please refer to the
 
 Other settings that might be interesting:
 
+* ``SECRET_KEY``: Refer to `Flask documentation`_, section sessions: How to
+  generate good secret keys, to set the value.
 * ``PUPPETDB_TIMEOUT``: Defaults to 20 seconds but you might need to increase
   this value. It depends on how big the results are when querying PuppetDB.
   This behaviour will change in a future release when pagination will be
@@ -188,6 +190,7 @@ Other settings that might be interesting:
   a set of endpoints in PuppetDB. Change this to ``False`` to disable this.
 
 .. _pypuppetdb documentation: http://pypuppetdb.readthedocs.org/en/v0.1.0/quickstart.html#ssl
+.. _Flask documentation: http://flask.pocoo.org/docs/0.10/quickstart/#sessions
 
 Puppet Enterprise
 -----------------
