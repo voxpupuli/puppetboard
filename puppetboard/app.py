@@ -8,7 +8,7 @@ try:
     from urllib import unquote
 except ImportError:
     from urllib.parse import unquote
-from datetime import datetime, timedelta
+from datetime import datetime
 
 from flask import (
     Flask, render_template, abort, url_for,
@@ -45,7 +45,7 @@ puppetdb = connect(
 
 numeric_level = getattr(logging, app.config['LOGLEVEL'].upper(), None)
 if not isinstance(numeric_level, int):
-        raise ValueError('Invalid log level: %s' % loglevel)
+    raise ValueError('Invalid log level: %s' % app.config['LOGLEVEL'])
 logging.basicConfig(level=numeric_level)
 log = logging.getLogger(__name__)
 
@@ -72,7 +72,7 @@ def bad_request(e):
 
 
 @app.errorhandler(403)
-def bad_request(e):
+def forbidden(e):
     return render_template('403.html'), 400
 
 
@@ -203,15 +203,17 @@ def reports():
 
 
 @app.route('/reports/<node>')
-def reports_node(node):
+def reports_node(node_name):
     """Fetches all reports for a node and processes them eventually rendering
     a table displaying those reports."""
-    reports = limit_reports(yield_or_stop(
-        puppetdb.reports('["=", "certname", "{0}"]'.format(node))), app.config['REPORTS_COUNT'])
+    reports = limit_reports(
+        yield_or_stop(
+            puppetdb.reports('["=", "certname", "{0}"]'.format(node_name))),
+        app.config['REPORTS_COUNT'])
     return render_template(
         'reports_node.html',
         reports=reports,
-        nodename=node,
+        nodename=node_name,
         reports_count=app.config['REPORTS_COUNT'])
 
 
@@ -221,7 +223,6 @@ def report_latest(node_name):
     as long as PuppetDB can't filter reports for latest-report? field. This
     feature has been requested: https://tickets.puppetlabs.com/browse/PDB-203
     """
-    node = get_or_abort(puppetdb.node, node_name)
     reports = get_or_abort(puppetdb._query, 'reports',
                            query='["=","certname","{0}"]'.format(node_name),
                            limit=1)
@@ -232,8 +233,8 @@ def report_latest(node_name):
         abort(404)
 
 
-@app.route('/report/<node>/<report_id>')
-def report(node, report_id):
+@app.route('/report/<node_name>/<report_id>')
+def report(node_name, report_id):
     """Displays a single report including all the events associated with that
     report and their status.
 
@@ -241,7 +242,7 @@ def report(node, report_id):
     configuration_version. This allows for better integration
     into puppet-hipchat.
     """
-    reports = puppetdb.reports('["=", "certname", "{0}"]'.format(node))
+    reports = puppetdb.reports('["=", "certname", "{0}"]'.format(node_name))
 
     for report in reports:
         if report.hash_ == report_id or report.version == report_id:

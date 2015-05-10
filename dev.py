@@ -13,7 +13,7 @@ from puppetboard.app import app
 if __name__ == '__main__':
     # Start CoffeeScript to automatically compile our coffee source.
     # We must be careful to only start this in the parent process as
-    # WERKZEUG will create a secondary process when using the reloader.
+    # Werkzeug will create a secondary process when using the reloader.
     if os.environ.get('WERKZEUG_RUN_MAIN') is None:
         try:
             subprocess.Popen([
