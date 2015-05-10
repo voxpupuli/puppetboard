@@ -6,8 +6,25 @@
 
   $(function() {});
 
+  $.tablesorter.addParser({
+    id: 'timestamp',
+    is: function(s) {
+      return false;
+    },
+    format: function(s) {
+      return moment.utc(s).unix();
+    },
+    type: 'numeric'
+  });
+
   $('.nodes').tablesorter({
     headers: {
+      2: {
+        sorter: 'timestamp'
+      },
+      3: {
+        sorter: 'timestamp'
+      },
       4: {
         sorter: false
       }
@@ -21,6 +38,9 @@
 
   $('.dashboard').tablesorter({
     headers: {
+      2: {
+        sorter: 'timestamp'
+      },
       3: {
         sorter: false
       }
