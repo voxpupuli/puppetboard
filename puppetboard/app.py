@@ -204,7 +204,7 @@ def reports():
     return render_template('reports.html')
 
 
-@app.route('/reports/<node>')
+@app.route('/reports/<node_name>')
 def reports_node(node_name):
     """Fetches all reports for a node and processes them eventually rendering
     a table displaying those reports."""
