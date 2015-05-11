@@ -49,7 +49,7 @@
       </td>
       <td>
         {% if node.report_timestamp %}
-        <a title='Reports' href="{{url_for('reports_node', node=node.name)}}"><i class='large darkblue book icon'></i></a>
+        <a title='Reports' href="{{url_for('reports_node', node_name=node.name)}}"><i class='large darkblue book icon'></i></a>
         <i class='large darkblue trash icon'></i>
         {% endif %}
       </td>
