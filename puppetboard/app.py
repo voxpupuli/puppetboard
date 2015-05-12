@@ -227,7 +227,10 @@ def inventory():
     for node in nodelist:
         nodedata[node] = []
         for fact_name in fact_names:
-            nodedata[node].append(factvalues[node,fact_name])
+            try:
+                nodedata[node].append(factvalues[node,fact_name])
+            except KeyError:
+                nodedata[node].append("undef")
 
     return Response(stream_with_context(
         stream_template('inventory.html', nodedata=nodedata, fact_desc=fact_desc)))
