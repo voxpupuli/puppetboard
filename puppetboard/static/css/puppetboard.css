@@ -73,6 +73,19 @@ th.tablesorter-headerDesc::after {
   background-color: #2C3E50;
   border-color: #2C3E50;
   color: #FFF;
+  float: left;
+}
+
+ul.searchable li {
+  float: left;
+  margin-right: 36px;
+  width: 10%;
+  min-width: 290px;
+}
+
+div.fact_listing td {vertical-align: top;border-bottom: 1px solid #E2E2E2;padding-bottom: 18px;}
+div.fact_listing td:first-child {
+    padding-top: 17px;
 }
 
 #scroll-btn-top {
