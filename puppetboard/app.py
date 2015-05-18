@@ -260,11 +260,17 @@ def report(node_name, report_id):
 
 
 @app.route('/facts')
-def facts():
+@app.route('/facts/<start>')
+@app.route('/facts/<start>/<end>')
+def facts(start=0, end=1000):
     """Displays an alphabetical list of all facts currently known to
-    PuppetDB."""
+    PuppetDB. To not overload the client rendering engine, output is limited to 1000. """
     facts_dict = collections.defaultdict(list)
     facts = get_or_abort(puppetdb.fact_names)
+    start = int(float(start))
+    end   = int(float(end))
+    facts = facts[start:end]
+	
     for fact in facts:
         letter = fact[0].upper()
         letter_list = facts_dict[letter]
