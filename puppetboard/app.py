@@ -267,8 +267,8 @@ def facts(start=0, end=1000):
     PuppetDB. To not overload the client rendering engine, output is limited to 1000. """
     facts_dict = collections.defaultdict(list)
     facts = get_or_abort(puppetdb.fact_names)
-    start = int(float(start))
-    end   = int(float(end))
+    start = int(start)
+    end   = int(end)
     facts = facts[start:end]
 	
     for fact in facts:
