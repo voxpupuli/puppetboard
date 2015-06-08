@@ -7,16 +7,16 @@
   <table>
   {%- for key,facts_list in facts_dict %}
   <tr>
-		<td>
-			<span class='ui label darkblue'>{{key}}</span>
-		</td>
-		<td>
-			<ul class="searchable">
-				{%- for fact in facts_list %}
-				<li><a href="{{url_for('fact', fact=fact)}}">{{fact}}</a></li>
-				{%- endfor %}
-			</ul>
-		</td>
+    <td>
+      <span class='ui label darkblue'>{{key}}</span>
+    </td>
+    <td>
+	  <ul class="searchable">
+      {%- for fact in facts_list %}
+        <li><a href="{{url_for('fact', fact=fact)}}">{{fact}}</a></li>
+      {%- endfor %}
+      </ul>
+    </td>
   </tr>
   {% endfor %}
   </table>
