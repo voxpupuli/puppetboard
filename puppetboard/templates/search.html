@@ -11,7 +11,7 @@
       <span class='ui label darkblue'>{{key}}</span>
     </td>
     <td>
-	  <ul class="searchable">
+      <ul class="searchable">
       {%- for fact in facts_list %}
         <li><a href="{{url_for('fact', fact=fact)}}">{{fact}}</a></li>
       {%- endfor %}
