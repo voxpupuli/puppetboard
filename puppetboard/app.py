@@ -180,6 +180,64 @@ def nodes():
         stream_template('nodes.html', nodes=nodes)))
 
 
+@app.route('/inventory')
+def inventory():
+    """Fetch all (active) nodes from PuppetDB and stream a table displaying
+    those nodes along with a set of facts about them.
+
+    Downside of the streaming aproach is that since we've already sent our
+    headers we can't abort the request if we detect an error. Because of this
+    we'll end up with an empty table instead because of how yield_or_stop
+    works. Once pagination is in place we can change this but we'll need to
+    provide a search feature instead.
+    """
+
+    fact_desc  = []     # a list of fact descriptions to go
+                        # in the table header
+    fact_names = []     # a list of inventory fact names
+    factvalues = {}     # values of the facts for all the nodes
+                        # indexed by node name and fact name
+    nodedata   = {}     # a dictionary containing list of inventoried
+                        # facts indexed by node name
+    nodelist   = set()  # a set of node names
+
+    # get all the facts from PuppetDB
+    facts = puppetdb.facts()
+
+    # load the list of items/facts we want in our inventory
+    try:
+        inv_facts = app.config['INVENTORY_FACTS']
+    except KeyError:
+        inv_facts = [ ('Hostname'      ,'fqdn'              ),
+                      ('IP Address'    ,'ipaddress'         ),
+                      ('OS'            ,'lsbdistdescription'),
+                      ('Architecture'  ,'hardwaremodel'     ),
+                      ('Kernel Version','kernelrelease'     ) ]
+
+    # generate a list of descriptions and a list of fact names
+    # from the list of tuples inv_facts.
+    for description,name in inv_facts:
+        fact_desc.append(description)
+        fact_names.append(name)
+
+    # convert the json in easy to access data structure
+    for fact in facts:
+        factvalues[fact.node,fact.name] = fact.value
+        nodelist.add(fact.node)
+
+    # generate the per-host data
+    for node in nodelist:
+        nodedata[node] = []
+        for fact_name in fact_names:
+            try:
+                nodedata[node].append(factvalues[node,fact_name])
+            except KeyError:
+                nodedata[node].append("undef")
+
+    return Response(stream_with_context(
+        stream_template('inventory.html', nodedata=nodedata, fact_desc=fact_desc)))
+
+
 @app.route('/node/<node_name>')
 def node(node_name):
     """Display a dashboard for a node showing as much data as we have on that

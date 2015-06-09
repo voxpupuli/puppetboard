@@ -32,6 +32,10 @@
     sortList: [[1, 0]]
   });
 
+  $('.inventory').tablesorter({
+    sortList: [[0, 0]]
+  });
+
   $('.facts').tablesorter({
     sortList: [[0, 0]]
   });

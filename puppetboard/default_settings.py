@@ -27,3 +27,9 @@ GRAPH_FACTS = ['architecture',
                'osfamily',
                'puppetversion',
                'processorcount']
+INVENTORY_FACTS = [ ('Hostname',       'fqdn'              ),
+                    ('IP Address',     'ipaddress'         ),
+                    ('OS',             'lsbdistdescription'),
+                    ('Architecture',   'hardwaremodel'     ),
+                    ('Kernel Version', 'kernelrelease'     ),
+                    ('Puppet Version', 'puppetversion'     ), ]
