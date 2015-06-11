@@ -6,13 +6,34 @@
 
   $(function() {});
 
+  $.tablesorter.addParser({
+    id: 'timestamp',
+    is: function(s) {
+      return false;
+    },
+    format: function(s) {
+      return moment.utc(s).unix();
+    },
+    type: 'numeric'
+  });
+
   $('.nodes').tablesorter({
     headers: {
+      2: {
+        sorter: 'timestamp'
+      },
+      3: {
+        sorter: 'timestamp'
+      },
       4: {
         sorter: false
       }
     },
     sortList: [[1, 0]]
+  });
+
+  $('.inventory').tablesorter({
+    sortList: [[0, 0]]
   });
 
   $('.facts').tablesorter({
@@ -21,7 +42,12 @@
 
   $('.dashboard').tablesorter({
     headers: {
-        2: { sorter: false }
+      2: {
+        sorter: 'timestamp'
+      },
+      3: {
+        sorter: false
+      }
     },
     sortList: [[0, 1]]
   });

@@ -1,11 +1,15 @@
+import os
+
 PUPPETDB_HOST = 'localhost'
 PUPPETDB_PORT = 8080
 PUPPETDB_SSL_VERIFY = True
 PUPPETDB_KEY = None
 PUPPETDB_CERT = None
 PUPPETDB_TIMEOUT = 20
+SECRET_KEY = os.urandom(24)
 DEV_LISTEN_HOST = '127.0.0.1'
 DEV_LISTEN_PORT = 5000
+DEV_COFFEE_LOCATION = 'coffee'
 UNRESPONSIVE_HOURS = 2
 ENABLE_QUERY = True
 LOCALISE_TIMESTAMP = True
@@ -24,3 +28,9 @@ GRAPH_FACTS = ['architecture',
                'osfamily',
                'puppetversion',
                'processorcount']
+INVENTORY_FACTS = [ ('Hostname',       'fqdn'              ),
+                    ('IP Address',     'ipaddress'         ),
+                    ('OS',             'lsbdistdescription'),
+                    ('Architecture',   'hardwaremodel'     ),
+                    ('Kernel Version', 'kernelrelease'     ),
+                    ('Puppet Version', 'puppetversion'     ), ]

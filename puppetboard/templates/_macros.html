@@ -2,7 +2,7 @@
 <div class="ui fluid icon input hide" style="margin-bottom:20px">
   <input {% if autofocus %} autofocus="autofocus" {% endif %} class="filter-table" placeholder="Type here to filter...">
 </div>
-<table class="filter-table facts ui basic table facts {% if condensed %}compact{% endif%}" style="table-layout: fixed;">
+<table class="filter-table facts ui compact basic table facts {% if condensed %}compact{% endif%}" style="table-layout: fixed;">
   <thead>
     <tr>
       {% if show_node %}
@@ -112,7 +112,7 @@
     <td rel="utctimestamp">{{report.start}}</td>
       <td>{{report.run_time}}</td>
 
-      <td><a href="{{url_for('report', node=nodename, report_id=report.hash_)}}">{{rep_hash}}</a></td>
+      <td><a href="{{url_for('report', node_name=nodename, report_id=report.hash_)}}">{{rep_hash}}</a></td>
       {% if show_conf_col %}
         <td>{{report.version}}</td>
       {% endif %}

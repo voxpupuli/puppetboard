@@ -31,12 +31,13 @@ th.tablesorter-headerDesc::after {
 }
 
 .status {
-  width: 47%;
+  width: 47.5%;
   text-align: center;
   display: block;
 }
+
 .count {
-  width: 21%;
+  width: 14%;
   text-align: center;
   display: block;
 }

@@ -8,8 +8,9 @@ from pypuppetdb.errors import EmptyResponseError
 
 from flask import abort
 
+
 def jsonprint(value):
-  return json.dumps(value, indent=2, separators=(',', ': ') )
+    return json.dumps(value, indent=2, separators=(',', ': '))
 
 
 def get_or_abort(func, *args, **kwargs):
@@ -51,6 +52,7 @@ def limit_reports(reports, limit, events_hash):
             if count == limit:
                 raise StopIteration
             yield report
+
 
 
 def yield_or_stop(generator):

@@ -1,0 +1,25 @@
+{% extends 'layout.html' %}
+{% block content %}
+<div class="ui fluid icon input hide" style="margin-bottom:20px">
+  <input autofocus="autofocus" class="filter-table" placeholder="Type here to filter...">
+</div>
+<table class='ui compact basic table inventory'>
+  <thead>
+    <tr>
+      {% for description in fact_desc %}
+      <th>{{description}}</th>
+      {% endfor %}
+    </tr>
+  </thead>
+  <tbody class="searchable">
+    {% for nodename in nodedata %}
+    <tr>
+ 
+      {% for item in nodedata[nodename] %}
+      <td>{{item}}</td>
+      {% endfor %}
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% endblock content %}

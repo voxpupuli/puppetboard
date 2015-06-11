@@ -10,7 +10,7 @@ class QueryForm(Form):
     PuppetDB."""
     query = TextAreaField('Query', [validators.Required(
         message='A query is required.')])
-    endpoints = RadioField('API endpoint', choices = [
+    endpoints = RadioField('API endpoint', choices=[
         ('nodes', 'Nodes'),
         ('resources', 'Resources'),
         ('facts', 'Facts'),
