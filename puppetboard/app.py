@@ -416,15 +416,38 @@ def status():
     nodelist = puppetdb.nodes(
           unreported=app.config['UNRESPONSIVE_HOURS'],
           with_status=True)
+    facts = collections.defaultdict(dict)
+
+    try:
+        export_facts = set(app.config['EXPORT_FACTS'])
+    except KeyError:
+        export_facts = set([
+          'kernelrelease', 'lsbdistdescription', 'architecture',
+          'puppetversion', 'kernel', 'processorcount'])
+
+    for fact in puppetdb.facts():
+        if fact.name not in export_facts:
+            continue
+        facts[fact.node][fact.name] = fact.value
 
     nodes = [x for x in yield_or_stop(nodelist)]
 
     def generate():
+        yield '# HELP puppet_node Puppet inventory\n'
+        yield '# TYPE puppet_node gauge\n'
         for node in nodes:
             yield 'puppet_node{'
             yield 'status="%s",' % node.status
+            for fact, value in facts[node.name].iteritems():
+              yield fact
+              yield '="'
+              yield value.replace('\"', '\\"')
+              yield '",'
             yield 'node="%s"' % node.name
             yield '} 1\n'
+        yield '# HELP puppet_latest_report_timestamp '
+        yield 'UNIX epoch timestmap of the latest report\n'
+        yield '# TYPE puppet_latest_report_timestamp counter\n'
         for node in nodes:
             if node.report_timestamp is None:
                 continue
