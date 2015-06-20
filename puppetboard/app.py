@@ -3,6 +3,7 @@ from __future__ import absolute_import
 
 import logging
 import collections
+from dateutil.tz import tzoffset
 try:
     from urllib import unquote
 except ImportError:
@@ -403,3 +404,37 @@ def metric(metric):
         'metric.html',
         name=name,
         metric=sorted(metric.items()))
+
+
+@app.route('/status')
+def status():
+    """Fetch all (active) nodes from PuppetDB and construct a scrapable list.
+
+    This is useful for feeding puppet data into a monitoring system such as
+    Prometheus.
+    """
+    nodelist = puppetdb.nodes(
+          unreported=app.config['UNRESPONSIVE_HOURS'],
+          with_status=True)
+
+    nodes = [x for x in yield_or_stop(nodelist)]
+
+    def generate():
+        for node in nodes:
+            yield 'puppet_node{'
+            yield 'status="%s",' % node.status
+            yield 'node="%s"' % node.name
+            yield '} 1\n'
+        for node in nodes:
+            if node.report_timestamp is None:
+                continue
+            unix_epoch = datetime.fromtimestamp(0, tzoffset('UTC', 0))
+            yield 'puppet_last_updated_timestamp{'
+            yield 'node="%s"' % node.name
+            yield '} '
+            yield str(int((node.report_timestamp-unix_epoch).total_seconds()))
+            yield '\n'
+
+    resp = Response(stream_with_context(generate()))
+    resp.headers['Content-Type'.encode('ISO-8859-1')] = 'text/plain'
+    return resp
