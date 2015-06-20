@@ -33,3 +33,5 @@ INVENTORY_FACTS = [ ('Hostname',       'fqdn'              ),
                     ('Architecture',   'hardwaremodel'     ),
                     ('Kernel Version', 'kernelrelease'     ),
                     ('Puppet Version', 'puppetversion'     ), ]
+EXPORT_FACTS = ['kernelrelease', 'lsbdistdescription', 'architecture',
+                'puppetversion', 'kernel', 'processorcount']
