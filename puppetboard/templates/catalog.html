@@ -1,0 +1,61 @@
+{% extends 'layout.html' %}
+{% block content %}
+<div class="ui fluid icon input hide" style="margin-bottom:20px">
+  <input autofocus="autofocus" class="filter-table" placeholder="Type here to filter...">
+</div>
+<h1>Summary</h1>
+<table class='ui basic table'>
+  <thead>
+    <tr>
+      <th>Hostname</th>
+      <th>Version</th>
+      <th>Transaction UUID</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><a href="{{url_for('node', node_name=catalog.node)}}">{{catalog.node}}</a></td>
+      <td>{{catalog.version}}</td>
+      <td>{{catalog.transaction_uuid}}</td>
+    </tr>
+  </tbody>
+</table>
+
+<h1>Resources</h1>
+<table class='ui basic table compact catalog'>
+  <thead>
+    <tr>
+      <th>Resource</th>
+      <th>Location</th>
+    </tr>
+  </thead>
+  <tbody class='searchable'>
+    {% for resource in catalog.get_resources() %}
+    <tr>
+      <td>{{resource.type_}}[{{resource.name}}]</td>
+      <td>{{resource.sourcefile}}:{{resource.sourceline}}</td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+
+<h1>Edges</h1>
+<table class="ui basic table compact catalog">
+  <thead>
+    <tr>
+      <th>Source</th>
+      <th>Relationship</th>
+      <th>Target</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for edge in catalog.get_edges() %}
+    <tr>
+      <td>{{edge.source}}</td>
+      <td>{{edge.relationship}}</td>
+      <td>{{edge.target}}</td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% endblock content %}

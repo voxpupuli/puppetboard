@@ -16,6 +16,7 @@ LOCALISE_TIMESTAMP = True
 LOGLEVEL = 'info'
 REPORTS_COUNT = 10
 OFFLINE_MODE = False
+ENABLE_CATALOG = False
 GRAPH_FACTS = ['architecture',
                'domain',
                'lsbcodename',
