@@ -39,7 +39,7 @@
           {% endif %}
       </td>
       <td><a href="{{url_for('node', node_name=node.name)}}">{{node.name}}</a></td>
-      <td rel="utctimestamp">{{node.catalog_timestamp}}</td>
+      <td><a rel="utctimestamp" href="{{url_for('catalog_node', node_name=node.name)}}">{{node.catalog_timestamp}}</a></td>
       <td>
         {% if node.report_timestamp %}
         <a href="{{url_for('report_latest', node_name=node.name)}}" rel='utctimestamp'>{{ node.report_timestamp }}</a>
