@@ -201,9 +201,6 @@ def inventory():
                         # facts indexed by node name
     nodelist   = set()  # a set of node names
 
-    # get all the facts from PuppetDB
-    facts = puppetdb.facts()
-
     # load the list of items/facts we want in our inventory
     try:
         inv_facts = app.config['INVENTORY_FACTS']
@@ -219,6 +216,13 @@ def inventory():
     for description,name in inv_facts:
         fact_desc.append(description)
         fact_names.append(name)
+
+    query = '["or", {0}]'.format(
+        ', '.join('["=", "name", "{0}"]'.format(name)
+            for name in fact_names))
+
+    # get all the facts from PuppetDB
+    facts = puppetdb.facts(query=query)
 
     # convert the json in easy to access data structure
     for fact in facts:
