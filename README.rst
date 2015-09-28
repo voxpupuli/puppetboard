@@ -654,6 +654,15 @@ messages have a look at this post by `Tim Pope`_.
 
 .. _Tim Pope: http://tbaggery.com/2008/04/19/a-note-about-git-commit-messages.html
 
+Examples
+========
+
+`vagrant-puppetboard`_
+
+.. _vagrant-puppetboard: https://github.com/visibilityspots/vagrant-puppet/tree/puppetboard
+
+A vagrant project to show off the puppetboard functionallity using the puppetboard puppet module on a puppetserver with puppetdb.
+
 Screenshots
 ===========
 
