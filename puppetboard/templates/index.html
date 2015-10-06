@@ -72,7 +72,7 @@
         </thead>
         <tbody class="searchable">
           {% for node in nodes %}
-          {% if node.status != 'unchanged' %}
+          {% if node.status != 'unchanged' or report_status[node.name] == 'failed' %}
           <tr>
             <td>
               <a class="ui small status label
@@ -87,8 +87,15 @@
                 {% elif node.status == 'unchanged' %}
                   unchanged
                 {% endif %}
+                {% if node.status != 'failed' and report_status[node.name] == 'failed' %}
+                  compil-failed
+                {% endif %}
                 " href="{{url_for('report_latest', node_name=node.name)}}">
+                {% if node.status != 'failed' and report_status[node.name] == 'failed' %}
+                  compilation failed ( {{node.status}})
+                {% else %}
                   {{node.status}}
+                {% endif %}
                 </a>
                 {% if node.status=='unreported'%}
                   <span class="ui small label status"> {{ node.unreported_time }} </span>
