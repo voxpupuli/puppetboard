@@ -36,6 +36,11 @@ th.tablesorter-headerDesc::after {
   display: block;
 }
 
+.ui.label.status {
+  color: white;
+  text-shadow: 0 0 1px;
+}
+
 .ui.header.failed, .ui.line.failed {
   color: #AA4643;
 }
