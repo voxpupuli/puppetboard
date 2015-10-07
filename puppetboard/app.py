@@ -323,12 +323,13 @@ def report(node_name, report_id):
 
     for report in reports:
         if report.hash_ == report_id or report.version == report_id:
-            events = puppetdb.events(query='["=", "report", "{0}"]'.format(
-                report.hash_))
+            events = report.events()
+            logs = iter(report.logs)
             return render_template(
                 'report.html',
                 report=report,
-                events=yield_or_stop(events))
+                events=yield_or_stop(events),
+                logs=yield_or_stop(logs))
     else:
         abort(404)
 

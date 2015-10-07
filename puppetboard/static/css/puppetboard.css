@@ -93,6 +93,10 @@ background: repeating-linear-gradient(
   background-color: #DB843D;
 }
 
+.ui.line.info {
+  color: #89A54E;
+}
+
 .ui.label.unchanged {
   background-color: #89A54E;
 }
@@ -107,7 +111,7 @@ background: repeating-linear-gradient(
   );
 }
 
-.ui.line.skipped {
+.ui.line.skipped, .ui.line.warning {
   color: orange;
 }
 
@@ -123,6 +127,10 @@ background: repeating-linear-gradient(
   #AA4643 10px,
   #AA4643 20px
   );
+}
+
+.break-all {
+  word-break: break-all;
 }
 
 .count {
