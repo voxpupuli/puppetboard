@@ -87,11 +87,11 @@
                 {% elif node.status == 'unchanged' %}
                   unchanged
                 {% endif %}
-                {% if node.status != 'failed' and report_status[node.name] == 'failed' %}
+                {% if node.status != 'failed' and node.status != 'unreported' and report_status[node.name] == 'failed' %}
                   compil-failed
                 {% endif %}
                 " href="{{url_for('report_latest', node_name=node.name)}}">
-                {% if node.status != 'failed' and report_status[node.name] == 'failed' %}
+                {% if node.status != 'failed' and node.status != 'unreported' and report_status[node.name] == 'failed' %}
                   compilation failed ( {{node.status}})
                 {% else %}
                   {{node.status}}
