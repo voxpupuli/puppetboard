@@ -99,8 +99,6 @@ Native packages for your operating system will be provided in the near future.
 +-------------------+-----------+--------------------------------------------+
 | `SuSE LE 11 SP3`_ | available | Maintained on `OpenSuSE Build Service`_    |
 +-------------------+-----------+--------------------------------------------+
-| `ArchLinux`_      | available | Maintained by `Niels Abspoel`_             |
-+-------------------+-----------+--------------------------------------------+
 | `OpenBSD`_        | available | Maintained by `Jasper Lievisse Adriaanse`_ |
 +-------------------+-----------+--------------------------------------------+
 
