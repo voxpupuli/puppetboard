@@ -24,17 +24,7 @@
       <div class="title item">
         Puppetboard
       </div>
-      {%- for endpoint, caption in [
-      ('index', 'Overview'),
-      ('nodes', 'Nodes'),
-      ('facts', 'Facts'),
-      ('reports', 'Reports'),
-      ('metrics', 'Metrics'),
-      ('inventory', 'Inventory'),
-      ('catalogs', 'Catalogs'),
-      ('radiator', 'Radiator'),
-      ('query', 'Query'),
-      ] %}
+      {%- for endpoint, caption in config.MENU_ITEMS %}
       <a {% if endpoint == request.endpoint %} class="active item" {% else %} class="item" {% endif %}
         href="{{ url_for(endpoint, env=current_env) }}">{{ caption }}</a>
       {%- endfor %}
@@ -50,6 +40,18 @@
       </div>
       <div class="item right"><a href="https://github.com/voxpupuli/puppetboard" target="_blank">v0.2.0</a></div>
     </div>
+      {%- for plugin, urls in config.PLUGINS.iteritems() %}
+      <a class="ui dropdown item">
+        {{ plugin }}<i class="dropdown icon"></i>
+        <div class="menu">
+          {%- for endpoint, caption in urls %}
+          <div class="item" data-value="{{ url_for(endpoint) }}">{{ caption }}</div>
+          {%- endfor %}
+        </div>
+      </a>
+      {%- endfor %}
+      <div class="item" style="float:right"><a href="https://github.com/puppet-community/puppetboard" target="_blank">v0.0.4</a></div>
+    </nav>
     <div class="ui grid padding-bottom">
       <div class="one wide column"></div>
       <div class="fourteen wide column">
@@ -86,6 +88,7 @@
     <script src="{{ url_for('static', filename='jquery-tablesort-v.0.0.7/jquery.tablesort.min.js') }}"></script>
     <script src="{{ url_for('static', filename='js/lists.js') }}"></script>
     <script src="{{ url_for('static', filename='js/tables.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/menu.js') }}"></script>
     <script src="{{ url_for('static', filename='js/scroll.top.js') }}"></script>
     <script type="text/javascript">
       $(".ui.dropdown").dropdown();

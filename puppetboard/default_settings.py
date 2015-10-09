@@ -38,3 +38,16 @@ INVENTORY_FACTS = [('Hostname', 'fqdn'),
                    ('Kernel Version', 'kernelrelease'),
                    ('Puppet Version', 'puppetversion'), ]
 REFRESH_RATE = 30
+
+MENU_ITEMS = [
+    ('index', 'Overview'),
+    ('nodes', 'Nodes'),
+    ('facts', 'Facts'),
+    ('reports', 'Reports'),
+    ('metrics', 'Metrics'),
+    ('inventory', 'Inventory'),
+    ('catalogs', 'Catalogs'),
+    ('radiator', 'Radiator'),
+    ('query', 'Query'),
+]
+PLUGINS = []
