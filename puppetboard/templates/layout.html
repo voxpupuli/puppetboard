@@ -27,17 +27,19 @@
       <div class="title item">
         Puppetboard
       </div>
-      {%- for endpoint, caption in [
-      ('index', 'Overview'),
-      ('nodes', 'Nodes'),
-      ('facts', 'Facts'),
-      ('reports', 'Reports'),
-      ('metrics', 'Metrics'),
-      ('inventory', 'Inventory'),
-      ('query', 'Query'),
-      ] %}
+      {%- for endpoint, caption in config.MENU_ITEMS %}
       <a {% if endpoint == request.endpoint %} class="active item" {% else %} class="item" {% endif %}
         href="{{ url_for(endpoint) }}">{{ caption }}</a>
+      {%- endfor %}
+      {%- for plugin, urls in config.PLUGINS.iteritems() %}
+      <a class="ui dropdown item">
+        {{ plugin }}<i class="dropdown icon"></i>
+        <div class="menu">
+          {%- for endpoint, caption in urls %}
+          <div class="item" data-value="{{ url_for(endpoint) }}">{{ caption }}</div>
+          {%- endfor %}
+        </div>
+      </a>
       {%- endfor %}
       <div class="item" style="float:right"><a href="https://github.com/puppet-community/puppetboard" target="_blank">v0.0.4</a></div>
     </nav>
@@ -79,6 +81,7 @@
     {% endif %}
     <script src="{{ url_for('static', filename='js/lists.js') }}"></script>
     <script src="{{ url_for('static', filename='js/tables.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/menu.js') }}"></script>
     <script src="{{ url_for('static', filename='js/scroll.top.js') }}"></script>
 
     {% block script %} {% endblock script %}

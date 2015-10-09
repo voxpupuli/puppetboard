@@ -34,3 +34,13 @@ INVENTORY_FACTS = [ ('Hostname',       'fqdn'              ),
                     ('Architecture',   'hardwaremodel'     ),
                     ('Kernel Version', 'kernelrelease'     ),
                     ('Puppet Version', 'puppetversion'     ), ]
+MENU_ITEMS = [
+    ('index', 'Overview'),
+    ('nodes', 'Nodes'),
+    ('facts', 'Facts'),
+    ('reports', 'Reports'),
+    ('metrics', 'Metrics'),
+    ('inventory', 'Inventory'),
+    ('query', 'Query'),
+]
+PLUGINS = []

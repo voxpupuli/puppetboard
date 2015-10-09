@@ -44,6 +44,16 @@ puppetdb = connect(
     ssl_key=app.config['PUPPETDB_KEY'],
     ssl_cert=app.config['PUPPETDB_CERT'],
     timeout=app.config['PUPPETDB_TIMEOUT'],)
+app.puppetdb = puppetdb
+
+plugins = collections.defaultdict(list)
+for plugin in app.config['PLUGINS']:
+    module = __import__('{}.app'.format(plugin))
+    prefix = '/{}'.format(module.app.NAME)
+    plugins[module.app.DISPLAY_NAME] = module.app.ITEMS
+     
+    app.register_blueprint(module.app.main, url_prefix=prefix)
+app.config['PLUGINS'] = plugins
 
 numeric_level = getattr(logging, app.config['LOGLEVEL'].upper(), None)
 if not isinstance(numeric_level, int):
