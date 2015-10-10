@@ -4,6 +4,26 @@ Changelog
 
 This is the changelog for Puppetboard.
 
+0.0.5
+=====
+
+* Now requires WTForms versions less than 2.0
+* Adding a Flask development server in ``dev.py``.
+* Adding CSRF protection VIA the flask_wtf CsrfProtect object.
+* Allowing users to configure the report limit on pages where reports are
+  listed with the LIMIT_REPORTS configuration option.
+* Adding an inventory page to users to be able to see all available nodes
+  and a configure lists of facts to display VIA the INVENTORY_FACTS
+  configuration option.
+* Adding a page to view a node's catalog information if enabled, disabled
+  by default. Can be changed with the ENABLE_CATALOG configuration attribute.
+* New configuration option GRAPH_FACTS allows the user to choose which graphs
+  will generate pie on the fact pages.
+* Replacing Chart.js with c3.js and d3.js.
+* Adding Semantic UI 0.16.1 and removing unused bootstrap styles.
+* Adding an OFFLINE_MODE configuration option to load local assets or from a
+  CDN service. This is useful in environments without internet access.
+
 0.0.4
 =====
 
