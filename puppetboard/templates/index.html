@@ -93,7 +93,7 @@
                 {% else %}
                    {% if node.events['failures'] %}<span class="ui small count label red">{{node.events['failures']}}</span>{% else %}<span class="ui small count label">0</span>{% endif%}
                    {% if node.events['successes'] %}<span class="ui small count label green">{{node.events['successes']}}</span>{% else %}<span class="ui small count label">0</span>{% endif%}
-                   {% if node.events['skips'] %}<span class="ui small count label orange">{{node.events['skips']}}</span>{% else %}<span class="ui small count label">0</span>{% endif%}
+                   {% if node.events['skips'] %}<span class="ui small count label black">{{node.events['skips']}}</span>{% else %}<span class="ui small count label">0</span>{% endif%}
                 {% endif %}
             </td>
             <td>
