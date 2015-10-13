@@ -76,20 +76,20 @@ th.tablesorter-headerDesc::after {
 }
 
 .ui.menu.yellow {
-  background-color: #FFFF64;
+  background-color: #F0E965;
 }
 
 .ui.yellow.header, i.yellow {
-  color: #FFFF64;
+  color: #F0E965;
 }
 
 .ui.labels .yellow.label::before, .ui.yellow.labels .label::before, .ui.yellow.label::before {
-  background-color: #FFFF64;
+  background-color: #F0E965;
 }
 
 .ui.yellow.labels .label, .ui.yellow.label {
-  background-color: #FFFF64;
-  border-color: #FFFF64;
+  background-color: #F0E965;
+  border-color: #F0E965;
 }
 
 #scroll-btn-top {
