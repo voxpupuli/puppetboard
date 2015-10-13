@@ -75,6 +75,23 @@ th.tablesorter-headerDesc::after {
   color: #FFF;
 }
 
+.ui.menu.yellow {
+  background-color: #FFFF64;
+}
+
+.ui.yellow.header, i.yellow {
+  color: #FFFF64;
+}
+
+.ui.labels .yellow.label::before, .ui.yellow.labels .label::before, .ui.yellow.label::before {
+  background-color: #FFFF64;
+}
+
+.ui.yellow.labels .label, .ui.yellow.label {
+  background-color: #FFFF64;
+  border-color: #FFFF64;
+}
+
 #scroll-btn-top {
   position: fixed;
   overflow: hidden;
