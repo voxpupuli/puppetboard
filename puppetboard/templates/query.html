@@ -14,7 +14,7 @@
   <form method="POST" action="{{ url_for('query') }}">
     {{ form.csrf_token }}
     <div class="field {% if form.query.errors %} error {% endif %}">
-      {{ form.query(autofocus="autofocus", rows=5, placeholder="Enter your query: [\"=\", \"name\", \"hostname\"]. You may omit the opening and closing bracket.") }}
+      {{ form.query(autofocus="autofocus", rows=5, placeholder="Enter your query: [\"=\", \"certname\", \"hostname\"]. You may omit the opening and closing bracket.") }}
     </div>
     <div class="inline fields">
       {% for subfield in form.endpoints %}
