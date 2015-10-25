@@ -32,8 +32,7 @@ setup(
         "Flask >= 0.10.1",
         "Flask-WTF >= 0.9.4, <= 0.9.5",
         "WTForms < 2.0",
-    dependency_links=[
-        "git+https://github.com/raphink/pypuppetdb@v4-api#egg=pypuppetdb",
+        "pypuppetdb >= 0.2.0, < 0.3.0",
         ],
     keywords="puppet puppetdb puppetboard",
     classifiers=[
