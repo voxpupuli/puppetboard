@@ -99,13 +99,13 @@ Native packages for your operating system will be provided in the near future.
 +-------------------+-----------+--------------------------------------------+
 | `SuSE LE 11 SP3`_ | available | Maintained on `OpenSuSE Build Service`_    |
 +-------------------+-----------+--------------------------------------------+
-| `ArchLinux`_      | available | Maintained by `Niels Abspoel`_             |
+| `ArchLinux`_      | available | Maintained by `Tim Meusel`_                |
 +-------------------+-----------+--------------------------------------------+
 | `OpenBSD`_        | available | Maintained by `Jasper Lievisse Adriaanse`_ |
 +-------------------+-----------+--------------------------------------------+
 
 .. _ArchLinux: https://aur.archlinux.org/packages/python2-puppetboard/
-.. _Niels Abspoel: https://github.com/aboe76
+.. _Tim Meusel: https://github.com/bastelfreak
 .. _Jasper Lievisse Adriaanse: https://github.com/jasperla
 .. _OpenBSD: http://www.openbsd.org/cgi-bin/cvsweb/ports/www/puppetboard/
 .. _OpenSuSE Build Service: https://build.opensuse.org/package/show/systemsmanagement:puppet/python-puppetboard
