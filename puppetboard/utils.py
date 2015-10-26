@@ -29,15 +29,30 @@ def get_or_abort(func, *args, **kwargs):
         abort(204)
 
 
-def limit_reports(reports, limit):
+def limit_reports(reports, limit, events_hash):
     """Helper to yield a number of from the reports generator.
+
+    If events_hash has any hash, then returns only those reports that
+    have associated events.
 
     This is an ugly solution at best...
     """
-    for count, report in enumerate(reports):
-        if count == limit:
-            raise StopIteration
-        yield report
+    if not events_hash:
+        for count, report in enumerate(reports):
+            if count == limit:
+                raise StopIteration
+            yield report
+    else:
+        count = 0
+        for report in reports:
+            if report.hash_ not in events_hash:
+                continue
+            else:
+                count += 1
+            if count == limit:
+                raise StopIteration
+            yield report
+
 
 
 def yield_or_stop(generator):
