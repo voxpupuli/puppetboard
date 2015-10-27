@@ -37,7 +37,6 @@ app.secret_key = app.config['SECRET_KEY']
 app.jinja_env.filters['jsonprint'] = jsonprint
 
 puppetdb = connect(
-    api_version=3,
     host=app.config['PUPPETDB_HOST'],
     port=app.config['PUPPETDB_PORT'],
     ssl_verify=app.config['PUPPETDB_SSL_VERIFY'],
@@ -102,7 +101,7 @@ def index():
     """
     # TODO: Would be great if we could parallelize this somehow, doing these
     # requests in sequence is rather pointless.
-    prefix = 'com.puppetlabs.puppetdb.query.population'
+    prefix = 'puppetlabs.puppetdb.query.population'
     num_nodes = get_or_abort(
         puppetdb.metric,
         "{0}{1}".format(prefix, ':type=default,name=num-nodes'))
@@ -272,7 +271,7 @@ def reports_node(node_name):
     a table displaying those reports."""
     reports = limit_reports(
         yield_or_stop(
-            puppetdb.reports('["=", "certname", "{0}"]'.format(node_name))),
+            puppetdb.reports(query='["=", "certname", "{0}"]'.format(node_name))),
         app.config['REPORTS_COUNT'])
     return render_template(
         'reports_node.html',
@@ -307,11 +306,11 @@ def report(node_name, report_id):
     configuration_version. This allows for better integration
     into puppet-hipchat.
     """
-    reports = puppetdb.reports('["=", "certname", "{0}"]'.format(node_name))
+    reports = puppetdb.reports(query='["=", "certname", "{0}"]'.format(node_name))
 
     for report in reports:
         if report.hash_ == report_id or report.version == report_id:
-            events = puppetdb.events('["=", "report", "{0}"]'.format(
+            events = puppetdb.events(query='["=", "report", "{0}"]'.format(
                 report.hash_))
             return render_template(
                 'report.html',
