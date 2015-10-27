@@ -8,6 +8,7 @@ try:
 except ImportError:
     from urllib.parse import unquote
 from datetime import datetime
+from itertools import tee
 
 from flask import (
     Flask, render_template, abort, url_for,
@@ -18,10 +19,10 @@ from flask_wtf.csrf import CsrfProtect
 
 from pypuppetdb import connect
 
-from puppetboard.forms import QueryForm
+from puppetboard.forms import (CatalogForm, QueryForm)
 from puppetboard.utils import (
     get_or_abort, yield_or_stop,
-    limit_reports, jsonprint
+    jsonprint, Pagination
     )
 
 
@@ -37,7 +38,6 @@ app.secret_key = app.config['SECRET_KEY']
 app.jinja_env.filters['jsonprint'] = jsonprint
 
 puppetdb = connect(
-    api_version=3,
     host=app.config['PUPPETDB_HOST'],
     port=app.config['PUPPETDB_PORT'],
     ssl_verify=app.config['PUPPETDB_SSL_VERIFY'],
@@ -59,6 +59,27 @@ def stream_template(template_name, **context):
     rv.enable_buffering(5)
     return rv
 
+def url_for_pagination(page):
+    args = request.view_args.copy()
+    args['page'] = page
+    return url_for(request.endpoint, **args)
+
+def url_for_environments(env):
+    args = request.view_args.copy()
+    args['env'] = env
+    return url_for(request.endpoint, **args)
+
+def environments():
+    envs = get_or_abort(puppetdb.environments)
+    x = []
+
+    for env in envs:
+        x.append(env['name'])
+
+    return x
+
+app.jinja_env.globals['url_for_pagination'] = url_for_pagination
+app.jinja_env.globals['url_for_environments'] = url_for_environments
 
 @app.context_processor
 def utility_processor():
@@ -95,14 +116,23 @@ def server_error(e):
     return render_template('500.html'), 500
 
 
-@app.route('/')
-def index():
+@app.route('/', defaults={'env': 'production'})
+@app.route('/<env>/')
+def index(env):
     """This view generates the index page and displays a set of metrics and
     latest reports on nodes fetched from PuppetDB.
+
+    :param env: Search for nodes in this (Catalog and Fact) environment
+    :type env: :obj:`string`
     """
+    envs = environments()
+
+    if env not in envs:
+        return redirect(url_for_environments(envs[0]))
+
     # TODO: Would be great if we could parallelize this somehow, doing these
     # requests in sequence is rather pointless.
-    prefix = 'com.puppetlabs.puppetdb.query.population'
+    prefix = 'puppetlabs.puppetdb.query.population'
     num_nodes = get_or_abort(
         puppetdb.metric,
         "{0}{1}".format(prefix, ':type=default,name=num-nodes'))
@@ -118,7 +148,10 @@ def index():
         'avg_resources_node': "{0:10.0f}".format(avg_resources_node['Value']),
         }
 
-    nodes = puppetdb.nodes(
+    nodes = get_or_abort(puppetdb.nodes,
+        query='["and", {0}]'.format(
+            ", ".join('["=", "{0}", "{1}"]'.format(field, env)
+                for field in ['catalog_environment', 'facts_environment'])),
         unreported=app.config['UNRESPONSIVE_HOURS'],
         with_status=True)
 
@@ -150,12 +183,15 @@ def index():
         'index.html',
         metrics=metrics,
         nodes=nodes_overview,
-        stats=stats
+        stats=stats,
+        envs=envs,
+        current_env=env
         )
 
 
-@app.route('/nodes')
-def nodes():
+@app.route('/nodes', defaults={'env': 'production'})
+@app.route('/<env>/nodes')
+def nodes(env):
     """Fetch all (active) nodes from PuppetDB and stream a table displaying
     those nodes.
 
@@ -164,9 +200,20 @@ def nodes():
     we'll end up with an empty table instead because of how yield_or_stop
     works. Once pagination is in place we can change this but we'll need to
     provide a search feature instead.
+
+    :param env: Search for nodes in this (Catalog and Fact) environment
+    :type env: :obj:`string`
     """
+    envs = environments()
+
+    if env not in envs:
+        return redirect(url_for_environments(envs[0]))
+
     status_arg = request.args.get('status', '')
     nodelist = puppetdb.nodes(
+        query='["and", {0}]'.format(
+            ", ".join('["=", "{0}", "{1}"]'.format(field, env)
+                for field in ['catalog_environment', 'facts_environment'])),
         unreported=app.config['UNRESPONSIVE_HOURS'],
         with_status=True)
     nodes = []
@@ -177,11 +224,15 @@ def nodes():
         else:
             nodes.append(node)
     return Response(stream_with_context(
-        stream_template('nodes.html', nodes=nodes)))
+        stream_template('nodes.html',
+            nodes=nodes,
+            envs=envs,
+            current_env=env)))
 
 
-@app.route('/inventory')
-def inventory():
+@app.route('/inventory', defaults={'env': 'production'})
+@app.route('/<env>/inventory')
+def inventory(env):
     """Fetch all (active) nodes from PuppetDB and stream a table displaying
     those nodes along with a set of facts about them.
 
@@ -190,7 +241,14 @@ def inventory():
     we'll end up with an empty table instead because of how yield_or_stop
     works. Once pagination is in place we can change this but we'll need to
     provide a search feature instead.
+
+    :param env: Search for facts in this environment
+    :type env: :obj:`string`
     """
+    envs = environments()
+
+    if env not in envs:
+        return redirect(url_for_environments(envs[0]))
 
     fact_desc  = []     # a list of fact descriptions to go
                         # in the table header
@@ -217,7 +275,8 @@ def inventory():
         fact_desc.append(description)
         fact_names.append(name)
 
-    query = '["or", {0}]'.format(
+    query = '["and", ["=", "environment", "{0}"], ["or", {1}]]'.format(
+        env,
         ', '.join('["=", "name", "{0}"]'.format(name)
             for name in fact_names))
 
@@ -239,92 +298,270 @@ def inventory():
                 nodedata[node].append("undef")
 
     return Response(stream_with_context(
-        stream_template('inventory.html', nodedata=nodedata, fact_desc=fact_desc)))
+        stream_template('inventory.html',
+            nodedata=nodedata,
+            fact_desc=fact_desc,
+            envs=envs,
+            current_env=env)))
 
 
-@app.route('/node/<node_name>')
-def node(node_name):
+@app.route('/node/<node_name>', defaults={'env': 'production'})
+@app.route('/<env>/node/<node_name>')
+def node(env, node_name):
     """Display a dashboard for a node showing as much data as we have on that
     node. This includes facts and reports but not Resources as that is too
     heavy to do within a single request.
+
+    :param env: Ensure that the node, facts and reports are in this environment
+    :type env: :obj:`string`
     """
+    envs = environments()
+
+    if env not in envs:
+        return redirect(url_for_environments(envs[0]))
+
     node = get_or_abort(puppetdb.node, node_name)
     facts = node.facts()
-    reports = limit_reports(node.reports(), app.config['REPORTS_COUNT'])
+    reports = get_or_abort(puppetdb.reports,
+        query='["and", ["=", "environment", "{0}"],' \
+            '["=", "certname", "{1}"]]'.format(env, node_name),
+        limit=app.config['REPORTS_COUNT'],
+        order_by='[{"field": "start_time", "order": "desc"}]')
+    reports, reports_events = tee(reports)
+    report_event_counts = {}
+
+    for report in reports_events:
+        counts = get_or_abort(puppetdb.event_counts,
+            query='["and", ["=", "environment", "{0}"],' \
+                '["=", "certname", "{1}"], ["=", "report", "{2}"]]'.format(
+                    env,
+                    node_name,
+                    report.hash_),
+            summarize_by="certname")
+        try:
+            report_event_counts[report.hash_] = counts[0]
+        except IndexError:
+            report_event_counts[report.hash_] = {}
     return render_template(
         'node.html',
         node=node,
         facts=yield_or_stop(facts),
         reports=yield_or_stop(reports),
-        reports_count=app.config['REPORTS_COUNT'])
+        reports_count=app.config['REPORTS_COUNT'],
+        report_event_counts=report_event_counts,
+        envs=envs,
+        current_env=env)
 
 
-@app.route('/reports')
-def reports():
-    """Doesn't do much yet but is meant to show something like the reports of
-    the last half our, something like that."""
-    return render_template('reports.html')
+@app.route('/reports/', defaults={'env': 'production', 'page': 1})
+@app.route('/<env>/reports/', defaults={'page': 1})
+@app.route('/<env>/reports/page/<int:page>')
+def reports(env, page):
+    """Displays a list of reports and status from all nodes, retreived using the
+    reports endpoint, sorted by start_time.
 
-
-@app.route('/reports/<node_name>')
-def reports_node(node_name):
-    """Fetches all reports for a node and processes them eventually rendering
-    a table displaying those reports."""
-    reports = limit_reports(
-        yield_or_stop(
-            puppetdb.reports('["=", "certname", "{0}"]'.format(node_name))),
-        app.config['REPORTS_COUNT'])
-    return render_template(
-        'reports_node.html',
-        reports=reports,
-        nodename=node_name,
-        reports_count=app.config['REPORTS_COUNT'])
-
-
-@app.route('/report/latest/<node_name>')
-def report_latest(node_name):
-    """Redirect to the latest report of a given node. This is a workaround
-    as long as PuppetDB can't filter reports for latest-report? field. This
-    feature has been requested: https://tickets.puppetlabs.com/browse/PDB-203
+    :param env: Search for all reports in this environment
+    :type env: :obj:`string`
+    :param page: Calculates the offset of the query based on the report count
+        and this value
+    :type page: :obj:`int`
     """
-    reports = get_or_abort(puppetdb._query, 'reports',
-                           query='["=","certname","{0}"]'.format(node_name),
-                           limit=1)
-    if len(reports) > 0:
-        report = reports[0]['hash']
-        return redirect(
-            url_for('report', node_name=node_name, report_id=report))
-    else:
+    envs = environments()
+
+    if env not in envs:
+        return redirect(url_for_environments(envs[0]))
+
+    reports = get_or_abort(puppetdb.reports,
+        query='["=", "environment", "{0}"]'.format(env),
+        limit=app.config['REPORTS_COUNT'],
+        offset=(page-1) * app.config['REPORTS_COUNT'],
+        order_by='[{"field": "start_time", "order": "desc"}]')
+    total = get_or_abort(puppetdb._query,
+        'reports',
+        query='["extract", [["function", "count"]],'\
+            '["and", ["=", "environment", "{0}"], ["~", "certname", ""]]]'.format(
+                env))
+    total = total[0]['count']
+    reports, reports_events = tee(reports)
+    report_event_counts = {}
+
+    if total == 0 and page != 1:
         abort(404)
 
+    for report in reports_events:
+        counts = get_or_abort(puppetdb.event_counts,
+            query='["and",' \
+                '["=", "environment", "{0}"],' \
+                '["=", "certname", "{1}"],' \
+                '["=", "report", "{2}"]]'.format(
+                    env,
+                    report.node,
+                    report.hash_),
+            summarize_by="certname")
+        try:
+            report_event_counts[report.hash_] = counts[0]
+        except IndexError:
+            report_event_counts[report.hash_] = {}
+    return Response(stream_with_context(stream_template(
+        'reports.html',
+        reports=yield_or_stop(reports),
+        reports_count=app.config['REPORTS_COUNT'],
+        report_event_counts=report_event_counts,
+        pagination=Pagination(page, app.config['REPORTS_COUNT'], total),
+        envs=envs,
+        current_env=env)))
 
-@app.route('/report/<node_name>/<report_id>')
-def report(node_name, report_id):
+
+@app.route('/reports/<node_name>/', defaults={'env': 'production', 'page': 1})
+@app.route('/<env>/reports/<node_name>', defaults={'page': 1})
+@app.route('/<env>/reports/<node_name>/page/<int:page>')
+def reports_node(env, node_name, page):
+    """Fetches all reports for a node and processes them eventually rendering
+    a table displaying those reports.
+
+    :param env: Search for reports in this environment
+    :type env: :obj:`string`
+    :param node_name: Find the reports whose certname match this value
+    :type node_name: :obj:`string`
+    :param page: Calculates the offset of the query based on the report count
+        and this value
+    :type page: :obj:`int`
+    """
+    envs = environments()
+
+    if env not in envs:
+        return redirect(url_for_environments(envs[0]))
+
+    reports = get_or_abort(puppetdb.reports,
+        query='["and",' \
+            '["=", "environment", "{0}"],' \
+            '["=", "certname", "{1}"]]'.format(env, node_name),
+        limit=app.config['REPORTS_COUNT'],
+        offset=(page-1) * app.config['REPORTS_COUNT'],
+        order_by='[{"field": "start_time", "order": "desc"}]')
+    total = get_or_abort(puppetdb._query,
+        'reports',
+        query='["extract", [["function", "count"]],' \
+            '["and", ["=", "environment", "{0}"], ["=", "certname", "{1}"]]]'.format(
+            env,
+            node_name))
+    total = total[0]['count']
+    reports, reports_events = tee(reports)
+    report_event_counts = {}
+
+    if total == 0 and page != 1:
+        abort(404)
+
+    for report in reports_events:
+        counts = get_or_abort(puppetdb.event_counts,
+            query='["and",' \
+                '["=", "environment", "{0}"],' \
+                '["=", "certname", "{1}"],' \
+                '["=", "report", "{2}"]]'.format(env, report.node, report.hash_),
+            summarize_by="certname")
+        try:
+            report_event_counts[report.hash_] = counts[0]
+        except IndexError:
+            report_event_counts[report.hash_] = {}
+    return render_template(
+        'reports.html',
+        reports=reports,
+        reports_count=app.config['REPORTS_COUNT'],
+        report_event_counts=report_event_counts,
+        pagination=Pagination(page, app.config['REPORTS_COUNT'], total),
+        envs=envs,
+        current_env=env)
+
+
+@app.route('/report/latest/<node_name>', defaults={'env': 'production'})
+@app.route('/<env>/report/latest/<node_name>')
+def report_latest(env, node_name):
+    """Redirect to the latest report of a given node.
+
+    :param env: Search for reports in this environment
+    :type env: :obj:`string`
+    :param node_name: Find the reports whose certname match this value
+    :type node_name: :obj:`string`
+    """
+    envs = environments()
+
+    if env not in envs:
+        return redirect(url_for_environments(envs[0]))
+
+    reports = get_or_abort(puppetdb.reports,
+                           query='["and",' \
+                               '["=", "environment", "{0}"],' \
+                               '["=", "certname", "{1}"],' \
+                               '["=", "latest_report?", true]]'.format(
+                                   env,
+                                   node_name))
+    try:
+        report = next(reports)
+    except StopIteration:
+        abort(404)
+
+    return redirect(
+        url_for('report', env=env, node_name=node_name, report_id=report.hash_))
+
+
+@app.route('/report/<node_name>/<report_id>', defaults={'env': 'production'})
+@app.route('/<env>/report/<node_name>/<report_id>')
+def report(env, node_name, report_id):
     """Displays a single report including all the events associated with that
     report and their status.
 
     The report_id may be the puppetdb's report hash or the
     configuration_version. This allows for better integration
     into puppet-hipchat.
-    """
-    reports = puppetdb.reports('["=", "certname", "{0}"]'.format(node_name))
 
-    for report in reports:
-        if report.hash_ == report_id or report.version == report_id:
-            events = puppetdb.events('["=", "report", "{0}"]'.format(
-                report.hash_))
-            return render_template(
-                'report.html',
-                report=report,
-                events=yield_or_stop(events))
-    else:
+    :param env: Search for reports in this environment
+    :type env: :obj:`string`
+    :param node_name: Find the reports whose certname match this value
+    :type node_name: :obj:`string`
+    :param report_id: The hash or the configuration_version of the desired
+        report
+    :type report_id: :obj:`string`
+    """
+    envs = environments()
+
+    if env not in envs:
+        return redirect(url_for_environments(envs[0]))
+
+    query = '["and", ["=", "environment", "{0}"], ["=", "certname", "{1}"],' \
+        '["or", ["=", "hash", "{2}"], ["=", "configuration_version", "{2}"]]]'.format(
+            env, node_name, report_id)
+    reports = puppetdb.reports(query=query)
+
+    try:
+        report = next(reports)
+    except StopIteration:
         abort(404)
 
+    return render_template(
+        'report.html',
+        report=report,
+        events=yield_or_stop(report.events()),
+        logs=report.logs,
+        metrics=report.metrics,
+        envs=envs,
+        current_env=env)
 
-@app.route('/facts')
-def facts():
+
+@app.route('/facts', defaults={'env': 'production'})
+@app.route('/<env>/facts')
+def facts(env):
     """Displays an alphabetical list of all facts currently known to
-    PuppetDB."""
+    PuppetDB.
+
+    :param env: Serves no purpose for this function, only for consistency's
+        sake
+    :type env: :obj:`string`
+    """
+    envs = environments()
+
+    if env not in envs:
+        return redirect(url_for_environments(envs[0]))
+
     facts_dict = collections.defaultdict(list)
     facts = get_or_abort(puppetdb.fact_names)
     for fact in facts:
@@ -334,45 +571,94 @@ def facts():
         facts_dict[letter] = letter_list
 
     sorted_facts_dict = sorted(facts_dict.items())
-    return render_template('facts.html', facts_dict=sorted_facts_dict)
+    return render_template('facts.html',
+        facts_dict=sorted_facts_dict,
+        envs=envs,
+        current_env=env)
 
 
-@app.route('/fact/<fact>')
-def fact(fact):
+@app.route('/fact/<fact>', defaults={'env': 'production'})
+@app.route('/<env>/fact/<fact>')
+def fact(env, fact):
     """Fetches the specific fact from PuppetDB and displays its value per
-    node for which this fact is known."""
+    node for which this fact is known.
+
+    :param env: Searches for facts in this environment
+    :type env: :obj:`string`
+    :param fact: Find all facts with this name
+    :type fact: :obj:`string`
+    """
+    envs = environments()
+
+    if env not in envs:
+        return redirect(url_for_environments(envs[0]))
+
     # we can only consume the generator once, lists can be doubly consumed
     # om nom nom
     render_graph = False
     if fact in graph_facts:
         render_graph = True
-    localfacts = [f for f in yield_or_stop(puppetdb.facts(name=fact))]
+    localfacts = [f for f in yield_or_stop(puppetdb.facts(
+        name=fact,
+        query='["=", "environment", "{0}"]'.format(env)))]
     return Response(stream_with_context(stream_template(
         'fact.html',
         name=fact,
         render_graph=render_graph,
-        facts=localfacts)))
+        facts=localfacts,
+        envs=envs,
+        current_env=env)))
 
 
-@app.route('/fact/<fact>/<value>')
-def fact_value(fact, value):
-    """On asking for fact/value get all nodes with that fact."""
-    facts = get_or_abort(puppetdb.facts, fact, value)
+@app.route('/fact/<fact>/<value>', defaults={'env': 'production'})
+@app.route('/<env>/fact/<fact>/<value>')
+def fact_value(env, fact, value):
+    """On asking for fact/value get all nodes with that fact.
+
+    :param env: Searches for facts in this environment
+    :type env: :obj:`string`
+    :param fact: Find all facts with this name
+    :type fact: :obj:`string`
+    :param value: Filter facts whose value is equal to this
+    :type value: :obj:`string`
+    """
+    envs = environments()
+
+    if env not in envs:
+        return redirect(url_for_environments(envs[0]))
+
+    facts = get_or_abort(puppetdb.facts,
+        name=fact,
+        value=value,
+        query='["=", "environment", "{0}"]'.format(env))
     localfacts = [f for f in yield_or_stop(facts)]
     return render_template(
         'fact.html',
         name=fact,
         value=value,
-        facts=localfacts)
+        facts=localfacts,
+        envs=envs,
+        current_env=env)
 
 
-@app.route('/query', methods=('GET', 'POST'))
-def query():
+@app.route('/query', methods=('GET', 'POST'), defaults={'env': 'production'})
+@app.route('/<env>/query', methods=('GET', 'POST'))
+def query(env):
     """Allows to execute raw, user created querries against PuppetDB. This is
     currently highly experimental and explodes in interesting ways since none
     of the possible exceptions are being handled just yet. This will return
     the JSON of the response or a message telling you what whent wrong /
-    why nothing was returned."""
+    why nothing was returned.
+
+    :param env: Serves no purpose for the query data but is required for the
+        select field in the environment block
+    :type env: :obj:`string`
+    """
+    envs = environments()
+
+    if env not in envs:
+        return redirect(url_for_environments(envs[0]))
+
     if app.config['ENABLE_QUERY']:
         form = QueryForm()
         if form.validate_on_submit():
@@ -384,36 +670,203 @@ def query():
                 puppetdb._query,
                 form.endpoints.data,
                 query=query)
-            return render_template('query.html', form=form, result=result)
-        return render_template('query.html', form=form)
+            return render_template('query.html',
+                form=form,
+                result=result,
+                envs=envs,
+                current_env=env)
+        return render_template('query.html',
+            form=form,
+            envs=envs,
+            current_env=env)
     else:
         log.warn('Access to query interface disabled by administrator..')
         abort(403)
 
 
-@app.route('/metrics')
-def metrics():
-    metrics = get_or_abort(puppetdb._query, 'metrics', path='mbeans')
+@app.route('/metrics', defaults={'env': 'production'})
+@app.route('/<env>/metrics')
+def metrics(env):
+    """Lists all available metrics that PuppetDB is aware of.
+
+    :param env: While this parameter serves no function purpose it is required
+        for the environments template block
+    :type env: :obj:`string`
+    """
+    envs = environments()
+
+    if env not in envs:
+        return redirect(url_for_environments(envs[0]))
+
+    metrics = get_or_abort(puppetdb._query, 'mbean')
     for key, value in metrics.items():
-        metrics[key] = value.split('/')[3]
-    return render_template('metrics.html', metrics=sorted(metrics.items()))
+        metrics[key] = value.split('/')[2]
+    return render_template('metrics.html',
+        metrics=sorted(metrics.items()),
+        envs=envs,
+        current_env=env)
 
 
-@app.route('/metric/<metric>')
-def metric(metric):
+@app.route('/metric/<metric>', defaults={'env': 'production'})
+@app.route('/<env>/metric/<metric>')
+def metric(env, metric):
+    """Lists all information about the metric of the given name.
+
+    :param env: While this parameter serves no function purpose it is required
+        for the environments template block
+    :type env: :obj:`string`
+    """
+    envs = environments()
+
+    if env not in envs:
+        return redirect(url_for_environments(envs[0]))
+
     name = unquote(metric)
     metric = puppetdb.metric(metric)
     return render_template(
         'metric.html',
         name=name,
-        metric=sorted(metric.items()))
+        metric=sorted(metric.items()),
+        envs=envs,
+        current_env=env)
 
-@app.route('/catalog/<node_name>')
-def catalog_node(node_name):
-    """Fetches from PuppetDB the compiled catalog of a given node."""
+@app.route('/catalogs', defaults={'env': 'production'})
+@app.route('/<env>/catalogs')
+def catalogs(env):
+    """Lists all nodes with a compiled catalog.
+
+    :param env: Find the nodes with this catalog_environment value
+    :type env: :obj:`string`
+    """
+    envs = environments()
+
+    if env not in envs:
+        return redirect(url_for_environments(envs[0]))
+
     if app.config['ENABLE_CATALOG']:
-        catalog = puppetdb.catalog(node=node_name)
-        return render_template('catalog.html', catalog=catalog)
+        nodenames = []
+        catalog_list = []
+        nodes = get_or_abort(puppetdb.nodes,
+            query='["and",' \
+                '["=", "catalog_environment", "{0}"],' \
+                '["null?", "catalog_timestamp", false]]'.format(env),
+            with_status=False,
+            order_by='[{"field": "certname", "order": "asc"}]')
+        nodes, temp = tee(nodes)
+
+        for node in temp:
+            nodenames.append(node.name)
+
+        for node in nodes:
+            table_row = {
+                'name': node.name,
+                'catalog_timestamp': node.catalog_timestamp
+            }
+
+            if len(nodenames) > 1:
+                form = CatalogForm()
+
+                form.compare.data = node.name
+                form.against.choices = [(x, x) for x in nodenames
+                                        if x != node.name]
+                table_row['form'] = form
+            else:
+                table_row['form'] = None
+
+            catalog_list.append(table_row)
+
+        return render_template(
+            'catalogs.html',
+            nodes=catalog_list,
+            envs=envs,
+            current_env=env)
+    else:
+        log.warn('Access to catalog interface disabled by administrator')
+        abort(403)
+
+@app.route('/catalog/<node_name>', defaults={'env': 'production'})
+@app.route('/<env>/catalog/<node_name>')
+def catalog_node(env, node_name):
+    """Fetches from PuppetDB the compiled catalog of a given node.
+
+    :param env: Find the catalog with this environment value
+    :type env: :obj:`string`
+    """
+    envs = environments()
+
+    if env not in envs:
+        return redirect(url_for_environments(envs[0]))
+
+    if app.config['ENABLE_CATALOG']:
+        catalog = get_or_abort(puppetdb.catalog,
+            node=node_name)
+        return render_template('catalog.html',
+            catalog=catalog,
+            envs=envs,
+            current_env=env)
+    else:
+        log.warn('Access to catalog interface disabled by administrator')
+        abort(403)
+
+@app.route('/catalog/submit', methods=['POST'], defaults={'env': 'production'})
+@app.route('/<env>/catalog/submit', methods=['POST'])
+def catalog_submit(env):
+    """Receives the submitted form data from the catalogs page and directs
+       the users to the comparison page. Directs users back to the catalogs
+       page if no form submission data is found.
+
+    :param env: This parameter only directs the response page to the right
+       environment. If this environment does not exist return the use to the
+       catalogs page with the right environment.
+    :type env: :obj:`string`
+    """
+    envs = environments()
+
+    if env not in envs:
+        return redirect(url_for_environments(envs[0]))
+
+    if app.config['ENABLE_CATALOG']:
+        form = CatalogForm(request.form)
+
+        form.against.choices = [(form.against.data, form.against.data)]
+        if form.validate_on_submit():
+            compare = form.compare.data
+            against = form.against.data
+            return redirect(
+                url_for('catalog_compare',
+                    env=env,
+                    compare=compare,
+                    against=against))
+        return redirect(url_for('catalogs', env=env))
+    else:
+        log.warn('Access to catalog interface disabled by administrator')
+        abort(403)
+
+@app.route('/catalogs/compare/<compare>...<against>', defaults={'env': 'production'})
+@app.route('/<env>/catalogs/compare/<compare>...<against>')
+def catalog_compare(env, compare, against):
+    """Compares the catalog of one node, parameter compare, with that of
+       with that of another node, parameter against.
+
+    :param env: Ensure that the 2 catalogs are in the same environment
+    :type env: :obj:`string`
+    """
+    envs = environments()
+
+    if env not in envs:
+        return redirect(url_for_environments(envs[0]))
+
+    if app.config['ENABLE_CATALOG']:
+        compare_cat = get_or_abort(puppetdb.catalog,
+            node=compare)
+        against_cat = get_or_abort(puppetdb.catalog,
+            node=against)
+
+        return render_template('catalog_compare.html',
+            compare=compare_cat,
+            against=against_cat,
+            envs=envs,
+            current_env=env)
     else:
         log.warn('Access to catalog interface disabled by administrator')
         abort(403)

@@ -9,7 +9,7 @@ if sys.argv[-1] == 'publish':
     os.system('python setup.py sdist upload')
     sys.exit()
 
-VERSION = "0.0.5"
+VERSION = "0.1.0"
 
 with codecs.open('README.rst', encoding='utf-8') as f:
     README = f.read()
@@ -23,7 +23,7 @@ setup(
     author='Daniele Sluijters',
     author_email='daniele.sluijters+pypi@gmail.com',
     packages=find_packages(),
-    url='https://github.com/nedap/puppetboard',
+    url='https://github.com/puppet-community/puppetboard',
     license='Apache License 2.0',
     description='Web frontend for PuppetDB',
     include_package_data=True,
@@ -32,7 +32,7 @@ setup(
         "Flask >= 0.10.1",
         "Flask-WTF >= 0.9.4, <= 0.9.5",
         "WTForms < 2.0",
-        "pypuppetdb >= 0.1.0, < 0.2.0",
+        "pypuppetdb >= 0.2.0, < 0.3.0",
         ],
     keywords="puppet puppetdb puppetboard",
     classifiers=[

@@ -1,4 +1,4 @@
-{% macro facts_table(facts, autofocus=False, condensed=False, show_node=False, show_value=True, link_facts=False, margin_top=20, margin_bottom=20) -%}
+{% macro facts_table(facts, current_env, autofocus=False, condensed=False, show_node=False, show_value=True, link_facts=False, margin_top=20, margin_bottom=20) -%}
 <div class="ui fluid icon input hide" style="margin-bottom:20px">
   <input {% if autofocus %} autofocus="autofocus" {% endif %} class="filter-table" placeholder="Type here to filter...">
 </div>
@@ -19,16 +19,24 @@
     {% for fact in facts %}
     <tr>
       {% if show_node %}
-        <td><a href="{{url_for('node', node_name=fact.node)}}">{{fact.node}}</a></td>
+        <td><a href="{{url_for('node', env=current_env, node_name=fact.node)}}">{{fact.node}}</a></td>
       {% else %}
-        <td><a href="{{url_for('fact', fact=fact.name)}}">{{fact.name}}</a></td>
+        <td><a href="{{url_for('fact', env=current_env, fact=fact.name)}}">{{fact.name}}</a></td>
       {% endif %}
       {% if show_value %}
       <td style="word-wrap:break-word">
         {% if link_facts %}
-          <a href="{{url_for('fact_value', fact=fact.name, value=fact.value)}}">{{fact.value}}</a>
+          {% if fact.value is mapping %}
+            <a href="{{url_for('fact_value', env=current_env, fact=fact.name, value=fact.value)}}"><pre>{{fact.value|jsonprint}}</pre></a>
+          {% else %}
+            <a href="{{url_for('fact_value', env=current_env, fact=fact.name, value=fact.value)}}">{{fact.value}}</a>
+          {% endif %}
         {% else %}
-          {{fact.value}}
+          {% if fact.value is mapping %}
+            <pre>{{fact.value|jsonprint}}</pre>
+          {% else %}
+            {{fact.value}}
+          {% endif %}
         {% endif %}
       </td>
       {% endif %}
@@ -70,30 +78,40 @@
 </script>
 {%- endmacro %}
 
-{% macro reports_table(reports, nodename, reports_count, condensed=False, hash_truncate=False, show_conf_col=True, show_agent_col=True, show_host_col=True) -%}
+{% macro reports_table(reports, reports_count, report_event_counts, current_env, condensed=False, hash_truncate=False, show_conf_col=True, show_agent_col=True, show_host_col=True, show_run_col=False, show_full_col=False, show_search_bar=False, searchable=False) -%}
+{% if show_search_bar %}
+<div class="ui fluid icon input hide" style="margin-bottom:20px">
+  <input autofocus="autofocus" class="filter-table" placeholder="Type here to filter...">
+</div>
+{% endif %}
 <div class="ui info message">
 
-  Only showing the last {{reports_count}} reports.
+  Only showing {{reports_count}} reports sorted by Start Time.
 
 </div>
-<table class='ui table basic {% if condensed %}compact{% endif %}'>
+<table class='ui table basic {% if condensed %}compact{% endif %} report'>
   <thead>
     <tr>
       <th>Start time</th>
+      <th>Status</th>
+      {% if show_host_col %}
+        <th>Hostname</th>
+      {% endif %}
+      {% if show_run_col %}
       <th>Run time</th>
+      {% endif %}
+      {% if show_full_col %}
       <th>Full report</th>
+      {% endif %}
       {% if show_conf_col %}
         <th>Configuration version</th>
       {% endif %}
       {% if show_agent_col %}
         <th>Agent version</th>
       {% endif %}
-      {% if show_host_col %}
-        <th>Hostname</th>
-      {% endif %}
     <tr>
   </thead>
-  <tbody>
+  <tbody {% if searchable %}class="searchable" {% endif %}>
   {% for report in reports %}
     {% if hash_truncate %}
     {% set rep_hash = "%s&hellip;"|format(report.hash_[0:10])|safe %}
@@ -105,21 +123,78 @@
     {% else %}
     <tr>
     {% endif %}
-    <td rel="utctimestamp">{{report.start}}</td>
+      <td rel="utctimestamp">{{report.start}}</td>
+      <td>
+        {% call status_counts(status=report.status, node_name=report.node, events=report_event_counts[report.hash_], report_hash=report.hash_, current_env=current_env) %}{% endcall %}
+      </td>
+      {% if show_host_col %}
+        <td><a href="{{url_for('node', env=current_env, node_name=report.node)}}">{{ report.node }}</a></td>
+      {% endif %}
+      {% if show_run_col %}
       <td>{{report.run_time}}</td>
-
-      <td><a href="{{url_for('report', node_name=nodename, report_id=report.hash_)}}">{{rep_hash}}</a></td>
+      {% endif %}
+      {% if show_full_col %}
+      <td><a href="{{url_for('report', env=current_env, node_name=report.node, report_id=report.hash_)}}">{{rep_hash}}</a></td>
+      {% endif %}
       {% if show_conf_col %}
         <td>{{report.version}}</td>
       {% endif %}
       {% if show_agent_col %}
         <td>{{report.agent_version}}</td>
       {% endif %}
-      {% if show_host_col %}
-        <td><a href="{{url_for('node', node_name=report.node)}}">{{ report.node }}</a></td>
-      {% endif %}
     </tr>
     {% endfor %}
   </tbody>
 </table>
 {%- endmacro %}
+{% macro status_counts(caller, status, node_name, events, current_env, unreported_time=False, report_hash=False) -%}
+  <a class="ui small status label
+    {% if status == 'failed' -%}
+      red
+    {% elif status == 'changed' -%}
+      green
+    {% elif status == 'unreported' -%}
+      black
+    {% elif status == 'noop' -%}
+      blue
+    {% endif -%}
+  " href="
+    {% if report_hash -%}
+      {{url_for('report', env=current_env, node_name=node_name, report_id=report_hash)}}
+    {% else -%}
+      {{url_for('report_latest', env=current_env, node_name=node_name)}}
+    {% endif -%}
+  ">
+    {{status}}
+  </a>
+  {% if status == 'unreported' %}
+    <span class="ui small label status"> {{ unreported_time }} </span>
+  {% else %}
+    {% if events['failures'] %}<span class="ui small count label red">{{events['failures']}}</span>{% else %}<span class="ui small count label">0</span>{% endif%}
+    {% if events['successes'] %}<span class="ui small count label green">{{events['successes']}}</span>{% else %}<span class="ui small count label">0</span>{% endif%}
+    {% if events['skips'] %}<span class="ui small count label orange">{{events['skips']}}</span>{% else %}<span class="ui small count label">0</span>{% endif%}
+  {% endif %}
+{%- endmacro %}
+{% macro render_pagination(pagination) -%}
+  <div class="pagination">
+  {% if pagination.has_prev %}
+    <a href="{{url_for_pagination(1)}}">&laquo; First</a>
+    <a href="{{url_for_pagination(pagination.page - 1)}}">Prev</a>
+  {% endif %}
+  {% for page in pagination.iter_pages() %}
+    {% if page %}
+      {% if page != pagination.page %}
+        <a href="{{url_for_pagination(page)}}">{{page}}</a>
+      {% else %}
+        <span style="font-weight:bold;">{{page}}</span>
+      {% endif %}
+    {% else %}
+      <span class="ellipsis">...</span>
+    {% endif %}
+  {% endfor %}
+  {% if pagination.has_next %}
+    <a href="{{url_for_pagination(pagination.page + 1)}}">Next</a>
+    <a href="{{url_for_pagination(pagination.pages)}}">Last &raquo;</a>
+  {% endif %}
+  </div>
+{% endmacro %}

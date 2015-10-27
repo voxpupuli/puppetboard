@@ -28,12 +28,12 @@
     </div>
     <div class='row'>
       <h1>Reports</h1>
-      {{ macros.reports_table(reports, node.name, reports_count, condensed=True, hash_truncate=True, show_conf_col=False, show_agent_col=False, show_host_col=False)}}
+      {{ macros.reports_table(reports, reports_count, report_event_counts, condensed=True, hash_truncate=True, show_conf_col=False, show_agent_col=False, show_host_col=False, current_env=current_env)}}
     </div>
   </div>
   <div class='column'>
     <h1>Facts</h1>
-    {{macros.facts_table(facts, link_facts=True, condensed=True)}}
+    {{macros.facts_table(facts, link_facts=True, condensed=True, current_env=current_env)}}
   </div>
 </div>
 {% endblock content %}

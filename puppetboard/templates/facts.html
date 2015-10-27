@@ -8,7 +8,7 @@
   <span class='ui label darkblue'>{{key}}</span>
   <ul class="searchable">
     {%- for fact in facts_list %}
-    <li><a href="{{url_for('fact', fact=fact)}}">{{fact}}</a></li>
+    <li><a href="{{url_for('fact', env=current_env, fact=fact)}}">{{fact}}</a></li>
     {%- endfor %}
   </ul>
   {% endfor %}
