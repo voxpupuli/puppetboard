@@ -25,4 +25,4 @@ class QueryForm(Form):
 class CatalogForm(Form):
     """The form used to compare the catalogs of different nodes."""
     compare = HiddenField('compare')
-    against = SelectField(u'against')
+    against = SelectField('against')

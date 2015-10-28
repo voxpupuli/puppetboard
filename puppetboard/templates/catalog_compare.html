@@ -1,5 +1,8 @@
 {% extends 'layout.html' %}
 {% block content %}
+<div class="ui fluid icon input hide" style="margin-bottom:20px">
+  <input autofocus="autofocus" class="filter-table" placeholder="Type here to filter...">
+</div>
 <table class="ui basic table">
   <tbody>
     <tr>
@@ -16,7 +19,7 @@
           <thead>
             <tr><th>Resources</th></tr>
           </thead>
-          <tbody>
+          <tbody class='searchable'>
             {% for resource in compare.get_resources() %}
               <tr>
                 <td>{{resource.type_}}[{{resource.name}}]</td>
@@ -30,7 +33,7 @@
           <thead>
             <tr><th>Resources</th></tr>
           </thead>
-          <tbody>
+          <tbody class='searchable'>
             {% for resource in against.get_resources() %}
               <tr>
                 <td>{{resource.type_}}[{{resource.name}}]</td>
@@ -50,7 +53,7 @@
               <th>Target</th>
             </tr>
           </thead>
-          <tbody>
+          <tbody class='searchable'>
             {% for edge in compare.get_edges() %}
               <tr>
                 <td>{{edge.source}}</td>
@@ -70,7 +73,7 @@
               <th>Target</th>
             </tr>
           </thead>
-          <tbody>
+          <tbody class='searchable'>
             {% for edge in against.get_edges() %}
               <tr>
                 <td>{{edge.source}}</td>
