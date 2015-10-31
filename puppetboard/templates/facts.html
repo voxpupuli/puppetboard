@@ -3,14 +3,34 @@
 <div class="ui fluid icon input hide" style="margin-bottom:20px">
   <input autofocus="autofocus" class="filter-list" placeholder="Type here to filter...">
 </div>
-<div style="-moz-column-count:4; -webkit-column-count:4; column-count:4;">
+<div class="fact_listing">
+  <table>
   {%- for key,facts_list in facts_dict %}
-  <span class='ui label darkblue'>{{key}}</span>
-  <ul class="searchable">
-    {%- for fact in facts_list %}
-    <li><a href="{{url_for('fact', fact=fact)}}">{{fact}}</a></li>
-    {%- endfor %}
-  </ul>
+  <tr>
+    <td>
+      <span class='ui label darkblue'>{{key}}</span>
+    </td>
+    <td>
+      <ul class="searchable">
+        {%- for fact in facts_list %}
+          <li><a href="{{url_for('fact', fact=fact)}}">{{fact}}</a></li>
+        {%- endfor %}
+      </ul>
+    </td>
+  </tr>
   {% endfor %}
+  </table>
 </div>
+  <div id="extend_button" class="ui button" onclick="puppetboard_ajax_get_fact_names(1001, 2000);" style="margin-top: 8px; margin-left: 10px;">
+  Loading more facts ....
+  </div>
+  <script>
+    var lock_extend = false;
+    interval_check_list_extension = setInterval(function() {
+      if ($('#extend_button').visible())
+      {
+        $('#extend_button').trigger( "click" );
+      }
+    }, 500);
+  </script>
 {% endblock content %}

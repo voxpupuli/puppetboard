@@ -1,0 +1,24 @@
+{% extends 'layout.html' %}
+{% block content %}
+<div class="ui fluid icon input hide" style="margin-bottom:20px">
+  <input autofocus="autofocus" class="filter-list" placeholder="Type here to filter...">
+</div>
+<div class="fact_listing">
+  <table>
+  {%- for key,facts_list in facts_dict %}
+  <tr>
+    <td>
+      <span class='ui label darkblue'>{{key}}</span>
+    </td>
+    <td>
+      <ul class="searchable">
+      {%- for fact in facts_list %}
+        <li><a href="{{url_for('fact', fact=fact)}}">{{fact}}</a></li>
+      {%- endfor %}
+      </ul>
+    </td>
+  </tr>
+  {% endfor %}
+  </table>
+</div>
+{% endblock content %}

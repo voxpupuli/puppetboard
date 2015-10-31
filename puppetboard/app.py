@@ -321,11 +321,17 @@ def report(node_name, report_id):
 
 
 @app.route('/facts')
-def facts():
+@app.route('/facts/<start>')
+@app.route('/facts/<start>/<end>')
+def facts(start=0, end=1000):
     """Displays an alphabetical list of all facts currently known to
-    PuppetDB."""
+    PuppetDB. To not overload the client rendering engine, output is limited to 1000. """
     facts_dict = collections.defaultdict(list)
     facts = get_or_abort(puppetdb.fact_names)
+    start = int(start)
+    end   = int(end)
+    facts = facts[start:end]
+	
     for fact in facts:
         letter = fact[0].upper()
         letter_list = facts_dict[letter]
@@ -334,6 +340,25 @@ def facts():
 
     sorted_facts_dict = sorted(facts_dict.items())
     return render_template('facts.html', facts_dict=sorted_facts_dict)
+
+@app.route('/facts/search/<search_string>')
+def search(search_string):
+    """ Searching for fact_names by parameter provided """
+    facts_dict = collections.defaultdict(list)
+    facts = get_or_abort(puppetdb.fact_names)
+	
+    results_found = 0
+    for fact in facts:
+        if search_string in fact:
+            results_found += 1
+            letter = fact[0].upper()
+            letter_list = facts_dict[letter]
+            letter_list.append(fact)
+            facts_dict[letter] = letter_list
+            if results_found > 1000:
+			    break
+    sorted_facts_dict = sorted(facts_dict.items())
+    return render_template('search.html', facts_dict=sorted_facts_dict)
 
 
 @app.route('/fact/<fact>')
