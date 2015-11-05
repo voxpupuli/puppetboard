@@ -130,6 +130,7 @@ def index():
         'noop': 0
         }
 
+    report_status = {}
     for node in nodes:
         if node.status == 'unreported':
             stats['unreported'] += 1
@@ -141,15 +142,21 @@ def index():
             stats['noop'] += 1
         else:
             stats['unchanged'] += 1
+        reports = get_or_abort(puppetdb._query, 'reports',
+                               query='["=","certname","{0}"]'.format(node.name),
+                               limit=1)
+        if len(reports) > 0:
+            report_status[node.name] = reports[0]['status']
 
-        if node.status != 'unchanged':
+        if node.status != 'unchanged' or report_status[node.name] == 'failed':
             nodes_overview.append(node)
 
     return render_template(
         'index.html',
         metrics=metrics,
         nodes=nodes_overview,
-        stats=stats
+        stats=stats,
+        report_status=report_status
         )
 
 
@@ -169,14 +176,20 @@ def nodes():
         unreported=app.config['UNRESPONSIVE_HOURS'],
         with_status=True)
     nodes = []
+    report_status = {}
     for node in yield_or_stop(nodelist):
         if status_arg:
             if node.status == status_arg:
                 nodes.append(node)
         else:
             nodes.append(node)
+        reports = get_or_abort(puppetdb._query, 'reports',
+                               query='["=","certname","{0}"]'.format(node.name),
+                               limit=1)
+        if len(reports) > 0:
+            report_status[node.name] = reports[0]['status']
     return Response(stream_with_context(
-        stream_template('nodes.html', nodes=nodes)))
+        stream_template('nodes.html', nodes=nodes, report_status=report_status)))
 
 
 @app.route('/inventory')
@@ -310,12 +323,13 @@ def report(node_name, report_id):
 
     for report in reports:
         if report.hash_ == report_id or report.version == report_id:
-            events = puppetdb.events(query='["=", "report", "{0}"]'.format(
-                report.hash_))
+            events = report.events()
+            logs = iter(report.logs)
             return render_template(
                 'report.html',
                 report=report,
-                events=yield_or_stop(events))
+                events=yield_or_stop(events),
+                logs=yield_or_stop(logs))
     else:
         abort(404)
 
