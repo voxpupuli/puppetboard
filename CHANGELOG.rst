@@ -34,9 +34,6 @@ This is the changelog for Puppetboard.
 * fact_value pages rendered from JSON valued facts return no results. A more
   sophisticated API is required to make use of JSON valued facts (through the
   factsets, fact-paths and/or fact-contents endpoints for example)
-* Switching environments is done through a JavaScript/jQuery function which
-  could be a potential vulnerability. A dropdown menu, like those available
-  in Bootstrap, is the most probable alternative.
 
 0.0.5
 =====
