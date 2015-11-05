@@ -1,0 +1,90 @@
+{% extends 'layout.html' %}
+{% block content %}
+<div class="ui fluid icon input hide" style="margin-bottom:20px">
+  <input autofocus="autofocus" class="filter-table" placeholder="Type here to filter...">
+</div>
+<table class="ui basic table">
+  <tbody>
+    <tr>
+      <th><h1>Comparing</h1></th>
+      <th><h1>Against</h1></th>
+    </tr>
+    <tr>
+      <td>{{compare.node}}</td>
+      <td>{{against.node}}</td>
+    </tr>
+    <tr>
+      <td>
+        <table class="ui basic table compact catalog">
+          <thead>
+            <tr><th>Resources</th></tr>
+          </thead>
+          <tbody class='searchable'>
+            {% for resource in compare.get_resources() %}
+              <tr>
+                <td>{{resource.type_}}[{{resource.name}}]</td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </td>
+      <td>
+        <table class="ui basic table compact catalog">
+          <thead>
+            <tr><th>Resources</th></tr>
+          </thead>
+          <tbody class='searchable'>
+            {% for resource in against.get_resources() %}
+              <tr>
+                <td>{{resource.type_}}[{{resource.name}}]</td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </td>
+    </tr>
+    <tr>
+      <td>
+        <table class="ui basic table compact catalog">
+          <thead>
+            <tr>
+              <th>Edges</th>
+              <th>-&gt;</th>
+              <th>Target</th>
+            </tr>
+          </thead>
+          <tbody class='searchable'>
+            {% for edge in compare.get_edges() %}
+              <tr>
+                <td>{{edge.source}}</td>
+                <td>{{edge.relationship}}</td>
+                <td>{{edge.target}}</td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </td>
+      <td>
+        <table class="ui basic table compact catalog">
+          <thead>
+            <tr>
+              <th>Edge</th>
+              <th>-&gt;</th>
+              <th>Target</th>
+            </tr>
+          </thead>
+          <tbody class='searchable'>
+            {% for edge in against.get_edges() %}
+              <tr>
+                <td>{{edge.source}}</td>
+                <td>{{edge.relationship}}</td>
+                <td>{{edge.target}}</td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </td>
+    </tr>
+  </tbody>
+</table>
+{% endblock content %}

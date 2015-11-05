@@ -1,0 +1,40 @@
+{% extends 'layout.html' %}
+{% import '_macros.html' as macros %}
+{% block content %}
+<div class="ui fluid icon input hide" style="margin-bottom:20px">
+  <input autofocus="autofocus" class="filter-table" placeholder="Type here to filter...">
+</div>
+<table class='ui compact basic table nodes'>
+  <thead>
+    <tr>
+      <th></th>
+      <th>Hostname</th>
+      <th>Compile Time</th>
+      <th>Compare With</th>
+    </tr>
+  </thead>
+  <tbody class="searchable">
+    {% for node in nodes %}
+      <tr>
+          <td></td>
+          <td><a href="{{url_for('node', node_name=node.name)}}">{{node.name}}</a></td>
+          <td><a rel="utctimestamp" href="{{url_for('catalog_node', node_name=node.name)}}">{{node.catalog_timestamp}}</a></td>
+          <td>
+            {% if node.form %}
+              <div class="ui form">
+                <form method="POST" action="{{url_for('catalog_submit')}}">
+                  {{node.form.csrf_token}}
+                  <div class="field inline">
+                    {{node.form.compare}}
+                    {{node.form.against}}
+                    <input type="submit" class="ui submit button" style="height:auto;" value="Compare"/>
+                  </div>
+                </form>
+              </div>
+            {% endif %}
+          </td>
+      </tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% endblock content %}

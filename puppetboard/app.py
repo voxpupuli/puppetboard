@@ -18,7 +18,7 @@ from flask_wtf.csrf import CsrfProtect
 
 from pypuppetdb import connect
 
-from puppetboard.forms import QueryForm
+from puppetboard.forms import (CatalogForm, QueryForm)
 from puppetboard.utils import (
     get_or_abort, yield_or_stop,
     limit_reports, jsonprint
@@ -407,12 +407,91 @@ def metric(metric):
         name=name,
         metric=sorted(metric.items()))
 
+@app.route('/catalogs')
+def catalogs():
+    if app.config['ENABLE_CATALOG']:
+        nodenames = []
+        catalog_list = []
+        nodes = get_or_abort(puppetdb.nodes,
+            query='["null?", "catalog_timestamp", false]',
+            with_status=False,
+            order_by='[{"field": "certname", "order": "asc"}]')
+        nodes, temp = tee(nodes)
+
+        for node in temp:
+            nodenames.append(node.name)
+
+        for node in nodes:
+            table_row = {
+                'name': node.name, 
+                'catalog_timestamp': node.catalog_timestamp
+            }
+
+            if len(nodenames) > 1:
+                form = CatalogForm()
+
+                form.compare.data = node.name
+                form.against.choices = [(x, x) for x in nodenames
+                                        if x != node.name]
+                table_row['form'] = form
+            else:
+                table_row['form'] = None
+
+            catalog_list.append(table_row)
+
+        return render_template(
+            'catalogs.html',
+            nodes=catalog_list)
+    else:
+        log.warn('Access to catalogs endpoint disabled by administrator')
+        abort(403)
+
 @app.route('/catalog/<node_name>')
 def catalog_node(node_name):
     """Fetches from PuppetDB the compiled catalog of a given node."""
     if app.config['ENABLE_CATALOG']:
         catalog = puppetdb.catalog(node=node_name)
         return render_template('catalog.html', catalog=catalog)
+    else:
+        log.warn('Access to catalog interface disabled by administrator')
+        abort(403)
+
+@app.route('/catalog/submit', methods=['POST'])
+def catalog_submit():
+    """Receives the submitted form data from the catalogs page and directs
+       the users to the comparison page. Directs users back to the catalogs
+       page if no form submission data is found.
+    """
+    if app.config['ENABLE_CATALOG']:
+        form = CatalogForm(request.form)
+
+        form.against.choices = [(form.against.data, form.against.data)]
+        if form.validate_on_submit():
+            compare = form.compare.data
+            against = form.against.data
+            return redirect(
+                url_for('catalog_compare', 
+                    compare=compare, 
+                    against=against))
+        return redirect(url_for('catalogs'))
+    else:
+        log.warn('Access to catalog interface disabled by administrator')
+        abort(403)
+
+@app.route('/catalogs/compare/<compare>...<against>')
+def catalog_compare(compare, against):
+    """Compares the catalog of one node, parameter compare, with that of
+       with that of another node, parameter against.
+    """
+    if app.config['ENABLE_CATALOG']:
+        compare_cat = get_or_abort(puppetdb.catalog,
+            node=compare)
+        against_cat = get_or_abort(puppetdb.catalog,
+            node=against)
+
+        return render_template('catalog_compare.html',
+            compare=compare_cat,
+            against=against_cat)
     else:
         log.warn('Access to catalog interface disabled by administrator')
         abort(403)
