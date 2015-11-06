@@ -379,7 +379,7 @@ def reports(env, page):
     total = get_or_abort(puppetdb._query,
         'reports',
         query='["extract", [["function", "count"]],'\
-            '["and", ["=", "environment", "{0}"], ["~", "certname", ""]]]'.format(
+            '["and", ["=", "environment", "{0}"]]]'.format(
                 env))
     total = total[0]['count']
     reports, reports_events = tee(reports)
