@@ -54,12 +54,6 @@
       <i class="large arrow up icon"></i>
     </div>
 
-    <footer class="ui absolute fixed bottom">
-      <div>
-	Copyright &copy; 2013-{{ now('%Y') }} <a href="https://github.com/daenney" target="_blank">Daniele Sluijters</a>. <span style="float:right">Live from PuppetDB.</span>
-      </div>
-    </footer>
-
     {% if config.OFFLINE_MODE %}
     <script src="{{ url_for('static', filename='js/jquery.min.js') }}"></script>
     <script src="{{ url_for('static', filename='js/semantic.min.js') }}"></script>
