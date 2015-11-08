@@ -593,9 +593,13 @@ be found on `IRCnet`_ and `Freenode`_ and idles in #puppetboard.
 There's now also the #puppetboard channel on `Freenode`_ where we hang out
 and answer questions related to pypuppetdb and Puppetboard.
 
+There is also a `GoogleGroup`_ to exchange questions and discussions. Please
+note that this group contains discussions of other Puppet Community projects.
+
 .. _issue: https://github.com/puppet-community/puppetboard/issues
 .. _IRCnet: http://www.ircnet.org
 .. _Freenode: http://freenode.net
+:: _GoogleGroup: https://groups.google.com/forum/?hl=en#!forum/puppet-community
 
 Third party
 ===========
