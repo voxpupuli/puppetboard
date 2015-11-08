@@ -40,17 +40,15 @@
       <a {% if endpoint == request.endpoint %} class="active item" {% else %} class="item" {% endif %}
         href="{{ url_for(endpoint, env=current_env) }}">{{ caption }}</a>
       {%- endfor %}
-      {% if envs|length > 0 %}
-        <div class="ui item dropdown">
-          Environments
-          <i class="dropdown icon"></i>
-          <div class="menu">
-            {% for env in envs %}
-              <a class="item {% if env == current_env %}active{% endif %}" href="{{url_for_environments(env)}}">{{env}}</a>
-            {% endfor %}
-          </div>
+      <div class="ui item dropdown">
+        Environments
+        <i class="dropdown icon"></i>
+        <div class="menu">
+          {% for env in envs %}
+            <a class="item {% if env == current_env %}active{% endif %}" href="{{url_for_environments(env)}}">{{env}}</a>
+          {% endfor %}
         </div>
-      {% endif %}
+      </div>
       <div class="item right"><a href="https://github.com/puppet-community/puppetboard" target="_blank">v0.1.0</a></div>
     </div>
     <div class="ui grid padding-bottom">

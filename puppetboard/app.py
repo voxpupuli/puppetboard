@@ -78,8 +78,14 @@ def environments():
 
     return x
 
+def check_env(env):
+    if env not in envs:
+        abort(404)
+
 app.jinja_env.globals['url_for_pagination'] = url_for_pagination
 app.jinja_env.globals['url_for_environments'] = url_for_environments
+
+envs = environments()
 
 @app.context_processor
 def utility_processor():
@@ -91,29 +97,29 @@ def utility_processor():
 
 @app.errorhandler(400)
 def bad_request(e):
-    return render_template('400.html'), 400
+    return render_template('400.html', envs=envs), 400
 
 
 @app.errorhandler(403)
 def forbidden(e):
-    return render_template('403.html'), 400
+    return render_template('403.html', envs=envs), 400
 
 
 @app.errorhandler(404)
 def not_found(e):
-    return render_template('404.html'), 404
+    return render_template('404.html', envs=envs), 404
 
 
 @app.errorhandler(412)
 def precond_failed(e):
     """We're slightly abusing 412 to handle missing features
     depending on the API version."""
-    return render_template('412.html'), 412
+    return render_template('412.html', envs=envs), 412
 
 
 @app.errorhandler(500)
 def server_error(e):
-    return render_template('500.html'), 500
+    return render_template('500.html', envs=envs), 500
 
 
 @app.route('/', defaults={'env': 'production'})
@@ -125,10 +131,7 @@ def index(env):
     :param env: Search for nodes in this (Catalog and Fact) environment
     :type env: :obj:`string`
     """
-    envs = environments()
-
-    if env not in envs:
-        return redirect(url_for_environments(envs[0]))
+    check_env(env)
 
     # TODO: Would be great if we could parallelize this somehow, doing these
     # requests in sequence is rather pointless.
@@ -204,10 +207,7 @@ def nodes(env):
     :param env: Search for nodes in this (Catalog and Fact) environment
     :type env: :obj:`string`
     """
-    envs = environments()
-
-    if env not in envs:
-        return redirect(url_for_environments(envs[0]))
+    check_env(env)
 
     status_arg = request.args.get('status', '')
     nodelist = puppetdb.nodes(
@@ -245,10 +245,7 @@ def inventory(env):
     :param env: Search for facts in this environment
     :type env: :obj:`string`
     """
-    envs = environments()
-
-    if env not in envs:
-        return redirect(url_for_environments(envs[0]))
+    check_env(env)
 
     fact_desc  = []     # a list of fact descriptions to go
                         # in the table header
@@ -315,10 +312,7 @@ def node(env, node_name):
     :param env: Ensure that the node, facts and reports are in this environment
     :type env: :obj:`string`
     """
-    envs = environments()
-
-    if env not in envs:
-        return redirect(url_for_environments(envs[0]))
+    check_env(env)
 
     node = get_or_abort(puppetdb.node, node_name)
     facts = node.facts()
@@ -366,10 +360,7 @@ def reports(env, page):
         and this value
     :type page: :obj:`int`
     """
-    envs = environments()
-
-    if env not in envs:
-        return redirect(url_for_environments(envs[0]))
+    check_env(env)
 
     reports = get_or_abort(puppetdb.reports,
         query='["=", "environment", "{0}"]'.format(env),
@@ -427,10 +418,7 @@ def reports_node(env, node_name, page):
         and this value
     :type page: :obj:`int`
     """
-    envs = environments()
-
-    if env not in envs:
-        return redirect(url_for_environments(envs[0]))
+    check_env(env)
 
     reports = get_or_abort(puppetdb.reports,
         query='["and",' \
@@ -483,10 +471,7 @@ def report_latest(env, node_name):
     :param node_name: Find the reports whose certname match this value
     :type node_name: :obj:`string`
     """
-    envs = environments()
-
-    if env not in envs:
-        return redirect(url_for_environments(envs[0]))
+    check_env(env)
 
     reports = get_or_abort(puppetdb.reports,
                            query='["and",' \
@@ -522,10 +507,7 @@ def report(env, node_name, report_id):
         report
     :type report_id: :obj:`string`
     """
-    envs = environments()
-
-    if env not in envs:
-        return redirect(url_for_environments(envs[0]))
+    check_env(env)
 
     query = '["and", ["=", "environment", "{0}"], ["=", "certname", "{1}"],' \
         '["or", ["=", "hash", "{2}"], ["=", "configuration_version", "{2}"]]]'.format(
@@ -557,10 +539,7 @@ def facts(env):
         sake
     :type env: :obj:`string`
     """
-    envs = environments()
-
-    if env not in envs:
-        return redirect(url_for_environments(envs[0]))
+    check_env(env)
 
     facts_dict = collections.defaultdict(list)
     facts = get_or_abort(puppetdb.fact_names)
@@ -588,10 +567,7 @@ def fact(env, fact):
     :param fact: Find all facts with this name
     :type fact: :obj:`string`
     """
-    envs = environments()
-
-    if env not in envs:
-        return redirect(url_for_environments(envs[0]))
+    check_env(env)
 
     # we can only consume the generator once, lists can be doubly consumed
     # om nom nom
@@ -622,10 +598,7 @@ def fact_value(env, fact, value):
     :param value: Filter facts whose value is equal to this
     :type value: :obj:`string`
     """
-    envs = environments()
-
-    if env not in envs:
-        return redirect(url_for_environments(envs[0]))
+    check_env(env)
 
     facts = get_or_abort(puppetdb.facts,
         name=fact,
@@ -654,10 +627,7 @@ def query(env):
         select field in the environment block
     :type env: :obj:`string`
     """
-    envs = environments()
-
-    if env not in envs:
-        return redirect(url_for_environments(envs[0]))
+    check_env(env)
 
     if app.config['ENABLE_QUERY']:
         form = QueryForm()
@@ -693,10 +663,7 @@ def metrics(env):
         for the environments template block
     :type env: :obj:`string`
     """
-    envs = environments()
-
-    if env not in envs:
-        return redirect(url_for_environments(envs[0]))
+    check_env(env)
 
     metrics = get_or_abort(puppetdb._query, 'mbean')
     for key, value in metrics.items():
@@ -716,10 +683,7 @@ def metric(env, metric):
         for the environments template block
     :type env: :obj:`string`
     """
-    envs = environments()
-
-    if env not in envs:
-        return redirect(url_for_environments(envs[0]))
+    check_env(env)
 
     name = unquote(metric)
     metric = puppetdb.metric(metric)
@@ -738,10 +702,7 @@ def catalogs(env):
     :param env: Find the nodes with this catalog_environment value
     :type env: :obj:`string`
     """
-    envs = environments()
-
-    if env not in envs:
-        return redirect(url_for_environments(envs[0]))
+    check_env(env)
 
     if app.config['ENABLE_CATALOG']:
         nodenames = []
@@ -792,10 +753,7 @@ def catalog_node(env, node_name):
     :param env: Find the catalog with this environment value
     :type env: :obj:`string`
     """
-    envs = environments()
-
-    if env not in envs:
-        return redirect(url_for_environments(envs[0]))
+    check_env(env)
 
     if app.config['ENABLE_CATALOG']:
         catalog = get_or_abort(puppetdb.catalog,
@@ -820,10 +778,7 @@ def catalog_submit(env):
        catalogs page with the right environment.
     :type env: :obj:`string`
     """
-    envs = environments()
-
-    if env not in envs:
-        return redirect(url_for_environments(envs[0]))
+    check_env(env)
 
     if app.config['ENABLE_CATALOG']:
         form = CatalogForm(request.form)
@@ -851,10 +806,7 @@ def catalog_compare(env, compare, against):
     :param env: Ensure that the 2 catalogs are in the same environment
     :type env: :obj:`string`
     """
-    envs = environments()
-
-    if env not in envs:
-        return redirect(url_for_environments(envs[0]))
+    check_env(env)
 
     if app.config['ENABLE_CATALOG']:
         compare_cat = get_or_abort(puppetdb.catalog,
