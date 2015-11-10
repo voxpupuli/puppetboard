@@ -1,6 +1,6 @@
 {% extends 'layout.html' %}
+{% import '_macros.html' as macros %}
 {% block content %}
-<div class="ui warning message">
-  Pending <a href="https://tickets.puppetlabs.com/browse/PDB-201">#PDB-201</a>. You can access reports for a node or individual reports through the <a href="{{url_for('nodes')}}">Nodes</a> tab.
-</div>
+{{ macros.reports_table(reports, reports_count, report_event_counts, condensed=False, hash_truncate=False, show_conf_col=True, show_agent_col=True, show_host_col=True, show_search_bar=True, searchable=True)}}
+{{ macros.render_pagination(pagination)}}
 {% endblock content %}

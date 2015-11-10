@@ -17,12 +17,12 @@
     {% for node in nodes %}
       <tr>
           <td></td>
-          <td><a href="{{url_for('node', node_name=node.name)}}">{{node.name}}</a></td>
-          <td><a rel="utctimestamp" href="{{url_for('catalog_node', node_name=node.name)}}">{{node.catalog_timestamp}}</a></td>
+          <td><a href="{{url_for('node', env=current_env, node_name=node.name)}}">{{node.name}}</a></td>
+          <td><a rel="utctimestamp" href="{{url_for('catalog_node', env=current_env, node_name=node.name)}}">{{node.catalog_timestamp}}</a></td>
           <td>
             {% if node.form %}
               <div class="ui form">
-                <form method="POST" action="{{url_for('catalog_submit')}}">
+                <form method="POST" action="{{url_for('catalog_submit', env=current_env)}}">
                   {{node.form.csrf_token}}
                   <div class="field inline">
                     {{node.form.compare}}

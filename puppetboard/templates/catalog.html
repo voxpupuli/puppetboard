@@ -14,7 +14,7 @@
   </thead>
   <tbody>
     <tr>
-      <td><a href="{{url_for('node', node_name=catalog.node)}}">{{catalog.node}}</a></td>
+      <td><a href="{{url_for('node', env=current_env, node_name=catalog.node)}}">{{catalog.node}}</a></td>
       <td>{{catalog.version}}</td>
       <td>{{catalog.transaction_uuid}}</td>
     </tr>

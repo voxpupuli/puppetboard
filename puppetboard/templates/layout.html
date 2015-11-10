@@ -23,7 +23,7 @@
   </head>
 
   <body>
-    <nav class="ui fixed darkblue inverted menu">
+    <div class="ui fixed darkblue inverted menu">
       <div class="title item">
         Puppetboard
       </div>
@@ -38,10 +38,19 @@
       ('query', 'Query'),
       ] %}
       <a {% if endpoint == request.endpoint %} class="active item" {% else %} class="item" {% endif %}
-        href="{{ url_for(endpoint) }}">{{ caption }}</a>
+        href="{{ url_for(endpoint, env=current_env) }}">{{ caption }}</a>
       {%- endfor %}
-      <div class="item" style="float:right"><a href="https://github.com/puppet-community/puppetboard" target="_blank">v0.0.5</a></div>
-    </nav>
+      <div class="ui item dropdown">
+        Environments
+        <i class="dropdown icon"></i>
+        <div class="menu">
+          {% for env in envs %}
+            <a class="item {% if env == current_env %}active{% endif %}" href="{{url_for_environments(env)}}">{{env}}</a>
+          {% endfor %}
+        </div>
+      </div>
+      <div class="item right"><a href="https://github.com/puppet-community/puppetboard" target="_blank">v0.1.0</a></div>
+    </div>
     <div class="ui grid padding-bottom">
       <div class="one wide column"></div>
       <div class="fourteen wide column">
@@ -81,6 +90,9 @@
     <script src="{{ url_for('static', filename='js/lists.js') }}"></script>
     <script src="{{ url_for('static', filename='js/tables.js') }}"></script>
     <script src="{{ url_for('static', filename='js/scroll.top.js') }}"></script>
+    <script type="text/javascript">
+      $(".ui.dropdown").dropdown();
+    </script>
 
     {% block script %} {% endblock script %}
   </body>

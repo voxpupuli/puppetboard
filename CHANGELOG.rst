@@ -4,6 +4,37 @@ Changelog
 
 This is the changelog for Puppetboard.
 
+0.1.0
+====
+
+* Requires pypuppetdb >= 0.2.0
+* Full support for PuppetDB 3.x
+* The first directory location is now a Puppet environment which is filtered
+  on all supported queries. Users can browse different environments with a
+  select field in the top NavBar
+* Using limit, order_by and offset parameters adding pagaination on the Reports
+  page (available in the NavBar). Functionality is available to pages that
+  accept a page attribute.
+* The report page now directly queries pypuppetdb to match the report_id
+  value with the report hash or configuration_version fields.
+* Catching and aborting with a 404 if the report and report_latest function
+  queries do not return a generator object.
+* Adding a Catalogs page (similar to the Nodes page) with a form to compare
+  one node's catalog information with that of another node.
+* Updating the Query Endpoints for the Query page.
+* Adding to ``templates/_macros.html`` status_counts that shows node/report
+  status information, like what is avaiable on the index and nodes pages,
+  available to the reports pages and tables also.
+* Showing report logs and metrics in the report page.
+* Removing ``limit_reports`` from ``utils.py`` because this helper function
+  has been replaced by the limit PuppetDB paging function.
+
+**Known Issues**
+
+* fact_value pages rendered from JSON valued facts return no results. A more
+  sophisticated API is required to make use of JSON valued facts (through the
+  factsets, fact-paths and/or fact-contents endpoints for example)
+
 0.0.5
 =====
 

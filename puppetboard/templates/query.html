@@ -11,7 +11,7 @@
 {% endif %}
 {% endwith %}
 <div class="ui form">
-  <form method="POST" action="{{ url_for('query') }}">
+  <form method="POST" action="{{ url_for('query', env=current_env) }}">
     {{ form.csrf_token }}
     <div class="field {% if form.query.errors %} error {% endif %}">
       {{ form.query(autofocus="autofocus", rows=5, placeholder="Enter your query: [\"=\", \"certname\", \"hostname\"]. You may omit the opening and closing bracket.") }}

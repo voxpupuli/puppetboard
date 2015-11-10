@@ -12,7 +12,7 @@
   </thead>
   <tbody>
     <tr>
-      <td><a href="{{url_for('node', node_name=report.node)}}">{{ report.node }}</a></td>
+      <td><a href="{{url_for('node', env=current_env, node_name=report.node)}}">{{ report.node }}</a></td>
       <td>
         {{report.version}}
       </td>
@@ -48,26 +48,62 @@
       <td>{{event.item['old']}}</td>
       <td>{{event.item['new']}}</td>
     </tr>
-    {#    <tr>
-      <td class='message' colspan='4'>
-        <div id='message-event-{{loop.index}}'>
-          {{event.item['message']}}
-        </div>
-      </td>
-    </tr>#}
+    {% endfor %}
+  </tbody>
+</table>
+
+<h1>Logs</h1>
+<table class="ui basic table compact">
+  <thead>
+    <tr>
+      <th>Timestamp</th>
+      <th>Source</th>
+      <th>Tags</th>
+      <th>Message</th>
+      <th>Location</th>
+    <tr>
+  </thead>
+  <tbody>
+    {% for log in logs %}
+      {% if log.level == 'info' or log.level == 'notice' %}
+        <tr class='positive'>
+      {% elif log.level == 'warning' %}
+        <tr class='warning'>
+      {% else %}
+        <tr class='error'>
+      {% endif %}
+        <td rel="utctimestamp">{{log.time}}</td>
+        <td>{{log.source}}</td>
+        <td>{{log.tags|join(', ')}}</td>
+        <td>{{log.message}}</td>
+        {% if log.file != None and log.line != None %}
+          <td>{{log.file}}:{{log.line}}</td>
+        {% else %}
+          <td></td>
+        {% endif %}
+      </tr>
+    {% endfor %}
+  </tbody>
+</table>
+
+<h1>Metrics</h1>
+<table class="ui basic table compact">
+  <thead>
+    <tr>
+      <th>Category</th>
+      <th>Name</th>
+      <th>Value</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for metric in metrics %}
+      <tr>
+        <td>{{metric.category}}</td>
+        <td>{{metric.name}}</td>
+        <td>{{metric.value|round(2)}}</td>
+      </tr>
     {% endfor %}
   </tbody>
 </table>
 
 {% endblock content %}
-{% block script %}
-  <script type='text/javascript'>
-    jQuery(function ($) {
-      $("[rel=tooltip]").tooltip();
-      $(".event").click(function() {
-        $("#message-" + this.id).slideToggle(200);
-        return false;
-      });
-    });
-  </script>
-{% endblock script %}
