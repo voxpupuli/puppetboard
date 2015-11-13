@@ -1,6 +1,6 @@
 {% extends 'layout.html' %}
 {% import '_macros.html' as macros %}
 {% block content %}
-{{ macros.reports_table(reports, reports_count, report_event_counts, condensed=False, hash_truncate=False, show_conf_col=True, show_agent_col=True, show_host_col=True, show_search_bar=True, searchable=True)}}
+{{ macros.reports_table(reports, reports_count, report_event_counts, condensed=False, hash_truncate=False, show_conf_col=True, show_agent_col=True, show_host_col=True, show_search_bar=True, searchable=True, current_env=current_env)}}
 {{ macros.render_pagination(pagination)}}
 {% endblock content %}
