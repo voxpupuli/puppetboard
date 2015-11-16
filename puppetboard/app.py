@@ -122,7 +122,7 @@ def server_error(e):
     return render_template('500.html', envs=envs), 500
 
 
-@app.route('/', defaults={'env': 'production'})
+@app.route('/', defaults={'env': app.config['DEFAULT_ENVIRONMENT']})
 @app.route('/<env>/')
 def index(env):
     """This view generates the index page and displays a set of metrics and
@@ -192,7 +192,7 @@ def index(env):
         )
 
 
-@app.route('/nodes', defaults={'env': 'production'})
+@app.route('/nodes', defaults={'env': app.config['DEFAULT_ENVIRONMENT']})
 @app.route('/<env>/nodes')
 def nodes(env):
     """Fetch all (active) nodes from PuppetDB and stream a table displaying
@@ -230,7 +230,7 @@ def nodes(env):
             current_env=env)))
 
 
-@app.route('/inventory', defaults={'env': 'production'})
+@app.route('/inventory', defaults={'env': app.config['DEFAULT_ENVIRONMENT']})
 @app.route('/<env>/inventory')
 def inventory(env):
     """Fetch all (active) nodes from PuppetDB and stream a table displaying
@@ -302,7 +302,7 @@ def inventory(env):
             current_env=env)))
 
 
-@app.route('/node/<node_name>', defaults={'env': 'production'})
+@app.route('/node/<node_name>', defaults={'env': app.config['DEFAULT_ENVIRONMENT']})
 @app.route('/<env>/node/<node_name>')
 def node(env, node_name):
     """Display a dashboard for a node showing as much data as we have on that
@@ -347,7 +347,7 @@ def node(env, node_name):
         current_env=env)
 
 
-@app.route('/reports/', defaults={'env': 'production', 'page': 1})
+@app.route('/reports/', defaults={'env': app.config['DEFAULT_ENVIRONMENT'], 'page': 1})
 @app.route('/<env>/reports/', defaults={'page': 1})
 @app.route('/<env>/reports/page/<int:page>')
 def reports(env, page):
@@ -403,7 +403,7 @@ def reports(env, page):
         current_env=env)))
 
 
-@app.route('/reports/<node_name>/', defaults={'env': 'production', 'page': 1})
+@app.route('/reports/<node_name>/', defaults={'env': app.config['DEFAULT_ENVIRONMENT'], 'page': 1})
 @app.route('/<env>/reports/<node_name>', defaults={'page': 1})
 @app.route('/<env>/reports/<node_name>/page/<int:page>')
 def reports_node(env, node_name, page):
@@ -461,7 +461,7 @@ def reports_node(env, node_name, page):
         current_env=env)
 
 
-@app.route('/report/latest/<node_name>', defaults={'env': 'production'})
+@app.route('/report/latest/<node_name>', defaults={'env': app.config['DEFAULT_ENVIRONMENT']})
 @app.route('/<env>/report/latest/<node_name>')
 def report_latest(env, node_name):
     """Redirect to the latest report of a given node.
@@ -489,7 +489,7 @@ def report_latest(env, node_name):
         url_for('report', env=env, node_name=node_name, report_id=report.hash_))
 
 
-@app.route('/report/<node_name>/<report_id>', defaults={'env': 'production'})
+@app.route('/report/<node_name>/<report_id>', defaults={'env': app.config['DEFAULT_ENVIRONMENT']})
 @app.route('/<env>/report/<node_name>/<report_id>')
 def report(env, node_name, report_id):
     """Displays a single report including all the events associated with that
@@ -529,7 +529,7 @@ def report(env, node_name, report_id):
         current_env=env)
 
 
-@app.route('/facts', defaults={'env': 'production'})
+@app.route('/facts', defaults={'env': app.config['DEFAULT_ENVIRONMENT']})
 @app.route('/<env>/facts')
 def facts(env):
     """Displays an alphabetical list of all facts currently known to
@@ -556,7 +556,7 @@ def facts(env):
         current_env=env)
 
 
-@app.route('/fact/<fact>', defaults={'env': 'production'})
+@app.route('/fact/<fact>', defaults={'env': app.config['DEFAULT_ENVIRONMENT']})
 @app.route('/<env>/fact/<fact>')
 def fact(env, fact):
     """Fetches the specific fact from PuppetDB and displays its value per
@@ -586,7 +586,7 @@ def fact(env, fact):
         current_env=env)))
 
 
-@app.route('/fact/<fact>/<value>', defaults={'env': 'production'})
+@app.route('/fact/<fact>/<value>', defaults={'env': app.config['DEFAULT_ENVIRONMENT']})
 @app.route('/<env>/fact/<fact>/<value>')
 def fact_value(env, fact, value):
     """On asking for fact/value get all nodes with that fact.
@@ -614,7 +614,7 @@ def fact_value(env, fact, value):
         current_env=env)
 
 
-@app.route('/query', methods=('GET', 'POST'), defaults={'env': 'production'})
+@app.route('/query', methods=('GET', 'POST'), defaults={'env': app.config['DEFAULT_ENVIRONMENT']})
 @app.route('/<env>/query', methods=('GET', 'POST'))
 def query(env):
     """Allows to execute raw, user created querries against PuppetDB. This is
@@ -654,7 +654,7 @@ def query(env):
         abort(403)
 
 
-@app.route('/metrics', defaults={'env': 'production'})
+@app.route('/metrics', defaults={'env': app.config['DEFAULT_ENVIRONMENT']})
 @app.route('/<env>/metrics')
 def metrics(env):
     """Lists all available metrics that PuppetDB is aware of.
@@ -674,7 +674,7 @@ def metrics(env):
         current_env=env)
 
 
-@app.route('/metric/<metric>', defaults={'env': 'production'})
+@app.route('/metric/<metric>', defaults={'env': app.config['DEFAULT_ENVIRONMENT']})
 @app.route('/<env>/metric/<metric>')
 def metric(env, metric):
     """Lists all information about the metric of the given name.
@@ -694,7 +694,7 @@ def metric(env, metric):
         envs=envs,
         current_env=env)
 
-@app.route('/catalogs', defaults={'env': 'production'})
+@app.route('/catalogs', defaults={'env': app.config['DEFAULT_ENVIRONMENT']})
 @app.route('/<env>/catalogs')
 def catalogs(env):
     """Lists all nodes with a compiled catalog.
@@ -745,7 +745,7 @@ def catalogs(env):
         log.warn('Access to catalog interface disabled by administrator')
         abort(403)
 
-@app.route('/catalog/<node_name>', defaults={'env': 'production'})
+@app.route('/catalog/<node_name>', defaults={'env': app.config['DEFAULT_ENVIRONMENT']})
 @app.route('/<env>/catalog/<node_name>')
 def catalog_node(env, node_name):
     """Fetches from PuppetDB the compiled catalog of a given node.
@@ -766,7 +766,7 @@ def catalog_node(env, node_name):
         log.warn('Access to catalog interface disabled by administrator')
         abort(403)
 
-@app.route('/catalog/submit', methods=['POST'], defaults={'env': 'production'})
+@app.route('/catalog/submit', methods=['POST'], defaults={'env': app.config['DEFAULT_ENVIRONMENT']})
 @app.route('/<env>/catalog/submit', methods=['POST'])
 def catalog_submit(env):
     """Receives the submitted form data from the catalogs page and directs
@@ -797,7 +797,7 @@ def catalog_submit(env):
         log.warn('Access to catalog interface disabled by administrator')
         abort(403)
 
-@app.route('/catalogs/compare/<compare>...<against>', defaults={'env': 'production'})
+@app.route('/catalogs/compare/<compare>...<against>', defaults={'env': app.config['DEFAULT_ENVIRONMENT']})
 @app.route('/<env>/catalogs/compare/<compare>...<against>')
 def catalog_compare(env, compare, against):
     """Compares the catalog of one node, parameter compare, with that of
