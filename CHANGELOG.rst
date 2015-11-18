@@ -8,6 +8,7 @@ This is the changelog for Puppetboard.
 ====
 
 * Requires pypuppetdb >= 0.2.0
+* Drop support for PuppetDB 2 and earlier
 * Full support for PuppetDB 3.x
 * The first directory location is now a Puppet environment which is filtered
   on all supported queries. Users can browse different environments with a
