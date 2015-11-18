@@ -79,7 +79,7 @@ def environments():
     return x
 
 def check_env(env):
-    if env not in envs:
+    if env != '*' and env not in envs:
         abort(404)
 
 app.jinja_env.globals['url_for_pagination'] = url_for_pagination
@@ -122,7 +122,7 @@ def server_error(e):
     return render_template('500.html', envs=envs), 500
 
 
-@app.route('/', defaults={'env': 'production'})
+@app.route('/', defaults={'env': app.config['DEFAULT_ENVIRONMENT']})
 @app.route('/<env>/')
 def index(env):
     """This view generates the index page and displays a set of metrics and
@@ -151,10 +151,15 @@ def index(env):
         'avg_resources_node': "{0:10.0f}".format(avg_resources_node['Value']),
         }
 
+    if env == '*':
+        query = None
+    else:
+        query = '["and", {0}]'.format(
+                ", ".join('["=", "{0}", "{1}"]'.format(field, env)
+                    for field in ['catalog_environment', 'facts_environment']))
+
     nodes = get_or_abort(puppetdb.nodes,
-        query='["and", {0}]'.format(
-            ", ".join('["=", "{0}", "{1}"]'.format(field, env)
-                for field in ['catalog_environment', 'facts_environment'])),
+        query=query,
         unreported=app.config['UNRESPONSIVE_HOURS'],
         with_status=True)
 
@@ -192,7 +197,7 @@ def index(env):
         )
 
 
-@app.route('/nodes', defaults={'env': 'production'})
+@app.route('/nodes', defaults={'env': app.config['DEFAULT_ENVIRONMENT']})
 @app.route('/<env>/nodes')
 def nodes(env):
     """Fetch all (active) nodes from PuppetDB and stream a table displaying
@@ -209,11 +214,16 @@ def nodes(env):
     """
     check_env(env)
 
-    status_arg = request.args.get('status', '')
-    nodelist = puppetdb.nodes(
-        query='["and", {0}]'.format(
+    if env == '*':
+        query = None
+    else:
+        query = '["and", {0}]'.format(
             ", ".join('["=", "{0}", "{1}"]'.format(field, env)
                 for field in ['catalog_environment', 'facts_environment'])),
+
+    status_arg = request.args.get('status', '')
+    nodelist = puppetdb.nodes(
+        query=query,
         unreported=app.config['UNRESPONSIVE_HOURS'],
         with_status=True)
     nodes = []
@@ -230,7 +240,7 @@ def nodes(env):
             current_env=env)))
 
 
-@app.route('/inventory', defaults={'env': 'production'})
+@app.route('/inventory', defaults={'env': app.config['DEFAULT_ENVIRONMENT']})
 @app.route('/<env>/inventory')
 def inventory(env):
     """Fetch all (active) nodes from PuppetDB and stream a table displaying
@@ -272,10 +282,15 @@ def inventory(env):
         fact_desc.append(description)
         fact_names.append(name)
 
-    query = '["and", ["=", "environment", "{0}"], ["or", {1}]]'.format(
-        env,
-        ', '.join('["=", "name", "{0}"]'.format(name)
-            for name in fact_names))
+    if env == '*':
+        query = '["or", {0}]]'.format(
+            ', '.join('["=", "name", "{0}"]'.format(name)
+                for name in fact_names))
+    else:
+        query = '["and", ["=", "environment", "{0}"], ["or", {1}]]'.format(
+            env,
+            ', '.join('["=", "name", "{0}"]'.format(name)
+                for name in fact_names))
 
     # get all the facts from PuppetDB
     facts = puppetdb.facts(query=query)
@@ -302,7 +317,7 @@ def inventory(env):
             current_env=env)))
 
 
-@app.route('/node/<node_name>', defaults={'env': 'production'})
+@app.route('/node/<node_name>', defaults={'env': app.config['DEFAULT_ENVIRONMENT']})
 @app.route('/<env>/node/<node_name>')
 def node(env, node_name):
     """Display a dashboard for a node showing as much data as we have on that
@@ -314,11 +329,16 @@ def node(env, node_name):
     """
     check_env(env)
 
+    if env == '*':
+        query = '["=", "certname", "{0}"]]'.format(node_name)
+    else:
+        query='["and", ["=", "environment", "{0}"],' \
+            '["=", "certname", "{1}"]]'.format(env, node_name),
+
     node = get_or_abort(puppetdb.node, node_name)
     facts = node.facts()
     reports = get_or_abort(puppetdb.reports,
-        query='["and", ["=", "environment", "{0}"],' \
-            '["=", "certname", "{1}"]]'.format(env, node_name),
+        query=query,
         limit=app.config['REPORTS_COUNT'],
         order_by='[{"field": "start_time", "order": "desc"}]')
     reports, reports_events = tee(reports)
@@ -347,7 +367,7 @@ def node(env, node_name):
         current_env=env)
 
 
-@app.route('/reports/', defaults={'env': 'production', 'page': 1})
+@app.route('/reports/', defaults={'env': app.config['DEFAULT_ENVIRONMENT'], 'page': 1})
 @app.route('/<env>/reports/', defaults={'page': 1})
 @app.route('/<env>/reports/page/<int:page>')
 def reports(env, page):
@@ -362,16 +382,22 @@ def reports(env, page):
     """
     check_env(env)
 
+    if env == '*':
+        reports_query = None
+        total_query = '["extract", [["function", "count"]], ["~", "certname", ""]]'
+    else:
+        reports_query = '["=", "environment", "{0}"]'.format(env)
+        total_query = '["extract", [["function", "count"]],'\
+            '["and", ["=", "environment", "{0}"]]]'.format(env)
+
     reports = get_or_abort(puppetdb.reports,
-        query='["=", "environment", "{0}"]'.format(env),
+        query=reports_query,
         limit=app.config['REPORTS_COUNT'],
         offset=(page-1) * app.config['REPORTS_COUNT'],
         order_by='[{"field": "start_time", "order": "desc"}]')
     total = get_or_abort(puppetdb._query,
         'reports',
-        query='["extract", [["function", "count"]],'\
-            '["and", ["=", "environment", "{0}"]]]'.format(
-                env))
+        query=total_query)
     total = total[0]['count']
     reports, reports_events = tee(reports)
     report_event_counts = {}
@@ -403,7 +429,7 @@ def reports(env, page):
         current_env=env)))
 
 
-@app.route('/reports/<node_name>/', defaults={'env': 'production', 'page': 1})
+@app.route('/reports/<node_name>/', defaults={'env': app.config['DEFAULT_ENVIRONMENT'], 'page': 1})
 @app.route('/<env>/reports/<node_name>', defaults={'page': 1})
 @app.route('/<env>/reports/<node_name>/page/<int:page>')
 def reports_node(env, node_name, page):
@@ -420,10 +446,15 @@ def reports_node(env, node_name, page):
     """
     check_env(env)
 
-    reports = get_or_abort(puppetdb.reports,
+    if env == '*':
+        query = '["=", "certname", "{0}"]]'.format(node_name)
+    else:
         query='["and",' \
             '["=", "environment", "{0}"],' \
             '["=", "certname", "{1}"]]'.format(env, node_name),
+
+    reports = get_or_abort(puppetdb.reports,
+        query=query,
         limit=app.config['REPORTS_COUNT'],
         offset=(page-1) * app.config['REPORTS_COUNT'],
         order_by='[{"field": "start_time", "order": "desc"}]')
@@ -461,7 +492,7 @@ def reports_node(env, node_name, page):
         current_env=env)
 
 
-@app.route('/report/latest/<node_name>', defaults={'env': 'production'})
+@app.route('/report/latest/<node_name>', defaults={'env': app.config['DEFAULT_ENVIRONMENT']})
 @app.route('/<env>/report/latest/<node_name>')
 def report_latest(env, node_name):
     """Redirect to the latest report of a given node.
@@ -473,13 +504,19 @@ def report_latest(env, node_name):
     """
     check_env(env)
 
-    reports = get_or_abort(puppetdb.reports,
-                           query='["and",' \
-                               '["=", "environment", "{0}"],' \
-                               '["=", "certname", "{1}"],' \
-                               '["=", "latest_report?", true]]'.format(
-                                   env,
-                                   node_name))
+    if env == '*':
+        query='["and",' \
+            '["=", "certname", "{1}"],' \
+            '["=", "latest_report?", true]]'.format(node_name)
+    else:
+        query='["and",' \
+            '["=", "environment", "{0}"],' \
+            '["=", "certname", "{1}"],' \
+            '["=", "latest_report?", true]]'.format(
+                env,
+                node_name)
+
+    reports = get_or_abort(puppetdb.reports, query=query)
     try:
         report = next(reports)
     except StopIteration:
@@ -489,7 +526,7 @@ def report_latest(env, node_name):
         url_for('report', env=env, node_name=node_name, report_id=report.hash_))
 
 
-@app.route('/report/<node_name>/<report_id>', defaults={'env': 'production'})
+@app.route('/report/<node_name>/<report_id>', defaults={'env': app.config['DEFAULT_ENVIRONMENT']})
 @app.route('/<env>/report/<node_name>/<report_id>')
 def report(env, node_name, report_id):
     """Displays a single report including all the events associated with that
@@ -509,9 +546,14 @@ def report(env, node_name, report_id):
     """
     check_env(env)
 
-    query = '["and", ["=", "environment", "{0}"], ["=", "certname", "{1}"],' \
-        '["or", ["=", "hash", "{2}"], ["=", "configuration_version", "{2}"]]]'.format(
-            env, node_name, report_id)
+    if env == '*':
+        query = '["and", ["=", "certname", "{0}"],' \
+            '["or", ["=", "hash", "{1}"], ["=", "configuration_version", "{1}"]]]'.format(
+                node_name, report_id)
+    else:
+        query = '["and", ["=", "environment", "{0}"], ["=", "certname", "{1}"],' \
+            '["or", ["=", "hash", "{2}"], ["=", "configuration_version", "{2}"]]]'.format(
+                env, node_name, report_id)
     reports = puppetdb.reports(query=query)
 
     try:
@@ -529,7 +571,7 @@ def report(env, node_name, report_id):
         current_env=env)
 
 
-@app.route('/facts', defaults={'env': 'production'})
+@app.route('/facts', defaults={'env': app.config['DEFAULT_ENVIRONMENT']})
 @app.route('/<env>/facts')
 def facts(env):
     """Displays an alphabetical list of all facts currently known to
@@ -556,7 +598,7 @@ def facts(env):
         current_env=env)
 
 
-@app.route('/fact/<fact>', defaults={'env': 'production'})
+@app.route('/fact/<fact>', defaults={'env': app.config['DEFAULT_ENVIRONMENT']})
 @app.route('/<env>/fact/<fact>')
 def fact(env, fact):
     """Fetches the specific fact from PuppetDB and displays its value per
@@ -574,9 +616,12 @@ def fact(env, fact):
     render_graph = False
     if fact in graph_facts:
         render_graph = True
+    if env == '*':
+        query = None
+    else:
+        query = '["=", "environment", "{0}"]'.format(env)
     localfacts = [f for f in yield_or_stop(puppetdb.facts(
-        name=fact,
-        query='["=", "environment", "{0}"]'.format(env)))]
+        name=fact, query=query))]
     return Response(stream_with_context(stream_template(
         'fact.html',
         name=fact,
@@ -586,7 +631,7 @@ def fact(env, fact):
         current_env=env)))
 
 
-@app.route('/fact/<fact>/<value>', defaults={'env': 'production'})
+@app.route('/fact/<fact>/<value>', defaults={'env': app.config['DEFAULT_ENVIRONMENT']})
 @app.route('/<env>/fact/<fact>/<value>')
 def fact_value(env, fact, value):
     """On asking for fact/value get all nodes with that fact.
@@ -600,10 +645,14 @@ def fact_value(env, fact, value):
     """
     check_env(env)
 
+    if env == '*':
+        query = None
+    else:
+        query = '["=", "environment", "{0}"]'.format(env)
     facts = get_or_abort(puppetdb.facts,
         name=fact,
         value=value,
-        query='["=", "environment", "{0}"]'.format(env))
+        query=query)
     localfacts = [f for f in yield_or_stop(facts)]
     return render_template(
         'fact.html',
@@ -614,7 +663,7 @@ def fact_value(env, fact, value):
         current_env=env)
 
 
-@app.route('/query', methods=('GET', 'POST'), defaults={'env': 'production'})
+@app.route('/query', methods=('GET', 'POST'), defaults={'env': app.config['DEFAULT_ENVIRONMENT']})
 @app.route('/<env>/query', methods=('GET', 'POST'))
 def query(env):
     """Allows to execute raw, user created querries against PuppetDB. This is
@@ -654,7 +703,7 @@ def query(env):
         abort(403)
 
 
-@app.route('/metrics', defaults={'env': 'production'})
+@app.route('/metrics', defaults={'env': app.config['DEFAULT_ENVIRONMENT']})
 @app.route('/<env>/metrics')
 def metrics(env):
     """Lists all available metrics that PuppetDB is aware of.
@@ -674,7 +723,7 @@ def metrics(env):
         current_env=env)
 
 
-@app.route('/metric/<metric>', defaults={'env': 'production'})
+@app.route('/metric/<metric>', defaults={'env': app.config['DEFAULT_ENVIRONMENT']})
 @app.route('/<env>/metric/<metric>')
 def metric(env, metric):
     """Lists all information about the metric of the given name.
@@ -694,7 +743,7 @@ def metric(env, metric):
         envs=envs,
         current_env=env)
 
-@app.route('/catalogs', defaults={'env': 'production'})
+@app.route('/catalogs', defaults={'env': app.config['DEFAULT_ENVIRONMENT']})
 @app.route('/<env>/catalogs')
 def catalogs(env):
     """Lists all nodes with a compiled catalog.
@@ -707,10 +756,14 @@ def catalogs(env):
     if app.config['ENABLE_CATALOG']:
         nodenames = []
         catalog_list = []
-        nodes = get_or_abort(puppetdb.nodes,
-            query='["and",' \
+        if env == '*':
+            query = '["null?", "catalog_timestamp", false]]'
+        else:
+            query = '["and",' \
                 '["=", "catalog_environment", "{0}"],' \
                 '["null?", "catalog_timestamp", false]]'.format(env),
+        nodes = get_or_abort(puppetdb.nodes,
+            query=query,
             with_status=False,
             order_by='[{"field": "certname", "order": "asc"}]')
         nodes, temp = tee(nodes)
@@ -745,7 +798,7 @@ def catalogs(env):
         log.warn('Access to catalog interface disabled by administrator')
         abort(403)
 
-@app.route('/catalog/<node_name>', defaults={'env': 'production'})
+@app.route('/catalog/<node_name>', defaults={'env': app.config['DEFAULT_ENVIRONMENT']})
 @app.route('/<env>/catalog/<node_name>')
 def catalog_node(env, node_name):
     """Fetches from PuppetDB the compiled catalog of a given node.
@@ -766,7 +819,7 @@ def catalog_node(env, node_name):
         log.warn('Access to catalog interface disabled by administrator')
         abort(403)
 
-@app.route('/catalog/submit', methods=['POST'], defaults={'env': 'production'})
+@app.route('/catalog/submit', methods=['POST'], defaults={'env': app.config['DEFAULT_ENVIRONMENT']})
 @app.route('/<env>/catalog/submit', methods=['POST'])
 def catalog_submit(env):
     """Receives the submitted form data from the catalogs page and directs
@@ -797,7 +850,7 @@ def catalog_submit(env):
         log.warn('Access to catalog interface disabled by administrator')
         abort(403)
 
-@app.route('/catalogs/compare/<compare>...<against>', defaults={'env': 'production'})
+@app.route('/catalogs/compare/<compare>...<against>', defaults={'env': app.config['DEFAULT_ENVIRONMENT']})
 @app.route('/<env>/catalogs/compare/<compare>...<against>')
 def catalog_compare(env, compare, against):
     """Compares the catalog of one node, parameter compare, with that of

@@ -44,6 +44,7 @@
         Environments
         <i class="dropdown icon"></i>
         <div class="menu">
+            <a class="item {% if '*' == current_env %}active{% endif %}" href="{{url_for_environments('*')}}">All environments</a>
           {% for env in envs %}
             <a class="item {% if env == current_env %}active{% endif %}" href="{{url_for_environments(env)}}">{{env}}</a>
           {% endfor %}
