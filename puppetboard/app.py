@@ -506,7 +506,7 @@ def report_latest(env, node_name):
 
     if env == '*':
         query='["and",' \
-            '["=", "certname", "{1}"],' \
+            '["=", "certname", "{0}"],' \
             '["=", "latest_report?", true]]'.format(node_name)
     else:
         query='["and",' \
