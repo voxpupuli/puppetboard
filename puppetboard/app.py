@@ -140,7 +140,7 @@ def index(env):
     check_env(env, envs)
 
     if env == '*':
-        query = None
+        query = app.config['OVERVIEW_FILTER']
 
         prefix = 'puppetlabs.puppetdb.query.population'
         num_nodes = get_or_abort(
@@ -157,9 +157,11 @@ def index(env):
         metrics['avg_resources_node'] = "{0:10.0f}".format(
             avg_resources_node['Value'])
     else:
-        query = '["and", {0}]'.format(
-                ", ".join('["=", "{0}", "{1}"]'.format(field, env)
-                    for field in ['catalog_environment', 'facts_environment']))
+        conditions = ", ".join('["=", "{0}", "{1}"]'.format(field, env)
+                  for field in ['catalog_environment', 'facts_environment'])
+        if app.config['OVERVIEW_FILTER'] != None:
+            conditions += ", {0}".format(app.config['OVERVIEW_FILTER'])
+        query = '["and", {0}]'.format(conditions)
         num_nodes = get_or_abort(
             puppetdb._query,
             'nodes',

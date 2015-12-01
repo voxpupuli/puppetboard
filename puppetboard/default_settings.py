@@ -18,6 +18,7 @@ LOGLEVEL = 'info'
 REPORTS_COUNT = 10
 OFFLINE_MODE = False
 ENABLE_CATALOG = False
+OVERVIEW_FILTER = None
 GRAPH_FACTS = ['architecture',
                'clientversion',
                'domain',
