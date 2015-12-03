@@ -13,10 +13,9 @@
       }
     </style>
     {% else %}
-    <!--<link href="//cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.1.6/semantic.min.css" rel="stylesheet">-->
     <link href='//fonts.googleapis.com/css?family=Open+Sans' rel='stylesheet' type='text/css'>
     {% endif %}
-    <link href="{{ url_for('static', filename='css/semantic.min.css') }}" rel="stylesheet">
+    <link href="{{ url_for('static', filename='Semantic-UI-2.1.6/semantic.min.css') }}" rel="stylesheet">
     <link href="{{ url_for('static', filename='css/puppetboard.css') }}" rel="stylesheet">
   </head>
 
@@ -69,14 +68,12 @@
     </footer>
 
     {% if config.OFFLINE_MODE %}
-    <script src="{{ url_for('static', filename='js/jquery.min.js') }}"></script>
-    <script src="{{ url_for('static', filename='js/semantic.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='jquery-2.1.1/jquery.min.js') }}"></script>
     {% if config.LOCALISE_TIMESTAMP %}
-      <script src="{{ url_for('static', filename='js/moment.min.js') }}"></script>
+      <script src="{{ url_for('static', filename='moment.js-2.7.0/moment.min.js') }}"></script>
     {% endif %}
     {% else %}
     <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
-    <script src="//cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.1.6/semantic.min.js"></script>
     {% if config.LOCALISE_TIMESTAMP %}
       <script src="//cdnjs.cloudflare.com/ajax/libs/moment.js/2.7.0/moment.min.js"></script>
     {% endif %}
@@ -84,7 +81,8 @@
     {% if config.LOCALISE_TIMESTAMP %}
       <script src="{{ url_for('static', filename='js/timestamps.js')}}"></script>
     {% endif %}
-    <script src="{{ url_for('static', filename='js/jquery.tablesort.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='Semantic-UI-2.1.6/semantic.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='jquery-tablesort-v.0.0.7/jquery.tablesort.min.js') }}"></script>
     <script src="{{ url_for('static', filename='js/lists.js') }}"></script>
     <script src="{{ url_for('static', filename='js/tables.js') }}"></script>
     <script src="{{ url_for('static', filename='js/scroll.top.js') }}"></script>
