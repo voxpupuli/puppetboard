@@ -1,43 +1,11 @@
 $ = jQuery
 $ ->
 
-$.tablesorter.addParser(
-  id: 'timestamp'
+if $('th.default-sort').data()
+  $('table.sortable').tablesort().data('tablesort').sort($("th.default-sort"),"desc")
 
-  # Return false so this parser is not auto detected
-  is: (s) ->
-    false
-
-  # Normalize the timestamp to epoch for sorting
-  format: (s) ->
-    moment.utc(s).unix()
-
-  # The return value of our normalization function is an integer
-  type: 'numeric'
-)
-
-$('.nodes').tablesorter(
-  headers:
-    2: sorter: 'timestamp'
-    3: sorter: 'timestamp'
-    4: sorter: false
-  sortList: [[1,0]]
-)
-
-$('.facts').tablesorter(
-  sortList: [[0,0]]
-)
-
-$('.dashboard').tablesorter(
-  headers:
-    2: sorter: 'timestamp'
-    3: sorter: false
-  sortList: [[0, 1]]
-)
-
-$('.catalog').tablesorter(
-    sortList: [[0, 0]]
-)
+$('thead th.date').data 'sortBy', (th, td, tablesort) ->
+  return moment.utc(td.text()).unix()
 
 $('input.filter-table').parent('div').removeClass('hide')
 $("input.filter-table").on "keyup", (e) ->

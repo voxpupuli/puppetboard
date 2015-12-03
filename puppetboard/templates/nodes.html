@@ -4,13 +4,13 @@
 <div class="ui fluid icon input hide" style="margin-bottom:20px">
   <input autofocus="autofocus" class="filter-table" placeholder="Type here to filter...">
 </div>
-<table class='ui compact basic table nodes'>
+<table class='ui very compact very basic sortable table'>
   <thead>
     <tr>
       <th>Status</th>
-      <th>Hostname</th>
-      <th>Catalog</th>
-      <th>Report</th>
+      <th class="default-sort">Hostname</th>
+      <th class="date">Catalog</th>
+      <th class="date">Report</th>
       <th>&nbsp;</th>
     </tr>
   </thead>
@@ -34,7 +34,7 @@
             <a href="{{url_for('report_latest', env=current_env, node_name=node.name)}}" rel='utctimestamp'>{{ node.report_timestamp }}</a>
           {% endif %}
         {% else %}
-          <i class="large ban circle icon"></i>
+          <i class="large darkblue ban icon"></i>
         {% endif %}
       </td>
       <td>

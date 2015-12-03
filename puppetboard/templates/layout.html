@@ -13,17 +13,15 @@
         src: local('Open Sans'), local('OpenSans'), url({{ url_for('static', filename='fonts/Open_Sans.woff') }}) format('woff');
       }
     </style>
-    <link href="{{ url_for('static', filename='css/jquery.tablesorter.filter.formatter.css') }}" rel="stylesheet">
     {% else %}
-    <link href="//cdnjs.cloudflare.com/ajax/libs/semantic-ui/0.16.1/css/semantic.min.css" rel="stylesheet">
+    <link href="//cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.1.6/semantic.min.css" rel="stylesheet">
     <link href='//fonts.googleapis.com/css?family=Open+Sans' rel='stylesheet' type='text/css'>
-    <link href="//cdnjs.cloudflare.com/ajax/libs/jquery.tablesorter/2.17.2/css/filter.formatter.css" rel="stylesheet">
     {% endif %}
     <link href="{{ url_for('static', filename='css/puppetboard.css') }}" rel="stylesheet">
   </head>
 
   <body>
-    <div class="ui fixed darkblue inverted menu">
+    <div class="ui darkblue doubling stackable inverted large menu">
       <div class="title item">
         Puppetboard
       </div>
@@ -40,13 +38,13 @@
       <a {% if endpoint == request.endpoint %} class="active item" {% else %} class="item" {% endif %}
         href="{{ url_for(endpoint, env=current_env) }}">{{ caption }}</a>
       {%- endfor %}
-      <div class="ui item dropdown">
+      <div class="ui dropdown item">
         Environments
         <i class="dropdown icon"></i>
         <div class="menu">
-            <a class="item {% if '*' == current_env %}active{% endif %}" href="{{url_for_environments('*')}}">All environments</a>
+            <a class="{% if '*' == current_env %}active {% endif %}item" href="{{url_for_environments('*')}}">All environments</a>
           {% for env in envs %}
-            <a class="item {% if env == current_env %}active{% endif %}" href="{{url_for_environments(env)}}">{{env}}</a>
+            <a class="{% if env == current_env %}active {% endif %}item" href="{{url_for_environments(env)}}">{{env}}</a>
           {% endfor %}
         </div>
       </div>
@@ -76,23 +74,23 @@
     {% if config.LOCALISE_TIMESTAMP %}
       <script src="{{ url_for('static', filename='js/moment.min.js') }}"></script>
     {% endif %}
-    <script src="{{ url_for('static', filename='js/jquery.tablesorter.min.js') }}"></script>
     {% else %}
     <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
-    <script src="//cdnjs.cloudflare.com/ajax/libs/semantic-ui/0.16.1/javascript/semantic.min.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.1.6/semantic.min.js"></script>
     {% if config.LOCALISE_TIMESTAMP %}
       <script src="//cdnjs.cloudflare.com/ajax/libs/moment.js/2.7.0/moment.min.js"></script>
     {% endif %}
-    <script src="//cdnjs.cloudflare.com/ajax/libs/jquery.tablesorter/2.17.2/jquery.tablesorter.min.js"></script>
     {% endif %}
     {% if config.LOCALISE_TIMESTAMP %}
       <script src="{{ url_for('static', filename='js/timestamps.js')}}"></script>
     {% endif %}
+    <script src="{{ url_for('static', filename='js/jquery.tablesort.min.js') }}"></script>
     <script src="{{ url_for('static', filename='js/lists.js') }}"></script>
     <script src="{{ url_for('static', filename='js/tables.js') }}"></script>
     <script src="{{ url_for('static', filename='js/scroll.top.js') }}"></script>
     <script type="text/javascript">
       $(".ui.dropdown").dropdown();
+      $('table').tablesort();
     </script>
 
     {% block script %} {% endblock script %}

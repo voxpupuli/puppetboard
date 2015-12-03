@@ -3,7 +3,7 @@
 <div class="ui fluid icon input hide" style="margin-bottom:20px">
   <input autofocus="autofocus" class="filter-table" placeholder="Type here to filter...">
 </div>
-<table class='ui compact basic table inventory'>
+<table class='ui very compact very basic sortable table'>
   <thead>
     <tr>
       {% for description in fact_desc %}
@@ -14,7 +14,6 @@
   <tbody class="searchable">
     {% for nodename in nodedata %}
     <tr>
- 
       {% for item in nodedata[nodename] %}
       <td>{{item}}</td>
       {% endfor %}

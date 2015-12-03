@@ -626,6 +626,7 @@ def facts(env):
     sorted_facts_dict = sorted(facts_dict.items())
     return render_template('facts.html',
         facts_dict=sorted_facts_dict,
+        facts_len=sum(map(len,facts_dict.values())) + len(facts_dict)*5,
         envs=envs,
         current_env=env)
 
