@@ -136,6 +136,7 @@ def index(env):
     # TODO: Would be great if we could parallelize this somehow, doing these
     # requests in sequence is rather pointless.
     prefix = 'puppetlabs.puppetdb.query.population'
+    refreshrate = app.config['REFRESH_RATE']
     num_nodes = get_or_abort(
         puppetdb.metric,
         "{0}{1}".format(prefix, ':type=default,name=num-nodes'))
@@ -193,6 +194,7 @@ def index(env):
         nodes=nodes_overview,
         stats=stats,
         envs=envs,
+        refreshrate=refreshrate,
         current_env=env
         )
 
