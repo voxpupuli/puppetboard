@@ -4,6 +4,20 @@ Changelog
 
 This is the changelog for Puppetboard.
 
+0.1.2
+====
+
+* Add configuration option to set the default environment, defaults to
+  'production' (https://github.com/puppet-community/puppetboard/pull/185)
+* Loading all available environments with every page load. (Issue: 
+  https://github.com/puppet-community/puppetboard/issues/186)
+
+0.1.1
+====
+
+* Fix bug where the reports template was not generating the report links
+  with the right environment
+
 0.1.0
 ====
 
