@@ -95,16 +95,19 @@ def utility_processor():
 
 @app.errorhandler(400)
 def bad_request(e):
+    envs = environments()
     return render_template('400.html', envs=envs), 400
 
 
 @app.errorhandler(403)
 def forbidden(e):
+    envs = environments()
     return render_template('403.html', envs=envs), 400
 
 
 @app.errorhandler(404)
 def not_found(e):
+    envs = environments()
     return render_template('404.html', envs=envs), 404
 
 
@@ -112,11 +115,13 @@ def not_found(e):
 def precond_failed(e):
     """We're slightly abusing 412 to handle missing features
     depending on the API version."""
+    envs = environments()
     return render_template('412.html', envs=envs), 412
 
 
 @app.errorhandler(500)
 def server_error(e):
+    envs = environments()
     return render_template('500.html', envs=envs), 500
 
 
