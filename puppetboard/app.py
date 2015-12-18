@@ -217,6 +217,68 @@ def radiator():
         with_status=True
         )
 
+@app.route('/radiator')
+def radiator():
+    """This view generates a simplified monitoring page
+    akin to the radiator view in puppet dashboard
+    """
+    num_nodes = get_or_abort(
+        puppetdb.metric,
+        "{0}{1}".format('com.puppetlabs.puppetdb.query.population', ':type=default,name=num-nodes'))
+
+
+    nodes = puppetdb.nodes(
+        unreported=app.config['UNRESPONSIVE_HOURS'],
+        with_status=True
+        )
+
+
+    stats = {
+        'changed_percent': 0,
+        'changed': 0,
+        'failed_percent': 0,
+        'failed': 0,
+        'noop_percent': 0,
+        'noop': 0,
+        'skipped_percent': 0,
+        'skipped': 0,
+        'unchanged_percent': 0,
+        'unchanged': 0,
+        'unreported_percent': 0,
+        'unreported': 0,
+    }
+
+
+
+    for node in nodes:
+        if node.status == 'unreported':
+            stats['unreported'] += 1
+        elif node.status == 'changed':
+            stats['changed'] += 1
+        elif node.status == 'failed':
+            stats['failed'] += 1
+        elif node.status == 'noop':
+            stats['noop'] += 1
+        elif node.status == 'skipped':
+            stats['skipped'] +=1
+        else:
+            stats['unchanged'] += 1
+
+
+    stats['changed_percent'] = int(100 * stats['changed'] / float(num_nodes['Value']))
+    stats['failed_percent'] = int(100 * stats['failed'] / float(num_nodes['Value']))
+    stats['noop_percent'] = int(100 * stats['noop'] / float(num_nodes['Value']))
+    stats['skipped_percent'] = int(100 * stats['skipped'] / float(num_nodes['Value']))
+    stats['unchanged_percent'] = int(100 * stats['unchanged'] / float(num_nodes['Value']))
+    stats['unreported_percent'] = int(100 * stats['unreported'] / float(num_nodes['Value']))
+
+
+    return render_template(
+        'radiator.html',
+        stats=stats,
+        total=num_nodes['Value']
+    )
+
 
     stats = {
         'changed_percent': 0,
