@@ -19,6 +19,7 @@ REPORTS_COUNT = 10
 OFFLINE_MODE = False
 ENABLE_CATALOG = False
 GRAPH_FACTS = ['architecture',
+               'clientversion',
                'domain',
                'lsbcodename',
                'lsbdistcodename',
