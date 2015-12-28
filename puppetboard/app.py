@@ -517,25 +517,43 @@ def report_latest(env, node_name):
     check_env(env, envs)
 
     if env == '*':
-        query='["and",' \
-            '["=", "certname", "{0}"],' \
-            '["=", "latest_report?", true]]'.format(node_name)
+        node_query = '["=", "certname", "{0}"]'.format(node_name)
     else:
-        query='["and",' \
-            '["=", "environment", "{0}"],' \
-            '["=", "certname", "{1}"],' \
-            '["=", "latest_report?", true]]'.format(
-                env,
-                node_name)
+        node_query = '["and",' \
+            '["=", "report_environment", "{0}"],' \
+            '["=", "certname", "{1}"]]'.format(env, node_name)
 
-    reports = get_or_abort(puppetdb.reports, query=query)
     try:
-        report = next(reports)
+        node = next(get_or_abort(puppetdb.nodes,
+            query=node_query,
+            with_status=True))
     except StopIteration:
         abort(404)
 
+    if node.latest_report_hash is not None:
+        hash_ = node.latest_report_hash
+    else:
+        if env == '*':
+            query='["and",' \
+                '["=", "certname", "{0}"],' \
+                '["=", "latest_report?", true]]'.format(node.name)
+        else:
+            query='["and",' \
+                '["=", "environment", "{0}"],' \
+                '["=", "certname", "{1}"],' \
+                '["=", "latest_report?", true]]'.format(
+                    env,
+                    node.name)
+
+        reports = get_or_abort(puppetdb.reports, query=query)
+        try:
+            report = next(reports)
+            hash_ = report.hash_
+        except StopIteration:
+            abort(404)
+
     return redirect(
-        url_for('report', env=env, node_name=node_name, report_id=report.hash_))
+        url_for('report', env=env, node_name=node_name, report_id=hash_))
 
 
 @app.route('/report/<node_name>/<report_id>', defaults={'env': app.config['DEFAULT_ENVIRONMENT']})
