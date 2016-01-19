@@ -32,7 +32,7 @@ setup(
         "Flask >= 0.10.1",
         "Flask-WTF >= 0.9.4, <= 0.9.5",
         "WTForms < 2.0",
-        "pypuppetdb >= 0.2.0, < 0.3.0",
+        "pypuppetdb >= 0.2.1, < 0.3.0",
         ],
     keywords="puppet puppetdb puppetboard",
     classifiers=[

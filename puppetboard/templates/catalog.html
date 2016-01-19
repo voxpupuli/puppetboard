@@ -10,6 +10,7 @@
       <th>Hostname</th>
       <th>Version</th>
       <th>Transaction UUID</th>
+      <th>Code ID</th>
     </tr>
   </thead>
   <tbody>
@@ -17,6 +18,7 @@
       <td><a href="{{url_for('node', env=current_env, node_name=catalog.node)}}">{{catalog.node}}</a></td>
       <td>{{catalog.version}}</td>
       <td>{{catalog.transaction_uuid}}</td>
+      <td>{{catalog.code_id}}</td>
     </tr>
   </tbody>
 </table>

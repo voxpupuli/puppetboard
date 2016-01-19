@@ -18,13 +18,21 @@
     {% for node in nodes %}
     <tr>
       <td>
-        {{macros.status_counts(status=node.status, node_name=node.name, events=node.events, unreported_time=node.unreported_time, current_env=current_env)}}
+        {% if node.latest_report_hash %}
+          {{macros.status_counts(status=node.status, node_name=node.name, events=node.events, unreported_time=node.unreported_time, current_env=current_env, report_hash=node.latest_report_hash)}}
+        {% else %}
+          {{macros.status_counts(status=node.status, node_name=node.name, events=node.events, unreported_time=node.unreported_time, current_env=current_env)}}
+        {% endif %}
       </td>
       <td><a href="{{url_for('node', env=current_env, node_name=node.name)}}">{{node.name}}</a></td>
       <td><a rel="utctimestamp" href="{{url_for('catalog_node', env=current_env, node_name=node.name)}}">{{node.catalog_timestamp}}</a></td>
       <td>
         {% if node.report_timestamp %}
-        <a href="{{url_for('report_latest', env=current_env, node_name=node.name)}}" rel='utctimestamp'>{{ node.report_timestamp }}</a>
+          {% if node.latest_report_hash %}
+            <a href="{{url_for('report', env=current_env, node_name=node.name, report_id=node.latest_report_hash)}}" rel='utctimestamp'>{{ node.report_timestamp }}</a>
+          {% else %}
+            <a href="{{url_for('report_latest', env=current_env, node_name=node.name)}}" rel='utctimestamp'>{{ node.report_timestamp }}</a>
+          {% endif %}
         {% else %}
           <i class="large ban circle icon"></i>
         {% endif %}
