@@ -416,14 +416,22 @@ def reports(env, page):
         abort(404)
 
     for report in reports_events:
-        counts = get_or_abort(puppetdb.event_counts,
-            query='["and",' \
+        if env == '*':
+            event_count_query = '["and",' \
+                '["=", "certname", "{0}"],' \
+                '["=", "report", "{1}"]]'.format(
+                    report.node,
+                    report.hash_)
+        else:
+            event_count_query = '["and",' \
                 '["=", "environment", "{0}"],' \
                 '["=", "certname", "{1}"],' \
                 '["=", "report", "{2}"]]'.format(
                     env,
                     report.node,
-                    report.hash_),
+                    report.hash_)
+        counts = get_or_abort(puppetdb.event_counts,
+            query=event_count_query,
             summarize_by="certname")
         try:
             report_event_counts[report.hash_] = counts[0]
@@ -483,11 +491,22 @@ def reports_node(env, node_name, page):
         abort(404)
 
     for report in reports_events:
-        counts = get_or_abort(puppetdb.event_counts,
-            query='["and",' \
+        if env == '*':
+            event_count_query = '["and",' \
+                '["=", "certname", "{0}"],' \
+                '["=", "report", "{1}"]]'.format(
+                    report.node,
+                    report.hash_)
+        else:
+            event_count_query = '["and",' \
                 '["=", "environment", "{0}"],' \
                 '["=", "certname", "{1}"],' \
-                '["=", "report", "{2}"]]'.format(env, report.node, report.hash_),
+                '["=", "report", "{2}"]]'.format(
+                    env,
+                    report.node,
+                    report.hash_)
+        counts = get_or_abort(puppetdb.event_counts,
+            query=event_count_query,
             summarize_by="certname")
         try:
             report_event_counts[report.hash_] = counts[0]
