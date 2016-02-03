@@ -53,10 +53,10 @@ There is a `Puppet module`_ by `Spencer Krum`_ that takes care of installing Pup
 
 You can install it with:
 
-    puppet module install nibalizer-puppetboard
+    puppet module install puppet-puppetboard
 
 .. _Spencer Krum: https://github.com/nibalizer
-.. _Puppet module: https://forge.puppetlabs.com/nibalizer/puppetboard
+.. _Puppet module: https://forge.puppetlabs.com/puppet/puppetboard
 
 Manual
 ^^^^^^
