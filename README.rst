@@ -19,7 +19,7 @@ At the current time of writing, Puppetboard supports the following Python versio
     * Python 2.6
     * Python 2.7
 
-.. image:: https://raw.github.com/nedap/puppetboard/master/screenshots/overview.png
+.. image:: screenshots/overview.png
    :alt: View of a node
    :width: 1024
    :height: 700
@@ -677,67 +677,67 @@ messages have a look at this post by `Tim Pope`_.
 Screenshots
 ===========
 
-.. image:: https://raw.github.com/nedap/puppetboard/master/screenshots/overview.png
+.. image:: screenshots/overview.png
    :alt: Overview / Index / Homepage
    :width: 1024
    :height: 700
    :align: center
 
-.. image:: https://raw.github.com/nedap/puppetboard/master/screenshots/nodes.png
+.. image:: screenshots/nodes.png
    :alt: Nodes view, all active nodes
    :width: 1024
    :height: 700
    :align: center
 
-.. image:: https://raw.github.com/nedap/puppetboard/master/screenshots/node.png
+.. image:: screenshots/node.png
    :alt: Single node page / overview
    :width: 1024
    :height: 700
    :align: center
 
-.. image:: https://raw.github.com/nedap/puppetboard/master/screenshots/report.png
+.. image:: screenshots/report.png
    :alt: Report view
    :width: 1024
    :height: 700
    :align: center
 
-.. image:: https://raw.github.com/nedap/puppetboard/master/screenshots/facts.png
+.. image:: screenshots/facts.png
    :alt: Facts view
    :width: 1024
    :height: 700
    :align: center
 
-.. image:: https://raw.github.com/nedap/puppetboard/master/screenshots/fact.png
+.. image:: screenshots/fact.png
    :alt: Single fact, with graphs
    :width: 1024
    :height: 700
    :align: center
 
-.. image:: https://raw.github.com/nedap/puppetboard/master/screenshots/fact_value.png
+.. image:: screenshots/fact_value.png
    :alt: All nodes that have this fact with that value
    :width: 1024
    :height: 700
    :align: center
 
-.. image:: https://raw.github.com/nedap/puppetboard/master/screenshots/metrics.png
+.. image:: screenshots/metrics.png
    :alt: Metrics view
    :width: 1024
    :height: 700
    :align: center
 
-.. image:: https://raw.github.com/nedap/puppetboard/master/screenshots/metric.png
+.. image:: screenshots/metric.png
    :alt: Single metric
    :width: 1024
    :height: 700
    :align: center
 
-.. image:: https://raw.github.com/nedap/puppetboard/master/screenshots/query.png
+.. image:: screenshots/query.png
    :alt: Query view
    :width: 1024
    :height: 700
    :align: center
 
-.. image:: https://raw.github.com/nedap/puppetboard/master/screenshots/broken.png
+.. image:: screenshots/broken.png
    :alt: Error page
    :width: 1024
    :height: 700
