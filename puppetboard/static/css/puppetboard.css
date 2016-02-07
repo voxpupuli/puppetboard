@@ -36,6 +36,55 @@ th.tablesorter-headerDesc::after {
   display: block;
 }
 
+.ui.label.status {
+  color: white;
+  text-shadow: 0 0 1px;
+}
+
+.ui.header.failed, .ui.line.failed {
+  color: #AA4643;
+}
+
+.ui.label.failed {
+  background-color: #AA4643;
+}
+
+.ui.header.changed, .ui.line.changed {
+  color: #4572A7;
+}
+
+.ui.label.changed {
+  background-color: #4572A7;
+}
+
+.ui.header.unreported {
+  color: #3D96AE;
+}
+
+.ui.label.unreported {
+  background-color: #3D96AE;
+}
+
+.ui.header.noop {
+  color: #DB843D;
+}
+
+.ui.label.noop {
+  background-color: #DB843D;
+}
+
+.ui.label.unchanged {
+  background-color: #89A54E;
+}
+
+.ui.line.skipped {
+  color: orange;
+}
+
+.ui.label.skipped {
+  background-color: orange;
+}
+
 .count {
   width: 14%;
   text-align: center;

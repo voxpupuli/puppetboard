@@ -8,7 +8,7 @@
   <div class="four column row">
     <div class="column">
       <a href="{{url_for('nodes', env=current_env, status='failed')}}">
-        <h1 class="ui red header no-margin-bottom">
+        <h1 class="ui failed header no-margin-bottom">
           {{stats['failed']}}
           <small>{% if stats['failed']== 1 %} node {% else %} nodes {% endif %}</small>
         </h1>
@@ -17,7 +17,7 @@
     </div>
     <div class="column">
       <a href="{{url_for('nodes', env=current_env, status='noop')}}">
-        <h1 class="ui header purple no-margin-bottom">
+        <h1 class="ui header noop no-margin-bottom">
           {{stats['noop']}}
           <small>{% if stats['noop']== 1 %} node {% else %} nodes {% endif %}</small>
         </h1>
@@ -26,7 +26,7 @@
     </div>
     <div class="column">
       <a href="{{url_for('nodes', env=current_env, status='changed')}}">
-        <h1 class="ui header green no-margin-bottom">
+        <h1 class="ui header changed no-margin-bottom">
           {{stats['changed']}}
           <small>{% if stats['changed']== 1 %} node {% else %} nodes {% endif %}</small>
         </h1>
@@ -35,7 +35,7 @@
     </div>
     <div class="column">
       <a href="{{url_for('nodes', env=current_env, status='unreported')}}">
-        <h1 class="ui header black no-margin-bottom">
+        <h1 class="ui header unreported no-margin-bottom">
           {{ stats['unreported'] }}
           <small>{% if stats['unreported']== 1 %} node {% else %} nodes {% endif %}</small>
         </h1>
