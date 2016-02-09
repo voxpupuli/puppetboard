@@ -135,32 +135,49 @@ def index(env):
     :type env: :obj:`string`
     """
     envs = environments()
-    check_env(env, envs)
-
-    # TODO: Would be great if we could parallelize this somehow, doing these
-    # requests in sequence is rather pointless.
-    prefix = 'puppetlabs.puppetdb.query.population'
-    num_nodes = get_or_abort(
-        puppetdb.metric,
-        "{0}{1}".format(prefix, ':type=default,name=num-nodes'))
-    num_resources = get_or_abort(
-        puppetdb.metric,
-        "{0}{1}".format(prefix, ':type=default,name=num-resources'))
-    avg_resources_node = get_or_abort(
-        puppetdb.metric,
-        "{0}{1}".format(prefix, ':type=default,name=avg-resources-per-node'))
     metrics = {
-        'num_nodes': num_nodes['Value'],
-        'num_resources': num_resources['Value'],
-        'avg_resources_node': "{0:10.0f}".format(avg_resources_node['Value']),
-        }
+        'num_nodes': 0,
+        'num_resources': 0,
+        'avg_resources_node': 0}
+    check_env(env, envs)
 
     if env == '*':
         query = None
+
+        prefix = 'puppetlabs.puppetdb.query.population'
+        num_nodes = get_or_abort(
+            puppetdb.metric,
+            "{0}{1}".format(prefix, ':type=default,name=num-nodes'))
+        num_resources = get_or_abort(
+            puppetdb.metric,
+            "{0}{1}".format(prefix, ':type=default,name=num-resources'))
+        avg_resources_node = get_or_abort(
+            puppetdb.metric,
+            "{0}{1}".format(prefix, ':type=default,name=avg-resources-per-node'))
+        metrics['num_nodes'] = num_nodes['Value']
+        metrics['num_resources'] = num_resources['Value']
+        metrics['avg_resources_node'] = "{0:10.0f}".format(
+            avg_resources_node['Value'])
     else:
         query = '["and", {0}]'.format(
                 ", ".join('["=", "{0}", "{1}"]'.format(field, env)
                     for field in ['catalog_environment', 'facts_environment']))
+        num_nodes = get_or_abort(
+            puppetdb._query,
+            'nodes',
+            query='["extract", [["function", "count"]],["and", {0}]]'.format(
+                    ",".join('["=", "{0}", "{1}"]'.format(field, env)
+                        for field in ['catalog_environment', 'facts_environment'])))
+        num_resources = get_or_abort(
+            puppetdb._query,
+            'resources',
+            query='["extract", [["function", "count"]],' \
+                '["=", "environment", "{0}"]]'.format(
+                    env))
+        metrics['num_nodes'] = num_nodes[0]['count']
+        metrics['num_resources'] = num_resources[0]['count']
+        metrics['avg_resources_node'] = "{0:10.0f}".format(
+            (num_resources[0]['count'] / num_nodes[0]['count']))
 
     nodes = get_or_abort(puppetdb.nodes,
         query=query,
