@@ -15,7 +15,6 @@ from flask import (
     Response, stream_with_context, redirect,
     request
     )
-from flask_wtf.csrf import CsrfProtect
 
 from pypuppetdb import connect
 
@@ -27,7 +26,6 @@ from puppetboard.utils import (
 
 
 app = Flask(__name__)
-CsrfProtect(app)
 
 app.config.from_object('puppetboard.default_settings')
 graph_facts = app.config['GRAPH_FACTS']
@@ -727,10 +725,10 @@ def query(env):
         select field in the environment block
     :type env: :obj:`string`
     """
-    envs = environments()
-    check_env(env, envs)
-
     if app.config['ENABLE_QUERY']:
+        envs = environments()
+        check_env(env, envs)
+
         form = QueryForm()
         if form.validate_on_submit():
             if form.query.data[0] == '[':
