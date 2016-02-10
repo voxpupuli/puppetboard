@@ -7,10 +7,27 @@ This is the changelog for Puppetboard.
 0.1.2
 ====
 
-* Add configuration option to set the default environment, defaults to
-  'production' (https://github.com/puppet-community/puppetboard/pull/185)
-* Loading all available environments with every page load. (Issue: 
-  https://github.com/puppet-community/puppetboard/issues/186)
+* Add configuration option to set the default environment with new 
+  configuration option DEFAULT_ENVIRONMENT, defaults to 'production'.
+* Loading all available environments with every page load. 
+* Adding an "All Environments" item to the Environments dropdown to 
+  remove all environment filters on PuppetDB data.
+* Updating README.rst to update links and describe new configuration
+  options.
+* Fixing Query form submission problem by disabling CSRF protection.
+  Needs to be re-implemented.
+* Updating the pypuppetdb requirement to >= 0.2.1, using information
+  available in PuppetDB 3.2 and higher
+** latest_report_hash and latest_report_status fields from the Nodes
+   endpoint, this effectively deprecates the report_latest() function
+** code_id from the Catalogs endpoint (current unused)
+* Adding a automatic refresh on the overview page to reload the page
+  every X number of seconds, defaults to 30. This is configurable
+  with the configuration option REFRESH_RATE
+* Fixing the table alignment in the catalog_compare() page by switching
+  to fixed tables from basic tables.
+* Using colors similar to Puppet Dashboard and Foreman for the status
+  counts sections
 
 0.1.1
 ====
