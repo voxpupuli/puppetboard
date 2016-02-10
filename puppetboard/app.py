@@ -746,7 +746,7 @@ def query(env):
         envs = environments()
         check_env(env, envs)
 
-        form = QueryForm()
+        form = QueryForm(csrf_enabled=False)
         if form.validate_on_submit():
             if form.query.data[0] == '[':
                 query = form.query.data
