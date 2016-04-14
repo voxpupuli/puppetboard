@@ -142,16 +142,16 @@ def index(env):
     if env == '*':
         query = None
 
-        prefix = 'puppetlabs.puppetdb.query.population'
+        prefix = 'puppetlabs.puppetdb.population'
         num_nodes = get_or_abort(
             puppetdb.metric,
-            "{0}{1}".format(prefix, ':type=default,name=num-nodes'))
+            "{0}{1}".format(prefix, ':name=num-nodes'))
         num_resources = get_or_abort(
             puppetdb.metric,
-            "{0}{1}".format(prefix, ':type=default,name=num-resources'))
+            "{0}{1}".format(prefix, ':name=num-resources'))
         avg_resources_node = get_or_abort(
             puppetdb.metric,
-            "{0}{1}".format(prefix, ':type=default,name=avg-resources-per-node'))
+            "{0}{1}".format(prefix, ':name=avg-resources-per-node'))
         metrics['num_nodes'] = num_nodes['Value']
         metrics['num_resources'] = num_resources['Value']
         metrics['avg_resources_node'] = "{0:10.0f}".format(
