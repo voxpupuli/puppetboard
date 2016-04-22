@@ -15,7 +15,6 @@ from flask import (
     Response, stream_with_context, redirect,
     request
     )
-from flask_wtf.csrf import CsrfProtect
 
 from pypuppetdb import connect
 
@@ -27,7 +26,6 @@ from puppetboard.utils import (
 
 
 app = Flask(__name__)
-CsrfProtect(app)
 
 app.config.from_object('puppetboard.default_settings')
 graph_facts = app.config['GRAPH_FACTS']
@@ -135,33 +133,49 @@ def index(env):
     :type env: :obj:`string`
     """
     envs = environments()
-    check_env(env, envs)
-
-    # TODO: Would be great if we could parallelize this somehow, doing these
-    # requests in sequence is rather pointless.
-    prefix = 'puppetlabs.puppetdb.query.population'
-    refreshrate = app.config['REFRESH_RATE']
-    num_nodes = get_or_abort(
-        puppetdb.metric,
-        "{0}{1}".format(prefix, ':type=default,name=num-nodes'))
-    num_resources = get_or_abort(
-        puppetdb.metric,
-        "{0}{1}".format(prefix, ':type=default,name=num-resources'))
-    avg_resources_node = get_or_abort(
-        puppetdb.metric,
-        "{0}{1}".format(prefix, ':type=default,name=avg-resources-per-node'))
     metrics = {
-        'num_nodes': num_nodes['Value'],
-        'num_resources': num_resources['Value'],
-        'avg_resources_node': "{0:10.0f}".format(avg_resources_node['Value']),
-        }
+        'num_nodes': 0,
+        'num_resources': 0,
+        'avg_resources_node': 0}
+    check_env(env, envs)
 
     if env == '*':
         query = None
+
+        prefix = 'puppetlabs.puppetdb.query.population'
+        num_nodes = get_or_abort(
+            puppetdb.metric,
+            "{0}{1}".format(prefix, ':type=default,name=num-nodes'))
+        num_resources = get_or_abort(
+            puppetdb.metric,
+            "{0}{1}".format(prefix, ':type=default,name=num-resources'))
+        avg_resources_node = get_or_abort(
+            puppetdb.metric,
+            "{0}{1}".format(prefix, ':type=default,name=avg-resources-per-node'))
+        metrics['num_nodes'] = num_nodes['Value']
+        metrics['num_resources'] = num_resources['Value']
+        metrics['avg_resources_node'] = "{0:10.0f}".format(
+            avg_resources_node['Value'])
     else:
         query = '["and", {0}]'.format(
                 ", ".join('["=", "{0}", "{1}"]'.format(field, env)
                     for field in ['catalog_environment', 'facts_environment']))
+        num_nodes = get_or_abort(
+            puppetdb._query,
+            'nodes',
+            query='["extract", [["function", "count"]],["and", {0}]]'.format(
+                    ",".join('["=", "{0}", "{1}"]'.format(field, env)
+                        for field in ['catalog_environment', 'facts_environment'])))
+        num_resources = get_or_abort(
+            puppetdb._query,
+            'resources',
+            query='["extract", [["function", "count"]],' \
+                '["=", "environment", "{0}"]]'.format(
+                    env))
+        metrics['num_nodes'] = num_nodes[0]['count']
+        metrics['num_resources'] = num_resources[0]['count']
+        metrics['avg_resources_node'] = "{0:10.0f}".format(
+            (num_resources[0]['count'] / num_nodes[0]['count']))
 
     nodes = get_or_abort(puppetdb.nodes,
         query=query,
@@ -198,7 +212,6 @@ def index(env):
         nodes=nodes_overview,
         stats=stats,
         envs=envs,
-        refreshrate=refreshrate,
         current_env=env
         )
 
@@ -416,14 +429,22 @@ def reports(env, page):
         abort(404)
 
     for report in reports_events:
-        counts = get_or_abort(puppetdb.event_counts,
-            query='["and",' \
+        if env == '*':
+            event_count_query = '["and",' \
+                '["=", "certname", "{0}"],' \
+                '["=", "report", "{1}"]]'.format(
+                    report.node,
+                    report.hash_)
+        else:
+            event_count_query = '["and",' \
                 '["=", "environment", "{0}"],' \
                 '["=", "certname", "{1}"],' \
                 '["=", "report", "{2}"]]'.format(
                     env,
                     report.node,
-                    report.hash_),
+                    report.hash_)
+        counts = get_or_abort(puppetdb.event_counts,
+            query=event_count_query,
             summarize_by="certname")
         try:
             report_event_counts[report.hash_] = counts[0]
@@ -483,11 +504,22 @@ def reports_node(env, node_name, page):
         abort(404)
 
     for report in reports_events:
-        counts = get_or_abort(puppetdb.event_counts,
-            query='["and",' \
+        if env == '*':
+            event_count_query = '["and",' \
+                '["=", "certname", "{0}"],' \
+                '["=", "report", "{1}"]]'.format(
+                    report.node,
+                    report.hash_)
+        else:
+            event_count_query = '["and",' \
                 '["=", "environment", "{0}"],' \
                 '["=", "certname", "{1}"],' \
-                '["=", "report", "{2}"]]'.format(env, report.node, report.hash_),
+                '["=", "report", "{2}"]]'.format(
+                    env,
+                    report.node,
+                    report.hash_)
+        counts = get_or_abort(puppetdb.event_counts,
+            query=event_count_query,
             summarize_by="certname")
         try:
             report_event_counts[report.hash_] = counts[0]
@@ -711,11 +743,11 @@ def query(env):
         select field in the environment block
     :type env: :obj:`string`
     """
-    envs = environments()
-    check_env(env, envs)
-
     if app.config['ENABLE_QUERY']:
-        form = QueryForm()
+        envs = environments()
+        check_env(env, envs)
+
+        form = QueryForm(csrf_enabled=False)
         if form.validate_on_submit():
             if form.query.data[0] == '[':
                 query = form.query.data
