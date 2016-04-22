@@ -45,6 +45,10 @@ th.tablesorter-headerDesc::after {
   word-wrap: break-word;
 }
 
+.ui.table.wrapped td {
+  word-wrap: break-word;
+}
+
 .ui.label.status {
   color: white;
   text-shadow: 0 0 1px;
