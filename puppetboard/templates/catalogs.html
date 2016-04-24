@@ -4,7 +4,7 @@
 <div class="ui fluid icon input hide" style="margin-bottom:20px">
   <input autofocus="autofocus" class="filter-table" placeholder="Type here to filter...">
 </div>
-<table class='ui compact basic table nodes'>
+<table class='ui very basic very compact table nodes'>
   <thead>
     <tr>
       <th></th>
@@ -21,7 +21,7 @@
           <td><a rel="utctimestamp" href="{{url_for('catalog_node', env=current_env, node_name=node.name)}}">{{node.catalog_timestamp}}</a></td>
           <td>
             {% if node.form %}
-              <div class="ui form">
+              <div class="ui action input">
                 <form method="POST" action="{{url_for('catalog_submit', env=current_env)}}">
                   {{node.form.csrf_token}}
                   <div class="field inline">

@@ -2,13 +2,13 @@
 <div class="ui fluid icon input hide" style="margin-bottom:20px">
   <input {% if autofocus %} autofocus="autofocus" {% endif %} class="filter-table" placeholder="Type here to filter...">
 </div>
-<table class="filter-table facts ui compact basic table facts {% if condensed %}compact{% endif%}" style="table-layout: fixed;">
+<table class="ui very basic {% if condensed %}very{% endif%} compact sortable table" style="table-layout: fixed;">
   <thead>
     <tr>
       {% if show_node %}
       <th>Node</th>
       {% else %}
-      <th>Fact</th>
+      <th class="default-sort">Fact</th>
       {% endif %}
       {% if show_value %}
       <th>Value</th>
@@ -89,10 +89,10 @@
   Only showing {{reports_count}} reports sorted by Start Time.
 
 </div>
-<table class='ui table basic {% if condensed %}compact{% endif %} report'>
+<table class='ui very basic {% if condensed %}very compact{% endif %} table stackable sortable table'>
   <thead>
     <tr>
-      <th>Start time</th>
+      <th class="default-sort">Start time</th>
       <th>Status</th>
       {% if show_host_col %}
         <th>Hostname</th>
@@ -148,7 +148,7 @@
 </table>
 {%- endmacro %}
 {% macro status_counts(caller, status, node_name, events, current_env, unreported_time=False, report_hash=False) -%}
-  <a class="ui small status label
+  <a class="ui
     {% if status == 'failed' -%}
       failed
     {% elif status == 'changed' -%}
@@ -160,17 +160,17 @@
     {% elif status == 'unchanged' -%}
       unchanged
     {% endif -%}
-  " href="
+  label status" href="
     {% if report_hash -%}
       {{url_for('report', env=current_env, node_name=node_name, report_id=report_hash)}}
     {% else -%}
       {{url_for('report_latest', env=current_env, node_name=node_name)}}
     {% endif -%}
   ">
-    {{status}}
+    {{ status|upper }}
   </a>
   {% if status == 'unreported' %}
-    <span class="ui small label status"> {{ unreported_time }} </span>
+    <span class="ui label status"> {{ unreported_time|upper }} </span>
   {% else %}
     {% if events['failures'] %}<span class="ui small count label failed">{{events['failures']}}</span>{% else %}<span class="ui small count label">0</span>{% endif%}
     {% if events['successes'] %}<span class="ui small count label changed">{{events['successes']}}</span>{% else %}<span class="ui small count label">0</span>{% endif%}

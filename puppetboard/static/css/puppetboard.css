@@ -1,6 +1,7 @@
 body {
   margin: 0;
   font-family: "Open Sans", sans-serif;
+  font-size: 1.2rem;
 }
 
 a {
@@ -31,9 +32,21 @@ th.tablesorter-headerDesc::after {
 }
 
 .status {
-  width: 45%;
+  width: 13.2em;
   text-align: center;
   display: block;
+}
+
+.ui.table[class*="very compact"] td {
+  padding: 0.15em 0.1em;
+}
+
+.factlist li {
+  word-wrap: break-word;
+}
+
+.ui.table.wrapped td {
+  word-wrap: break-word;
 }
 
 .ui.label.status {
@@ -86,13 +99,9 @@ th.tablesorter-headerDesc::after {
 }
 
 .count {
-  width: 14%;
+  width: 4em;
   text-align: center;
   display: block;
-}
-
-.no-margin-top {
-  margin-top: -35px !important;
 }
 
 .absolute {

@@ -59,22 +59,21 @@
       <span>Avg. resources/node</span>
     </div>
   </div>
-  <div class="ui divider">
-  </div>
-  <div class="one column row no-margin-top">
+  <div class="ui divider"></div>
+  <div class="one column row">
     <div class="column">
       {% if nodes %}
       <h2>Nodes status detail ({{nodes|length}})</h2>
-      <table class='ui compact basic table dashboard'>
+      <table class='ui sortable very compact very basic table'>
         <thead>
           <tr>
             <th class="five wide">Status</th>
             <th class="five wide">Hostname</th>
-            <th class="five wide">Report</th>
+            <th class="five wide date default-sort">Report</th>
             <th class="one wide"></th>
           </tr>
         </thead>
-        <tbody class="searchable">
+        <tbody>
           {% for node in nodes %}
           {% if node.status != 'unchanged' %}
           <tr>
@@ -96,7 +95,7 @@
                   <a href="{{url_for('report_latest', env=current_env, node_name=node.name)}}" rel='utctimestamp'>{{ node.report_timestamp }}</a>
                 {% endif %}
               {% else %}
-                <i class="large ban circle icon"></i>
+                <i class="large ban icon"></i>
               {% endif %}
             </td>
             <td>
