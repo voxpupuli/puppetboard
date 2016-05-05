@@ -949,3 +949,79 @@ def catalog_compare(env, compare, against):
     else:
         log.warn('Access to catalog interface disabled by administrator')
         abort(403)
+
+@app.route('/radiator', defaults={'env': app.config['DEFAULT_ENVIRONMENT']})
+@app.route('/<env>/radiator')
+def radiator(env):
+    """This view generates a simplified monitoring page
+    akin to the radiator view in puppet dashboard
+    """
+    envs = environments()
+    check_env(env, envs)
+
+    if env == '*':
+        metrics = get_or_abort(
+            puppetdb.metric,
+            'com.puppetlabs.puppetdb.query.population:type=default,name=num-nodes')
+        num_nodes = metrics['Value']
+    else:
+        metrics = get_or_abort(
+            puppetdb._query,
+            'nodes',
+            query='["extract", [["function", "count"]],["and", {0}]]'.format(
+                ",".join('["=", "{0}", "{1}"]'.format(field, env)
+                    for field in ['catalog_environment', 'facts_environment'])))
+        num_nodes = metrics[0]['count']
+
+
+    nodes = puppetdb.nodes(
+        unreported=app.config['UNRESPONSIVE_HOURS'],
+        with_status=True
+        )
+
+
+    stats = {
+        'changed_percent': 0,
+        'changed': 0,
+        'failed_percent': 0,
+        'failed': 0,
+        'noop_percent': 0,
+        'noop': 0,
+        'skipped_percent': 0,
+        'skipped': 0,
+        'unchanged_percent': 0,
+        'unchanged': 0,
+        'unreported_percent': 0,
+        'unreported': 0,
+    }
+
+
+
+    for node in nodes:
+        if node.status == 'unreported':
+            stats['unreported'] += 1
+        elif node.status == 'changed':
+            stats['changed'] += 1
+        elif node.status == 'failed':
+            stats['failed'] += 1
+        elif node.status == 'noop':
+            stats['noop'] += 1
+        elif node.status == 'skipped':
+            stats['skipped'] +=1
+        else:
+            stats['unchanged'] += 1
+
+
+    stats['changed_percent'] = int(100 * stats['changed'] / float(num_nodes))
+    stats['failed_percent'] = int(100 * stats['failed'] / float(num_nodes))
+    stats['noop_percent'] = int(100 * stats['noop'] / float(num_nodes))
+    stats['skipped_percent'] = int(100 * stats['skipped'] / float(num_nodes))
+    stats['unchanged_percent'] = int(100 * stats['unchanged'] / float(num_nodes))
+    stats['unreported_percent'] = int(100 * stats['unreported'] / float(num_nodes))
+
+
+    return render_template(
+        'radiator.html',
+        stats=stats,
+        total=num_nodes
+    )

@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Puppetboard</title>
+    {% if config.REFRESH_RATE > 0 %}
+    <meta http-equiv='refresh' content="{{config.REFRESH_RATE}}"/>
+    {% endif %}
+    <link href="{{ url_for('static', filename='css/radiator.css')}}" media="screen" rel="stylesheet" type="text/css" />
+    <script src="{{ url_for('static', filename='js/jquery.min.js')}}" type="text/javascript"></script>
+    <script src="{{ url_for('static', filename='js/radiator.js')}}" type="text/javascript"></script>
+</head>
+<body class='radiator_controller radiator_index_action no-sidebar'>
+    <table class='node_summary'>
+        <tr class='failed '>
+            <td class='count_column'>
+                <span class='count'>{{stats['failed']}}</span>
+            </td>
+            <td>
+                <div>
+                    <p class='label'>
+                        <span>Failed</span>
+                    </p>
+                    <p class='percent' style='width:{{stats['failed_percent']}}%'>
+                        <span>Failed</span>
+                    </p>
+                </div>
+            </td>
+        </tr>
+        <tr class='unreported '>
+            <td class='count_column'>
+                <span class='count'>{{stats['unreported']}}</span>
+            </td>
+            <td>
+                <div>
+                    <p class='label'>
+                        <span>Unreported</span>
+                    </p>
+                    <p class='percent' style='width:{{stats['unreported_percent']}}%'>
+                        <span>Unreported</span>
+                    </p>
+                </div>
+            </td>
+        </tr>
+        <tr class='noop '>
+            <td class='count_column'>
+                <span class='count'>{{stats['noop']}}</span>
+            </td>
+            <td>
+                <div>
+                    <p class='label'>
+                        <span>Pending</span>
+                    </p>
+                    <p class='percent' style='width:{{stats['noop_percent']}}%'>
+                        <span>Pending</span>
+                    </p>
+                </div>
+            </td>
+        </tr>
+        <tr class='changed '>
+            <td class='count_column'>
+                <span class='count'>{{stats['changed']}}</span>
+            </td>
+            <td>
+                <div>
+                    <p class='label'>
+                        <span>Changed</span>
+                    </p>
+                    <p class='percent' style='width:{{stats['changed_percent']}}%'>
+                        <span>Changed</span>
+                    </p>
+                </div>
+            </td>
+        </tr>
+        <tr class='unchanged '>
+            <td class='count_column'>
+                <span class='count'>{{stats['unchanged']}}</span>
+            </td>
+            <td>
+                <div>
+                    <p class='label'>
+                        <span>Unchanged</span>
+                    </p>
+                    <p class='percent' style='width:{{stats['unchanged_percent']}}%'>
+                        <span>Unchanged</span>
+                    </p>
+                </div>
+            </td>
+        </tr>
+        <tr class='total '>
+            <td class='count_column'>
+                <span class='count'>{{total}}</span>
+            </td>
+            <td>
+                <div>
+                    <p class='label'>
+                        <span>Total</span>
+                    </p>
+                </div>
+            </td>
+        </tr>
+    </table>
+</body>
+</html>

@@ -1,0 +1,42 @@
+html,body,div,span,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,code,del,dfn,em,img,q,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td {margin:0;padding:0;border:0;font-weight:inherit;font-style:inherit;font-size:100%;font-family:inherit;vertical-align:baseline;}
+body{line-height:20px;}
+table{border-collapse:separate;border-spacing:0;}
+caption,th,td {text-align:left;font-weight:normal;}
+table,td,th {vertical-align:middle;}
+blockquote:before,blockquote:after,q:before,q:after {content:"";}
+blockquote,q {quotes:"" "";}
+a img {border:none;}
+ul {list-style-position:inside;}
+body.radiator_controller {font-size:1000%;line-height:1;font-family:"Helvetica Neue",Arial,Helvetica,sans-serif;background-color:#000;}
+body.radiator_controller table.node_summary {padding:20px;position:absolute;height:100%;width:100%;}
+body.radiator_controller table.node_summary .count_column {min-width:2em;width:2em;}
+body.radiator_controller table.node_summary tr:last-child td {border-bottom:none;}
+body.radiator_controller table.node_summary tr:last-child td .label {border-left:0px #000 solid;}
+body.radiator_controller table.node_summary tr.unreported .percent {background-color:#ee7722;border-radius:0 3px 3px 0;}
+body.radiator_controller table.node_summary tr.unreported .label,body.radiator_controller table.node_summary tr.unreported .count {color:#ee7722;}
+body.radiator_controller table.node_summary tr.unreported .label {border-left:1px #333 dashed;}
+body.radiator_controller table.node_summary tr.failed .percent {background-color:#cc2211;border-radius:0 3px 3px 0;}
+body.radiator_controller table.node_summary tr.failed .label,body.radiator_controller table.node_summary tr.failed .count {color:#cc2211;}
+body.radiator_controller table.node_summary tr.failed .label {border-left:1px #333 dashed;}
+body.radiator_controller table.node_summary tr.noop .percent {background-color:#eddc21;border-radius:0 3px 3px 0;}
+body.radiator_controller table.node_summary tr.noop .label,body.radiator_controller table.node_summary tr.noop .count {color:#eddc21;}
+body.radiator_controller table.node_summary tr.noop .label {border-left:1px #333 dashed;}
+body.radiator_controller table.node_summary tr.changed .percent {background-color:#009933;border-radius:0 3px 3px 0;}
+body.radiator_controller table.node_summary tr.changed .label,body.radiator_controller table.node_summary tr.changed .count {color:#009933;}
+body.radiator_controller table.node_summary tr.changed .label {border-left:1px #333 dashed;}
+body.radiator_controller table.node_summary tr.unchanged .percent {background-color:#2198ed;border-radius:0 3px 3px 0;}
+body.radiator_controller table.node_summary tr.unchanged .label,body.radiator_controller table.node_summary tr.unchanged .count {color:#2198ed;}
+body.radiator_controller table.node_summary tr.unchanged .label {border-left:1px #333 dashed;}
+body.radiator_controller table.node_summary tr.total {color:#fff;background-color:#181818;}
+body.radiator_controller table.node_summary tr.total .percent {background-color:white;border-radius:0 3px 3px 0;}
+body.radiator_controller table.node_summary tr.total .label,body.radiator_controller table.node_summary tr.total .count {color:white;}
+body.radiator_controller table.node_summary tr.total .label {border-left:1px #333 dashed;}
+body.radiator_controller table.node_summary tr.total .percent {display:none;}
+body.radiator_controller table.node_summary tr.total td {border-top:1px solid #fff;}
+body.radiator_controller table.node_summary tr td {color:#ccc;font-weight:normal;position:relative;border-bottom:1px solid #333;vertical-align:baseline;}
+body.radiator_controller table.node_summary tr td div {position:relative;height:100%;}
+body.radiator_controller table.node_summary tr td .percent {color:#000;position:absolute;top:0;left:0;height:100%;overflow:hidden;}
+body.radiator_controller table.node_summary tr td .percent span {margin-left:0.1em;}
+body.radiator_controller table.node_summary tr td .label {position:relative;height:100%;}
+body.radiator_controller table.node_summary tr td .label span {margin-left:0.1em;}
+body.radiator_controller table.node_summary tr td .count {text-align:right;width:1.75em;display:inline-block;font-weight:bold;margin-top:-0.12em;}
