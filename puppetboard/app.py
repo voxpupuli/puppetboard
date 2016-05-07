@@ -960,21 +960,25 @@ def radiator(env):
     check_env(env, envs)
 
     if env == '*':
+        query = None
         metrics = get_or_abort(
             puppetdb.metric,
-            'com.puppetlabs.puppetdb.query.population:type=default,name=num-nodes')
+            'puppetlabs.puppetdb.population:name=num-nodes')
         num_nodes = metrics['Value']
     else:
+        query = '["and", {0}]]'.format(
+            ",".join('["=", "{0}", "{1}"]'.format(field, env)
+                for field in ['catalog_environment', 'facts_environment']))
         metrics = get_or_abort(
             puppetdb._query,
             'nodes',
-            query='["extract", [["function", "count"]],["and", {0}]]'.format(
-                ",".join('["=", "{0}", "{1}"]'.format(field, env)
-                    for field in ['catalog_environment', 'facts_environment'])))
+            query='["extract", [["function", "count"]],{0}'.format(
+                query))
         num_nodes = metrics[0]['count']
 
 
     nodes = puppetdb.nodes(
+        query=query,
         unreported=app.config['UNRESPONSIVE_HOURS'],
         with_status=True
         )
