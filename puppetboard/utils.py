@@ -2,6 +2,7 @@ from __future__ import absolute_import
 from __future__ import unicode_literals
 
 import json
+import logging
 
 from math import ceil
 from requests.exceptions import HTTPError, ConnectionError
@@ -9,6 +10,8 @@ from pypuppetdb.errors import EmptyResponseError
 
 from flask import abort
 
+
+log = logging.getLogger(__name__)
 
 def jsonprint(value):
     return json.dumps(value, indent=2, separators=(',', ': '))
@@ -23,10 +26,13 @@ def get_or_abort(func, *args, **kwargs):
     try:
         return func(*args, **kwargs)
     except HTTPError as e:
+        log.error(str(e))
         abort(e.response.status_code)
     except ConnectionError:
+        log.error(str(e))
         abort(500)
     except EmptyResponseError:
+        log.error(str(e))
         abort(204)
 
 
