@@ -535,59 +535,6 @@ def reports_node(env, node_name, page):
         current_env=env)
 
 
-@app.route('/report/latest/<node_name>', defaults={'env': app.config['DEFAULT_ENVIRONMENT']})
-@app.route('/<env>/report/latest/<node_name>')
-def report_latest(env, node_name):
-    """Redirect to the latest report of a given node.
-
-    :param env: Search for reports in this environment
-    :type env: :obj:`string`
-    :param node_name: Find the reports whose certname match this value
-    :type node_name: :obj:`string`
-    """
-    envs = environments()
-    check_env(env, envs)
-
-    if env == '*':
-        node_query = '["=", "certname", "{0}"]'.format(node_name)
-    else:
-        node_query = '["and",' \
-            '["=", "report_environment", "{0}"],' \
-            '["=", "certname", "{1}"]]'.format(env, node_name)
-
-    try:
-        node = next(get_or_abort(puppetdb.nodes,
-            query=node_query,
-            with_status=True))
-    except StopIteration:
-        abort(404)
-
-    if node.latest_report_hash is not None:
-        hash_ = node.latest_report_hash
-    else:
-        if env == '*':
-            query='["and",' \
-                '["=", "certname", "{0}"],' \
-                '["=", "latest_report?", true]]'.format(node.name)
-        else:
-            query='["and",' \
-                '["=", "environment", "{0}"],' \
-                '["=", "certname", "{1}"],' \
-                '["=", "latest_report?", true]]'.format(
-                    env,
-                    node.name)
-
-        reports = get_or_abort(puppetdb.reports, query=query)
-        try:
-            report = next(reports)
-            hash_ = report.hash_
-        except StopIteration:
-            abort(404)
-
-    return redirect(
-        url_for('report', env=env, node_name=node_name, report_id=hash_))
-
-
 @app.route('/report/<node_name>/<report_id>', defaults={'env': app.config['DEFAULT_ENVIRONMENT']})
 @app.route('/<env>/report/<node_name>/<report_id>')
 def report(env, node_name, report_id):

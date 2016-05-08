@@ -161,11 +161,7 @@
       unchanged
     {% endif -%}
   label status" href="
-    {% if report_hash -%}
-      {{url_for('report', env=current_env, node_name=node_name, report_id=report_hash)}}
-    {% else -%}
-      {{url_for('report_latest', env=current_env, node_name=node_name)}}
-    {% endif -%}
+    {{url_for('report', env=current_env, node_name=node_name, report_id=report_hash)}}
   ">
     {{ status|upper }}
   </a>
