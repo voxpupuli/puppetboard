@@ -178,25 +178,25 @@
   {% endif %}
 {%- endmacro %}
 {% macro render_pagination(pagination) -%}
-  <div class="pagination">
+  <div class="ui pagination menu">
   {% if pagination.has_prev %}
-    <a href="{{url_for_pagination(1)}}">&laquo; First</a>
-    <a href="{{url_for_pagination(pagination.page - 1)}}">Prev</a>
+    <a class="item" href="{{url_for_pagination(1)}}">&laquo; First</a>
+    <a class="item" href="{{url_for_pagination(pagination.page - 1)}}">Prev</a>
   {% endif %}
   {% for page in pagination.iter_pages() %}
     {% if page %}
       {% if page != pagination.page %}
-        <a href="{{url_for_pagination(page)}}">{{page}}</a>
+        <a class="item" href="{{url_for_pagination(page)}}">{{page}}</a>
       {% else %}
-        <span style="font-weight:bold;">{{page}}</span>
+        <a class="active item">{{page}}</a>
       {% endif %}
     {% else %}
-      <span class="ellipsis">...</span>
+      <a class="disabled item">...</a>
     {% endif %}
   {% endfor %}
   {% if pagination.has_next %}
-    <a href="{{url_for_pagination(pagination.page + 1)}}">Next</a>
-    <a href="{{url_for_pagination(pagination.pages)}}">Last &raquo;</a>
+    <a class="item" href="{{url_for_pagination(pagination.page + 1)}}">Next</a>
+    <a class="item" href="{{url_for_pagination(pagination.pages)}}">Last &raquo;</a>
   {% endif %}
   </div>
 {% endmacro %}
