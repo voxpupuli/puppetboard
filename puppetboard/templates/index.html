@@ -89,11 +89,7 @@
             </td>
             <td>
               {% if node.report_timestamp %}
-                {% if node.latest_report_hash %}
-                  <a href="{{url_for('report', env=current_env, node_name=node.name, report_id=node.latest_report_hash)}}" rel='utctimestamp'>{{ node.report_timestamp }}</a>
-                {% else %}
-                  <a href="{{url_for('report_latest', env=current_env, node_name=node.name)}}" rel='utctimestamp'>{{ node.report_timestamp }}</a>
-                {% endif %}
+                <a href="{{url_for('report', env=current_env, node_name=node.name, report_id=node.latest_report_hash)}}" rel='utctimestamp'>{{ node.report_timestamp }}</a>
               {% else %}
                 <i class="large ban icon"></i>
               {% endif %}
