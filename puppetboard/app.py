@@ -174,8 +174,11 @@ def index(env):
                     env))
         metrics['num_nodes'] = num_nodes[0]['count']
         metrics['num_resources'] = num_resources[0]['count']
-        metrics['avg_resources_node'] = "{0:10.0f}".format(
-            (num_resources[0]['count'] / num_nodes[0]['count']))
+        try:
+            metrics['avg_resources_node'] = "{0:10.0f}".format(
+                (num_resources[0]['count'] / num_nodes[0]['count']))
+        except ZeroDivisionError:
+            metrics['avg_resources_node'] = 0
 
     nodes = get_or_abort(puppetdb.nodes,
         query=query,
