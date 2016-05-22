@@ -57,14 +57,9 @@ def stream_template(template_name, **context):
     rv.enable_buffering(5)
     return rv
 
-def url_for_pagination(page):
+def url_for_field(field, value):
     args = request.view_args.copy()
-    args['page'] = page
-    return url_for(request.endpoint, **args)
-
-def url_for_environments(env):
-    args = request.view_args.copy()
-    args['env'] = env
+    args[field] = value
     return url_for(request.endpoint, **args)
 
 def environments():
@@ -80,8 +75,7 @@ def check_env(env, envs):
     if env != '*' and env not in envs:
         abort(404)
 
-app.jinja_env.globals['url_for_pagination'] = url_for_pagination
-app.jinja_env.globals['url_for_environments'] = url_for_environments
+app.jinja_env.globals['url_for_field'] = url_for_field
 
 @app.context_processor
 def utility_processor():
