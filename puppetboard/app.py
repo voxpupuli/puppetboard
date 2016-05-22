@@ -59,6 +59,7 @@ def stream_template(template_name, **context):
 
 def url_for_field(field, value):
     args = request.view_args.copy()
+    args.update(request.args.copy())
     args[field] = value
     return url_for(request.endpoint, **args)
 
@@ -413,6 +414,7 @@ def reports(env, page):
     """
     envs = environments()
     check_env(env, envs)
+    limit = request.args.get('limit', app.config['REPORTS_COUNT'])
 
     if env == '*':
         reports_query = None
@@ -422,11 +424,16 @@ def reports(env, page):
         total_query = '["extract", [["function", "count"]],'\
             '["and", ["=", "environment", "{0}"]]]'.format(env)
 
+    try:
+        paging_args = {'limit': int(limit)}
+        paging_args['offset'] = int((page-1) * paging_args['limit'])
+    except ValueError:
+        paging_args = {}
+
     reports = get_or_abort(puppetdb.reports,
         query=reports_query,
-        limit=app.config['REPORTS_COUNT'],
-        offset=(page-1) * app.config['REPORTS_COUNT'],
-        order_by='[{"field": "start_time", "order": "desc"}]')
+        order_by='[{"field": "start_time", "order": "desc"}]',
+        **paging_args)
     total = get_or_abort(puppetdb._query,
         'reports',
         query=total_query)
@@ -466,9 +473,10 @@ def reports(env, page):
         reports=yield_or_stop(reports),
         reports_count=app.config['REPORTS_COUNT'],
         report_event_counts=report_event_counts,
-        pagination=Pagination(page, app.config['REPORTS_COUNT'], total),
+        pagination=Pagination(page, paging_args.get('limit', total), total),
         envs=envs,
-        current_env=env)))
+        current_env=env,
+        limit=paging_args.get('limit', total))))
 
 
 @app.route('/reports/<node_name>/', defaults={'env': app.config['DEFAULT_ENVIRONMENT'], 'page': 1})
