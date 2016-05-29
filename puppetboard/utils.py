@@ -11,6 +11,12 @@ from pypuppetdb.errors import EmptyResponseError
 from flask import abort
 
 
+# Python 3 compatibility
+try:
+    xrange
+except NameError:
+    xrange = range
+
 log = logging.getLogger(__name__)
 
 def jsonprint(value):
