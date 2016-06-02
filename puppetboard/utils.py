@@ -28,10 +28,10 @@ def get_or_abort(func, *args, **kwargs):
     except HTTPError as e:
         log.error(str(e))
         abort(e.response.status_code)
-    except ConnectionError:
+    except ConnectionError as e:
         log.error(str(e))
         abort(500)
-    except EmptyResponseError:
+    except EmptyResponseError as e:
         log.error(str(e))
         abort(204)
 
