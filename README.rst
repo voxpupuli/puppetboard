@@ -618,7 +618,7 @@ and answer questions related to pypuppetdb and Puppetboard.
 There is also a `GoogleGroup`_ to exchange questions and discussions. Please
 note that this group contains discussions of other Puppet Community projects.
 
-.. _issue: https://github.com/puppet-community/puppetboard/issues
+.. _issue: https://github.com/voxpupuli/puppetboard/issues
 .. _IRCnet: http://www.ircnet.org
 .. _Freenode: http://freenode.net
 .. _GoogleGroup: https://groups.google.com/forum/?hl=en#!forum/puppet-community
