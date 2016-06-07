@@ -356,13 +356,12 @@ def node(env, node_name):
     """
     envs = environments()
     check_env(env, envs)
+    query = AndOperator()
 
-    if env == '*':
-        query = EqualsOperator("certname", node_name)
-    else:
-        query = AndOperator()
+    if env != '*':
         query.add(EqualsOperator("environment", env))
-        query.add(EqualsOperator("certname", node_name))
+
+    query.add(EqualsOperator("certname", node_name))
 
     node = get_or_abort(puppetdb.node, node_name)
     facts = node.facts()
