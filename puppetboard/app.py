@@ -17,6 +17,7 @@ from flask import (
     )
 
 from pypuppetdb import connect
+from pypuppetdb.QueryBuilder import *
 
 from puppetboard.forms import (CatalogForm, QueryForm)
 from puppetboard.utils import (
@@ -152,23 +153,28 @@ def index(env):
         metrics['avg_resources_node'] = "{0:10.0f}".format(
             avg_resources_node['Value'])
     else:
-        conditions = ", ".join('["=", "{0}", "{1}"]'.format(field, env)
-                  for field in ['catalog_environment', 'facts_environment'])
+        query = AndOperator()
+        query.add(EqualsOperator('catalog_environment', env))
+        query.add(EqualsOperator('facts_environment', env))
         if app.config['OVERVIEW_FILTER'] != None:
-            conditions += ", {0}".format(app.config['OVERVIEW_FILTER'])
-        query = '["and", {0}]'.format(conditions)
+             query.add(app.config['OVERVIEW_FILTER'])
+
+        num_nodes_query = ExtractOperator()
+        num_nodes_query.add_field(FunctionOperator('count'))
+        num_nodes_query.add_query(query)
+
+        num_resources_query = ExtractOperator()
+        num_resources_query.add_field(FunctionOperator('count'))
+        num_resources_query.add_query(EqualsOperator("environment", env))
+
         num_nodes = get_or_abort(
             puppetdb._query,
             'nodes',
-            query='["extract", [["function", "count"]],["and", {0}]]'.format(
-                    ",".join('["=", "{0}", "{1}"]'.format(field, env)
-                        for field in ['catalog_environment', 'facts_environment'])))
+            query=num_nodes_query)
         num_resources = get_or_abort(
             puppetdb._query,
             'resources',
-            query='["extract", [["function", "count"]],' \
-                '["=", "environment", "{0}"]]'.format(
-                    env))
+            query=num_resources_query)
         metrics['num_nodes'] = num_nodes[0]['count']
         metrics['num_resources'] = num_resources[0]['count']
         try:
@@ -237,9 +243,9 @@ def nodes(env):
     if env == '*':
         query = None
     else:
-        query = '["and", {0}]'.format(
-            ", ".join('["=", "{0}", "{1}"]'.format(field, env)
-                for field in ['catalog_environment', 'facts_environment'])),
+        query = AndOperator()
+        query.add(EqualsOperator("catalog_environment", env))
+        query.add(EqualsOperator("facts_environment", env))
 
     status_arg = request.args.get('status', '')
     nodelist = puppetdb.nodes(
@@ -303,15 +309,15 @@ def inventory(env):
         fact_desc.append(description)
         fact_names.append(name)
 
+    fact_query = OrOperator()
+    fact_query.add([EqualsOperator("name", name) for name in fact_names])
+
     if env == '*':
-        query = '["or", {0}]]'.format(
-            ', '.join('["=", "name", "{0}"]'.format(name)
-                for name in fact_names))
+        query = fact_query
     else:
-        query = '["and", ["=", "environment", "{0}"], ["or", {1}]]'.format(
-            env,
-            ', '.join('["=", "name", "{0}"]'.format(name)
-                for name in fact_names))
+        query = AndOperator()
+        query.add(EqualsOperator("environment", env))
+        query.add(fact_query)
 
     # get all the facts from PuppetDB
     facts = puppetdb.facts(query=query)
@@ -352,10 +358,11 @@ def node(env, node_name):
     check_env(env, envs)
 
     if env == '*':
-        query = '["=", "certname", "{0}"]]'.format(node_name)
+        query = EqualsOperator("certname", node_name)
     else:
-        query='["and", ["=", "environment", "{0}"],' \
-            '["=", "certname", "{1}"]]'.format(env, node_name),
+        query = AndOperator()
+        query.add(EqualsOperator("environment", env))
+        query.add(EqualsOperator("certname", node_name))
 
     node = get_or_abort(puppetdb.node, node_name)
     facts = node.facts()
@@ -417,14 +424,14 @@ def reports(env, page):
     envs = environments()
     check_env(env, envs)
     limit = request.args.get('limit', app.config['REPORTS_COUNT'])
+    reports_query = None
+    total_query = ExtractOperator()
 
-    if env == '*':
-        reports_query = None
-        total_query = '["extract", [["function", "count"]], ["~", "certname", ""]]'
-    else:
-        reports_query = '["=", "environment", "{0}"]'.format(env)
-        total_query = '["extract", [["function", "count"]],'\
-            '["and", ["=", "environment", "{0}"]]]'.format(env)
+    total_query.add_field(FunctionOperator("count"))
+
+    if env != '*':
+        reports_query = EqualsOperator("environment", env)
+        total_query.add_query(reports_query)
 
     try:
         paging_args = {'limit': int(limit)}
@@ -498,19 +505,16 @@ def reports_node(env, node_name, page):
     """
     envs = environments()
     check_env(env, envs)
+    query = AndOperator()
+    total_query = ExtractOperator()
 
-    if env == '*':
-        query = '["=", "certname", "{0}"]'.format(node_name)
-        total_query = '["extract", [["function", "count"]],'\
-            '["=", "certname", "{0}"]'.format(node_name)
-    else:
-        query='["and",' \
-            '["=", "environment", "{0}"],' \
-            '["=", "certname", "{1}"]]'.format(env, node_name)
-        total_query = '["extract", [["function", "count"]],' \
-            '["and",' \
-            '["=", "environment", "{0}"],' \
-            '["=", "certname", "{1}"]]]'.format(env, node_name)
+    total_query.add_field(FunctionOperator("count"))
+
+    if env != '*':
+        query.add(EqualsOperator("environment", env))
+
+    query.add(EqualsOperator("certname", node_name))
+    total_query.add_query(query)
 
     reports = get_or_abort(puppetdb.reports,
         query=query,
@@ -581,15 +585,18 @@ def report(env, node_name, report_id):
     """
     envs = environments()
     check_env(env, envs)
+    query = AndOperator()
+    report_id_query = OrOperator()
 
-    if env == '*':
-        query = '["and", ["=", "certname", "{0}"],' \
-            '["or", ["=", "hash", "{1}"], ["=", "configuration_version", "{1}"]]]'.format(
-                node_name, report_id)
-    else:
-        query = '["and", ["=", "environment", "{0}"], ["=", "certname", "{1}"],' \
-            '["or", ["=", "hash", "{2}"], ["=", "configuration_version", "{2}"]]]'.format(
-                env, node_name, report_id)
+    report_id_query.add(EqualsOperator("hash", report_id))
+    report_id_query.add(EqualsOperator("configuration_version", report_id))
+
+    if env != '*':
+        query.add(EqualsOperator("environment", env))
+
+    query.add(EqualsOperator("certname", node_name))
+    query.add(report_id_query)
+
     reports = puppetdb.reports(query=query)
 
     try:
@@ -655,10 +662,12 @@ def fact(env, fact):
     render_graph = False
     if fact in graph_facts:
         render_graph = True
+
     if env == '*':
         query = None
     else:
-        query = '["=", "environment", "{0}"]'.format(env)
+        query = EqualsOperator("environment", env)
+
     localfacts = [f for f in yield_or_stop(puppetdb.facts(
         name=fact, query=query))]
     return Response(stream_with_context(stream_template(
@@ -688,7 +697,8 @@ def fact_value(env, fact, value):
     if env == '*':
         query = None
     else:
-        query = '["=", "environment", "{0}"]'.format(env)
+        query = EqualsOperator("environment", env)
+
     facts = get_or_abort(puppetdb.facts,
         name=fact,
         value=value,
@@ -800,12 +810,13 @@ def catalogs(env):
     if app.config['ENABLE_CATALOG']:
         nodenames = []
         catalog_list = []
-        if env == '*':
-            query = '["null?", "catalog_timestamp", false]]'
-        else:
-            query = '["and",' \
-                '["=", "catalog_environment", "{0}"],' \
-                '["null?", "catalog_timestamp", false]]'.format(env),
+        query = AndOperator()
+
+        if env != '*':
+            query.add(EqualsOperator("catalog_environment", env))
+
+        query.add(NullOperator("catalog_timestamp", False))
+
         nodes = get_or_abort(puppetdb.nodes,
             query=query,
             with_status=False,
@@ -939,14 +950,18 @@ def radiator(env):
             'puppetlabs.puppetdb.population:name=num-nodes')
         num_nodes = metrics['Value']
     else:
-        query = '["and", {0}]]'.format(
-            ",".join('["=", "{0}", "{1}"]'.format(field, env)
-                for field in ['catalog_environment', 'facts_environment']))
+        query = AndOperator()
+        metric_query = ExtractOperator()
+
+        query.add(EqualsOperator("catalog_environment", env))
+        query.add(EqualsOperator("facts_environment", env))
+        metric_query.add_field(FunctionOperator('count'))
+        metric_query.add_query(query)
+
         metrics = get_or_abort(
             puppetdb._query,
             'nodes',
-            query='["extract", [["function", "count"]],{0}'.format(
-                query))
+            query=metric_query)
         num_nodes = metrics[0]['count']
 
 
