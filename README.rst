@@ -501,10 +501,6 @@ differ too much. As we can't use ``uwsgi_pass`` with gunicorn, the nginx configu
 
 .. code-block:: nginx
 
-    upstream puppetboard {
-        server 127.0.0.1:9090;
-    }
-
     server {
         listen      80;
         server_name puppetboard.example.tld;
