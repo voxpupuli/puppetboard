@@ -156,12 +156,13 @@ def index(env):
         query = AndOperator()
         query.add(EqualsOperator('catalog_environment', env))
         query.add(EqualsOperator('facts_environment', env))
-        if app.config['OVERVIEW_FILTER'] != None:
-             query.add(app.config['OVERVIEW_FILTER'])
 
         num_nodes_query = ExtractOperator()
         num_nodes_query.add_field(FunctionOperator('count'))
         num_nodes_query.add_query(query)
+
+        if app.config['OVERVIEW_FILTER'] != None:
+             query.add(app.config['OVERVIEW_FILTER'])
 
         num_resources_query = ExtractOperator()
         num_resources_query.add_field(FunctionOperator('count'))
@@ -309,15 +310,14 @@ def inventory(env):
         fact_desc.append(description)
         fact_names.append(name)
 
+    query = AndOperator()
     fact_query = OrOperator()
     fact_query.add([EqualsOperator("name", name) for name in fact_names])
 
-    if env == '*':
-        query = fact_query
-    else:
-        query = AndOperator()
+    if env != '*':
         query.add(EqualsOperator("environment", env))
-        query.add(fact_query)
+
+    query.add(fact_query)
 
     # get all the facts from PuppetDB
     facts = puppetdb.facts(query=query)
