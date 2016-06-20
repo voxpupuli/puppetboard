@@ -26,6 +26,11 @@
       </div>
       {% endfor %}
     </div>
+    <div class="inline fields">
+      <div class="field">
+        {{ form.rawjson(active=True) }} Raw JSON
+      </div>
+    </div>
     <input type=submit class="ui submit button" value='Submit'>
     <input type=reset class="ui red submit button" value='Cancel'>
   </form>
@@ -35,7 +40,13 @@
 <div class="row">
   <div class="span12">
     <h2>Result</h2>
+      {% if form.rawjson.data %}
       <pre><code>{{ result|jsonprint }}</code></pre>
+      {% else %}
+      {% autoescape false %}
+      {{ result|prettyprint}}
+      {% endautoescape %}
+      {% endif %}
   </div>
 </div>
 {% endif %}

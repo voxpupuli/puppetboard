@@ -22,6 +22,35 @@ log = logging.getLogger(__name__)
 def jsonprint(value):
     return json.dumps(value, indent=2, separators=(',', ': '))
 
+def formatvalue(value):
+    if isinstance(value, str):
+      return value
+    elif isinstance(value, list):
+      return ", ".join(value)
+    elif isinstance(value, dict):
+      ret = ""
+      for k in value:
+        ret += k+" => "+formatvalue(value[k])+",<br/>"
+      return ret
+    else:
+      return str(value)
+
+def prettyprint(value):
+    html = '<table class="ui basic fixed table"><tr>'
+
+    # Get keys
+    for k in value[0]:
+      html += "<th>"+k+"</th>"
+
+    for e in value:
+        html += "<tr>"
+        for k in e:
+          html += "<td>"+formatvalue(e[k])+"</td>"
+        html += "</tr>"
+      
+    html += "</tr>"
+    html += "</table>"
+    return(html)
 
 def get_or_abort(func, *args, **kwargs):
     """Execute the function with its arguments and handle the possible

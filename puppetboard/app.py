@@ -21,7 +21,7 @@ from pypuppetdb import connect
 from puppetboard.forms import (CatalogForm, QueryForm)
 from puppetboard.utils import (
     get_or_abort, yield_or_stop,
-    jsonprint, Pagination
+    jsonprint, prettyprint, Pagination
     )
 
 
@@ -34,6 +34,7 @@ graph_facts += app.config['GRAPH_FACTS']
 app.secret_key = app.config['SECRET_KEY']
 
 app.jinja_env.filters['jsonprint'] = jsonprint
+app.jinja_env.filters['prettyprint'] = prettyprint
 
 puppetdb = connect(
     host=app.config['PUPPETDB_HOST'],
