@@ -722,7 +722,9 @@ def query(env):
 
         form = QueryForm(csrf_enabled=False)
         if form.validate_on_submit():
-            if form.query.data[0] == '[':
+            if form.endpoints.data == 'pql':
+                query = form.query.data
+            elif form.query.data[0] == '[':
                 query = form.query.data
             else:
                 query = '[{0}]'.format(form.query.data)
