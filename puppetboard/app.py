@@ -83,7 +83,7 @@ app.jinja_env.globals['url_for_field'] = url_for_field
 def utility_processor():
     def now(format='%m/%d/%Y %H:%M:%S'):
         """returns the formated datetime"""
-        return datetime.now().strftime(format)
+        return datetime.datetime.now().strftime(format)
     return dict(now=now)
 
 
