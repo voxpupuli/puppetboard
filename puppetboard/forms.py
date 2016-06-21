@@ -25,6 +25,7 @@ class QueryForm(Form):
         ('catalogs', 'Catalogs'),
         ('edges', 'Edges'),
         ('environments', 'Environments'),
+        ('pql', 'PQL'),
         ])
     rawjson = BooleanField('Raw JSON')
 
