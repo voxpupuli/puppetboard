@@ -36,11 +36,13 @@ def formatvalue(value):
       return str(value)
 
 def prettyprint(value):
-    html = '<table class="ui basic fixed table"><tr>'
+    html = '<table class="ui basic fixed sortable table"><thead><tr>'
 
     # Get keys
     for k in value[0]:
       html += "<th>"+k+"</th>"
+
+    html += "</tr></thead><tbody>"
 
     for e in value:
         html += "<tr>"
@@ -48,8 +50,7 @@ def prettyprint(value):
           html += "<td>"+formatvalue(e[k])+"</td>"
         html += "</tr>"
       
-    html += "</tr>"
-    html += "</table>"
+    html += "</tbody></table>"
     return(html)
 
 def get_or_abort(func, *args, **kwargs):
