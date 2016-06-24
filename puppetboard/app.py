@@ -13,7 +13,7 @@ from itertools import tee
 from flask import (
     Flask, render_template, abort, url_for,
     Response, stream_with_context, redirect,
-    request
+    request, session
     )
 
 from pypuppetdb import connect
@@ -730,7 +730,9 @@ def query(env):
         envs = environments()
         check_env(env, envs)
 
-        form = QueryForm(csrf_enabled=False)
+        form = QueryForm(meta={
+            'csrf_secret': app.config['SECRET_KEY'],
+            'csrf_context': session})
         if form.validate_on_submit():
             if form.endpoints.data == 'pql':
                 query = form.query.data

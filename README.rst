@@ -287,6 +287,24 @@ puppetboard directory:
 
 Make sure this file is readable by the user the webserver runs as.
 
+Flask requires a static secret_key in order to protect itself from CSRF exploits.
+The default secret_key in ``default_settings.py`` generates a random 24 character
+string, however this string is re-generated on each request under httpd >= 2.4.
+To generate your own secret_key create a python script with the following content
+and run it once:
+
+.. code_block:: python
+
+    import os
+
+    print os.random(24)
+
+Copy the output and add the following to your ``wsgi.py`` file:
+
+.. code_block:: python
+
+   application.secret_key = '<your secret key>'
+
 The last thing we need to do is configure Apache.
 
 Here is a sample configuration for Debian and Ubuntu:
