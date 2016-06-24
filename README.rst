@@ -114,6 +114,13 @@ Native packages for your operating system will be provided in the near future.
 .. _OpenSuSE 12/13: https://build.opensuse.org/package/show/systemsmanagement:puppet/python-puppetboard
 .. _SuSE LE 11 SP3: https://build.opensuse.org/package/show/systemsmanagement:puppet/python-puppetboard
 
+Docker Images
+^^^^^^^^^^^^^
+
+A `Dockerfile`_ was added to the source-code in the 0.2.0 release. An officially
+image is planned for the 0.2.x series.
+
+.. _Dockerfile: https://github.com/voxpupuli/puppetboard/blob/master/Dockerfile
 
 Development
 -----------
