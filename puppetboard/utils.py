@@ -49,7 +49,7 @@ def prettyprint(value):
         for k in e:
           html += "<td>"+formatvalue(e[k])+"</td>"
         html += "</tr>"
-      
+
     html += "</tbody></table>"
     return(html)
 
