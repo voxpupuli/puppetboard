@@ -1,6 +1,6 @@
 import os
 
-PUPPETDB_HOST = 'puppetdb'
+PUPPETDB_HOST = 'localhost'
 PUPPETDB_PORT = 8080
 PUPPETDB_SSL_VERIFY = True
 PUPPETDB_KEY = None
