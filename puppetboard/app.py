@@ -771,10 +771,8 @@ def metrics(env):
     check_env(env, envs)
 
     metrics = get_or_abort(puppetdb._query, 'mbean')
-    for key, value in metrics.items():
-        metrics[key] = value.split('/')[2]
     return render_template('metrics.html',
-        metrics=sorted(metrics.items()),
+        metrics=sorted(metrics.keys()),
         envs=envs,
         current_env=env)
 
