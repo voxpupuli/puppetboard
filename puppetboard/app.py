@@ -17,11 +17,12 @@ from flask import (
     )
 
 from pypuppetdb import connect
+from pypuppetdb.QueryBuilder import *
 
 from puppetboard.forms import (CatalogForm, QueryForm)
 from puppetboard.utils import (
     get_or_abort, yield_or_stop,
-    jsonprint, Pagination
+    jsonprint, prettyprint, Pagination
     )
 
 
@@ -34,6 +35,7 @@ graph_facts += app.config['GRAPH_FACTS']
 app.secret_key = app.config['SECRET_KEY']
 
 app.jinja_env.filters['jsonprint'] = jsonprint
+app.jinja_env.filters['prettyprint'] = prettyprint
 
 puppetdb = connect(
     host=app.config['PUPPETDB_HOST'],
@@ -57,14 +59,10 @@ def stream_template(template_name, **context):
     rv.enable_buffering(5)
     return rv
 
-def url_for_pagination(page):
+def url_for_field(field, value):
     args = request.view_args.copy()
-    args['page'] = page
-    return url_for(request.endpoint, **args)
-
-def url_for_environments(env):
-    args = request.view_args.copy()
-    args['env'] = env
+    args.update(request.args.copy())
+    args[field] = value
     return url_for(request.endpoint, **args)
 
 def environments():
@@ -80,14 +78,13 @@ def check_env(env, envs):
     if env != '*' and env not in envs:
         abort(404)
 
-app.jinja_env.globals['url_for_pagination'] = url_for_pagination
-app.jinja_env.globals['url_for_environments'] = url_for_environments
+app.jinja_env.globals['url_for_field'] = url_for_field
 
 @app.context_processor
 def utility_processor():
     def now(format='%m/%d/%Y %H:%M:%S'):
         """returns the formated datetime"""
-        return datetime.now().strftime(format)
+        return datetime.datetime.now().strftime(format)
     return dict(now=now)
 
 
@@ -157,23 +154,29 @@ def index(env):
         metrics['avg_resources_node'] = "{0:10.0f}".format(
             avg_resources_node['Value'])
     else:
-        conditions = ", ".join('["=", "{0}", "{1}"]'.format(field, env)
-                  for field in ['catalog_environment', 'facts_environment'])
+        query = AndOperator()
+        query.add(EqualsOperator('catalog_environment', env))
+        query.add(EqualsOperator('facts_environment', env))
+
+        num_nodes_query = ExtractOperator()
+        num_nodes_query.add_field(FunctionOperator('count'))
+        num_nodes_query.add_query(query)
+
         if app.config['OVERVIEW_FILTER'] != None:
-            conditions += ", {0}".format(app.config['OVERVIEW_FILTER'])
-        query = '["and", {0}]'.format(conditions)
+             query.add(app.config['OVERVIEW_FILTER'])
+
+        num_resources_query = ExtractOperator()
+        num_resources_query.add_field(FunctionOperator('count'))
+        num_resources_query.add_query(EqualsOperator("environment", env))
+
         num_nodes = get_or_abort(
             puppetdb._query,
             'nodes',
-            query='["extract", [["function", "count"]],["and", {0}]]'.format(
-                    ",".join('["=", "{0}", "{1}"]'.format(field, env)
-                        for field in ['catalog_environment', 'facts_environment'])))
+            query=num_nodes_query)
         num_resources = get_or_abort(
             puppetdb._query,
             'resources',
-            query='["extract", [["function", "count"]],' \
-                '["=", "environment", "{0}"]]'.format(
-                    env))
+            query=num_resources_query)
         metrics['num_nodes'] = num_nodes[0]['count']
         metrics['num_resources'] = num_resources[0]['count']
         try:
@@ -242,9 +245,9 @@ def nodes(env):
     if env == '*':
         query = None
     else:
-        query = '["and", {0}]'.format(
-            ", ".join('["=", "{0}", "{1}"]'.format(field, env)
-                for field in ['catalog_environment', 'facts_environment'])),
+        query = AndOperator()
+        query.add(EqualsOperator("catalog_environment", env))
+        query.add(EqualsOperator("facts_environment", env))
 
     status_arg = request.args.get('status', '')
     nodelist = puppetdb.nodes(
@@ -308,15 +311,14 @@ def inventory(env):
         fact_desc.append(description)
         fact_names.append(name)
 
-    if env == '*':
-        query = '["or", {0}]]'.format(
-            ', '.join('["=", "name", "{0}"]'.format(name)
-                for name in fact_names))
-    else:
-        query = '["and", ["=", "environment", "{0}"], ["or", {1}]]'.format(
-            env,
-            ', '.join('["=", "name", "{0}"]'.format(name)
-                for name in fact_names))
+    query = AndOperator()
+    fact_query = OrOperator()
+    fact_query.add([EqualsOperator("name", name) for name in fact_names])
+
+    if env != '*':
+        query.add(EqualsOperator("environment", env))
+
+    query.add(fact_query)
 
     # get all the facts from PuppetDB
     facts = puppetdb.facts(query=query)
@@ -355,12 +357,12 @@ def node(env, node_name):
     """
     envs = environments()
     check_env(env, envs)
+    query = AndOperator()
 
-    if env == '*':
-        query = '["=", "certname", "{0}"]]'.format(node_name)
-    else:
-        query='["and", ["=", "environment", "{0}"],' \
-            '["=", "certname", "{1}"]]'.format(env, node_name),
+    if env != '*':
+        query.add(EqualsOperator("environment", env))
+
+    query.add(EqualsOperator("certname", node_name))
 
     node = get_or_abort(puppetdb.node, node_name)
     facts = node.facts()
@@ -372,17 +374,29 @@ def node(env, node_name):
     report_event_counts = {}
 
     for report in reports_events:
-        counts = get_or_abort(puppetdb.event_counts,
-            query='["and", ["=", "environment", "{0}"],' \
-                '["=", "certname", "{1}"], ["=", "report", "{2}"]]'.format(
-                    env,
-                    node_name,
-                    report.hash_),
-            summarize_by="certname")
-        try:
-            report_event_counts[report.hash_] = counts[0]
-        except IndexError:
-            report_event_counts[report.hash_] = {}
+        report_event_counts[report.hash_] = {}
+
+        for event in report.events():
+            if event.status == 'success':
+                try:
+                    report_event_counts[report.hash_]['successes'] += 1
+                except KeyError:
+                    report_event_counts[report.hash_]['successes'] = 1
+            elif event.status == 'failure':
+                try:
+                    report_event_counts[report.hash_]['failures'] += 1
+                except KeyError:
+                    report_event_counts[report.hash_]['failures'] = 1
+            elif event.status == 'noop':
+                try:
+                    report_event_counts[report.hash_]['noops'] += 1
+                except KeyError:
+                    report_event_counts[report.hash_]['noops'] = 1
+            elif event.status == 'skipped':
+                try:
+                    report_event_counts[report.hash_]['skips'] += 1
+                except KeyError:
+                    report_event_counts[report.hash_]['skips'] = 1
     return render_template(
         'node.html',
         node=node,
@@ -409,20 +423,26 @@ def reports(env, page):
     """
     envs = environments()
     check_env(env, envs)
+    limit = request.args.get('limit', app.config['REPORTS_COUNT'])
+    reports_query = None
+    total_query = ExtractOperator()
 
-    if env == '*':
-        reports_query = None
-        total_query = '["extract", [["function", "count"]], ["~", "certname", ""]]'
-    else:
-        reports_query = '["=", "environment", "{0}"]'.format(env)
-        total_query = '["extract", [["function", "count"]],'\
-            '["and", ["=", "environment", "{0}"]]]'.format(env)
+    total_query.add_field(FunctionOperator("count"))
+
+    if env != '*':
+        reports_query = EqualsOperator("environment", env)
+        total_query.add_query(reports_query)
+
+    try:
+        paging_args = {'limit': int(limit)}
+        paging_args['offset'] = int((page-1) * paging_args['limit'])
+    except ValueError:
+        paging_args = {}
 
     reports = get_or_abort(puppetdb.reports,
         query=reports_query,
-        limit=app.config['REPORTS_COUNT'],
-        offset=(page-1) * app.config['REPORTS_COUNT'],
-        order_by='[{"field": "start_time", "order": "desc"}]')
+        order_by='[{"field": "start_time", "order": "desc"}]',
+        **paging_args)
     total = get_or_abort(puppetdb._query,
         'reports',
         query=total_query)
@@ -434,35 +454,38 @@ def reports(env, page):
         abort(404)
 
     for report in reports_events:
-        if env == '*':
-            event_count_query = '["and",' \
-                '["=", "certname", "{0}"],' \
-                '["=", "report", "{1}"]]'.format(
-                    report.node,
-                    report.hash_)
-        else:
-            event_count_query = '["and",' \
-                '["=", "environment", "{0}"],' \
-                '["=", "certname", "{1}"],' \
-                '["=", "report", "{2}"]]'.format(
-                    env,
-                    report.node,
-                    report.hash_)
-        counts = get_or_abort(puppetdb.event_counts,
-            query=event_count_query,
-            summarize_by="certname")
-        try:
-            report_event_counts[report.hash_] = counts[0]
-        except IndexError:
-            report_event_counts[report.hash_] = {}
+        report_event_counts[report.hash_] = {}
+
+        for event in report.events():
+            if event.status == 'success':
+                try:
+                    report_event_counts[report.hash_]['successes'] += 1
+                except KeyError:
+                    report_event_counts[report.hash_]['successes'] = 1
+            elif event.status == 'failure':
+                try:
+                    report_event_counts[report.hash_]['failures'] += 1
+                except KeyError:
+                    report_event_counts[report.hash_]['failures'] = 1
+            elif event.status == 'noop':
+                try:
+                    report_event_counts[report.hash_]['noops'] += 1
+                except KeyError:
+                    report_event_counts[report.hash_]['noops'] = 1
+            elif event.status == 'skipped':
+                try:
+                    report_event_counts[report.hash_]['skips'] += 1
+                except KeyError:
+                    report_event_counts[report.hash_]['skips'] = 1
     return Response(stream_with_context(stream_template(
         'reports.html',
         reports=yield_or_stop(reports),
         reports_count=app.config['REPORTS_COUNT'],
         report_event_counts=report_event_counts,
-        pagination=Pagination(page, app.config['REPORTS_COUNT'], total),
+        pagination=Pagination(page, paging_args.get('limit', total), total),
         envs=envs,
-        current_env=env)))
+        current_env=env,
+        limit=paging_args.get('limit', total))))
 
 
 @app.route('/reports/<node_name>/', defaults={'env': app.config['DEFAULT_ENVIRONMENT'], 'page': 1})
@@ -482,13 +505,16 @@ def reports_node(env, node_name, page):
     """
     envs = environments()
     check_env(env, envs)
+    query = AndOperator()
+    total_query = ExtractOperator()
 
-    if env == '*':
-        query = '["=", "certname", "{0}"]]'.format(node_name)
-    else:
-        query='["and",' \
-            '["=", "environment", "{0}"],' \
-            '["=", "certname", "{1}"]]'.format(env, node_name),
+    total_query.add_field(FunctionOperator("count"))
+
+    if env != '*':
+        query.add(EqualsOperator("environment", env))
+
+    query.add(EqualsOperator("certname", node_name))
+    total_query.add_query(query)
 
     reports = get_or_abort(puppetdb.reports,
         query=query,
@@ -497,10 +523,7 @@ def reports_node(env, node_name, page):
         order_by='[{"field": "start_time", "order": "desc"}]')
     total = get_or_abort(puppetdb._query,
         'reports',
-        query='["extract", [["function", "count"]],' \
-            '["and", ["=", "environment", "{0}"], ["=", "certname", "{1}"]]]'.format(
-            env,
-            node_name))
+        query=total_query)
     total = total[0]['count']
     reports, reports_events = tee(reports)
     report_event_counts = {}
@@ -509,27 +532,29 @@ def reports_node(env, node_name, page):
         abort(404)
 
     for report in reports_events:
-        if env == '*':
-            event_count_query = '["and",' \
-                '["=", "certname", "{0}"],' \
-                '["=", "report", "{1}"]]'.format(
-                    report.node,
-                    report.hash_)
-        else:
-            event_count_query = '["and",' \
-                '["=", "environment", "{0}"],' \
-                '["=", "certname", "{1}"],' \
-                '["=", "report", "{2}"]]'.format(
-                    env,
-                    report.node,
-                    report.hash_)
-        counts = get_or_abort(puppetdb.event_counts,
-            query=event_count_query,
-            summarize_by="certname")
-        try:
-            report_event_counts[report.hash_] = counts[0]
-        except IndexError:
-            report_event_counts[report.hash_] = {}
+        report_event_counts[report.hash_] = {}
+
+        for event in report.events():
+            if event.status == 'success':
+                try:
+                    report_event_counts[report.hash_]['successes'] += 1
+                except KeyError:
+                    report_event_counts[report.hash_]['successes'] = 1
+            elif event.status == 'failure':
+                try:
+                    report_event_counts[report.hash_]['failures'] += 1
+                except KeyError:
+                    report_event_counts[report.hash_]['failures'] = 1
+            elif event.status == 'noop':
+                try:
+                    report_event_counts[report.hash_]['noops'] += 1
+                except KeyError:
+                    report_event_counts[report.hash_]['noops'] = 1
+            elif event.status == 'skipped':
+                try:
+                    report_event_counts[report.hash_]['skips'] += 1
+                except KeyError:
+                    report_event_counts[report.hash_]['skips'] = 1
     return render_template(
         'reports.html',
         reports=reports,
@@ -560,15 +585,18 @@ def report(env, node_name, report_id):
     """
     envs = environments()
     check_env(env, envs)
+    query = AndOperator()
+    report_id_query = OrOperator()
 
-    if env == '*':
-        query = '["and", ["=", "certname", "{0}"],' \
-            '["or", ["=", "hash", "{1}"], ["=", "configuration_version", "{1}"]]]'.format(
-                node_name, report_id)
-    else:
-        query = '["and", ["=", "environment", "{0}"], ["=", "certname", "{1}"],' \
-            '["or", ["=", "hash", "{2}"], ["=", "configuration_version", "{2}"]]]'.format(
-                env, node_name, report_id)
+    report_id_query.add(EqualsOperator("hash", report_id))
+    report_id_query.add(EqualsOperator("configuration_version", report_id))
+
+    if env != '*':
+        query.add(EqualsOperator("environment", env))
+
+    query.add(EqualsOperator("certname", node_name))
+    query.add(report_id_query)
+
     reports = puppetdb.reports(query=query)
 
     try:
@@ -634,10 +662,12 @@ def fact(env, fact):
     render_graph = False
     if fact in graph_facts:
         render_graph = True
+
     if env == '*':
         query = None
     else:
-        query = '["=", "environment", "{0}"]'.format(env)
+        query = EqualsOperator("environment", env)
+
     localfacts = [f for f in yield_or_stop(puppetdb.facts(
         name=fact, query=query))]
     return Response(stream_with_context(stream_template(
@@ -667,7 +697,8 @@ def fact_value(env, fact, value):
     if env == '*':
         query = None
     else:
-        query = '["=", "environment", "{0}"]'.format(env)
+        query = EqualsOperator("environment", env)
+
     facts = get_or_abort(puppetdb.facts,
         name=fact,
         value=value,
@@ -703,7 +734,9 @@ def query(env):
             'csrf_secret': app.config['SECRET_KEY'],
             'csrf_context': session})
         if form.validate_on_submit():
-            if form.query.data[0] == '[':
+            if form.endpoints.data == 'pql':
+                query = form.query.data
+            elif form.query.data[0] == '[':
                 query = form.query.data
             else:
                 query = '[{0}]'.format(form.query.data)
@@ -781,12 +814,13 @@ def catalogs(env):
     if app.config['ENABLE_CATALOG']:
         nodenames = []
         catalog_list = []
-        if env == '*':
-            query = '["null?", "catalog_timestamp", false]]'
-        else:
-            query = '["and",' \
-                '["=", "catalog_environment", "{0}"],' \
-                '["null?", "catalog_timestamp", false]]'.format(env),
+        query = AndOperator()
+
+        if env != '*':
+            query.add(EqualsOperator("catalog_environment", env))
+
+        query.add(NullOperator("catalog_timestamp", False))
+
         nodes = get_or_abort(puppetdb.nodes,
             query=query,
             with_status=False,
@@ -920,14 +954,18 @@ def radiator(env):
             'puppetlabs.puppetdb.population:name=num-nodes')
         num_nodes = metrics['Value']
     else:
-        query = '["and", {0}]]'.format(
-            ",".join('["=", "{0}", "{1}"]'.format(field, env)
-                for field in ['catalog_environment', 'facts_environment']))
+        query = AndOperator()
+        metric_query = ExtractOperator()
+
+        query.add(EqualsOperator("catalog_environment", env))
+        query.add(EqualsOperator("facts_environment", env))
+        metric_query.add_field(FunctionOperator('count'))
+        metric_query.add_query(query)
+
         metrics = get_or_abort(
             puppetdb._query,
             'nodes',
-            query='["extract", [["function", "count"]],{0}'.format(
-                query))
+            query=metric_query)
         num_nodes = metrics[0]['count']
 
 

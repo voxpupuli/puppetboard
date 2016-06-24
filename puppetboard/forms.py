@@ -4,7 +4,7 @@ from __future__ import absolute_import
 from flask.ext.wtf import Form
 from wtforms import (
     HiddenField, RadioField, SelectField,
-    TextAreaField, validators
+    TextAreaField, BooleanField, validators
 )
 
 
@@ -25,7 +25,9 @@ class QueryForm(Form):
         ('catalogs', 'Catalogs'),
         ('edges', 'Edges'),
         ('environments', 'Environments'),
+        ('pql', 'PQL'),
         ])
+    rawjson = BooleanField('Raw JSON')
 
 class CatalogForm(Form):
     """The form used to compare the catalogs of different nodes."""

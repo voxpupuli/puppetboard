@@ -29,6 +29,7 @@
     <div class='row'>
       <h1>Reports</h1>
       {{ macros.reports_table(reports, reports_count, report_event_counts, condensed=True, hash_truncate=True, show_conf_col=False, show_agent_col=False, show_host_col=False, current_env=current_env)}}
+      <a href="{{url_for('reports_node', node_name=node.name)}}">Show All</a>
     </div>
   </div>
   <div class='column'>

@@ -3,4 +3,15 @@
 {% block content %}
 {{ macros.reports_table(reports, reports_count, report_event_counts, condensed=False, hash_truncate=False, show_conf_col=True, show_agent_col=True, show_host_col=True, show_search_bar=True, searchable=True, current_env=current_env)}}
 {{ macros.render_pagination(pagination)}}
+<div class="ui dropdown" style="float:right;">
+  <div class="text">Limit</div>
+  <i class="dropdown icon"></i>
+  <div class="menu">
+    <a class="{% if limit == config.REPORTS_COUNT %}active {% endif %}item" href="{{url_for_field('limit', config.REPORTS_COUNT)}}">{{config.REPORTS_COUNT}}</a>
+    <a class="{% if limit == 25 %}active {% endif %}item" href="{{url_for_field('limit', 25)}}">25</a>
+    <a class="{% if limit == 50 %}active {% endif %}item" href="{{url_for_field('limit', 50)}}">50</a>
+    <a class="{% if limit == 100 %}active {% endif %}item" href="{{url_for_field('limit', 100)}}">100</a>
+    <a class="{% if limit == '*' %}active {% endif %}item" href="{{url_for_field('limit', '*')}}">All</a>
+  </div>
+</div>
 {% endblock content %}

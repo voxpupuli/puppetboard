@@ -42,13 +42,13 @@
         Environments
         <i class="dropdown icon"></i>
         <div class="menu">
-            <a class="{% if '*' == current_env %}active {% endif %}item" href="{{url_for_environments('*')}}">All environments</a>
+            <a class="{% if '*' == current_env %}active {% endif %}item" href="{{url_for_field('env', '*')}}">All environments</a>
           {% for env in envs %}
-            <a class="{% if env == current_env %}active {% endif %}item" href="{{url_for_environments(env)}}">{{env}}</a>
+            <a class="{% if env == current_env %}active {% endif %}item" href="{{url_for_field('env', env)}}">{{env}}</a>
           {% endfor %}
         </div>
       </div>
-      <div class="item right"><a href="https://github.com/puppet-community/puppetboard" target="_blank">v0.1.3</a></div>
+      <div class="item right"><a href="https://github.com/voxpupuli/puppetboard" target="_blank">v0.1.3</a></div>
     </div>
     <div class="ui grid padding-bottom">
       <div class="one wide column"></div>
@@ -64,7 +64,7 @@
 
     <footer class="ui absolute fixed bottom">
       <div>
-        Copyright &copy; 2013-{{ now('%Y') }} <a href="https://github.com/puppet-community" target="_blank">Puppet Community</a>. <span style="float:right">Live from PuppetDB.</span>
+        Copyright &copy; 2013-{{ now('%Y') }} <a href="https://github.com/voxpupuli" target="_blank">Puppet Community</a>. <span style="float:right">Live from PuppetDB.</span>
       </div>
     </footer>
 

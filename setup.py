@@ -23,7 +23,7 @@ setup(
     author='Daniele Sluijters',
     author_email='daniele.sluijters+pypi@gmail.com',
     packages=find_packages(),
-    url='https://github.com/puppet-community/puppetboard',
+    url='https://github.com/voxpupuli/puppetboard',
     license='Apache License 2.0',
     description='Web frontend for PuppetDB',
     include_package_data=True,
@@ -32,7 +32,7 @@ setup(
         "Flask >= 0.10.1",
         "Flask-WTF >= 0.12, <= 0.13",
         "WTForms < 3.0",
-        "pypuppetdb >= 0.2.1, < 0.3.0",
+        "pypuppetdb >= 0.3.0, < 0.4.0",
         ],
     keywords="puppet puppetdb puppetboard",
     classifiers=[

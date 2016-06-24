@@ -11,11 +11,47 @@ from pypuppetdb.errors import EmptyResponseError
 from flask import abort
 
 
+# Python 3 compatibility
+try:
+    xrange
+except NameError:
+    xrange = range
+
 log = logging.getLogger(__name__)
 
 def jsonprint(value):
     return json.dumps(value, indent=2, separators=(',', ': '))
 
+def formatvalue(value):
+    if isinstance(value, str):
+      return value
+    elif isinstance(value, list):
+      return ", ".join(value)
+    elif isinstance(value, dict):
+      ret = ""
+      for k in value:
+        ret += k+" => "+formatvalue(value[k])+",<br/>"
+      return ret
+    else:
+      return str(value)
+
+def prettyprint(value):
+    html = '<table class="ui basic fixed sortable table"><thead><tr>'
+
+    # Get keys
+    for k in value[0]:
+      html += "<th>"+k+"</th>"
+
+    html += "</tr></thead><tbody>"
+
+    for e in value:
+        html += "<tr>"
+        for k in e:
+          html += "<td>"+formatvalue(e[k])+"</td>"
+        html += "</tr>"
+      
+    html += "</tbody></table>"
+    return(html)
 
 def get_or_abort(func, *args, **kwargs):
     """Execute the function with its arguments and handle the possible
@@ -28,10 +64,10 @@ def get_or_abort(func, *args, **kwargs):
     except HTTPError as e:
         log.error(str(e))
         abort(e.response.status_code)
-    except ConnectionError:
+    except ConnectionError as e:
         log.error(str(e))
         abort(500)
-    except EmptyResponseError:
+    except EmptyResponseError as e:
         log.error(str(e))
         abort(204)
 
