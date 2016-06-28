@@ -1,5 +1,8 @@
 *.py[cod]
 
+# Editor tmp files
+.*.sw*
+
 # C extensions
 *.so
 
@@ -22,6 +25,7 @@ lib64
 pip-log.txt
 
 # Unit test / coverage reports
+.cache
 .coverage
 .tox
 nosetests.xml
@@ -36,3 +40,6 @@ nosetests.xml
 
 # PuppetDB Settings
 /settings.py
+
+# Virtual Environment
+venv
