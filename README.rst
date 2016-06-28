@@ -207,6 +207,8 @@ Other settings that might be interesting in no particular order:
   suggests, load all information filtered by this environment value.
 * ``REPORTS_COUNT``: Defaults to ``10`` the limit of the number of reports
   to load on the node or any reports page.
+* ``NODE_REPORT_CHANGING_ONLY``: On the node detail page only show changed or
+  failed reports.
 * ``OFFLINE_MODE``: If set to ``True`` load static assets (jquery,
   semantic-ui, tablesorter, etc) from the local web server instead of a CDN.
   Defaults to ``False``.
