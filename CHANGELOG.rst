@@ -4,6 +4,34 @@ Changelog
 
 This is the changelog for Puppetboard.
 
+0.2.0
+=====
+
+* Full support for PuppetDB 4.x
+* Updating Semantic UI to 2.1.8
+* Updating Flask-WTF requirements to 0.12
+* Updating WTForms to 2.x
+* Restored CSRF protection on the Query Tab form
+* Updating Pypuppetdb requirement to 0.3.x
+* New configuration option OVERVIEW_FILTER allows users to add custom
+  PuppetDB query clauses to include/exclude nodes displayed on the
+  index page
+* Adding Radiator view similar to what is available in Puppet Dashboard
+* Adding a drop-down list in the Reports tab to configure the number of
+  reports displayed
+* Removing unneeded report_latest() endpoint. This endpoint was deprecated
+  with the addition of the `latest_report_hash` field in the Nodes
+  PuppetDB endpoint
+* Enhancing Report pagination
+* Using the OOP Query Builder available in Pypuppetdb 0.3.x
+* Allowing PQL queries in the Query Tab
+* Fixing double url-quoting bug on Metric endpodint calls
+* Adding a Boolean field to the Query form to prettyprint responses from
+  PuppetDB
+* Fixing corner-case where empty environments would trigger a ZeroDivisionError
+  due to the Number of Nodes divided by the Number of Resources calculation
+* Adding additional logging in `utils.py`
+
 0.1.2
 ====
 
