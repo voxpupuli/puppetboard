@@ -300,7 +300,7 @@ string, however this string is re-generated on each request under httpd >= 2.4.
 To generate your own secret_key create a python script with the following content
 and run it once:
 
-.. code_block:: python
+.. code-block:: python
 
     import os
 
@@ -308,7 +308,7 @@ and run it once:
 
 Copy the output and add the following to your ``wsgi.py`` file:
 
-.. code_block:: python
+.. code-block:: python
 
    application.secret_key = '<your secret key>'
 
