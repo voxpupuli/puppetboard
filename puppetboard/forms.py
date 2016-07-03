@@ -26,8 +26,9 @@ class QueryForm(Form):
         ('edges', 'Edges'),
         ('environments', 'Environments'),
         ('pql', 'PQL'),
-        ])
+    ])
     rawjson = BooleanField('Raw JSON')
+
 
 class CatalogForm(Form):
     """The form used to compare the catalogs of different nodes."""

@@ -20,12 +20,12 @@ if __name__ == '__main__':
                 app.config['DEV_COFFEE_LOCATION'], '-w', '-c',
                 '-o', 'puppetboard/static/js',
                 'puppetboard/static/coffeescript'
-                ])
+            ])
         except OSError:
             app.logger.error(
                 'The coffee executable was not found, disabling automatic '
                 'CoffeeScript compilation'
-                )
+            )
 
     # Start the Flask development server
     app.debug = True
