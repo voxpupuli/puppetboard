@@ -2,6 +2,9 @@
 Puppetboard
 ###########
 
+.. image:: https://travis-ci.org/voxpupuli/puppetboard.svg?branch=add_travis_badge
+    :target: https://travis-ci.org/voxpupuli/puppetboard
+
 Puppetboard is a web interface to `PuppetDB`_ aiming to replace the reporting
 functionality of `Puppet Dashboard`_.
 
