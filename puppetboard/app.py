@@ -448,28 +448,22 @@ def reports(env, page):
     check_env(env, envs)
     limit = request.args.get('limit', app.config['REPORTS_COUNT'])
     status_arg = request.args.get('status')
-    reports_query = None
+    reports_query = AndOperator()
     total_query = ExtractOperator()
 
     total_query.add_field(FunctionOperator("count"))
 
-    if env == '*':
-        if status_arg in ['failed', 'changed', 'unchanged']:
-            reports_query = AndOperator()
-            reports_query.add(EqualsOperator('status', status_arg))
-            reports_query.add(EqualsOperator('noop', False))
-        elif status_arg == 'noop':
-            reports_query = EqualsOperator('noop', True)
-    else:
-        reports_query = AndOperator()
+    if env != '*':
         reports_query.add(EqualsOperator("environment", env))
 
-        if status_arg in ['failed', 'changed', 'unchanged']:
-            reports_query = AndOperator()
-            reports_query.add(EqualsOperator('status', status_arg))
-            reports_query.add(EqualsOperator('noop', False))
-        elif status_arg == 'noop':
-            reports_query = EqualsOperator('noop', True)
+    if status_arg in ['failed', 'changed', 'unchanged']:
+        reports_query.add(EqualsOperator('status', status_arg))
+        reports_query.add(EqualsOperator('noop', False))
+    elif status_arg == 'noop':
+        reports_query.add(EqualsOperator('noop', True))
+
+    if len(reports_query.operations) == 0:
+        reports_query = None
 
     if reports_query is not None:
         total_query.add_query(reports_query)
