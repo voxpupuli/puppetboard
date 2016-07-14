@@ -254,17 +254,17 @@ def nodes(env):
         query.add(EqualsOperator("catalog_environment", env))
         query.add(EqualsOperator("facts_environment", env))
 
-
     if status_arg in ['failed', 'changed', 'unchanged']:
         query.add(EqualsOperator('latest_report_status', status_arg))
     elif status_arg == 'unreported':
         unreported = datetime.datetime.utcnow()
-        unreported = unreported - timedelta(hours=app.config['UNRESPONSIVE_HOURS'])
-        unreported = unreported.replace(microsecond=0)
+        unreported = (unreported -
+                      timedelta(hours=app.config['UNRESPONSIVE_HOURS']))
+        unreported = unreported.replace(microsecond=0).isoformat()
 
         unrep_query = OrOperator()
         unrep_query.add(NullOperator('report_timestamp', True))
-        unrep_query.add(LessEqualOperator('report_timestamp', unreported.isoformat()))
+        unrep_query.add(LessEqualOperator('report_timestamp', unreported))
 
         query.add(unrep_query)
 
