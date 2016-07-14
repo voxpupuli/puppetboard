@@ -248,36 +248,28 @@ def nodes(env):
     status_arg = request.args.get('status', '')
     check_env(env, envs)
 
-    if env == '*':
-        query = None
+    query = AndOperator()
 
-        if status_arg in ['failed', 'changed', 'unchanged']:
-            query = EqualsOperator('latest_report_status', status_arg)
-        elif status_arg == 'unreported':
-            unreported = datetime.datetime.utcnow()
-            unreported = unreported - timedelta(hours=app.config['UNRESPONSIVE_HOURS'])
-            unreported = unreported.replace(microsecond=0)
-
-            query = OrOperator()
-            query.add(NullOperator('report_timestamp', True))
-            query.add(LessEqualOperator('report_timestamp', unreported.isoformat()))
-    else:
-        query = AndOperator()
+    if env != '*':
         query.add(EqualsOperator("catalog_environment", env))
         query.add(EqualsOperator("facts_environment", env))
 
-        if status_arg in ['failed', 'changed', 'unchanged']:
-            query = EqualsOperator('latest_report_status', status_arg)
-        elif status_arg == 'unreported':
-            unreported = datetime.datetime.utcnow()
-            unreported = unreported - timedelta(hours=app.config['UNRESPONSIVE_HOURS'])
-            unreported = unreported.replace(microsecond=0)
 
-            unrep_query = OrOperator()
-            unrep_query.add(NullOperator('report_timestamp', True))
-            unrep_query.add(LessEqualOperator('report_timestamp', unreported.isoformat()))
+    if status_arg in ['failed', 'changed', 'unchanged']:
+        query.add(EqualsOperator('latest_report_status', status_arg))
+    elif status_arg == 'unreported':
+        unreported = datetime.datetime.utcnow()
+        unreported = unreported - timedelta(hours=app.config['UNRESPONSIVE_HOURS'])
+        unreported = unreported.replace(microsecond=0)
 
-            query.add(unrep_query)
+        unrep_query = OrOperator()
+        unrep_query.add(NullOperator('report_timestamp', True))
+        unrep_query.add(LessEqualOperator('report_timestamp', unreported.isoformat()))
+
+        query.add(unrep_query)
+
+    if len(query.operations) == 0:
+        query = None
 
     nodelist = puppetdb.nodes(
         query=query,
