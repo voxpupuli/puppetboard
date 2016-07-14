@@ -7,7 +7,7 @@ try:
     from urllib import unquote
 except ImportError:
     from urllib.parse import unquote
-from datetime import datetime
+from datetime import datetime, timedelta
 from itertools import tee
 
 from flask import (
@@ -240,16 +240,40 @@ def nodes(env):
     :type env: :obj:`string`
     """
     envs = environments()
+    status_arg = request.args.get('status', '')
     check_env(env, envs)
 
     if env == '*':
         query = None
+
+        if status_arg in ['failed', 'changed', 'unchanged']:
+            query = EqualsOperator('latest_report_status', status_arg)
+        elif status_arg == 'unreported':
+            unreported = datetime.datetime.utcnow()
+            unreported = unreported - timedelta(hours=app.config['UNRESPONSIVE_HOURS'])
+            unreported = unreported.replace(microsecond=0)
+
+            query = OrOperator()
+            query.add(NullOperator('report_timestamp', True))
+            query.add(LessEqualOperator('report_timestamp', unreported.isoformat()))
     else:
         query = AndOperator()
         query.add(EqualsOperator("catalog_environment", env))
         query.add(EqualsOperator("facts_environment", env))
 
-    status_arg = request.args.get('status', '')
+        if status_arg in ['failed', 'changed', 'unchanged']:
+            query = EqualsOperator('latest_report_status', status_arg)
+        elif status_arg == 'unreported':
+            unreported = datetime.datetime.utcnow()
+            unreported = unreported - timedelta(hours=app.config['UNRESPONSIVE_HOURS'])
+            unreported = unreported.replace(microsecond=0)
+
+            unrep_query = OrOperator()
+            unrep_query.add(NullOperator('report_timestamp', True))
+            unrep_query.add(LessEqualOperator('report_timestamp', unreported.isoformat()))
+
+            query.add(unrep_query)
+
     nodelist = puppetdb.nodes(
         query=query,
         unreported=app.config['UNRESPONSIVE_HOURS'],
@@ -424,13 +448,31 @@ def reports(env, page):
     envs = environments()
     check_env(env, envs)
     limit = request.args.get('limit', app.config['REPORTS_COUNT'])
+    status_arg = request.args.get('status')
     reports_query = None
     total_query = ExtractOperator()
 
     total_query.add_field(FunctionOperator("count"))
 
-    if env != '*':
-        reports_query = EqualsOperator("environment", env)
+    if env == '*':
+        if status_arg in ['failed', 'changed', 'unchanged']:
+            reports_query = AndOperator()
+            reports_query.add(EqualsOperator('status', status_arg))
+            reports_query.add(EqualsOperator('noop', False))
+        elif status_arg == 'noop':
+            reports_query = EqualsOperator('noop', True)
+    else:
+        reports_query = AndOperator()
+        reports_query.add(EqualsOperator("environment", env))
+
+        if status_arg in ['failed', 'changed', 'unchanged']:
+            reports_query = AndOperator()
+            reports_query.add(EqualsOperator('status', status_arg))
+            reports_query.add(EqualsOperator('noop', False))
+        elif status_arg == 'noop':
+            reports_query = EqualsOperator('noop', True)
+
+    if reports_query is not None:
         total_query.add_query(reports_query)
 
     try:
@@ -504,14 +546,26 @@ def reports_node(env, node_name, page):
     :type page: :obj:`int`
     """
     envs = environments()
+    status_arg = request.args.get('status')
     check_env(env, envs)
     query = AndOperator()
     total_query = ExtractOperator()
 
     total_query.add_field(FunctionOperator("count"))
 
-    if env != '*':
+    if env == '*':
+        if status_arg in ['failed', 'changed', 'unchanged']:
+            query.add(EqualsOperator('status', status_arg))
+        elif status_arg == 'noop':
+            query.add(EqualsOperator('noop', True))
+    else:
         query.add(EqualsOperator("environment", env))
+
+        if status_arg in ['failed', 'changed', 'unchanged']:
+            query.add(EqualsOperator('status', status_arg))
+            query.add(EqualsOperator('noop', False))
+        elif status_arg == 'noop':
+            query.add(EqualsOperator('noop', True))
 
     query.add(EqualsOperator("certname", node_name))
     total_query.add_query(query)

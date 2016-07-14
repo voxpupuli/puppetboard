@@ -42,4 +42,15 @@
     {% endfor %}
   </tbody>
 </table>
+<div class="ui dropdown" style="float:right;">
+  <div class="text">Filter By</div>
+  <i class="dropdown icon"></i>
+  <div class="menu">
+    <a class="item" href="{{url_for_field('status', 'failed')}}">Failed</a>
+    <a class="item" href="{{url_for_field('status', 'changed')}}">Changed</a>
+    <a class="item" href="{{url_for_field('status', 'unchanged')}}">Unchanged</a>
+    <a class="item" href="{{url_for_field('status', 'noop')}}">Noop</a>
+    <a class="item" href="{{url_for_field('status', 'unreported')}}">Unreported</a>
+  </div>
+</div>
 {% endblock content %}
