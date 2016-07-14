@@ -14,7 +14,7 @@ from flask import (
     Flask, render_template, abort, url_for,
     Response, stream_with_context, redirect,
     request, session
-    )
+)
 
 from pypuppetdb import connect
 from pypuppetdb.QueryBuilder import *
@@ -23,8 +23,9 @@ from puppetboard.forms import (CatalogForm, QueryForm)
 from puppetboard.utils import (
     get_or_abort, yield_or_stop,
     jsonprint, prettyprint, Pagination
-    )
+)
 
+DEFAULT_ORDER_BY = '[{"field": "start_time", "order": "desc"}]'
 
 app = Flask(__name__)
 
@@ -59,11 +60,13 @@ def stream_template(template_name, **context):
     rv.enable_buffering(5)
     return rv
 
+
 def url_for_field(field, value):
     args = request.view_args.copy()
     args.update(request.args.copy())
     args[field] = value
     return url_for(request.endpoint, **args)
+
 
 def environments():
     envs = get_or_abort(puppetdb.environments)
@@ -74,11 +77,13 @@ def environments():
 
     return x
 
+
 def check_env(env, envs):
     if env != '*' and env not in envs:
         abort(404)
 
 app.jinja_env.globals['url_for_field'] = url_for_field
+
 
 @app.context_processor
 def utility_processor():
@@ -163,7 +168,7 @@ def index(env):
         num_nodes_query.add_query(query)
 
         if app.config['OVERVIEW_FILTER'] != None:
-             query.add(app.config['OVERVIEW_FILTER'])
+            query.add(app.config['OVERVIEW_FILTER'])
 
         num_resources_query = ExtractOperator()
         num_resources_query.add_field(FunctionOperator('count'))
@@ -186,9 +191,9 @@ def index(env):
             metrics['avg_resources_node'] = 0
 
     nodes = get_or_abort(puppetdb.nodes,
-        query=query,
-        unreported=app.config['UNRESPONSIVE_HOURS'],
-        with_status=True)
+                         query=query,
+                         unreported=app.config['UNRESPONSIVE_HOURS'],
+                         with_status=True)
 
     nodes_overview = []
     stats = {
@@ -197,7 +202,7 @@ def index(env):
         'failed': 0,
         'unreported': 0,
         'noop': 0
-        }
+    }
 
     for node in nodes:
         if node.status == 'unreported':
@@ -221,7 +226,7 @@ def index(env):
         stats=stats,
         envs=envs,
         current_env=env
-        )
+    )
 
 
 @app.route('/nodes', defaults={'env': app.config['DEFAULT_ENVIRONMENT']})
@@ -287,9 +292,9 @@ def nodes(env):
             nodes.append(node)
     return Response(stream_with_context(
         stream_template('nodes.html',
-            nodes=nodes,
-            envs=envs,
-            current_env=env)))
+                        nodes=nodes,
+                        envs=envs,
+                        current_env=env)))
 
 
 @app.route('/inventory', defaults={'env': app.config['DEFAULT_ENVIRONMENT']})
@@ -310,28 +315,28 @@ def inventory(env):
     envs = environments()
     check_env(env, envs)
 
-    fact_desc  = []     # a list of fact descriptions to go
-                        # in the table header
+    fact_desc = []     # a list of fact descriptions to go
+    # in the table header
     fact_names = []     # a list of inventory fact names
     factvalues = {}     # values of the facts for all the nodes
-                        # indexed by node name and fact name
-    nodedata   = {}     # a dictionary containing list of inventoried
-                        # facts indexed by node name
-    nodelist   = set()  # a set of node names
+    # indexed by node name and fact name
+    nodedata = {}     # a dictionary containing list of inventoried
+    # facts indexed by node name
+    nodelist = set()  # a set of node names
 
     # load the list of items/facts we want in our inventory
     try:
         inv_facts = app.config['INVENTORY_FACTS']
     except KeyError:
-        inv_facts = [ ('Hostname'      ,'fqdn'              ),
-                      ('IP Address'    ,'ipaddress'         ),
-                      ('OS'            ,'lsbdistdescription'),
-                      ('Architecture'  ,'hardwaremodel'     ),
-                      ('Kernel Version','kernelrelease'     ) ]
+        inv_facts = [('Hostname', 'fqdn'),
+                     ('IP Address', 'ipaddress'),
+                     ('OS', 'lsbdistdescription'),
+                     ('Architecture', 'hardwaremodel'),
+                     ('Kernel Version', 'kernelrelease')]
 
     # generate a list of descriptions and a list of fact names
     # from the list of tuples inv_facts.
-    for description,name in inv_facts:
+    for description, name in inv_facts:
         fact_desc.append(description)
         fact_names.append(name)
 
@@ -349,7 +354,7 @@ def inventory(env):
 
     # convert the json in easy to access data structure
     for fact in facts:
-        factvalues[fact.node,fact.name] = fact.value
+        factvalues[fact.node, fact.name] = fact.value
         nodelist.add(fact.node)
 
     # generate the per-host data
@@ -357,19 +362,20 @@ def inventory(env):
         nodedata[node] = []
         for fact_name in fact_names:
             try:
-                nodedata[node].append(factvalues[node,fact_name])
+                nodedata[node].append(factvalues[node, fact_name])
             except KeyError:
                 nodedata[node].append("undef")
 
     return Response(stream_with_context(
         stream_template('inventory.html',
-            nodedata=nodedata,
-            fact_desc=fact_desc,
-            envs=envs,
-            current_env=env)))
+                        nodedata=nodedata,
+                        fact_desc=fact_desc,
+                        envs=envs,
+                        current_env=env)))
 
 
-@app.route('/node/<node_name>', defaults={'env': app.config['DEFAULT_ENVIRONMENT']})
+@app.route('/node/<node_name>',
+           defaults={'env': app.config['DEFAULT_ENVIRONMENT']})
 @app.route('/<env>/node/<node_name>')
 def node(env, node_name):
     """Display a dashboard for a node showing as much data as we have on that
@@ -391,9 +397,9 @@ def node(env, node_name):
     node = get_or_abort(puppetdb.node, node_name)
     facts = node.facts()
     reports = get_or_abort(puppetdb.reports,
-        query=query,
-        limit=app.config['REPORTS_COUNT'],
-        order_by='[{"field": "start_time", "order": "desc"}]')
+                           query=query,
+                           limit=app.config['REPORTS_COUNT'],
+                           order_by=DEFAULT_ORDER_BY)
     reports, reports_events = tee(reports)
     report_event_counts = {}
 
@@ -432,7 +438,8 @@ def node(env, node_name):
         current_env=env)
 
 
-@app.route('/reports/', defaults={'env': app.config['DEFAULT_ENVIRONMENT'], 'page': 1})
+@app.route('/reports/',
+           defaults={'env': app.config['DEFAULT_ENVIRONMENT'], 'page': 1})
 @app.route('/<env>/reports/', defaults={'page': 1})
 @app.route('/<env>/reports/page/<int:page>')
 def reports(env, page):
@@ -477,17 +484,17 @@ def reports(env, page):
 
     try:
         paging_args = {'limit': int(limit)}
-        paging_args['offset'] = int((page-1) * paging_args['limit'])
+        paging_args['offset'] = int((page - 1) * paging_args['limit'])
     except ValueError:
         paging_args = {}
 
     reports = get_or_abort(puppetdb.reports,
-        query=reports_query,
-        order_by='[{"field": "start_time", "order": "desc"}]',
-        **paging_args)
+                           query=reports_query,
+                           order_by=DEFAULT_ORDER_BY,
+                           **paging_args)
     total = get_or_abort(puppetdb._query,
-        'reports',
-        query=total_query)
+                         'reports',
+                         query=total_query)
     total = total[0]['count']
     reports, reports_events = tee(reports)
     report_event_counts = {}
@@ -530,7 +537,8 @@ def reports(env, page):
         limit=paging_args.get('limit', total))))
 
 
-@app.route('/reports/<node_name>/', defaults={'env': app.config['DEFAULT_ENVIRONMENT'], 'page': 1})
+@app.route('/reports/<node_name>/',
+           defaults={'env': app.config['DEFAULT_ENVIRONMENT'], 'page': 1})
 @app.route('/<env>/reports/<node_name>', defaults={'page': 1})
 @app.route('/<env>/reports/<node_name>/page/<int:page>')
 def reports_node(env, node_name, page):
@@ -571,13 +579,13 @@ def reports_node(env, node_name, page):
     total_query.add_query(query)
 
     reports = get_or_abort(puppetdb.reports,
-        query=query,
-        limit=app.config['REPORTS_COUNT'],
-        offset=(page-1) * app.config['REPORTS_COUNT'],
-        order_by='[{"field": "start_time", "order": "desc"}]')
+                           query=query,
+                           limit=app.config['REPORTS_COUNT'],
+                           offset=(page - 1) * app.config['REPORTS_COUNT'],
+                           order_by=DEFAULT_ORDER_BY)
     total = get_or_abort(puppetdb._query,
-        'reports',
-        query=total_query)
+                         'reports',
+                         query=total_query)
     total = total[0]['count']
     reports, reports_events = tee(reports)
     report_event_counts = {}
@@ -619,7 +627,8 @@ def reports_node(env, node_name, page):
         current_env=env)
 
 
-@app.route('/report/<node_name>/<report_id>', defaults={'env': app.config['DEFAULT_ENVIRONMENT']})
+@app.route('/report/<node_name>/<report_id>',
+           defaults={'env': app.config['DEFAULT_ENVIRONMENT']})
 @app.route('/<env>/report/<node_name>/<report_id>')
 def report(env, node_name, report_id):
     """Displays a single report including all the events associated with that
@@ -691,10 +700,11 @@ def facts(env):
 
     sorted_facts_dict = sorted(facts_dict.items())
     return render_template('facts.html',
-        facts_dict=sorted_facts_dict,
-        facts_len=sum(map(len,facts_dict.values())) + len(facts_dict)*5,
-        envs=envs,
-        current_env=env)
+                           facts_dict=sorted_facts_dict,
+                           facts_len=(sum(map(len, facts_dict.values())) +
+                                      len(facts_dict) * 5),
+                           envs=envs,
+                           current_env=env)
 
 
 @app.route('/fact/<fact>', defaults={'env': app.config['DEFAULT_ENVIRONMENT']})
@@ -733,7 +743,8 @@ def fact(env, fact):
         current_env=env)))
 
 
-@app.route('/fact/<fact>/<value>', defaults={'env': app.config['DEFAULT_ENVIRONMENT']})
+@app.route('/fact/<fact>/<value>',
+           defaults={'env': app.config['DEFAULT_ENVIRONMENT']})
 @app.route('/<env>/fact/<fact>/<value>')
 def fact_value(env, fact, value):
     """On asking for fact/value get all nodes with that fact.
@@ -754,9 +765,9 @@ def fact_value(env, fact, value):
         query = EqualsOperator("environment", env)
 
     facts = get_or_abort(puppetdb.facts,
-        name=fact,
-        value=value,
-        query=query)
+                         name=fact,
+                         value=value,
+                         query=query)
     localfacts = [f for f in yield_or_stop(facts)]
     return render_template(
         'fact.html',
@@ -767,7 +778,8 @@ def fact_value(env, fact, value):
         current_env=env)
 
 
-@app.route('/query', methods=('GET', 'POST'), defaults={'env': app.config['DEFAULT_ENVIRONMENT']})
+@app.route('/query', methods=('GET', 'POST'),
+           defaults={'env': app.config['DEFAULT_ENVIRONMENT']})
 @app.route('/<env>/query', methods=('GET', 'POST'))
 def query(env):
     """Allows to execute raw, user created querries against PuppetDB. This is
@@ -799,14 +811,14 @@ def query(env):
                 form.endpoints.data,
                 query=query)
             return render_template('query.html',
-                form=form,
-                result=result,
-                envs=envs,
-                current_env=env)
+                                   form=form,
+                                   result=result,
+                                   envs=envs,
+                                   current_env=env)
         return render_template('query.html',
-            form=form,
-            envs=envs,
-            current_env=env)
+                               form=form,
+                               envs=envs,
+                               current_env=env)
     else:
         log.warn('Access to query interface disabled by administrator..')
         abort(403)
@@ -826,12 +838,13 @@ def metrics(env):
 
     metrics = get_or_abort(puppetdb._query, 'mbean')
     return render_template('metrics.html',
-        metrics=sorted(metrics.keys()),
-        envs=envs,
-        current_env=env)
+                           metrics=sorted(metrics.keys()),
+                           envs=envs,
+                           current_env=env)
 
 
-@app.route('/metric/<metric>', defaults={'env': app.config['DEFAULT_ENVIRONMENT']})
+@app.route('/metric/<metric>',
+           defaults={'env': app.config['DEFAULT_ENVIRONMENT']})
 @app.route('/<env>/metric/<metric>')
 def metric(env, metric):
     """Lists all information about the metric of the given name.
@@ -851,6 +864,7 @@ def metric(env, metric):
         metric=sorted(metric.items()),
         envs=envs,
         current_env=env)
+
 
 @app.route('/catalogs', defaults={'env': app.config['DEFAULT_ENVIRONMENT']})
 @app.route('/<env>/catalogs')
@@ -873,10 +887,11 @@ def catalogs(env):
 
         query.add(NullOperator("catalog_timestamp", False))
 
+        order_by_str = '[{"field": "certname", "order": "asc"}]'
         nodes = get_or_abort(puppetdb.nodes,
-            query=query,
-            with_status=False,
-            order_by='[{"field": "certname", "order": "asc"}]')
+                             query=query,
+                             with_status=False,
+                             order_by=oder_by_str)
         nodes, temp = tee(nodes)
 
         for node in temp:
@@ -909,7 +924,9 @@ def catalogs(env):
         log.warn('Access to catalog interface disabled by administrator')
         abort(403)
 
-@app.route('/catalog/<node_name>', defaults={'env': app.config['DEFAULT_ENVIRONMENT']})
+
+@app.route('/catalog/<node_name>',
+           defaults={'env': app.config['DEFAULT_ENVIRONMENT']})
 @app.route('/<env>/catalog/<node_name>')
 def catalog_node(env, node_name):
     """Fetches from PuppetDB the compiled catalog of a given node.
@@ -922,16 +939,18 @@ def catalog_node(env, node_name):
 
     if app.config['ENABLE_CATALOG']:
         catalog = get_or_abort(puppetdb.catalog,
-            node=node_name)
+                               node=node_name)
         return render_template('catalog.html',
-            catalog=catalog,
-            envs=envs,
-            current_env=env)
+                               catalog=catalog,
+                               envs=envs,
+                               current_env=env)
     else:
         log.warn('Access to catalog interface disabled by administrator')
         abort(403)
 
-@app.route('/catalog/submit', methods=['POST'], defaults={'env': app.config['DEFAULT_ENVIRONMENT']})
+
+@app.route('/catalog/submit', methods=['POST'],
+           defaults={'env': app.config['DEFAULT_ENVIRONMENT']})
 @app.route('/<env>/catalog/submit', methods=['POST'])
 def catalog_submit(env):
     """Receives the submitted form data from the catalogs page and directs
@@ -955,15 +974,17 @@ def catalog_submit(env):
             against = form.against.data
             return redirect(
                 url_for('catalog_compare',
-                    env=env,
-                    compare=compare,
-                    against=against))
+                        env=env,
+                        compare=compare,
+                        against=against))
         return redirect(url_for('catalogs', env=env))
     else:
         log.warn('Access to catalog interface disabled by administrator')
         abort(403)
 
-@app.route('/catalogs/compare/<compare>...<against>', defaults={'env': app.config['DEFAULT_ENVIRONMENT']})
+
+@app.route('/catalogs/compare/<compare>...<against>',
+           defaults={'env': app.config['DEFAULT_ENVIRONMENT']})
 @app.route('/<env>/catalogs/compare/<compare>...<against>')
 def catalog_compare(env, compare, against):
     """Compares the catalog of one node, parameter compare, with that of
@@ -977,18 +998,19 @@ def catalog_compare(env, compare, against):
 
     if app.config['ENABLE_CATALOG']:
         compare_cat = get_or_abort(puppetdb.catalog,
-            node=compare)
+                                   node=compare)
         against_cat = get_or_abort(puppetdb.catalog,
-            node=against)
+                                   node=against)
 
         return render_template('catalog_compare.html',
-            compare=compare_cat,
-            against=against_cat,
-            envs=envs,
-            current_env=env)
+                               compare=compare_cat,
+                               against=against_cat,
+                               envs=envs,
+                               current_env=env)
     else:
         log.warn('Access to catalog interface disabled by administrator')
         abort(403)
+
 
 @app.route('/radiator', defaults={'env': app.config['DEFAULT_ENVIRONMENT']})
 @app.route('/<env>/radiator')
@@ -1020,13 +1042,11 @@ def radiator(env):
             query=metric_query)
         num_nodes = metrics[0]['count']
 
-
     nodes = puppetdb.nodes(
         query=query,
         unreported=app.config['UNRESPONSIVE_HOURS'],
         with_status=True
-        )
-
+    )
 
     stats = {
         'changed_percent': 0,
@@ -1043,8 +1063,6 @@ def radiator(env):
         'unreported': 0,
     }
 
-
-
     for node in nodes:
         if node.status == 'unreported':
             stats['unreported'] += 1
@@ -1055,18 +1073,18 @@ def radiator(env):
         elif node.status == 'noop':
             stats['noop'] += 1
         elif node.status == 'skipped':
-            stats['skipped'] +=1
+            stats['skipped'] += 1
         else:
             stats['unchanged'] += 1
-
 
     stats['changed_percent'] = int(100 * stats['changed'] / float(num_nodes))
     stats['failed_percent'] = int(100 * stats['failed'] / float(num_nodes))
     stats['noop_percent'] = int(100 * stats['noop'] / float(num_nodes))
     stats['skipped_percent'] = int(100 * stats['skipped'] / float(num_nodes))
-    stats['unchanged_percent'] = int(100 * stats['unchanged'] / float(num_nodes))
-    stats['unreported_percent'] = int(100 * stats['unreported'] / float(num_nodes))
-
+    stats['unchanged_percent'] = int(100 * (stats['unchanged'] /
+                                            float(num_nodes)))
+    stats['unreported_percent'] = int(100 * (stats['unreported'] /
+                                             float(num_nodes)))
 
     return render_template(
         'radiator.html',
