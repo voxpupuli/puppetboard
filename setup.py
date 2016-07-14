@@ -33,7 +33,7 @@ setup(
         "Flask-WTF >= 0.12, <= 0.13",
         "WTForms >= 2.0, < 3.0",
         "pypuppetdb >= 0.3.0, < 0.4.0",
-        ],
+    ],
     keywords="puppet puppetdb puppetboard",
     classifiers=[
         'Development Status :: 3 - Alpha',
@@ -49,5 +49,5 @@ setup(
         'Programming Language :: Python :: 3',
         'Programming Language :: Python :: 3.2',
         'Programming Language :: Python :: 3.3',
-        ],
+    ],
 )
