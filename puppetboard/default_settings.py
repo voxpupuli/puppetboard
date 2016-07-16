@@ -38,3 +38,4 @@ INVENTORY_FACTS = [('Hostname', 'fqdn'),
                    ('Kernel Version', 'kernelrelease'),
                    ('Puppet Version', 'puppetversion'), ]
 REFRESH_RATE = 30
+HIDE_FACTS_VALUES_FROM_NODE_VIEW = []

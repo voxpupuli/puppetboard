@@ -34,7 +34,7 @@
   </div>
   <div class='column'>
     <h1>Facts</h1>
-    {{macros.facts_table(facts, link_facts=True, condensed=True, current_env=current_env)}}
+    {{macros.facts_table(facts, link_facts=True, condensed=True, current_env=current_env, hidden_facts_values=hidden_facts_values))}}
   </div>
 </div>
 {% endblock content %}
