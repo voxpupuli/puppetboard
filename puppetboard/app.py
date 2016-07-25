@@ -3,6 +3,7 @@ from __future__ import absolute_import
 
 import logging
 import collections
+import os
 try:
     from urllib import unquote
 except ImportError:
@@ -39,12 +40,12 @@ app.jinja_env.filters['jsonprint'] = jsonprint
 app.jinja_env.filters['prettyprint'] = prettyprint
 
 puppetdb = connect(
-    host=app.config['PUPPETDB_HOST'],
-    port=app.config['PUPPETDB_PORT'],
-    ssl_verify=app.config['PUPPETDB_SSL_VERIFY'],
-    ssl_key=app.config['PUPPETDB_KEY'],
-    ssl_cert=app.config['PUPPETDB_CERT'],
-    timeout=app.config['PUPPETDB_TIMEOUT'],)
+    host=os.getenv(app.name.upper() + '_' + 'PUPPETDB_HOST', app.config['PUPPETDB_HOST']),
+    port=os.getenv(app.name.upper() + '_' + 'PUPPETDB_PORT', app.config['PUPPETDB_PORT']),
+    ssl_verify=os.getenv(app.name.upper() + '_' + 'PUPPETDB_SSL_VERIFY', app.config['PUPPETDB_SSL_VERIFY']),
+    ssl_key=os.getenv(app.name.upper() + '_' + 'PUPPETDB_KEY', app.config['PUPPETDB_KEY']),
+    ssl_cert=os.getenv(app.name.upper() + '_' + 'PUPPETDB_CERT', app.config['PUPPETDB_CERT']),
+    timeout=os.getenv(app.name.upper() + '_' + 'PUPPETDB_TIMEOUT',app.config['PUPPETDB_TIMEOUT']),)
 
 numeric_level = getattr(logging, app.config['LOGLEVEL'].upper(), None)
 if not isinstance(numeric_level, int):
