@@ -14,7 +14,7 @@ from itertools import tee
 from flask import (
     Flask, render_template, abort, url_for,
     Response, stream_with_context, redirect,
-    request, session
+    request, send_from_directory, session
 )
 
 from pypuppetdb import connect
@@ -1038,3 +1038,12 @@ def radiator(env):
         stats=stats,
         total=num_nodes
     )
+
+
+@app.route('/static/<filename>')
+def static_resource(filename):
+    """This view returns a static asset.
+    It is recommended to map the static folder via Apache or Nginx.
+    Use this for debugging or when running Flask with Gunicorn.
+    """
+    return send_from_directory('static', filename)
