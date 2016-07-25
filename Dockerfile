@@ -12,4 +12,4 @@ USER gunicorn
 
 EXPOSE 9000
 
-CMD gunicorn -b 0.0.0.0:9000 --access-logfile '-' puppetboard.app:app
+CMD gunicorn -b 0.0.0.0:9000 --access-log=/dev/stdout puppetboard.app:app
