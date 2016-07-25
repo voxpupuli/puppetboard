@@ -1041,7 +1041,7 @@ def radiator(env):
 
 
 @app.route('/static/<filename>')
-def radiator(filename):
+def static_resource(filename):
     """This view returns a static asset.
     It is recommended to map the static folder via Apache or Nginx.
     Use this for debugging or when running Flask with Gunicorn.
