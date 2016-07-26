@@ -837,7 +837,7 @@ def catalogs(env):
         nodes = get_or_abort(puppetdb.nodes,
                              query=query,
                              with_status=False,
-                             order_by=oder_by_str)
+                             order_by=order_by_str)
         nodes, temp = tee(nodes)
 
         for node in temp:
