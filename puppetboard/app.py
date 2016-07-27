@@ -7,8 +7,9 @@ try:
     from urllib import unquote
 except ImportError:
     from urllib.parse import unquote
-from datetime import datetime
+from datetime import datetime, timedelta
 from itertools import tee
+from copy import copy
 
 from flask import (
     Flask, render_template, abort, url_for,
@@ -125,9 +126,10 @@ def server_error(e):
     return render_template('500.html', envs=envs), 500
 
 
-@app.route('/', defaults={'env': app.config['DEFAULT_ENVIRONMENT']})
-@app.route('/<env>/')
-def index(env):
+@app.route('/', defaults={'env': app.config['DEFAULT_ENVIRONMENT'], 'page': 1})
+@app.route('/<env>/', defaults={'page': 1})
+@app.route('/<env>/page/<int:page>')
+def index(env, page):
     """This view generates the index page and displays a set of metrics and
     latest reports on nodes fetched from PuppetDB.
 
@@ -135,89 +137,99 @@ def index(env):
     :type env: :obj:`string`
     """
     envs = environments()
-    metrics = {
-        'num_nodes': 0,
-        'num_resources': 0,
-        'avg_resources_node': 0}
     check_env(env, envs)
+    metrics = {}
+    query = None
+    limit = app.config['DEFAULT_PAGE_SIZE']
+
+    try:
+        paging_args = {'limit': int(limit)}
+        paging_args['offset'] = int((page - 1) * paging_args['limit'])
+    except ValueError:
+        paging_args = {}
+
+    if app.config['OVERVIEW_FILTER'] is not None:
+        query = AndOperator()
+        query.add(app.config['OVERVIEW_FILTER'])
 
     if env == '*':
-        query = app.config['OVERVIEW_FILTER']
-
         prefix = 'puppetlabs.puppetdb.population'
         num_nodes = get_or_abort(
             puppetdb.metric,
-            "{0}{1}".format(prefix, ':name=num-nodes'))
+            "{0}{1}".format(prefix, ':name=num-nodes'))['Value']
         num_resources = get_or_abort(
             puppetdb.metric,
-            "{0}{1}".format(prefix, ':name=num-resources'))
-        avg_resources_node = get_or_abort(
-            puppetdb.metric,
-            "{0}{1}".format(prefix, ':name=avg-resources-per-node'))
-        metrics['num_nodes'] = num_nodes['Value']
-        metrics['num_resources'] = num_resources['Value']
-        metrics['avg_resources_node'] = "{0:10.0f}".format(
-            avg_resources_node['Value'])
+            "{0}{1}".format(prefix, ':name=num-resources'))['Value']
+
     else:
-        query = AndOperator()
+        if query is None:
+            query = AndOperator()
         query.add(EqualsOperator('catalog_environment', env))
         query.add(EqualsOperator('facts_environment', env))
 
         num_nodes_query = ExtractOperator()
         num_nodes_query.add_field(FunctionOperator('count'))
         num_nodes_query.add_query(query)
-
-        if app.config['OVERVIEW_FILTER'] != None:
-            query.add(app.config['OVERVIEW_FILTER'])
+        num_nodes = get_or_abort(
+            puppetdb._query,
+            'nodes',
+            query=num_nodes_query)[0]['count']
 
         num_resources_query = ExtractOperator()
         num_resources_query.add_field(FunctionOperator('count'))
         num_resources_query.add_query(EqualsOperator("environment", env))
-
-        num_nodes = get_or_abort(
-            puppetdb._query,
-            'nodes',
-            query=num_nodes_query)
         num_resources = get_or_abort(
             puppetdb._query,
             'resources',
-            query=num_resources_query)
-        metrics['num_nodes'] = num_nodes[0]['count']
-        metrics['num_resources'] = num_resources[0]['count']
-        try:
-            metrics['avg_resources_node'] = "{0:10.0f}".format(
-                (num_resources[0]['count'] / num_nodes[0]['count']))
-        except ZeroDivisionError:
-            metrics['avg_resources_node'] = 0
+            query=num_resources_query)[0]['count']
 
-    nodes = get_or_abort(puppetdb.nodes,
-                         query=query,
-                         unreported=app.config['UNRESPONSIVE_HOURS'],
-                         with_status=True)
+    metrics['num_nodes'] = num_nodes
+    metrics['num_resources'] = num_resources
+    try:
+        metrics['avg_resources_node'] = "{0:10.0f}".format(
+            (num_resources / num_nodes))
+    except ZeroDivisionError:
+        metrics['avg_resources_node'] = 0
 
+    stats = {}
+
+    # Extract unreported count
+    unreported_operator = LessOperator(
+        'report_timestamp',
+        (datetime.datetime.utcnow() - timedelta(
+            hours=app.config['UNRESPONSIVE_HOURS']
+        )).strftime('%Y-%m-%d %H:%M:%S'))
+    if query is None:
+        unreported_query = unreported_operator
+    else:
+        unreported_query = copy.copy(query)
+        unreported_query.add(unreported_operator)
+    unreported_num_nodes = ExtractOperator()
+    unreported_num_nodes.add_field(FunctionOperator('count'))
+    unreported_num_nodes.add_query(unreported_query)
+    stats['unreported'] = get_or_abort(
+        puppetdb._query, 'nodes',
+        query=unreported_num_nodes)[0]['count']
+
+    for status in ('changed', 'failed', 'noop', 'unchanged'):
+        metric_query = ExtractOperator()
+        metric_query.add_field(FunctionOperator('count'))
+        metric_query.add_query(EqualsOperator(
+            'latest_report_status', status))
+        stats[status] = get_or_abort(
+            puppetdb._query, 'nodes',
+            query=metric_query)[0]['count']
+
+    # Extract nodes ordered by recent events (with limit)
+    nodes = get_or_abort(
+        puppetdb.nodes,
+        query=query,
+        unreported=app.config['UNRESPONSIVE_HOURS'],
+        with_status=True,
+        **paging_args)
     nodes_overview = []
-    stats = {
-        'changed': 0,
-        'unchanged': 0,
-        'failed': 0,
-        'unreported': 0,
-        'noop': 0
-    }
-
     for node in nodes:
-        if node.status == 'unreported':
-            stats['unreported'] += 1
-        elif node.status == 'changed':
-            stats['changed'] += 1
-        elif node.status == 'failed':
-            stats['failed'] += 1
-        elif node.status == 'noop':
-            stats['noop'] += 1
-        else:
-            stats['unchanged'] += 1
-
-        if node.status != 'unchanged':
-            nodes_overview.append(node)
+        nodes_overview.append(node)
 
     return render_template(
         'index.html',
@@ -225,7 +237,9 @@ def index(env):
         nodes=nodes_overview,
         stats=stats,
         envs=envs,
-        current_env=env
+        current_env=env,
+        pagination=Pagination(
+            page, paging_args.get('limit', num_nodes), num_nodes),
     )
 
 
