@@ -15,7 +15,7 @@
     {% for nodename in nodedata %}
     <tr>
       {% for item in nodedata[nodename] %}
-      <td><a href="{{url_for('node', env=current_env, node_name=nodename)}}">{{item}}</a></td>
+      <td>{{item}}</td>
       {% endfor %}
     </tr>
     {% endfor %}
