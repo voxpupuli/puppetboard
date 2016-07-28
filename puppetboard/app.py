@@ -4,6 +4,7 @@ from __future__ import absolute_import
 import logging
 import collections
 import os
+
 try:
     from urllib import unquote
 except ImportError:
@@ -40,12 +41,18 @@ app.jinja_env.filters['jsonprint'] = jsonprint
 app.jinja_env.filters['prettyprint'] = prettyprint
 
 puppetdb = connect(
-    host=os.getenv(app.name.upper() + '_' + 'PUPPETDB_HOST', app.config['PUPPETDB_HOST']),
-    port=os.getenv(app.name.upper() + '_' + 'PUPPETDB_PORT', app.config['PUPPETDB_PORT']),
-    ssl_verify=os.getenv(app.name.upper() + '_' + 'PUPPETDB_SSL_VERIFY', app.config['PUPPETDB_SSL_VERIFY']),
-    ssl_key=os.getenv(app.name.upper() + '_' + 'PUPPETDB_KEY', app.config['PUPPETDB_KEY']),
-    ssl_cert=os.getenv(app.name.upper() + '_' + 'PUPPETDB_CERT', app.config['PUPPETDB_CERT']),
-    timeout=os.getenv(app.name.upper() + '_' + 'PUPPETDB_TIMEOUT',app.config['PUPPETDB_TIMEOUT']),)
+    host=os.getenv(app.name.upper() + '_' + 'PUPPETDB_HOST',
+                   app.config['PUPPETDB_HOST']),
+    port=os.getenv(app.name.upper() + '_' + 'PUPPETDB_PORT',
+                   app.config['PUPPETDB_PORT']),
+    ssl_verify=os.getenv(app.name.upper() + '_' + 'PUPPETDB_SSL_VERIFY',
+                         app.config['PUPPETDB_SSL_VERIFY']),
+    ssl_key=os.getenv(app.name.upper() + '_' + 'PUPPETDB_KEY',
+                      app.config['PUPPETDB_KEY']),
+    ssl_cert=os.getenv(app.name.upper() + '_' + 'PUPPETDB_CERT',
+                       app.config['PUPPETDB_CERT']),
+    timeout=os.getenv(app.name.upper() + '_' + 'PUPPETDB_TIMEOUT',
+                      app.config['PUPPETDB_TIMEOUT']), )
 
 numeric_level = getattr(logging, app.config['LOGLEVEL'].upper(), None)
 if not isinstance(numeric_level, int):
@@ -83,6 +90,7 @@ def check_env(env, envs):
     if env != '*' and env not in envs:
         abort(404)
 
+
 app.jinja_env.globals['url_for_field'] = url_for_field
 
 
@@ -91,6 +99,7 @@ def utility_processor():
     def now(format='%m/%d/%Y %H:%M:%S'):
         """returns the formated datetime"""
         return datetime.datetime.now().strftime(format)
+
     return dict(now=now)
 
 
@@ -292,12 +301,12 @@ def inventory(env):
     envs = environments()
     check_env(env, envs)
 
-    fact_desc = []     # a list of fact descriptions to go
+    fact_desc = []  # a list of fact descriptions to go
     # in the table header
-    fact_names = []     # a list of inventory fact names
-    factvalues = {}     # values of the facts for all the nodes
+    fact_names = []  # a list of inventory fact names
+    factvalues = {}  # values of the facts for all the nodes
     # indexed by node name and fact name
-    nodedata = {}     # a dictionary containing list of inventoried
+    nodedata = {}  # a dictionary containing list of inventoried
     # facts indexed by node name
     nodelist = set()  # a set of node names
 
