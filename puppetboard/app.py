@@ -564,11 +564,18 @@ def reports_node(env, node_name, page):
     query.add(EqualsOperator("certname", node_name))
     total_query.add_query(query)
 
+    limit = request.args.get('limit', app.config['REPORTS_COUNT'])
+
+    try:
+        paging_args = {'limit': int(limit)}
+        paging_args['offset'] = int((page - 1) * paging_args['limit'])
+    except ValueError:
+        paging_args = {}
+
     reports = get_or_abort(puppetdb.reports,
                            query=query,
-                           limit=app.config['REPORTS_COUNT'],
-                           offset=(page - 1) * app.config['REPORTS_COUNT'],
-                           order_by=DEFAULT_ORDER_BY)
+                           order_by=DEFAULT_ORDER_BY,
+                           **paging_args)
     total = get_or_abort(puppetdb._query,
                          'reports',
                          query=total_query)
@@ -608,7 +615,7 @@ def reports_node(env, node_name, page):
         reports=reports,
         reports_count=app.config['REPORTS_COUNT'],
         report_event_counts=report_event_counts,
-        pagination=Pagination(page, app.config['REPORTS_COUNT'], total),
+        pagination=Pagination(page, paging_args.get('limit', total), total),
         envs=envs,
         current_env=env)
 
