@@ -291,14 +291,11 @@ def inventory(env):
     envs = environments()
     check_env(env, envs)
 
-    fact_desc = []     # a list of fact descriptions to go
+    headers = []        # a list of fact descriptions to go
     # in the table header
     fact_names = []     # a list of inventory fact names
-    factvalues = {}     # values of the facts for all the nodes
-    # indexed by node name and fact name
-    nodedata = {}     # a dictionary containing list of inventoried
-    # facts indexed by node name
-    nodelist = set()  # a set of node names
+    fact_data = {}      # a multidimensional dict for node and
+    # fact data
 
     # load the list of items/facts we want in our inventory
     try:
@@ -312,8 +309,8 @@ def inventory(env):
 
     # generate a list of descriptions and a list of fact names
     # from the list of tuples inv_facts.
-    for description, name in inv_facts:
-        fact_desc.append(description)
+    for desc, name in inv_facts:
+        headers.append(desc)
         fact_names.append(name)
 
     query = AndOperator()
@@ -328,26 +325,21 @@ def inventory(env):
     # get all the facts from PuppetDB
     facts = puppetdb.facts(query=query)
 
-    # convert the json in easy to access data structure
     for fact in facts:
-        factvalues[fact.node, fact.name] = fact.value
-        nodelist.add(fact.node)
+        if fact.node not in fact_data:
+            fact_data[fact.node] = {}
 
-    # generate the per-host data
-    for node in nodelist:
-        nodedata[node] = []
-        for fact_name in fact_names:
-            try:
-                nodedata[node].append(factvalues[node, fact_name])
-            except KeyError:
-                nodedata[node].append("undef")
+        fact_data[fact.node][fact.name] = fact.value
 
     return Response(stream_with_context(
-        stream_template('inventory.html',
-                        nodedata=nodedata,
-                        fact_desc=fact_desc,
-                        envs=envs,
-                        current_env=env)))
+        stream_template(
+            'inventory.html',
+            headers=headers,
+            fact_names=fact_names,
+            fact_data=fact_data,
+            envs=envs,
+            current_env=env
+        )))
 
 
 @app.route('/node/<node_name>',
