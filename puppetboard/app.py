@@ -7,7 +7,7 @@ try:
     from urllib import unquote
 except ImportError:
     from urllib.parse import unquote
-from datetime import datetime
+from datetime import datetime, timedelta
 from itertools import tee
 
 from flask import (
@@ -245,16 +245,32 @@ def nodes(env):
     :type env: :obj:`string`
     """
     envs = environments()
+    status_arg = request.args.get('status', '')
     check_env(env, envs)
 
-    if env == '*':
-        query = None
-    else:
-        query = AndOperator()
+    query = AndOperator()
+
+    if env != '*':
         query.add(EqualsOperator("catalog_environment", env))
         query.add(EqualsOperator("facts_environment", env))
 
-    status_arg = request.args.get('status', '')
+    if status_arg in ['failed', 'changed', 'unchanged']:
+        query.add(EqualsOperator('latest_report_status', status_arg))
+    elif status_arg == 'unreported':
+        unreported = datetime.datetime.utcnow()
+        unreported = (unreported -
+                      timedelta(hours=app.config['UNRESPONSIVE_HOURS']))
+        unreported = unreported.replace(microsecond=0).isoformat()
+
+        unrep_query = OrOperator()
+        unrep_query.add(NullOperator('report_timestamp', True))
+        unrep_query.add(LessEqualOperator('report_timestamp', unreported))
+
+        query.add(unrep_query)
+
+    if len(query.operations) == 0:
+        query = None
+
     nodelist = puppetdb.nodes(
         query=query,
         unreported=app.config['UNRESPONSIVE_HOURS'],
@@ -431,13 +447,25 @@ def reports(env, page):
     envs = environments()
     check_env(env, envs)
     limit = request.args.get('limit', app.config['REPORTS_COUNT'])
-    reports_query = None
+    status_arg = request.args.get('status')
+    reports_query = AndOperator()
     total_query = ExtractOperator()
 
     total_query.add_field(FunctionOperator("count"))
 
     if env != '*':
-        reports_query = EqualsOperator("environment", env)
+        reports_query.add(EqualsOperator("environment", env))
+
+    if status_arg in ['failed', 'changed', 'unchanged']:
+        reports_query.add(EqualsOperator('status', status_arg))
+        reports_query.add(EqualsOperator('noop', False))
+    elif status_arg == 'noop':
+        reports_query.add(EqualsOperator('noop', True))
+
+    if len(reports_query.operations) == 0:
+        reports_query = None
+
+    if reports_query is not None:
         total_query.add_query(reports_query)
 
     try:
@@ -512,23 +540,42 @@ def reports_node(env, node_name, page):
     :type page: :obj:`int`
     """
     envs = environments()
+    status_arg = request.args.get('status')
     check_env(env, envs)
     query = AndOperator()
     total_query = ExtractOperator()
 
     total_query.add_field(FunctionOperator("count"))
 
-    if env != '*':
+    if env == '*':
+        if status_arg in ['failed', 'changed', 'unchanged']:
+            query.add(EqualsOperator('status', status_arg))
+        elif status_arg == 'noop':
+            query.add(EqualsOperator('noop', True))
+    else:
         query.add(EqualsOperator("environment", env))
+
+        if status_arg in ['failed', 'changed', 'unchanged']:
+            query.add(EqualsOperator('status', status_arg))
+            query.add(EqualsOperator('noop', False))
+        elif status_arg == 'noop':
+            query.add(EqualsOperator('noop', True))
 
     query.add(EqualsOperator("certname", node_name))
     total_query.add_query(query)
 
+    limit = request.args.get('limit', app.config['REPORTS_COUNT'])
+
+    try:
+        paging_args = {'limit': int(limit)}
+        paging_args['offset'] = int((page - 1) * paging_args['limit'])
+    except ValueError:
+        paging_args = {}
+
     reports = get_or_abort(puppetdb.reports,
                            query=query,
-                           limit=app.config['REPORTS_COUNT'],
-                           offset=(page - 1) * app.config['REPORTS_COUNT'],
-                           order_by=DEFAULT_ORDER_BY)
+                           order_by=DEFAULT_ORDER_BY,
+                           **paging_args)
     total = get_or_abort(puppetdb._query,
                          'reports',
                          query=total_query)
@@ -568,7 +615,7 @@ def reports_node(env, node_name, page):
         reports=reports,
         reports_count=app.config['REPORTS_COUNT'],
         report_event_counts=report_event_counts,
-        pagination=Pagination(page, app.config['REPORTS_COUNT'], total),
+        pagination=Pagination(page, paging_args.get('limit', total), total),
         envs=envs,
         current_env=env)
 
