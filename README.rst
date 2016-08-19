@@ -120,11 +120,21 @@ Native packages for your operating system will be provided in the near future.
 .. _OpenSuSE 12/13: https://build.opensuse.org/package/show/systemsmanagement:puppet/python-puppetboard
 .. _SuSE LE 11 SP3: https://build.opensuse.org/package/show/systemsmanagement:puppet/python-puppetboard
 
-Docker Images
+Docker Container
 ^^^^^^^^^^^^^
 
-A `Dockerfile`_ was added to the source-code in the 0.2.0 release. An officially
-image is planned for the 0.2.x series.
+A `Dockerfile` is available in the GitHub repository. It will use the latest version from PyPi and run with a Gunicorn web server. 
+The container is capable of serving both the Flask application and its static web resources. There for placing an Apache or Nginx server in front of it is left up to you if you need caching or extra security rules.
+After building the container with `docker build` you can just call `docker run` with at least one parameter to specity the environment variable used to store the IP address or hostname of your PuppetDB.
+For example:
+
+.. code-block:: bash
+
+   docker build https://raw.githubusercontent.com/voxpupuli/puppetboard/master/Dockerfile
+   docker run --name puppetboard -P -e PUPPETBOARD_PUPPETDB_HOST=your.puppetdb.net puppetboard_image_build_previously
+
+
+You can pass other settings used to connect to the PuppetDB and found in default_settings.py, just prepend 'PUPPETBOARD_' in front when assigning them a value in `docker run`.
 
 .. _Dockerfile: https://github.com/voxpupuli/puppetboard/blob/master/Dockerfile
 
