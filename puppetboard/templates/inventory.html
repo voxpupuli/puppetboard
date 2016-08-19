@@ -15,7 +15,7 @@
     {% for node, facts in fact_data.iteritems() %}
     <tr>
       {% for name in fact_names %}
-      <td>{{facts.get(name, 'undef')}}</td>
+      <td><a href="{{url_for('node', env=current_env, node_name=node)}}">{{facts.get(name, 'undef')}}</a></td>
       {% endfor %}
     </tr>
     {% endfor %}
