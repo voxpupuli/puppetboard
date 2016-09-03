@@ -674,9 +674,24 @@ def facts(env):
     """
     envs = environments()
     check_env(env, envs)
+    facts = []
+    order_by = '[{"field": "name", "order": "asc"}]'
+
+    if env == '*':
+        facts = get_or_abort(puppetdb.fact_names)
+    else:
+        query = ExtractOperator()
+        query.add_field(str('name'))
+        query.add_query(EqualsOperator("environment", env))
+        query.add_group_by(str("name"))
+
+        for names in get_or_abort(puppetdb._query,
+                                  'facts',
+                                  query=query,
+                                  order_by=order_by):
+            facts.append(names['name'])
 
     facts_dict = collections.defaultdict(list)
-    facts = get_or_abort(puppetdb.fact_names)
     for fact in facts:
         letter = fact[0].upper()
         letter_list = facts_dict[letter]
