@@ -39,7 +39,7 @@
         href="{{ url_for(endpoint, env=current_env) }}">{{ caption }}</a>
       {%- endfor %}
       <div class="ui dropdown item">
-        Environments
+        {{current_env}}
         <i class="dropdown icon"></i>
         <div class="menu">
             <a class="{% if '*' == current_env %}active {% endif %}item" href="{{url_for_field('env', '*')}}">All environments</a>
