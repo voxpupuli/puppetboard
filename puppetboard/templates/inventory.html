@@ -6,16 +6,16 @@
 <table class='ui compact very basic sortable table'>
   <thead>
     <tr>
-      {% for description in fact_desc %}
-      <th>{{description}}</th>
+      {% for head in headers %}
+      <th{% if loop.index == 1 %} class="default-sort"{% endif %}>{{head}}</th>
       {% endfor %}
     </tr>
   </thead>
   <tbody class="searchable">
-    {% for nodename in nodedata %}
+    {% for node, facts in fact_data.iteritems() %}
     <tr>
-      {% for item in nodedata[nodename] %}
-      <td>{{item}}</td>
+      {% for name in fact_names %}
+      <td><a href="{{url_for('node', env=current_env, node_name=node)}}">{{facts.get(name, 'undef')}}</a></td>
       {% endfor %}
     </tr>
     {% endfor %}
