@@ -25,6 +25,8 @@ from puppetboard.utils import (
     jsonprint, prettyprint, Pagination
 )
 
+import werkzeug.exceptions as ex
+
 DEFAULT_ORDER_BY = '[{"field": "start_time", "order": "desc"}]'
 
 app = Flask(__name__)
@@ -91,6 +93,22 @@ def utility_processor():
         """returns the formated datetime"""
         return datetime.datetime.now().strftime(format)
     return dict(now=now)
+
+
+#
+# 204 doesn't have a mapping in werkzeug, we need to define a custom
+# class and then set it to the mappings.
+#
+class NoContent(ex.HTTPException):
+    code = 204
+    description = '<p>No content</p'
+
+abort.mapping[204] = NoContent
+
+
+@app.errorhandler(204)
+def no_content(e):
+    return '', 204
 
 
 @app.errorhandler(400)
