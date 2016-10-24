@@ -128,6 +128,20 @@ image is planned for the 0.2.x series.
 
 .. _Dockerfile: https://github.com/voxpupuli/puppetboard/blob/master/Dockerfile
 
+Usage:
+.. code-block:: bash
+  $ docker build -t puppetboard .
+  $ docker run -it -p 9080:80 -v /etc/puppetlabs/puppet/ssl:/etc/puppetlabs/puppet/ssl \
+    -e PUPPETDB_HOST=<hostname> \
+    -e PUPPETDB_PORT=8081 \
+    -e PUPPETDB_SSL_VERIFY=/etc/puppetlabs/puppetdb/ssl/ca.pem \
+    -e PUPPETDB_KEY=/etc/puppetlabs/puppetdb/ssl/private.pem \
+    -e PUPPETDB_CERT=/etc/puppetlabs/puppetdb/ssl/public.pem \
+    -e INVENTORY_FACTS='Hostname,fqdn, IP Address,ipaddress' \
+    -e ENABLE_CATALOG=true \
+    -e GRAPH_FACTS='architecture,puppetversion,osfamily' \
+    puppetboard
+
 Development
 -----------
 
