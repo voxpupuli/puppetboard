@@ -13,7 +13,7 @@ from itertools import tee
 from flask import (
     Flask, render_template, abort, url_for,
     Response, stream_with_context, redirect,
-    request, session
+    request, session, jsonify
 )
 
 from pypuppetdb import connect
@@ -24,6 +24,7 @@ from puppetboard.utils import (
     get_or_abort, yield_or_stop,
     jsonprint, prettyprint, Pagination
 )
+from puppetboard.dailychart import get_daily_reports_chart
 
 import werkzeug.exceptions as ex
 
@@ -1109,3 +1110,23 @@ def radiator(env):
         stats=stats,
         total=num_nodes
     )
+
+
+@app.route('/daily_reports_chart.json',
+           defaults={'env': app.config['DEFAULT_ENVIRONMENT']})
+@app.route('/<env>/daily_reports_chart.json')
+def daily_reports_chart(env):
+    """Return JSON data to generate a bar chart of daily runs.
+
+    If certname is passed as GET argument, the data will target that
+    node only.
+    """
+    certname = request.args.get('certname')
+    result = get_or_abort(
+        get_daily_reports_chart,
+        db=puppetdb,
+        env=env,
+        days_number=app.config['DAILY_REPORTS_CHART_DAYS'],
+        certname=certname,
+    )
+    return jsonify(result=result)
