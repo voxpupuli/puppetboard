@@ -39,4 +39,4 @@ body.radiator_controller table.node_summary tr td .percent {color:#000;position:
 body.radiator_controller table.node_summary tr td .percent span {margin-left:0.1em;}
 body.radiator_controller table.node_summary tr td .label {position:relative;height:100%;}
 body.radiator_controller table.node_summary tr td .label span {margin-left:0.1em;}
-body.radiator_controller table.node_summary tr td .count {text-align:right;width:1.75em;display:inline-block;font-weight:bold;margin-top:-0.12em;}
+body.radiator_controller table.node_summary tr td .count {text-align:right;width:100%;display:inline-block;font-weight:bold;margin-top:-0.12em;}
