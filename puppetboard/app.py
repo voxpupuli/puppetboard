@@ -1031,7 +1031,9 @@ def catalog_compare(env, compare, against):
 
 
 @app.route('/radiator', defaults={'env': app.config['DEFAULT_ENVIRONMENT']})
-@app.route('/radiator.json', defaults={'env': app.config['DEFAULT_ENVIRONMENT'], 'to_json': True})
+@app.route('/radiator.json',
+           defaults={'env': app.config['DEFAULT_ENVIRONMENT'],
+                     'to_json': True})
 @app.route('/<env>/radiator')
 @app.route('/<env>/radiator.json', defaults={'to_json': True})
 def radiator(env, to_json=False):
