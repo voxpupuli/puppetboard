@@ -13,7 +13,7 @@ from itertools import tee
 from flask import (
     Flask, render_template, abort, url_for,
     Response, stream_with_context, redirect,
-    request, session
+    request, session, jsonify
 )
 
 from pypuppetdb import connect
@@ -1031,8 +1031,10 @@ def catalog_compare(env, compare, against):
 
 
 @app.route('/radiator', defaults={'env': app.config['DEFAULT_ENVIRONMENT']})
+@app.route('/radiator.json', defaults={'env': app.config['DEFAULT_ENVIRONMENT'], 'to_json': True})
 @app.route('/<env>/radiator')
-def radiator(env):
+@app.route('/<env>/radiator.json', defaults={'to_json': True})
+def radiator(env, to_json=False):
     """This view generates a simplified monitoring page
     akin to the radiator view in puppet dashboard
     """
@@ -1103,6 +1105,9 @@ def radiator(env):
                                             float(num_nodes)))
     stats['unreported_percent'] = int(100 * (stats['unreported'] /
                                              float(num_nodes)))
+    if to_json:
+        stats['num_nodes'] = num_nodes
+        return jsonify(**stats)
 
     return render_template(
         'radiator.html',
