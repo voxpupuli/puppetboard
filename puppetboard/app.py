@@ -1031,11 +1031,12 @@ def catalog_compare(env, compare, against):
 
 
 @app.route('/radiator', defaults={'env': app.config['DEFAULT_ENVIRONMENT']})
-@app.route('/radiator.json',
+@app.route('/radiator.json', endpoint='radiator_json',
            defaults={'env': app.config['DEFAULT_ENVIRONMENT'],
                      'to_json': True})
+@app.route('/<env>/radiator.json', endpoint='env_radiator_json',
+           defaults={'to_json': True})
 @app.route('/<env>/radiator')
-@app.route('/<env>/radiator.json', defaults={'to_json': True})
 def radiator(env, to_json=False):
     """This view generates a simplified monitoring page
     akin to the radiator view in puppet dashboard
