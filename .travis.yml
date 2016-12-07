@@ -8,7 +8,9 @@ install:
   - pip install -r requirements.txt
   - pip install -r requirements-test.txt
   - pip install -q coverage coveralls --use-wheel
-script: py.test --cov=puppetboard --pep8  -v
+script:
+  - py.test --cov=puppetboard --pep8  -v
+  - ./bandit.sh
 
 after_success:
   - coveralls
