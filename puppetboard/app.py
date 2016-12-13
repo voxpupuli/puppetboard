@@ -606,6 +606,9 @@ def report(env, node_name, report_id):
     except StopIteration:
         abort(404)
 
+    import CommonMark
+    report.version = CommonMark.commonmark(report.version)
+
     return render_template(
         'report.html',
         report=report,
