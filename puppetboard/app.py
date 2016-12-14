@@ -27,6 +27,7 @@ from puppetboard.utils import (
 from puppetboard.dailychart import get_daily_reports_chart
 
 import werkzeug.exceptions as ex
+import CommonMark
 
 from . import __version__
 
@@ -606,7 +607,6 @@ def report(env, node_name, report_id):
     except StopIteration:
         abort(404)
 
-    import CommonMark
     report.version = CommonMark.commonmark(report.version)
 
     return render_template(
