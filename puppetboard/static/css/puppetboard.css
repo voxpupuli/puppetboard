@@ -13,20 +13,6 @@ h1.ui.header.no-margin-bottom {
   margin-bottom: 0;
 }
 
-.tablesorter-header-inner {
-  float: left;
-}
-
-th.tablesorter-headerAsc::after {
-  content: '\25b4' !important;
-  float: right;
-}
-
-th.tablesorter-headerDesc::after {
-  content: '\25be' !important;
-  float: right;
-}
-
 .ui.grid.padding-bottom {
   padding-bottom: 40px !important;
 }

@@ -22,13 +22,22 @@ from pypuppetdb.QueryBuilder import *
 from puppetboard.forms import (CatalogForm, QueryForm)
 from puppetboard.utils import (
     get_or_abort, yield_or_stop,
-    jsonprint, prettyprint, Pagination
+    jsonprint, prettyprint
 )
 from puppetboard.dailychart import get_daily_reports_chart
 
 import werkzeug.exceptions as ex
 
-DEFAULT_ORDER_BY = '[{"field": "start_time", "order": "desc"}]'
+REPORTS_COLUMNS = [
+    {'attr': 'end', 'filter': 'end_time',
+     'name': 'End time', 'type': 'datetime'},
+    {'attr': 'status', 'name': 'Status', 'type': 'status'},
+    {'attr': 'certname', 'name': 'Certname', 'type': 'node'},
+    {'attr': 'version', 'filter': 'configuration_version',
+     'name': 'Configuration version'},
+    {'attr': 'agent_version', 'filter': 'puppet_version',
+     'name': 'Agent version'},
+]
 
 app = Flask(__name__)
 
@@ -377,9 +386,9 @@ def inventory(env):
         )))
 
 
-@app.route('/node/<node_name>',
+@app.route('/node/<node_name>/',
            defaults={'env': app.config['DEFAULT_ENVIRONMENT']})
-@app.route('/<env>/node/<node_name>')
+@app.route('/<env>/node/<node_name>/')
 def node(env, node_name):
     """Display a dashboard for a node showing as much data as we have on that
     node. This includes facts and reports but not Resources as that is too
@@ -399,236 +408,158 @@ def node(env, node_name):
 
     node = get_or_abort(puppetdb.node, node_name)
     facts = node.facts()
-    reports = get_or_abort(puppetdb.reports,
-                           query=query,
-                           limit=app.config['REPORTS_COUNT'],
-                           order_by=DEFAULT_ORDER_BY)
-    reports, reports_events = tee(reports)
-    report_event_counts = {}
-
-    for report in reports_events:
-        report_event_counts[report.hash_] = {}
-
-        for event in report.events():
-            if event.status == 'success':
-                try:
-                    report_event_counts[report.hash_]['successes'] += 1
-                except KeyError:
-                    report_event_counts[report.hash_]['successes'] = 1
-            elif event.status == 'failure':
-                try:
-                    report_event_counts[report.hash_]['failures'] += 1
-                except KeyError:
-                    report_event_counts[report.hash_]['failures'] = 1
-            elif event.status == 'noop':
-                try:
-                    report_event_counts[report.hash_]['noops'] += 1
-                except KeyError:
-                    report_event_counts[report.hash_]['noops'] = 1
-            elif event.status == 'skipped':
-                try:
-                    report_event_counts[report.hash_]['skips'] += 1
-                except KeyError:
-                    report_event_counts[report.hash_]['skips'] = 1
     return render_template(
         'node.html',
         node=node,
         facts=yield_or_stop(facts),
-        reports=yield_or_stop(reports),
-        reports_count=app.config['REPORTS_COUNT'],
-        report_event_counts=report_event_counts,
         envs=envs,
-        current_env=env)
+        current_env=env,
+        columns=REPORTS_COLUMNS[:2])
 
 
-@app.route('/reports/',
-           defaults={'env': app.config['DEFAULT_ENVIRONMENT'], 'page': 1})
-@app.route('/<env>/reports/', defaults={'page': 1})
-@app.route('/<env>/reports/page/<int:page>')
-def reports(env, page):
-    """Displays a list of reports and status from all nodes, retreived using the
-    reports endpoint, sorted by start_time.
+@app.route(
+    '/reports/',
+    defaults={'env': app.config['DEFAULT_ENVIRONMENT'], 'node_name': None})
+@app.route('/<env>/reports/', defaults={'node_name': None})
+@app.route(
+    '/reports/<node_name>/',
+    defaults={'env': app.config['DEFAULT_ENVIRONMENT']})
+@app.route('/<env>/reports/<node_name>')
+def reports(env, node_name):
+    """Query and Return JSON data to reports Jquery datatable
 
     :param env: Search for all reports in this environment
     :type env: :obj:`string`
-    :param page: Calculates the offset of the query based on the report count
-        and this value
-    :type page: :obj:`int`
     """
     envs = environments()
     check_env(env, envs)
-    limit = request.args.get('limit', app.config['REPORTS_COUNT'])
-    status_arg = request.args.get('status')
-    reports_query = AndOperator()
-    total_query = ExtractOperator()
+    return render_template(
+        'reports.html',
+        envs=envs,
+        current_env=env,
+        node_name=node_name,
+        columns=REPORTS_COLUMNS)
 
-    total_query.add_field(FunctionOperator("count"))
+
+@app.route(
+    '/reports/json',
+    defaults={'env': app.config['DEFAULT_ENVIRONMENT'], 'node_name': None})
+@app.route('/<env>/reports/json', defaults={'node_name': None})
+@app.route(
+    '/reports/<node_name>/json',
+    defaults={'env': app.config['DEFAULT_ENVIRONMENT']})
+@app.route('/<env>/reports/<node_name>/json')
+def reports_ajax(env, node_name):
+    """Query and Return JSON data to reports Jquery datatable
+
+    :param env: Search for all reports in this environment
+    :type env: :obj:`string`
+    """
+    draw = int(request.args.get('draw', 0))
+    start = int(request.args.get('start', 0))
+    length = int(request.args.get('length'))
+    paging_args = {'limit': length, 'offset': start}
+    search_arg = request.args.get('search[value]')
+    order_column = int(request.args.get('order[0][column]'))
+    order_filter = REPORTS_COLUMNS[order_column].get(
+        'filter', REPORTS_COLUMNS[order_column]['attr'])
+    order_dir = request.args.get('order[0][dir]')
+    order_args = '[{"field": "%s", "order": "%s"}]' % (order_filter, order_dir)
+    status_args = request.args.get('columns[1][search][value]').split('|')
+    for i in range(len(REPORTS_COLUMNS)):
+        if request.args.get("columns[%s][data]" % i, None):
+            max_col = i + 1
+
+    envs = environments()
+    check_env(env, envs)
+    reports_query = AndOperator()
 
     if env != '*':
         reports_query.add(EqualsOperator("environment", env))
 
-    if status_arg in ['failed', 'changed', 'unchanged']:
-        reports_query.add(EqualsOperator('status', status_arg))
-        reports_query.add(EqualsOperator('noop', False))
-    elif status_arg == 'noop':
-        reports_query.add(EqualsOperator('noop', True))
+    if node_name:
+        reports_query.add(EqualsOperator("certname", node_name))
 
-    if len(reports_query.operations) == 0:
-        reports_query = None
+    if search_arg:
+        search_query = OrOperator()
+        search_query.add(RegexOperator("certname", r"%s" % search_arg))
+        search_query.add(RegexOperator("puppet_version", r"%s" % search_arg))
+        search_query.add(RegexOperator(
+            "configuration_version", r"%s" % search_arg))
+        reports_query.add(search_query)
 
-    if reports_query is not None:
-        total_query.add_query(reports_query)
+    status_query = OrOperator()
+    for status_arg in status_args:
+        if status_arg in ['failed', 'changed', 'unchanged']:
+            arg_query = AndOperator()
+            arg_query.add(EqualsOperator('status', status_arg))
+            arg_query.add(EqualsOperator('noop', False))
+            status_query.add(arg_query)
+            if status_arg == 'unchanged':
+                arg_query = AndOperator()
+                arg_query.add(EqualsOperator('noop', True))
+                arg_query.add(EqualsOperator('noop_pending', False))
+                status_query.add(arg_query)
+        elif status_arg == 'noop':
+            arg_query = AndOperator()
+            arg_query.add(EqualsOperator('noop', True))
+            arg_query.add(EqualsOperator('noop_pending', True))
+            status_query.add(arg_query)
 
-    try:
-        paging_args = {'limit': int(limit)}
-        paging_args['offset'] = int((page - 1) * paging_args['limit'])
-    except ValueError:
-        paging_args = {}
+    if len(status_query.operations) == 0:
+        if len(reports_query.operations) == 0:
+            reports_query = None
+    else:
+        reports_query.add(status_query)
 
-    reports = get_or_abort(puppetdb.reports,
-                           query=reports_query,
-                           order_by=DEFAULT_ORDER_BY,
-                           **paging_args)
-    total = get_or_abort(puppetdb._query,
-                         'reports',
-                         query=total_query)
-    total = total[0]['count']
-    reports, reports_events = tee(reports)
+    if status_args[0] != 'none':
+        reports = get_or_abort(
+            puppetdb.reports,
+            query=reports_query,
+            order_by=order_args,
+            include_total=True,
+            **paging_args)
+        reports, reports_events = tee(reports)
+        total = None
+    else:
+        reports = []
+        reports_events = []
+        total = 0
+
     report_event_counts = {}
-
-    if total == 0 and page != 1:
-        abort(404)
-
     for report in reports_events:
-        report_event_counts[report.hash_] = {}
+        if total is None:
+            total = puppetdb.total
 
-        for event in report.events():
-            if event.status == 'success':
-                try:
-                    report_event_counts[report.hash_]['successes'] += 1
-                except KeyError:
-                    report_event_counts[report.hash_]['successes'] = 1
-            elif event.status == 'failure':
-                try:
-                    report_event_counts[report.hash_]['failures'] += 1
-                except KeyError:
-                    report_event_counts[report.hash_]['failures'] = 1
-            elif event.status == 'noop':
-                try:
-                    report_event_counts[report.hash_]['noops'] += 1
-                except KeyError:
-                    report_event_counts[report.hash_]['noops'] = 1
-            elif event.status == 'skipped':
-                try:
-                    report_event_counts[report.hash_]['skips'] += 1
-                except KeyError:
-                    report_event_counts[report.hash_]['skips'] = 1
-    return Response(stream_with_context(stream_template(
-        'reports.html',
-        reports=yield_or_stop(reports),
-        reports_count=app.config['REPORTS_COUNT'],
+        report_counts = {'successes': 0, 'failures': 0, 'skips': 0}
+
+        if report.status != 'unchanged':
+            events_count = get_or_abort(
+                puppetdb.event_counts, summarize_by='certname',
+                query=EqualsOperator('report', report.hash_))
+
+            report_counts['successes'] = events_count[0].get('successes', None)
+            report_counts['failures'] = events_count[0].get('failures', None)
+            if report.status == 'noop':
+                report_counts['skips'] = events_count[0].get('noops', None)
+            else:
+                report_counts['skips'] = events_count[0].get('skips', None)
+
+        report_event_counts[report.hash_] = report_counts
+
+    if total is None:
+        total = 0
+
+    return render_template(
+        'reports.json.tpl',
+        draw=draw,
+        total=total,
+        total_filtered=total,
+        reports=reports,
         report_event_counts=report_event_counts,
-        pagination=Pagination(page, paging_args.get('limit', total), total),
         envs=envs,
         current_env=env,
-        limit=paging_args.get('limit', total))))
-
-
-@app.route('/reports/<node_name>/',
-           defaults={'env': app.config['DEFAULT_ENVIRONMENT'], 'page': 1})
-@app.route('/<env>/reports/<node_name>', defaults={'page': 1})
-@app.route('/<env>/reports/<node_name>/page/<int:page>')
-def reports_node(env, node_name, page):
-    """Fetches all reports for a node and processes them eventually rendering
-    a table displaying those reports.
-
-    :param env: Search for reports in this environment
-    :type env: :obj:`string`
-    :param node_name: Find the reports whose certname match this value
-    :type node_name: :obj:`string`
-    :param page: Calculates the offset of the query based on the report count
-        and this value
-    :type page: :obj:`int`
-    """
-    envs = environments()
-    status_arg = request.args.get('status')
-    check_env(env, envs)
-    query = AndOperator()
-    total_query = ExtractOperator()
-
-    total_query.add_field(FunctionOperator("count"))
-
-    if env == '*':
-        if status_arg in ['failed', 'changed', 'unchanged']:
-            query.add(EqualsOperator('status', status_arg))
-        elif status_arg == 'noop':
-            query.add(EqualsOperator('noop', True))
-    else:
-        query.add(EqualsOperator("environment", env))
-
-        if status_arg in ['failed', 'changed', 'unchanged']:
-            query.add(EqualsOperator('status', status_arg))
-            query.add(EqualsOperator('noop', False))
-        elif status_arg == 'noop':
-            query.add(EqualsOperator('noop', True))
-
-    query.add(EqualsOperator("certname", node_name))
-    total_query.add_query(query)
-
-    limit = request.args.get('limit', app.config['REPORTS_COUNT'])
-
-    try:
-        paging_args = {'limit': int(limit)}
-        paging_args['offset'] = int((page - 1) * paging_args['limit'])
-    except ValueError:
-        paging_args = {}
-
-    reports = get_or_abort(puppetdb.reports,
-                           query=query,
-                           order_by=DEFAULT_ORDER_BY,
-                           **paging_args)
-    total = get_or_abort(puppetdb._query,
-                         'reports',
-                         query=total_query)
-    total = total[0]['count']
-    reports, reports_events = tee(reports)
-    report_event_counts = {}
-
-    if total == 0 and page != 1:
-        abort(404)
-
-    for report in reports_events:
-        report_event_counts[report.hash_] = {}
-
-        for event in report.events():
-            if event.status == 'success':
-                try:
-                    report_event_counts[report.hash_]['successes'] += 1
-                except KeyError:
-                    report_event_counts[report.hash_]['successes'] = 1
-            elif event.status == 'failure':
-                try:
-                    report_event_counts[report.hash_]['failures'] += 1
-                except KeyError:
-                    report_event_counts[report.hash_]['failures'] = 1
-            elif event.status == 'noop':
-                try:
-                    report_event_counts[report.hash_]['noops'] += 1
-                except KeyError:
-                    report_event_counts[report.hash_]['noops'] = 1
-            elif event.status == 'skipped':
-                try:
-                    report_event_counts[report.hash_]['skips'] += 1
-                except KeyError:
-                    report_event_counts[report.hash_]['skips'] = 1
-    return render_template(
-        'reports.html',
-        reports=reports,
-        reports_count=app.config['REPORTS_COUNT'],
-        report_event_counts=report_event_counts,
-        pagination=Pagination(page, paging_args.get('limit', total), total),
-        envs=envs,
-        current_env=env)
+        columns=REPORTS_COLUMNS[:max_col])
 
 
 @app.route('/report/<node_name>/<report_id>',

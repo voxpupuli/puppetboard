@@ -45,6 +45,7 @@
   </tbody>
 </table>
 {%- endmacro %}
+
 {% macro facts_graph(facts, autofocus=False, condensed=False, show_node=False, margin_top=20, margin_bottom=20) -%}
 <script src="{{url_for('static', filename='js/d3.min.js')}}"></script>
 <script src="{{url_for('static', filename='js/c3.min.js')}}"></script>
@@ -78,93 +79,8 @@
 </script>
 {%- endmacro %}
 
-{% macro reports_table(reports, reports_count, report_event_counts, current_env, condensed=False, hash_truncate=False, show_conf_col=True, show_agent_col=True, show_host_col=True, show_run_col=False, show_full_col=False, show_search_bar=False, searchable=False) -%}
-{% if show_search_bar %}
-<div class="ui fluid icon input hide" style="margin-bottom:20px">
-  <input autofocus="autofocus" class="filter-table" placeholder="Type here to filter...">
-</div>
-{% endif %}
-<div class="ui info message">
-
-  Only showing {{reports_count}} reports sorted by Start Time.
-
-</div>
-<table class='ui very basic {% if condensed %}very compact{% endif %} table stackable sortable table'>
-  <thead>
-    <tr>
-      <th class="default-sort">Start time</th>
-      <th>Status</th>
-      {% if show_host_col %}
-        <th>Certname</th>
-      {% endif %}
-      {% if show_run_col %}
-      <th>Run time</th>
-      {% endif %}
-      {% if show_full_col %}
-      <th>Full report</th>
-      {% endif %}
-      {% if show_conf_col %}
-        <th>Configuration version</th>
-      {% endif %}
-      {% if show_agent_col %}
-        <th>Agent version</th>
-      {% endif %}
-    <tr>
-  </thead>
-  <tbody {% if searchable %}class="searchable" {% endif %}>
-  {% for report in reports %}
-    {% if hash_truncate %}
-    {% set rep_hash = "%s&hellip;"|format(report.hash_[0:10])|safe %}
-    {% else %}
-    {% set rep_hash = report.hash_ %}
-    {% endif %}
-    {% if report.failed %}
-    <tr class="error">
-    {% else %}
-    <tr>
-    {% endif %}
-      <td rel="utctimestamp">{{report.start}}</td>
-      <td>
-        {% call status_counts(status=report.status, node_name=report.node, events=report_event_counts[report.hash_], report_hash=report.hash_, current_env=current_env) %}{% endcall %}
-      </td>
-      {% if show_host_col %}
-        <td><a href="{{url_for('node', env=current_env, node_name=report.node)}}">{{ report.node }}</a></td>
-      {% endif %}
-      {% if show_run_col %}
-      <td>{{report.run_time}}</td>
-      {% endif %}
-      {% if show_full_col %}
-      <td><a href="{{url_for('report', env=current_env, node_name=report.node, report_id=report.hash_)}}">{{rep_hash}}</a></td>
-      {% endif %}
-      {% if show_conf_col %}
-        <td>{{report.version}}</td>
-      {% endif %}
-      {% if show_agent_col %}
-        <td>{{report.agent_version}}</td>
-      {% endif %}
-    </tr>
-    {% endfor %}
-  </tbody>
-</table>
-{%- endmacro %}
 {% macro status_counts(caller, status, node_name, events, current_env, unreported_time=False, report_hash=False) -%}
-  <a class="ui
-    {% if status == 'failed' -%}
-      failed
-    {% elif status == 'changed' -%}
-      changed
-    {% elif status == 'unreported' -%}
-      unreported
-    {% elif status == 'noop' -%}
-      noop
-    {% elif status == 'unchanged' -%}
-      unchanged
-    {% endif -%}
-  label status" href="
-    {{url_for('report', env=current_env, node_name=node_name, report_id=report_hash)}}
-  ">
-    {{ status|upper }}
-  </a>
+  <a class="ui {{status}} label status" href="{{url_for('report', env=current_env, node_name=node_name, report_id=report_hash)}}">{{ status|upper }}</a>
   {% if status == 'unreported' %}
     <span class="ui label status"> {{ unreported_time|upper }} </span>
   {% else %}
@@ -173,26 +89,56 @@
     {% if events['skips'] %}<span class="ui small count label skipped">{{events['skips']}}</span>{% else %}<span class="ui small count label">0</span>{% endif%}
   {% endif %}
 {%- endmacro %}
-{% macro render_pagination(pagination) -%}
-  <div class="ui pagination menu">
-  {% if pagination.has_prev %}
-    <a class="item" href="{{url_for_field('page', 1)}}">&laquo; First</a>
-    <a class="item" href="{{url_for_field('page', pagination.page - 1)}}">Prev</a>
-  {% endif %}
-  {% for page in pagination.iter_pages() %}
-    {% if page %}
-      {% if page != pagination.page %}
-        <a class="item" href="{{url_for_field('page', page)}}">{{page}}</a>
-      {% else %}
-        <a class="active item">{{page}}</a>
-      {% endif %}
-    {% else %}
-      <a class="disabled item">...</a>
-    {% endif %}
-  {% endfor %}
-  {% if pagination.has_next %}
-    <a class="item" href="{{url_for_field('page', pagination.page + 1)}}">Next</a>
-    <a class="item" href="{{url_for_field('page', pagination.pages)}}">Last &raquo;</a>
-  {% endif %}
-  </div>
-{% endmacro %}
+
+{% macro datatable_init(table_html_id, ajax_url, default_length, length_selector, extra_options=None, columns) -%}
+  // Init datatable
+  $.fn.dataTable.ext.errMode = 'throw';
+  var table = $('#{{ table_html_id }}').DataTable({
+    // Permit flow auto-readjust (responsive)
+    "autoWidth": false,
+    // Activate "processing" message
+    "processing": true,
+    // Activate Ajax mode
+    "serverSide": true,
+    // Responsive
+    "responsive": true,
+    // Defer rendering out of screen lines (JIT)
+    "deferRender": true,
+    // Data loading URL
+    "ajax": "{{ ajax_url }}",
+    // Paging options
+    "lengthMenu": {{ length_selector }},
+    "pageLength": {{ default_length }},
+    // Default sort
+    "order": [[ 0, "desc" ]],
+    // Custom options
+    {% if extra_options %}{% call extra_options() %}Callback to parent defined options{% endcall %}{% endif %}
+  });
+
+  table.on('draw.dt', function(){
+    $('#{{ table_html_id }} [rel=utctimestamp]').each(
+      function(index, timestamp){
+        $(this).localise_timestamp();
+    });
+  });
+
+  // Override Datatables search box events to delay Ajax call while writing
+  var searchWait = 0;
+  var searchWaitInterval;
+  $('.dataTables_filter input')
+  .unbind()
+  .bind('input', function(e){
+    var item = $(this);
+    searchWait = 0;
+    if(!searchWaitInterval) searchWaitInterval = setInterval(function(){
+      if(searchWait>=3){
+        clearInterval(searchWaitInterval);
+        searchWaitInterval = '';
+        searchTerm = $(item).val();
+        table.search(searchTerm).draw();
+        searchWait = 0;
+      }
+      searchWait++;
+    },80);
+  });
+{%- endmacro %}

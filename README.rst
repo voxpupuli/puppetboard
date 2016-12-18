@@ -236,7 +236,7 @@ Other settings that might be interesting in no particular order:
 * ``REPORTS_COUNT``: Defaults to ``10`` the limit of the number of reports
   to load on the node or any reports page.
 * ``OFFLINE_MODE``: If set to ``True`` load static assets (jquery,
-  semantic-ui, tablesorter, etc) from the local web server instead of a CDN.
+  semantic-ui, etc) from the local web server instead of a CDN.
   Defaults to ``False``.
 
 .. _pypuppetdb documentation: http://pypuppetdb.readthedocs.org/en/v0.1.0/quickstart.html#ssl
