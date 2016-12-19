@@ -310,7 +310,7 @@ and run it once:
 
     import os
 
-    print os.random(24)
+    print os.urandom(24)
 
 Copy the output and add the following to your ``wsgi.py`` file:
 
@@ -332,7 +332,7 @@ Here is a sample configuration for Debian and Ubuntu:
         CustomLog /var/log/apache2/puppetboard.access.log combined
 
         Alias /static /usr/local/lib/pythonX.Y/dist-packages/puppetboard/static
-        <Directory /usr/lib/python2.X/dist-packages/puppetboard/static>
+        <Directory /usr/local/lib/pythonX.X/dist-packages/puppetboard/static>
             Satisfy Any
             Allow from all
         </Directory>
