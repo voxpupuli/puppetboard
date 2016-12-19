@@ -405,6 +405,11 @@ def node(env, node_name):
     reports, reports_events = tee(reports)
     report_event_counts = {}
 
+    try:
+        hidden_facts_values = app.config['HIDE_FACTS_VALUES_FROM_NODE_VIEW']
+    except:
+        hidden_facts_values = []
+
     for report in reports_events:
         report_event_counts[report.hash_] = {}
 
@@ -437,6 +442,7 @@ def node(env, node_name):
         reports_count=app.config['REPORTS_COUNT'],
         report_event_counts=report_event_counts,
         envs=envs,
+        hidden_facts_values=hidden_facts_values,
         current_env=env)
 
 

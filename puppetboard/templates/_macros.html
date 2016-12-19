@@ -1,4 +1,4 @@
-{% macro facts_table(facts, current_env, autofocus=False, condensed=False, show_node=False, show_value=True, link_facts=False, margin_top=20, margin_bottom=20) -%}
+{% macro facts_table(facts, current_env, autofocus=False, condensed=False, show_node=False, show_value=True, link_facts=False, margin_top=20, margin_bottom=20, hidden_facts_values=[]) -%}
 <div class="ui fluid icon input hide" style="margin-bottom:20px">
   <input {% if autofocus %} autofocus="autofocus" {% endif %} class="filter-table" placeholder="Type here to filter...">
 </div>
@@ -25,17 +25,21 @@
       {% endif %}
       {% if show_value %}
       <td style="word-wrap:break-word">
-        {% if link_facts %}
-          {% if fact.value is mapping %}
-            <a href="{{url_for('fact_value', env=current_env, fact=fact.name, value=fact.value)}}"><pre>{{fact.value|jsonprint}}</pre></a>
+        {% if fact.name in hidden_facts_values %}
+          <pre>HIDDEN</pre>
+        {% else %}      
+          {% if link_facts %}
+            {% if fact.value is mapping %}
+              <a href="{{url_for('fact_value', env=current_env, fact=fact.name, value=fact.value)}}"><pre>{{fact.value|jsonprint}}</pre></a>
+            {% else %}
+              <a href="{{url_for('fact_value', env=current_env, fact=fact.name, value=fact.value)}}">{{fact.value}}</a>
+            {% endif %}
           {% else %}
-            <a href="{{url_for('fact_value', env=current_env, fact=fact.name, value=fact.value)}}">{{fact.value}}</a>
-          {% endif %}
-        {% else %}
-          {% if fact.value is mapping %}
-            <pre>{{fact.value|jsonprint}}</pre>
-          {% else %}
-            {{fact.value}}
+            {% if fact.value is mapping %}
+              <pre>{{fact.value|jsonprint}}</pre>
+            {% else %}
+              {{fact.value}}
+            {% endif %}
           {% endif %}
         {% endif %}
       </td>
