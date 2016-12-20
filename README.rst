@@ -20,6 +20,7 @@ As of version 0.1.0 and higher, Puppetboard **requires** PuppetDB 3.
 .. _PuppetDB: http://docs.puppetlabs.com/puppetdb/latest/index.html
 .. _Puppet Dashboard: http://docs.puppetlabs.com/dashboard/
 .. _Flask: http://flask.pocoo.org
+.. _FlaskSession: http://flask.pocoo.org/docs/0.11/quickstart/#sessions
 
 At the current time of writing, Puppetboard supports the following Python versions:
     * Python 2.6
@@ -300,17 +301,19 @@ puppetboard directory:
 
 Make sure this file is readable by the user the webserver runs as.
 
-Flask requires a static secret_key in order to protect itself from CSRF exploits.
-The default secret_key in ``default_settings.py`` generates a random 24 character
-string, however this string is re-generated on each request under httpd >= 2.4.
+Flask requires a static secret_key, see `FlaskSession`_, in order to protect
+itself from CSRF exploits.  The default secret_key in ``default_settings.py``
+generates a random 24 character string, however this string is re-generated
+on each request under httpd >= 2.4.
+
 To generate your own secret_key create a python script with the following content
 and run it once:
 
 .. code-block:: python
 
     import os
-
-    print os.urandom(24)
+    os.urandom(24)
+    '\xfd{H\xe5<\x95\xf9\xe3\x96.5\xd1\x01O<!\xd5\xa2\xa0\x9fR"\xa1\xa8'
 
 Copy the output and add the following to your ``wsgi.py`` file:
 
