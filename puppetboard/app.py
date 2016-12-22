@@ -397,6 +397,13 @@ def node(env, node_name):
 
     query.add(EqualsOperator("certname", node_name))
 
+    # do not show reports that are unchanged, so failed or chagned status
+    if ('NODE_REPORT_CHANGING_ONLY' in app.config and
+            app.config['NODE_REPORT_CHANGING_ONLY']):
+        query = ('["and", %s, [ "or",' \
+                 '["=", "status", "changed"], ["=", "status", "failed"]]]' %
+                 query)
+
     node = get_or_abort(puppetdb.node, node_name)
     facts = node.facts()
     reports = get_or_abort(puppetdb.reports,
