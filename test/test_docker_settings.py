@@ -1,6 +1,7 @@
 import pytest
 import os
 from puppetboard import docker_settings
+from puppetboard import app
 
 try:
     import future.utils
@@ -97,3 +98,11 @@ def test_graph_facts_custom(cleanUpEnv):
     assert 'puppetversion' in facts
     assert 'architecture' in facts
     assert 'extra' in facts
+
+
+def test_bad_log_value(cleanUpEnv):
+    os.environ['LOGLEVEL'] = 'g'
+    os.environ['PUPPETBOARD_SETTINGS'] = '../puppetboard/docker_settings.py'
+    reload(docker_settings)
+    with pytest.raises(ValueError) as error:
+        reload(app)
