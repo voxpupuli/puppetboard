@@ -203,7 +203,7 @@ def index(env):
         num_nodes_query.add_field(FunctionOperator('count'))
         num_nodes_query.add_query(query)
 
-        if app.config['OVERVIEW_FILTER'] != None:
+        if app.config['OVERVIEW_FILTER'] is not None:
             query.add(app.config['OVERVIEW_FILTER'])
 
         num_resources_query = ExtractOperator()
