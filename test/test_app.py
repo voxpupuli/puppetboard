@@ -1,19 +1,8 @@
-import os
-from puppetboard import app
-import unittest
+import pytest
 import tempfile
 
-
-class AppTestCase(unittest.TestCase):
-    def setUp(self):
-        pass
-
-    def tearDown(self):
-        pass
-
-    def test_first_test(self):
-        self.assertTrue(True)
+from puppetboard import app
 
 
-if __name__ == '__main__':
-    unittest.main()
+def test_first_test():
+    assert app is not None, ("%s" % reg.app)
