@@ -98,3 +98,91 @@ def test_offline_mode(client, mocker):
             assert "//" not in script['src']
 
     assert rv.status_code == 200
+
+
+def test_default_node_view(client, mocker,
+                           mock_puppetdb_environments,
+                           mock_puppetdb_default_nodes):
+
+    rv = client.get('/nodes')
+    soup = BeautifulSoup(rv.data, 'html.parser')
+    assert soup.title.contents[0] == 'Puppetboard'
+
+    for label in ['failed', 'changed', 'unreported', 'noop']:
+        vals = soup.find_all('a',
+                             {"class": "ui %s label status" % label})
+        assert len(vals) == 1
+        assert 'node-%s' % (label) in vals[0].attrs['href']
+
+    assert rv.status_code == 200
+
+
+def test_radiator_view(client, mocker,
+                       mock_puppetdb_environments,
+                       mock_puppetdb_default_nodes):
+    query_data = {
+        'nodes': [[{'count': 10}]],
+        'resources': [[{'count': 40}]],
+    }
+
+    dbquery = MockDbQuery(query_data)
+
+    mocker.patch.object(app.puppetdb, '_query', side_effect=dbquery.get)
+
+    rv = client.get('/radiator')
+
+    assert rv.status_code == 200
+
+    soup = BeautifulSoup(rv.data, 'html.parser')
+    assert soup.title.contents[0] == 'Puppetboard'
+    assert soup.h1 != 'Not Found'
+    total = soup.find(class_='total')
+
+    assert '10' in total.text
+
+
+def test_radiator_view_bad_env(client, mocker):
+    mock_puppetdb_environments(mocker)
+    mock_puppetdb_default_nodes(mocker)
+
+    query_data = {
+        'nodes': [[{'count': 10}]],
+        'resources': [[{'count': 40}]],
+    }
+
+    dbquery = MockDbQuery(query_data)
+
+    mocker.patch.object(app.puppetdb, '_query', side_effect=dbquery.get)
+
+    rv = client.get('/nothere/radiator')
+
+    assert rv.status_code == 404
+    soup = BeautifulSoup(rv.data, 'html.parser')
+    assert soup.title.contents[0] == 'Puppetboard'
+    assert soup.h1.text == 'Not Found'
+
+
+@pytest.mark.xfail
+def test_radiator_view_division_by_zero(client, mocker):
+    mock_puppetdb_environments(mocker)
+    mock_puppetdb_default_nodes(mocker)
+
+    query_data = {
+        'nodes': [[{'count': 0}]],
+        'resources': [[{'count': 40}]],
+    }
+
+    dbquery = MockDbQuery(query_data)
+
+    mocker.patch.object(app.puppetdb, '_query', side_effect=dbquery.get)
+
+    rv = client.get('/radiator')
+
+    assert rv.status_code == 200
+
+    soup = BeautifulSoup(rv.data, 'html.parser')
+    assert soup.title.contents[0] == 'Puppetboard'
+    assert soup.h1.text != 'Not Found'
+
+    total = soup.find(class_='total')
+    assert '0' in total.text
