@@ -1032,8 +1032,13 @@ def catalog_compare(env, compare, against):
 
 
 @app.route('/radiator', defaults={'env': app.config['DEFAULT_ENVIRONMENT']})
+@app.route('/radiator.json', endpoint='radiator_json',
+           defaults={'env': app.config['DEFAULT_ENVIRONMENT'],
+                     'to_json': True})
+@app.route('/<env>/radiator.json', endpoint='env_radiator_json',
+           defaults={'to_json': True})
 @app.route('/<env>/radiator')
-def radiator(env):
+def radiator(env, to_json=False):
     """This view generates a simplified monitoring page
     akin to the radiator view in puppet dashboard
     """
@@ -1104,6 +1109,9 @@ def radiator(env):
                                             float(num_nodes)))
     stats['unreported_percent'] = int(100 * (stats['unreported'] /
                                              float(num_nodes)))
+    if to_json:
+        stats['num_nodes'] = num_nodes
+        return jsonify(**stats)
 
     return render_template(
         'radiator.html',
