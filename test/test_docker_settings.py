@@ -25,7 +25,7 @@ class DockerTestCase(unittest.TestCase):
         reload(docker_settings)
 
     def test_default_host_port(self):
-        self.assertEqual(docker_settings.PUPPETDB_HOST, 'localhost')
+        self.assertEqual(docker_settings.PUPPETDB_HOST, 'puppetdb')
         self.assertEqual(docker_settings.PUPPETDB_PORT, 8080)
 
     def test_set_host_port(self):
