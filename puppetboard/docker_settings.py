@@ -1,6 +1,6 @@
 import os
 
-PUPPETDB_HOST = os.getenv('PUPPETDB_HOST', 'localhost')
+PUPPETDB_HOST = os.getenv('PUPPETDB_HOST', 'puppetdb')
 PUPPETDB_PORT = int(os.getenv('PUPPETDB_PORT', '8080'))
 # Since this is an env it will alwas be a string, we need
 # to conver that string to a bool
