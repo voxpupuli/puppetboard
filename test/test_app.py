@@ -162,7 +162,6 @@ def test_radiator_view_bad_env(client, mocker):
     assert soup.h1.text == 'Not Found'
 
 
-@pytest.mark.xfail
 def test_radiator_view_division_by_zero(client, mocker):
     mock_puppetdb_environments(mocker)
     mock_puppetdb_default_nodes(mocker)
@@ -182,7 +181,6 @@ def test_radiator_view_division_by_zero(client, mocker):
 
     soup = BeautifulSoup(rv.data, 'html.parser')
     assert soup.title.contents[0] == 'Puppetboard'
-    assert soup.h1.text != 'Not Found'
 
     total = soup.find(class_='total')
     assert '0' in total.text
