@@ -1096,14 +1096,24 @@ def radiator(env):
         else:
             stats['unchanged'] += 1
 
-    stats['changed_percent'] = int(100 * stats['changed'] / float(num_nodes))
-    stats['failed_percent'] = int(100 * stats['failed'] / float(num_nodes))
-    stats['noop_percent'] = int(100 * stats['noop'] / float(num_nodes))
-    stats['skipped_percent'] = int(100 * stats['skipped'] / float(num_nodes))
-    stats['unchanged_percent'] = int(100 * (stats['unchanged'] /
-                                            float(num_nodes)))
-    stats['unreported_percent'] = int(100 * (stats['unreported'] /
-                                             float(num_nodes)))
+    try:
+        stats['changed_percent'] = int(100 * (stats['changed'] /
+                                              float(num_nodes)))
+        stats['failed_percent'] = int(100 * stats['failed'] / float(num_nodes))
+        stats['noop_percent'] = int(100 * stats['noop'] / float(num_nodes))
+        stats['skipped_percent'] = int(100 * (stats['skipped'] /
+                                              float(num_nodes)))
+        stats['unchanged_percent'] = int(100 * (stats['unchanged'] /
+                                                float(num_nodes)))
+        stats['unreported_percent'] = int(100 * (stats['unreported'] /
+                                                 float(num_nodes)))
+    except ZeroDivisionError:
+        stats['changed_percent'] = 0
+        stats['failed_percent'] = 0
+        stats['noop_percent'] = 0
+        stats['skipped_percent'] = 0
+        stats['unchanged_percent'] = 0
+        stats['unreported_percent'] = 0
 
     return render_template(
         'radiator.html',
