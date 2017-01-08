@@ -40,6 +40,12 @@ REPORTS_COLUMNS = [
      'name': 'Agent version'},
 ]
 
+CATALOGS_COLUMNS = [
+    {'attr': 'certname', 'name': 'Certname', 'type': 'node'},
+    {'attr': 'catalog_timestamp', 'name': 'Compile Time'},
+    {'attr': 'form', 'name': 'Compare'},
+]
+
 app = Flask(__name__)
 
 app.config.from_object('puppetboard.default_settings')
@@ -828,9 +834,14 @@ def metric(env, metric):
         current_env=env)
 
 
-@app.route('/catalogs', defaults={'env': app.config['DEFAULT_ENVIRONMENT']})
-@app.route('/<env>/catalogs')
-def catalogs(env):
+@app.route('/catalogs',
+           defaults={'env': app.config['DEFAULT_ENVIRONMENT'],
+                     'compare': None})
+@app.route('/<env>/catalogs', defaults={'compare': None})
+@app.route('/catalogs/compare/<compare>',
+           defaults={'env': app.config['DEFAULT_ENVIRONMENT']})
+@app.route('/<env>/catalogs/compare/<compare>')
+def catalogs(env, compare):
     """Lists all nodes with a compiled catalog.
 
     :param env: Find the nodes with this catalog_environment value
@@ -839,52 +850,78 @@ def catalogs(env):
     envs = environments()
     check_env(env, envs)
 
-    if app.config['ENABLE_CATALOG']:
-        nodenames = []
-        catalog_list = []
-        query = AndOperator()
-
-        if env != '*':
-            query.add(EqualsOperator("catalog_environment", env))
-
-        query.add(NullOperator("catalog_timestamp", False))
-
-        order_by_str = '[{"field": "certname", "order": "asc"}]'
-        nodes = get_or_abort(puppetdb.nodes,
-                             query=query,
-                             with_status=False,
-                             order_by=order_by_str)
-        nodes, temp = tee(nodes)
-
-        for node in temp:
-            nodenames.append(node.name)
-
-        for node in nodes:
-            table_row = {
-                'name': node.name,
-                'catalog_timestamp': node.catalog_timestamp
-            }
-
-            if len(nodenames) > 1:
-                form = CatalogForm()
-
-                form.compare.data = node.name
-                form.against.choices = [(x, x) for x in nodenames
-                                        if x != node.name]
-                table_row['form'] = form
-            else:
-                table_row['form'] = None
-
-            catalog_list.append(table_row)
-
-        return render_template(
-            'catalogs.html',
-            nodes=catalog_list,
-            envs=envs,
-            current_env=env)
-    else:
+    if not app.config['ENABLE_CATALOG']:
         log.warn('Access to catalog interface disabled by administrator')
         abort(403)
+        return
+
+    return render_template(
+        'catalogs.html',
+        compare=compare,
+        columns=CATALOGS_COLUMNS)
+
+
+@app.route('/catalogs/json',
+           defaults={'env': app.config['DEFAULT_ENVIRONMENT'],
+                     'compare': None})
+@app.route('/<env>/catalogs/json', defaults={'compare': None})
+@app.route('/catalogs/compare/<compare>/json',
+           defaults={'env': app.config['DEFAULT_ENVIRONMENT']})
+@app.route('/<env>/catalogs/compare/<compare>/json')
+def catalogs_ajax(env, compare):
+    """Server data to catalogs as JSON to Jquery datatables
+    """
+    draw = int(request.args.get('draw', 0))
+    start = int(request.args.get('start', 0))
+    length = int(request.args.get('length', app.config['NORMAL_TABLE_COUNT']))
+    paging_args = {'limit': length, 'offset': start}
+    search_arg = request.args.get('search[value]')
+    order_column = int(request.args.get('order[0][column]', 0))
+    order_filter = CATALOGS_COLUMNS[order_column].get(
+        'filter', CATALOGS_COLUMNS[order_column]['attr'])
+    order_dir = request.args.get('order[0][dir]', 'asc')
+    order_args = '[{"field": "%s", "order": "%s"}]' % (order_filter, order_dir)
+
+    envs = environments()
+    check_env(env, envs)
+
+    query = AndOperator()
+    if env != '*':
+        query.add(EqualsOperator("catalog_environment", env))
+    if search_arg:
+        query.add(RegexOperator("certname", r"%s" % search_arg))
+    query.add(NullOperator("catalog_timestamp", False))
+
+    nodes = get_or_abort(puppetdb.nodes,
+                         query=query,
+                         include_total=True,
+                         order_by=order_args,
+                         **paging_args)
+
+    catalog_list = []
+    total = None
+    for node in nodes:
+        if total is None:
+            total = puppetdb.total
+
+        catalog_list.append({
+            'certname': node.name,
+            'catalog_timestamp': node.catalog_timestamp,
+            'form': compare,
+        })
+
+    if total is None:
+        total = 0
+
+    return render_template(
+        'catalogs.json.tpl',
+        total=total,
+        total_filtered=total,
+        draw=draw,
+        columns=CATALOGS_COLUMNS,
+        catalogs=catalog_list,
+        envs=envs,
+        current_env=env)
 
 
 @app.route('/catalog/<node_name>',
@@ -906,40 +943,6 @@ def catalog_node(env, node_name):
                                catalog=catalog,
                                envs=envs,
                                current_env=env)
-    else:
-        log.warn('Access to catalog interface disabled by administrator')
-        abort(403)
-
-
-@app.route('/catalog/submit', methods=['POST'],
-           defaults={'env': app.config['DEFAULT_ENVIRONMENT']})
-@app.route('/<env>/catalog/submit', methods=['POST'])
-def catalog_submit(env):
-    """Receives the submitted form data from the catalogs page and directs
-       the users to the comparison page. Directs users back to the catalogs
-       page if no form submission data is found.
-
-    :param env: This parameter only directs the response page to the right
-       environment. If this environment does not exist return the use to the
-       catalogs page with the right environment.
-    :type env: :obj:`string`
-    """
-    envs = environments()
-    check_env(env, envs)
-
-    if app.config['ENABLE_CATALOG']:
-        form = CatalogForm(request.form)
-
-        form.against.choices = [(form.against.data, form.against.data)]
-        if form.validate_on_submit():
-            compare = form.compare.data
-            against = form.against.data
-            return redirect(
-                url_for('catalog_compare',
-                        env=env,
-                        compare=compare,
-                        against=against))
-        return redirect(url_for('catalogs', env=env))
     else:
         log.warn('Access to catalog interface disabled by administrator')
         abort(403)
