@@ -1,5 +1,10 @@
 {% extends 'layout.html' %}
 {% import '_macros.html' as macros %}
+{% block head %}
+{% if config.DAILY_REPORTS_CHART_ENABLED %}
+<link href="{{ url_for('static', filename='css/c3.min.css') }}" rel="stylesheet">
+{% endif %}
+{% endblock head %}
 {% block content %}
 {% if config.REFRESH_RATE > 0 %}
 <meta http-equiv="refresh" content="{{config.REFRESH_RATE}}">
@@ -59,6 +64,11 @@
       <span>Avg. resources/node</span>
     </div>
   </div>
+  {% if config.DAILY_REPORTS_CHART_ENABLED %}
+  <div id="dailyReportsChartContainer" class="one column row">
+    <div id="dailyReportsChart"></div>
+  </div>
+  {% endif %}
   <div class="ui divider"></div>
   <div class="one column row">
     <div class="column">
@@ -114,3 +124,10 @@
   </div>
 </div>
 {% endblock content %}
+{% if config.DAILY_REPORTS_CHART_ENABLED %}
+{% block script %}
+<script src="{{url_for('static', filename='js/d3.min.js')}}"></script>
+<script src="{{url_for('static', filename='js/c3.min.js')}}"></script>
+<script src="{{url_for('static', filename='js/dailychart.js')}}"></script>
+{% endblock script %}
+{% endif %}

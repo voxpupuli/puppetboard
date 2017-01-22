@@ -1,5 +1,10 @@
 {% extends 'layout.html' %}
 {% import '_macros.html' as macros %}
+{% block head %}
+{% if config.DAILY_REPORTS_CHART_ENABLED %}
+<link href="{{ url_for('static', filename='css/c3.min.css') }}" rel="stylesheet">
+{% endif %}
+{% endblock head %}
 {% block content %}
 <div class='ui two column grid'>
   <div class='column'>
@@ -28,6 +33,11 @@
     </div>
     <div class='row'>
       <h1>Reports</h1>
+  {% if config.DAILY_REPORTS_CHART_ENABLED %}
+  <div id="dailyReportsChartContainer" class="one column row">
+    <div id="dailyReportsChart" data-certname="{{node.name}}"></div>
+  </div>
+  {% endif %}
       {{ macros.reports_table(reports, reports_count, report_event_counts, condensed=True, hash_truncate=True, show_conf_col=False, show_agent_col=False, show_host_col=False, current_env=current_env)}}
       <a href="{{url_for('reports_node', node_name=node.name)}}">Show All</a>
     </div>
@@ -38,3 +48,10 @@
   </div>
 </div>
 {% endblock content %}
+{% if config.DAILY_REPORTS_CHART_ENABLED %}
+{% block script %}
+<script src="{{url_for('static', filename='js/d3.min.js')}}"></script>
+<script src="{{url_for('static', filename='js/c3.min.js')}}"></script>
+<script src="{{url_for('static', filename='js/dailychart.js')}}"></script>
+{% endblock script %}
+{% endif %}

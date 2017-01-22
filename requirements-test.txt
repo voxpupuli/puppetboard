@@ -6,3 +6,4 @@ pytest-pep8==1.0.5
 pytest-cov==2.2.1
 cov-core==1.15.0
 unittest2==1.1.0; python_version < '2.7'
+bandit

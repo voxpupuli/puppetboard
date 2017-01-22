@@ -38,3 +38,5 @@ INVENTORY_FACTS = [('Hostname', 'fqdn'),
                    ('Kernel Version', 'kernelrelease'),
                    ('Puppet Version', 'puppetversion'), ]
 REFRESH_RATE = 30
+DAILY_REPORTS_CHART_ENABLED = True
+DAILY_REPORTS_CHART_DAYS = 8
