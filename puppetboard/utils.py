@@ -24,6 +24,26 @@ def jsonprint(value):
     return json.dumps(value, indent=2, separators=(',', ': '))
 
 
+def get_db_version(puppetdb):
+    '''
+    Get the version of puppetdb.  Version form 3.2 query
+    interface is slightly different on mbeans
+    '''
+    ver = ()
+    try:
+        (major, minor, build) = [int(x) for x in
+                                 puppetdb.current_version().split('.')]
+        ver = (major, minor, build)
+        log.info("PuppetDB Version %d.%d.%d" % (major, minor, build))
+    except HTTPError as e:
+        log.error(str(e))
+    except ConnectionError as e:
+        log.error(str(e))
+    except EmptyResponseError as e:
+        log.error(str(e))
+    return ver
+
+
 def formatvalue(value):
     if isinstance(value, str):
         return value
