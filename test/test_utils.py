@@ -14,7 +14,7 @@ from puppetboard import utils
 from puppetboard import app
 from puppetboard.app import NoContent
 
-
+from bs4 import BeautifulSoup
 import logging
 
 
@@ -52,6 +52,15 @@ def test_get():
         return x
 
     assert x == utils.get_or_abort(test_get_or_abort)
+
+
+def test_pretty_print():
+    test_data = [{'hello': 'world'}]
+
+    html = utils.prettyprint(test_data)
+    soup = BeautifulSoup(html, 'html.parser')
+
+    assert soup.th.text == 'hello'
 
 
 @pytest.fixture
