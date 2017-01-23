@@ -14,6 +14,14 @@ class MockDbQuery(object):
         resp = None
         if method in self.responses:
             resp = self.responses[method].pop(0)
+
+            if 'validate' in resp:
+                checks = resp['validate']['checks']
+                resp = resp['validate']['data']
+                for check in checks:
+                    assert check in kws
+                    expected_value = checks[check]
+                    assert expected_value == kws[check]
         return resp
 
 
@@ -70,6 +78,56 @@ def test_get_index(client, mocker,
     rv = client.get('/')
     soup = BeautifulSoup(rv.data, 'html.parser')
     assert soup.title.contents[0] == 'Puppetboard'
+    assert rv.status_code == 200
+
+
+def test_index_all(client, mocker,
+                   mock_puppetdb_environments,
+                   mock_puppetdb_default_nodes):
+
+    base_str = 'puppetlabs.puppetdb.population:'
+    query_data = {
+        'mbean': [
+            {
+                'validate': {
+                    'data': {'Value': '50'},
+                    'checks': {
+                        'path': '%sname=num-nodes' % base_str
+                    }
+                }
+            },
+            {
+                'validate': {
+                    'data': {'Value': '60'},
+                    'checks': {
+                        'path': '%sname=num-resources' % base_str
+                    }
+                }
+            },
+            {
+                'validate': {
+                    'data': {'Value': 60.3},
+                    'checks': {
+                        'path': '%sname=avg-resources-per-node' % base_str
+                    }
+                }
+            }
+        ]
+    }
+    dbquery = MockDbQuery(query_data)
+    mocker.patch.object(app.puppetdb, '_query', side_effect=dbquery.get)
+    rv = client.get('/%2A/')
+
+    soup = BeautifulSoup(rv.data, 'html.parser')
+    assert soup.title.contents[0] == 'Puppetboard'
+    vals = soup.find_all('h1',
+                         {"class": "ui header darkblue no-margin-bottom"})
+
+    assert len(vals) == 3
+    assert vals[0].string == '50'
+    assert vals[1].string == '60'
+    assert vals[2].string == '        60'
+
     assert rv.status_code == 200
 
 
