@@ -1,4 +1,5 @@
 import pytest
+import json
 from puppetboard import app
 from pypuppetdb.types import Node
 from puppetboard import default_settings
@@ -61,7 +62,19 @@ def mock_puppetdb_default_nodes(mocker):
              latest_report_hash='1234567',
              catalog_timestamp='2013-08-01T09:57:00.000Z',
              facts_timestamp='2013-08-01T09:57:00.000Z',
-             status='noop')
+             status='noop'),
+        Node('_', 'node-unchanged',
+             report_timestamp='2013-08-01T09:57:00.000Z',
+             latest_report_hash='1234567',
+             catalog_timestamp='2013-08-01T09:57:00.000Z',
+             facts_timestamp='2013-08-01T09:57:00.000Z',
+             status='unchanged'),
+        Node('_', 'node-skipped',
+             report_timestamp='2013-08-01T09:57:00.000Z',
+             latest_report_hash='1234567',
+             catalog_timestamp='2013-08-01T09:57:00.000Z',
+             facts_timestamp='2013-08-01T09:57:00.000Z',
+             status='skipped')
 
     ]
     return mocker.patch.object(app.puppetdb, 'nodes',
@@ -217,6 +230,31 @@ def test_radiator_view(client, mocker,
     total = soup.find(class_='total')
 
     assert '10' in total.text
+
+
+def test_radiator_view_json(client, mocker,
+                            mock_puppetdb_environments,
+                            mock_puppetdb_default_nodes):
+    query_data = {
+        'nodes': [[{'count': 10}]],
+        'resources': [[{'count': 40}]],
+    }
+
+    dbquery = MockDbQuery(query_data)
+
+    mocker.patch.object(app.puppetdb, '_query', side_effect=dbquery.get)
+
+    rv = client.get('/radiator', headers={'Accept': 'application/json'})
+
+    assert rv.status_code == 200
+    json_data = json.loads(rv.data.decode('utf-8'))
+
+    assert json_data['unreported'] == 1
+    assert json_data['noop'] == 1
+    assert json_data['failed'] == 1
+    assert json_data['changed'] == 1
+    assert json_data['skipped'] == 1
+    assert json_data['unchanged'] == 1
 
 
 def test_radiator_view_bad_env(client, mocker):
