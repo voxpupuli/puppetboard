@@ -38,14 +38,34 @@ def mock_puppetdb_environments(mocker):
 @pytest.fixture
 def mock_puppetdb_default_nodes(mocker):
     node_list = [
-        Node('_', 'node',
+        Node('_', 'node-unreported',
              report_timestamp='2013-08-01T09:57:00.000Z',
              latest_report_hash='1234567',
              catalog_timestamp='2013-08-01T09:57:00.000Z',
-             facts_timestamp='2013-08-01T09:57:00.000Z',)
+             facts_timestamp='2013-08-01T09:57:00.000Z',
+             status='unreported'),
+        Node('_', 'node-changed',
+             report_timestamp='2013-08-01T09:57:00.000Z',
+             latest_report_hash='1234567',
+             catalog_timestamp='2013-08-01T09:57:00.000Z',
+             facts_timestamp='2013-08-01T09:57:00.000Z',
+             status='changed'),
+        Node('_', 'node-failed',
+             report_timestamp='2013-08-01T09:57:00.000Z',
+             latest_report_hash='1234567',
+             catalog_timestamp='2013-08-01T09:57:00.000Z',
+             facts_timestamp='2013-08-01T09:57:00.000Z',
+             status='failed'),
+        Node('_', 'node-noop',
+             report_timestamp='2013-08-01T09:57:00.000Z',
+             latest_report_hash='1234567',
+             catalog_timestamp='2013-08-01T09:57:00.000Z',
+             facts_timestamp='2013-08-01T09:57:00.000Z',
+             status='noop')
+
     ]
     return mocker.patch.object(app.puppetdb, 'nodes',
-                               return_value=node_list)
+                               return_value=iter(node_list))
 
 
 @pytest.fixture
