@@ -1115,6 +1115,10 @@ def radiator(env):
         stats['unchanged_percent'] = 0
         stats['unreported_percent'] = 0
 
+    if ('Accept' in request.headers and
+            request.headers["Accept"] == 'application/json'):
+        return jsonify(**stats)
+
     return render_template(
         'radiator.html',
         stats=stats,
