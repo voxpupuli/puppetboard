@@ -1,7 +1,8 @@
+import pytest
 import os
 from puppetboard import docker_settings
-import unittest
-import tempfile
+from puppetboard import app
+
 try:
     import future.utils
 except:
@@ -13,80 +14,95 @@ except:
     pass
 
 
-class DockerTestCase(unittest.TestCase):
-    def setUp(self):
-        for env_var in dir(docker_settings):
-            if (env_var.startswith('__') or env_var.startswith('_') or
-                    env_var.islower()):
-                continue
+@pytest.fixture(scope='function')
+def cleanUpEnv(request):
+    for env_var in dir(docker_settings):
+        if (env_var.startswith('__') or env_var.startswith('_') or
+                env_var.islower()):
+            continue
 
-            if env_var in os.environ:
-                del os.environ[env_var]
-        reload(docker_settings)
-
-    def test_default_host_port(self):
-        self.assertEqual(docker_settings.PUPPETDB_HOST, 'puppetdb')
-        self.assertEqual(docker_settings.PUPPETDB_PORT, 8080)
-
-    def test_set_host_port(self):
-        os.environ['PUPPETDB_HOST'] = 'puppetdb'
-        os.environ['PUPPETDB_PORT'] = '9081'
-        reload(docker_settings)
-        self.assertEqual(docker_settings.PUPPETDB_HOST, 'puppetdb')
-        self.assertEqual(docker_settings.PUPPETDB_PORT, 9081)
-
-    def test_cert_true_test(self):
-        os.environ['PUPPETDB_SSL_VERIFY'] = 'True'
-        reload(docker_settings)
-        self.assertTrue(docker_settings.PUPPETDB_SSL_VERIFY)
-        os.environ['PUPPETDB_SSL_VERIFY'] = 'true'
-        reload(docker_settings)
-        self.assertTrue(docker_settings.PUPPETDB_SSL_VERIFY)
-
-    def test_cert_false_test(self):
-        os.environ['PUPPETDB_SSL_VERIFY'] = 'False'
-        reload(docker_settings)
-        self.assertFalse(docker_settings.PUPPETDB_SSL_VERIFY)
-        os.environ['PUPPETDB_SSL_VERIFY'] = 'false'
-        reload(docker_settings)
-        self.assertFalse(docker_settings.PUPPETDB_SSL_VERIFY)
-
-    def test_cert_path(self):
-        ca_file = '/usr/ssl/path/ca.pem'
-        os.environ['PUPPETDB_SSL_VERIFY'] = ca_file
-        reload(docker_settings)
-        self.assertEqual(docker_settings.PUPPETDB_SSL_VERIFY, ca_file)
-
-    def validate_facts(self, facts):
-        self.assertEqual(type(facts), type([]))
-        self.assertTrue(len(facts) > 0)
-        for map in facts:
-            self.assertEqual(type(map), type(()))
-            self.assertTrue(len(map) == 2)
-
-    def test_inventory_facts_default(self):
-        self.validate_facts(docker_settings.INVENTORY_FACTS)
-
-    def test_invtory_facts_custom(self):
-        os.environ['INVENTORY_FACTS'] = "A, B, C, D"
-        reload(docker_settings)
-        self.validate_facts(docker_settings.INVENTORY_FACTS)
-
-    def test_graph_facts_defautl(self):
-        facts = docker_settings.GRAPH_FACTS
-        self.assertEqual(type(facts), type([]))
-        self.assertTrue('puppetversion' in facts)
-
-    def test_graph_facts_custom(self):
-        os.environ['GRAPH_FACTS'] = "architecture, puppetversion, extra"
-        reload(docker_settings)
-        facts = docker_settings.GRAPH_FACTS
-        self.assertEqual(type(facts), type([]))
-        self.assertEqual(len(facts), 3)
-        self.assertTrue('puppetversion' in facts)
-        self.assertTrue('architecture' in facts)
-        self.assertTrue('extra' in facts)
+        if env_var in os.environ:
+            del os.environ[env_var]
+    reload(docker_settings)
+    return
 
 
-if __name__ == '__main__':
-    unittest.main()
+def test_default_host_port(cleanUpEnv):
+    assert docker_settings.PUPPETDB_HOST == 'puppetdb'
+    assert docker_settings.PUPPETDB_PORT == 8080
+
+
+def test_set_host_port(cleanUpEnv):
+    os.environ['PUPPETDB_HOST'] = 'puppetdb2'
+    os.environ['PUPPETDB_PORT'] = '9081'
+    reload(docker_settings)
+    assert docker_settings.PUPPETDB_HOST == 'puppetdb2'
+    assert docker_settings.PUPPETDB_PORT == 9081
+
+
+def test_cert_true_test(cleanUpEnv):
+    os.environ['PUPPETDB_SSL_VERIFY'] = 'True'
+    reload(docker_settings)
+    assert docker_settings.PUPPETDB_SSL_VERIFY is True
+    os.environ['PUPPETDB_SSL_VERIFY'] = 'true'
+    reload(docker_settings)
+    assert docker_settings.PUPPETDB_SSL_VERIFY is True
+
+
+def test_cert_false_test(cleanUpEnv):
+    os.environ['PUPPETDB_SSL_VERIFY'] = 'False'
+    reload(docker_settings)
+    assert docker_settings.PUPPETDB_SSL_VERIFY is False
+    os.environ['PUPPETDB_SSL_VERIFY'] = 'false'
+    reload(docker_settings)
+    assert docker_settings.PUPPETDB_SSL_VERIFY is False
+
+
+def test_cert_path(cleanUpEnv):
+    ca_file = '/usr/ssl/path/ca.pem'
+    os.environ['PUPPETDB_SSL_VERIFY'] = ca_file
+    reload(docker_settings)
+    assert docker_settings.PUPPETDB_SSL_VERIFY == ca_file
+
+
+def validate_facts(facts):
+    assert isinstance(facts, list)
+    assert len(facts) > 0
+    for map in facts:
+        assert isinstance(map, tuple)
+        assert len(map) == 2
+
+
+def test_inventory_facts_default(cleanUpEnv):
+    validate_facts(docker_settings.INVENTORY_FACTS)
+
+
+def test_invtory_facts_custom(cleanUpEnv):
+    os.environ['INVENTORY_FACTS'] = "A, B, C, D"
+    reload(docker_settings)
+    validate_facts(docker_settings.INVENTORY_FACTS)
+
+
+def test_graph_facts_defautl(cleanUpEnv):
+    facts = docker_settings.GRAPH_FACTS
+    assert isinstance(facts, list)
+    assert 'puppetversion' in facts
+
+
+def test_graph_facts_custom(cleanUpEnv):
+    os.environ['GRAPH_FACTS'] = "architecture, puppetversion, extra"
+    reload(docker_settings)
+    facts = docker_settings.GRAPH_FACTS
+    assert isinstance(facts, list)
+    assert len(facts) == 3
+    assert 'puppetversion' in facts
+    assert 'architecture' in facts
+    assert 'extra' in facts
+
+
+def test_bad_log_value(cleanUpEnv):
+    os.environ['LOGLEVEL'] = 'g'
+    os.environ['PUPPETBOARD_SETTINGS'] = '../puppetboard/docker_settings.py'
+    reload(docker_settings)
+    with pytest.raises(ValueError) as error:
+        reload(app)
