@@ -68,6 +68,18 @@ def mock_log(mocker):
     return mocker.patch('logging.log')
 
 
+@pytest.fixture
+def mock_info_log(mocker):
+    logger = logging.getLogger('puppetboard.utils')
+    return mocker.patch.object(logger, 'info')
+
+
+@pytest.fixture
+def mock_err_log(mocker):
+    logger = logging.getLogger('puppetboard.utils')
+    return mocker.patch.object(logger, 'error')
+
+
 def test_http_error(mock_log):
     err = "NotFound"
 
@@ -107,6 +119,73 @@ def test_http_empty(mock_log, mocker):
         utils.get_or_abort(connection_error)
         mock_log.error.assert_called_with(err)
         flask_abort.assert_called_with('204')
+
+
+def test_db_version_good(mocker, mock_info_log):
+    mocker.patch.object(app.puppetdb, 'current_version', return_value='4.2.0')
+    err = 'PuppetDB Version %d.%d.%d' % (4, 2, 0)
+    result = utils.get_db_version(app.puppetdb)
+    mock_info_log.assert_called_with(err)
+    assert (4, 0, 0) < result
+    assert (4, 2, 0) == result
+    assert (3, 2, 0) < result
+    assert (4, 3, 0) > result
+    assert (5, 0, 0) > result
+    assert (4, 2, 1) > result
+
+
+def test_db_invalid_version(mocker, mock_err_log):
+    mocker.patch.object(app.puppetdb, 'current_version', return_value='4')
+    err = u"Unable to determine version from string: '%s'" % (4)
+    result = utils.get_db_version(app.puppetdb)
+    mock_err_log.assert_called_with(err)
+    assert (4, 0, 0) < result
+    assert (4, 2, 0) == result
+
+
+def test_db_http_error(mocker, mock_err_log):
+    err = "NotFound"
+
+    def raise_http_error():
+        x = Response()
+        x.status_code = 404
+        x.reason = err
+        raise HTTPError(err, response=x)
+
+    mocker.patch.object(app.puppetdb, 'current_version',
+                        side_effect=raise_http_error)
+    result = utils.get_db_version(app.puppetdb)
+    mock_err_log.assert_called_with(err)
+    assert result == ()
+
+
+def test_db_connection_error(mocker, mock_err_log):
+    err = "ConnectionError"
+
+    def connection_error():
+        x = Response()
+        x.status_code = 500
+        x.reason = err
+        raise ConnectionError(err, response=x)
+
+    mocker.patch.object(app.puppetdb, 'current_version',
+                        side_effect=connection_error)
+    result = utils.get_db_version(app.puppetdb)
+    mock_err_log.assert_called_with(err)
+    assert result == ()
+
+
+def test_db_empty_response(mocker, mock_err_log):
+    err = "Empty Response"
+
+    def connection_error():
+        raise EmptyResponseError(err)
+
+    mocker.patch.object(app.puppetdb, 'current_version',
+                        side_effect=connection_error)
+    result = utils.get_db_version(app.puppetdb)
+    mock_err_log.assert_called_with(err)
+    assert result == ()
 
 
 def test_iter():

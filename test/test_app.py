@@ -131,6 +131,58 @@ def test_index_all(client, mocker,
 
     base_str = 'puppetlabs.puppetdb.population:'
     query_data = {
+        'version': [{'version': '4.2.0'}],
+        'mbean': [
+            {
+                'validate': {
+                    'data': {'Value': '50'},
+                    'checks': {
+                        'path': '%sname=num-nodes' % base_str
+                    }
+                }
+            },
+            {
+                'validate': {
+                    'data': {'Value': '60'},
+                    'checks': {
+                        'path': '%sname=num-resources' % base_str
+                    }
+                }
+            },
+            {
+                'validate': {
+                    'data': {'Value': 60.3},
+                    'checks': {
+                        'path': '%sname=avg-resources-per-node' % base_str
+                    }
+                }
+            }
+        ]
+    }
+    dbquery = MockDbQuery(query_data)
+    mocker.patch.object(app.puppetdb, '_query', side_effect=dbquery.get)
+    rv = client.get('/%2A/')
+
+    soup = BeautifulSoup(rv.data, 'html.parser')
+    assert soup.title.contents[0] == 'Puppetboard'
+    vals = soup.find_all('h1',
+                         {"class": "ui header darkblue no-margin-bottom"})
+
+    assert len(vals) == 3
+    assert vals[0].string == '50'
+    assert vals[1].string == '60'
+    assert vals[2].string == '        60'
+
+    assert rv.status_code == 200
+
+
+def test_index_all_older_puppetdb(client, mocker,
+                                  mock_puppetdb_environments,
+                                  mock_puppetdb_default_nodes):
+
+    base_str = 'puppetlabs.puppetdb.population:type=default,'
+    query_data = {
+        'version': [{'version': '3.2.0'}],
         'mbean': [
             {
                 'validate': {
@@ -267,6 +319,106 @@ def test_radiator_view(client, mocker,
     total = soup.find(class_='total')
 
     assert '10' in total.text
+
+
+def test_radiator_view_all(client, mocker,
+                           mock_puppetdb_environments,
+                           mock_puppetdb_default_nodes):
+    base_str = 'puppetlabs.puppetdb.population:'
+    query_data = {
+        'version': [{'version': '4.2.0'}],
+        'mbean': [
+            {
+                'validate': {
+                    'data': {'Value': '50'},
+                    'checks': {
+                        'path': '%sname=num-nodes' % base_str
+                    }
+                }
+            },
+            {
+                'validate': {
+                    'data': {'Value': '60'},
+                    'checks': {
+                        'path': '%sname=num-resources' % base_str
+                    }
+                }
+            },
+            {
+                'validate': {
+                    'data': {'Value': 60.3},
+                    'checks': {
+                        'path': '%sname=avg-resources-per-node' % base_str
+                    }
+                }
+            }
+        ]
+    }
+
+    dbquery = MockDbQuery(query_data)
+
+    mocker.patch.object(app.puppetdb, '_query', side_effect=dbquery.get)
+
+    rv = client.get('/%2A/radiator')
+
+    assert rv.status_code == 200
+
+    soup = BeautifulSoup(rv.data, 'html.parser')
+    assert soup.title.contents[0] == 'Puppetboard'
+    assert soup.h1 != 'Not Found'
+    total = soup.find(class_='total')
+
+    assert '50' in total.text
+
+
+def test_radiator_view_all_old_version(client, mocker,
+                                       mock_puppetdb_environments,
+                                       mock_puppetdb_default_nodes):
+    base_str = 'puppetlabs.puppetdb.population:type=default,'
+    query_data = {
+        'version': [{'version': '3.2.0'}],
+        'mbean': [
+            {
+                'validate': {
+                    'data': {'Value': '50'},
+                    'checks': {
+                        'path': '%sname=num-nodes' % base_str
+                    }
+                }
+            },
+            {
+                'validate': {
+                    'data': {'Value': '60'},
+                    'checks': {
+                        'path': '%sname=num-resources' % base_str
+                    }
+                }
+            },
+            {
+                'validate': {
+                    'data': {'Value': 60.3},
+                    'checks': {
+                        'path': '%sname=avg-resources-per-node' % base_str
+                    }
+                }
+            }
+        ]
+    }
+
+    dbquery = MockDbQuery(query_data)
+
+    mocker.patch.object(app.puppetdb, '_query', side_effect=dbquery.get)
+
+    rv = client.get('/%2A/radiator')
+
+    assert rv.status_code == 200
+
+    soup = BeautifulSoup(rv.data, 'html.parser')
+    assert soup.title.contents[0] == 'Puppetboard'
+    assert soup.h1 != 'Not Found'
+    total = soup.find(class_='total')
+
+    assert '50' in total.text
 
 
 def test_radiator_view_json(client, mocker,
