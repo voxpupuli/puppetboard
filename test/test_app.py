@@ -164,6 +164,32 @@ def test_index_all(client, mocker,
     assert rv.status_code == 200
 
 
+def test_index_division_by_zero(client, mocker):
+    mock_puppetdb_environments(mocker)
+    mock_puppetdb_default_nodes(mocker)
+
+    query_data = {
+        'nodes': [[{'count': 0}]],
+        'resources': [[{'count': 40}]],
+    }
+
+    dbquery = MockDbQuery(query_data)
+
+    mocker.patch.object(app.puppetdb, '_query', side_effect=dbquery.get)
+
+    rv = client.get('/')
+
+    assert rv.status_code == 200
+
+    soup = BeautifulSoup(rv.data, 'html.parser')
+    assert soup.title.contents[0] == 'Puppetboard'
+
+    vals = soup.find_all('h1',
+                         {"class": "ui header darkblue no-margin-bottom"})
+    assert len(vals) == 3
+    assert vals[2].string == '0'
+
+
 def test_offline_mode(client, mocker):
     app.app.config['OFFLINE_MODE'] = True
 
