@@ -28,6 +28,7 @@ setup(
     description='Web frontend for PuppetDB',
     include_package_data=True,
     long_description='\n'.join((README, CHANGELOG)),
+    zip_safe=False,
     install_requires=[
         "Flask >= 0.10.1",
         "Flask-WTF >= 0.12, <= 0.13",
