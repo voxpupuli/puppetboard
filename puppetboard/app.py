@@ -534,16 +534,17 @@ def reports_ajax(env, node_name):
         report_counts = {'successes': 0, 'failures': 0, 'skips': 0}
 
         if report.status != 'unchanged':
-            events_count = get_or_abort(
+            counts = get_or_abort(
                 puppetdb.event_counts, summarize_by='certname',
                 query=EqualsOperator('report', report.hash_))
 
-            report_counts['successes'] = events_count[0].get('successes', None)
-            report_counts['failures'] = events_count[0].get('failures', None)
-            if report.status == 'noop':
-                report_counts['skips'] = events_count[0].get('noops', None)
-            else:
-                report_counts['skips'] = events_count[0].get('skips', None)
+            if len(counts) > 0:
+                report_counts['successes'] = counts[0].get('successes', None)
+                report_counts['failures'] = counts[0].get('failures', None)
+                if report.status == 'noop':
+                    report_counts['skips'] = counts[0].get('noops', None)
+                else:
+                    report_counts['skips'] = counts[0].get('skips', None)
 
         report_event_counts[report.hash_] = report_counts
 
