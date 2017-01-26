@@ -527,24 +527,22 @@ def reports_ajax(env, node_name):
         total = 0
 
     report_event_counts = {}
+    # Create a map from the metrics data to what the templates
+    # use to express the data.
+    report_map = {
+        'success': 'successes',
+        'failure': 'failures',
+        'skipped': 'skips'
+    }
     for report in reports_events:
         if total is None:
             total = puppetdb.total
 
         report_counts = {'successes': 0, 'failures': 0, 'skips': 0}
-
-        if report.status != 'unchanged':
-            counts = get_or_abort(
-                puppetdb.event_counts, summarize_by='certname',
-                query=EqualsOperator('report', report.hash_))
-
-            if len(counts) > 0:
-                report_counts['successes'] = counts[0].get('successes', None)
-                report_counts['failures'] = counts[0].get('failures', None)
-                if report.status == 'noop':
-                    report_counts['skips'] = counts[0].get('noops', None)
-                else:
-                    report_counts['skips'] = counts[0].get('skips', None)
+        for metrics in report.metrics:
+            if 'name' in metrics and metrics['name'] in report_map:
+                key_name = report_map[metrics['name']]
+                report_counts[key_name] = metrics['value']
 
         report_event_counts[report.hash_] = report_counts
 
