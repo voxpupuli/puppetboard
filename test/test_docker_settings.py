@@ -106,3 +106,13 @@ def test_bad_log_value(cleanUpEnv):
     reload(docker_settings)
     with pytest.raises(ValueError) as error:
         reload(app)
+
+
+def test_default_table_selctor(cleanUpEnv):
+    assert [10, 20, 50, 100, 500] == docker_settings.TABLE_COUNT_SELECTOR
+
+
+def test_env_table_selector(cleanUpEnv):
+    os.environ['TABLE_COUNT_SELECTOR'] = '5,15,25'
+    reload(docker_settings)
+    assert [5, 15, 25] == docker_settings.TABLE_COUNT_SELECTOR
