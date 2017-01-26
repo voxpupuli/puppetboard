@@ -1,7 +1,8 @@
 import pytest
 import json
+import os
 from puppetboard import app
-from pypuppetdb.types import Node
+from pypuppetdb.types import Node, Report
 from puppetboard import default_settings
 
 from bs4 import BeautifulSoup
@@ -79,6 +80,16 @@ def mock_puppetdb_default_nodes(mocker):
     ]
     return mocker.patch.object(app.puppetdb, 'nodes',
                                return_value=iter(node_list))
+
+
+@pytest.fixture
+def input_data(request):
+    data_path = os.path.join(os.path.dirname(os.path.realpath(__file__)),
+                             'data')
+    data = None
+    with open('%s/%s' % (data_path, request.function.__name__), "r") as fp:
+        data = fp.read()
+    return data
 
 
 @pytest.fixture
@@ -326,3 +337,37 @@ def test_radiator_view_division_by_zero(client, mocker):
 
     total = soup.find(class_='total')
     assert '0' in total.text
+
+
+def test_json_report_ok(client, mocker, input_data):
+    mock_puppetdb_environments(mocker)
+    mock_puppetdb_default_nodes(mocker)
+
+    query_response = json.loads(input_data)
+
+    query_data = {
+        'reports': [
+            {
+                'validate': {
+                    'data': query_response[:100],
+                    'checks': {
+                        'limit': 100,
+                        'offset': 0
+                    }
+                }
+            }
+        ]
+    }
+
+    dbquery = MockDbQuery(query_data)
+
+    mocker.patch.object(app.puppetdb, '_query', side_effect=dbquery.get)
+    app.puppetdb.last_total = 499
+
+    rv = client.get('/reports/json')
+
+    assert rv.status_code == 200
+    result_json = json.loads(rv.data.decode('utf-8'))
+
+    assert 'data' in result_json
+    assert len(result_json['data']) == 100

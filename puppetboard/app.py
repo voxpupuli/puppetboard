@@ -417,13 +417,12 @@ def node(env, node_name):
         columns=REPORTS_COLUMNS[:2])
 
 
-@app.route(
-    '/reports/',
-    defaults={'env': app.config['DEFAULT_ENVIRONMENT'], 'node_name': None})
+@app.route('/reports/',
+           defaults={'env': app.config['DEFAULT_ENVIRONMENT'],
+                     'node_name': None})
 @app.route('/<env>/reports/', defaults={'node_name': None})
-@app.route(
-    '/reports/<node_name>/',
-    defaults={'env': app.config['DEFAULT_ENVIRONMENT']})
+@app.route('/reports/<node_name>/',
+           defaults={'env': app.config['DEFAULT_ENVIRONMENT']})
 @app.route('/<env>/reports/<node_name>')
 def reports(env, node_name):
     """Query and Return JSON data to reports Jquery datatable
@@ -441,13 +440,12 @@ def reports(env, node_name):
         columns=REPORTS_COLUMNS)
 
 
-@app.route(
-    '/reports/json',
-    defaults={'env': app.config['DEFAULT_ENVIRONMENT'], 'node_name': None})
+@app.route('/reports/json',
+           defaults={'env': app.config['DEFAULT_ENVIRONMENT'],
+                     'node_name': None})
 @app.route('/<env>/reports/json', defaults={'node_name': None})
-@app.route(
-    '/reports/<node_name>/json',
-    defaults={'env': app.config['DEFAULT_ENVIRONMENT']})
+@app.route('/reports/<node_name>/json',
+           defaults={'env': app.config['DEFAULT_ENVIRONMENT']})
 @app.route('/<env>/reports/<node_name>/json')
 def reports_ajax(env, node_name):
     """Query and Return JSON data to reports Jquery datatable
@@ -457,15 +455,16 @@ def reports_ajax(env, node_name):
     """
     draw = int(request.args.get('draw', 0))
     start = int(request.args.get('start', 0))
-    length = int(request.args.get('length'))
+    length = int(request.args.get('length', app.config['NORMAL_TABLE_COUNT']))
     paging_args = {'limit': length, 'offset': start}
     search_arg = request.args.get('search[value]')
-    order_column = int(request.args.get('order[0][column]'))
+    order_column = int(request.args.get('order[0][column]', 0))
     order_filter = REPORTS_COLUMNS[order_column].get(
         'filter', REPORTS_COLUMNS[order_column]['attr'])
     order_dir = request.args.get('order[0][dir]')
     order_args = '[{"field": "%s", "order": "%s"}]' % (order_filter, order_dir)
-    status_args = request.args.get('columns[1][search][value]').split('|')
+    status_args = request.args.get('columns[1][search][value]', '').split('|')
+    max_col = len(REPORTS_COLUMNS)
     for i in range(len(REPORTS_COLUMNS)):
         if request.args.get("columns[%s][data]" % i, None):
             max_col = i + 1
@@ -527,24 +526,22 @@ def reports_ajax(env, node_name):
         total = 0
 
     report_event_counts = {}
+    # Create a map from the metrics data to what the templates
+    # use to express the data.
+    report_map = {
+        'success': 'successes',
+        'failure': 'failures',
+        'skipped': 'skips'
+    }
     for report in reports_events:
         if total is None:
             total = puppetdb.total
 
         report_counts = {'successes': 0, 'failures': 0, 'skips': 0}
-
-        if report.status != 'unchanged':
-            counts = get_or_abort(
-                puppetdb.event_counts, summarize_by='certname',
-                query=EqualsOperator('report', report.hash_))
-
-            if len(counts) > 0:
-                report_counts['successes'] = counts[0].get('successes', None)
-                report_counts['failures'] = counts[0].get('failures', None)
-                if report.status == 'noop':
-                    report_counts['skips'] = counts[0].get('noops', None)
-                else:
-                    report_counts['skips'] = counts[0].get('skips', None)
+        for metrics in report.metrics:
+            if 'name' in metrics and metrics['name'] in report_map:
+                key_name = report_map[metrics['name']]
+                report_counts[key_name] = metrics['value']
 
         report_event_counts[report.hash_] = report_counts
 
