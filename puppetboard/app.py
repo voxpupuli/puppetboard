@@ -862,9 +862,9 @@ def metrics(env):
                            current_env=env)
 
 
-@app.route('/metric/<metric>',
+@app.route('/metric/<path:metric>',
            defaults={'env': app.config['DEFAULT_ENVIRONMENT']})
-@app.route('/<env>/metric/<metric>')
+@app.route('/<env>/metric/<path:metric>')
 def metric(env, metric):
     """Lists all information about the metric of the given name.
 
@@ -876,7 +876,7 @@ def metric(env, metric):
     check_env(env, envs)
 
     name = unquote(metric)
-    metric = puppetdb.metric(metric)
+    metric = get_or_abort(puppetdb.metric, metric)
     return render_template(
         'metric.html',
         name=name,
