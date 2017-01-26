@@ -531,7 +531,8 @@ def reports_ajax(env, node_name):
     report_map = {
         'success': 'successes',
         'failure': 'failures',
-        'skipped': 'skips'
+        'skipped': 'skips',
+        'noops': 'noop'
     }
     for report in reports_events:
         if total is None:
