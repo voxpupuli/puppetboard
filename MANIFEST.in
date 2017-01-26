@@ -2,4 +2,4 @@ include README.rst
 include CHANGELOG.rst
 include LICENSE
 recursive-include puppetboard/static *.css *.js *icons.* Open_Sans.woff
-recursive-include puppetboard/templates *.html
+recursive-include puppetboard/templates *.html *.json.tpl

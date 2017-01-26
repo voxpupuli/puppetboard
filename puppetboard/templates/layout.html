@@ -12,11 +12,43 @@
         src: local('Open Sans'), local('OpenSans'), url({{ url_for('static', filename='fonts/Open_Sans.woff') }}) format('woff');
       }
     </style>
+    <link href='{{ url_for('static', filename='jquery-datatables-1.10.13/dataTables.semanticui.min.css') }}' rel='stylesheet' type='text/css'>
     {% else %}
     <link href='//fonts.googleapis.com/css?family=Open+Sans' rel='stylesheet' type='text/css' />
+    <link href='//cdnjs.cloudflare.com/ajax/libs/datatables/1.10.13/css/dataTables.semanticui.min.css' rel='stylesheet' type='text/css'>
     {% endif %}
     <link href="{{ url_for('static', filename='Semantic-UI-2.1.8/semantic.min.css') }}" rel="stylesheet" />
     <link href="{{ url_for('static', filename='css/puppetboard.css') }}" rel="stylesheet" />
+
+    {% if config.OFFLINE_MODE %}
+      <script src="{{ url_for('static', filename='jquery-2.1.1/jquery.min.js') }}"></script>
+      <script src="{{ url_for('static', filename='jquery-datatables-1.10.13/jquery.dataTables.min.js') }}"></script>
+      <script src="{{ url_for('static', filename='jquery-datatables-1.10.13/dataTables.semanticui.min.js') }}"></script>
+      {% if config.LOCALISE_TIMESTAMP %}
+      <script src="{{ url_for('static', filename='moment.js-2.7.0/moment.min.js') }}"></script>
+      {% endif %}
+    {% else %}
+      <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+      <script src="//cdnjs.cloudflare.com/ajax/libs/datatables/1.10.13/js/jquery.dataTables.min.js"></script>
+      <script src="//cdnjs.cloudflare.com/ajax/libs/datatables/1.10.13/js/dataTables.semanticui.min.js"></script>
+      {% if config.LOCALISE_TIMESTAMP %}
+        <script src="//cdnjs.cloudflare.com/ajax/libs/moment.js/2.7.0/moment.min.js"></script>
+      {% endif %}
+    {% endif %}
+    {% if config.LOCALISE_TIMESTAMP %}
+      <script src="{{ url_for('static', filename='js/timestamps.js')}}"></script>
+    {% endif %}
+    <script src="{{ url_for('static', filename='Semantic-UI-2.1.8/semantic.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/lists.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/scroll.top.js') }}"></script>
+    <script type="text/javascript">
+      $(document).ready(function(){
+          $(".ui.dropdown").dropdown();
+          {% block onload_script %} {% endblock onload_script %}
+
+        })
+    </script>
+    {% block script %} {% endblock script %}
     {% block head %} {% endblock head %}
   </head>
 
@@ -68,31 +100,5 @@
         Copyright &copy; 2013-{{ now('%Y') }} <a href="https://github.com/voxpupuli" target="_blank">Puppet Community</a>. <span style="float:right">Live from PuppetDB.</span>
       </div>
     </footer>
-
-    {% if config.OFFLINE_MODE %}
-    <script src="{{ url_for('static', filename='jquery-2.1.1/jquery.min.js') }}"></script>
-    {% if config.LOCALISE_TIMESTAMP %}
-      <script src="{{ url_for('static', filename='moment.js-2.7.0/moment.min.js') }}"></script>
-    {% endif %}
-    {% else %}
-    <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
-    {% if config.LOCALISE_TIMESTAMP %}
-      <script src="//cdnjs.cloudflare.com/ajax/libs/moment.js/2.7.0/moment.min.js"></script>
-    {% endif %}
-    {% endif %}
-    {% if config.LOCALISE_TIMESTAMP %}
-      <script src="{{ url_for('static', filename='js/timestamps.js')}}"></script>
-    {% endif %}
-    <script src="{{ url_for('static', filename='Semantic-UI-2.1.8/semantic.min.js') }}"></script>
-    <script src="{{ url_for('static', filename='jquery-tablesort-v.0.0.7/jquery.tablesort.min.js') }}"></script>
-    <script src="{{ url_for('static', filename='js/lists.js') }}"></script>
-    <script src="{{ url_for('static', filename='js/tables.js') }}"></script>
-    <script src="{{ url_for('static', filename='js/scroll.top.js') }}"></script>
-    <script type="text/javascript">
-      $(".ui.dropdown").dropdown();
-      $('table').tablesort();
-    </script>
-
-    {% block script %} {% endblock script %}
   </body>
 </html>

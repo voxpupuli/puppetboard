@@ -4,6 +4,13 @@
 {% if config.DAILY_REPORTS_CHART_ENABLED %}
 <link href="{{ url_for('static', filename='css/c3.min.css') }}" rel="stylesheet">
 {% endif %}
+{% if config.DAILY_REPORTS_CHART_ENABLED %}
+{% block script %}
+<script src="{{url_for('static', filename='js/d3.min.js')}}"></script>
+<script src="{{url_for('static', filename='js/c3.min.js')}}"></script>
+<script src="{{url_for('static', filename='js/dailychart.js')}}"></script>
+{% endblock script %}
+{% endif %}
 {% endblock head %}
 {% block content %}
 {% if config.REFRESH_RATE > 0 %}
@@ -106,7 +113,7 @@
             </td>
             <td>
               {% if node.report_timestamp %}
-              <a title='Reports' href="{{url_for('reports_node', env=current_env, node_name=node.name)}}"><i class='large darkblue book icon'></i></a>
+              <a title='Reports' href="{{url_for('reports', env=current_env, node_name=node.name)}}"><i class='large darkblue book icon'></i></a>
               {% endif %}
             </td>
           </tr>
@@ -124,10 +131,3 @@
   </div>
 </div>
 {% endblock content %}
-{% if config.DAILY_REPORTS_CHART_ENABLED %}
-{% block script %}
-<script src="{{url_for('static', filename='js/d3.min.js')}}"></script>
-<script src="{{url_for('static', filename='js/c3.min.js')}}"></script>
-<script src="{{url_for('static', filename='js/dailychart.js')}}"></script>
-{% endblock script %}
-{% endif %}
