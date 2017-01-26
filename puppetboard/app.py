@@ -417,13 +417,12 @@ def node(env, node_name):
         columns=REPORTS_COLUMNS[:2])
 
 
-@app.route(
-    '/reports/',
-    defaults={'env': app.config['DEFAULT_ENVIRONMENT'], 'node_name': None})
+@app.route('/reports/',
+           defaults={'env': app.config['DEFAULT_ENVIRONMENT'],
+                     'node_name': None})
 @app.route('/<env>/reports/', defaults={'node_name': None})
-@app.route(
-    '/reports/<node_name>/',
-    defaults={'env': app.config['DEFAULT_ENVIRONMENT']})
+@app.route('/reports/<node_name>/',
+           defaults={'env': app.config['DEFAULT_ENVIRONMENT']})
 @app.route('/<env>/reports/<node_name>')
 def reports(env, node_name):
     """Query and Return JSON data to reports Jquery datatable
@@ -441,13 +440,12 @@ def reports(env, node_name):
         columns=REPORTS_COLUMNS)
 
 
-@app.route(
-    '/reports/json',
-    defaults={'env': app.config['DEFAULT_ENVIRONMENT'], 'node_name': None})
+@app.route('/reports/json',
+           defaults={'env': app.config['DEFAULT_ENVIRONMENT'],
+                     'node_name': None})
 @app.route('/<env>/reports/json', defaults={'node_name': None})
-@app.route(
-    '/reports/<node_name>/json',
-    defaults={'env': app.config['DEFAULT_ENVIRONMENT']})
+@app.route('/reports/<node_name>/json',
+           defaults={'env': app.config['DEFAULT_ENVIRONMENT']})
 @app.route('/<env>/reports/<node_name>/json')
 def reports_ajax(env, node_name):
     """Query and Return JSON data to reports Jquery datatable
