@@ -28,12 +28,11 @@
   </tbody>
 </table>
 {% endblock content %}
-{% block script %}
+{% block onload_script %}
 {% macro extra_options(caller) %}
   // No initial loading
   "deferLoading": true,
 {% endmacro %}
-<script type="text/javascript">
   {{ macros.datatable_init(table_html_id="reports_table", ajax_url=url_for('reports_ajax', env=current_env, node_name=node_name), default_length=config.NORMAL_TABLE_COUNT, length_selector=config.TABLE_COUNT_SELECTOR, extra_options=extra_options, columns=columns) }}
 
   // Event listener for status filters
@@ -56,5 +55,4 @@
   $('#failed, #changed, #unchanged, #noop').change(status_filter_change);
   // Call at init - fix page reload behavior
   status_filter_change();
-</script>
-{% endblock script %}
+{% endblock onload_script %}
