@@ -123,6 +123,9 @@
     </div>
   </div>
 </div>
+<br />
+{{ macros.render_pagination(pagination)}}
+<br /><br />
 {% endblock content %}
 {% if config.DAILY_REPORTS_CHART_ENABLED %}
 {% block script %}
