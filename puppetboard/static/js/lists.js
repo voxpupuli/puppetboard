@@ -4,15 +4,11 @@
 
   $ = jQuery;
 
-  $(function() {});
-
-  $('input.filter-list').parent('div').removeClass('hide');
-
   $("input.filter-list").on("keyup", function(e) {
     var ev, rex;
     rex = new RegExp($(this).val(), "i");
     $(".searchable li").hide();
-    $(".searchable li").parent().parent().hide();
+    $(".searchable li").parent().parent('.list_hide_segment').hide();
     $(".searchable li").filter(function() {
       return rex.test($(this).text());
     }).show();

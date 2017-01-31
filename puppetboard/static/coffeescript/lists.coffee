@@ -1,11 +1,9 @@
 $ = jQuery
-$ ->
-$('input.filter-list').parent('div').removeClass('hide')
 $("input.filter-list").on "keyup", (e) ->
   rex = new RegExp($(this).val(), "i")
 
   $(".searchable li").hide()
-  $(".searchable li").parent().parent().hide()
+  $(".searchable li").parent().parent('.list_hide_segment').hide()
   $(".searchable li").filter( ->
     rex.test $(this).text()
   ).show()
