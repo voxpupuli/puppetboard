@@ -21,6 +21,7 @@ TABLE_COUNT_SELECTOR = [10, 20, 50, 100, 500]
 OFFLINE_MODE = False
 ENABLE_CATALOG = False
 OVERVIEW_FILTER = None
+GRAPH_TYPE = 'pie'
 GRAPH_FACTS = ['architecture',
                'clientversion',
                'domain',

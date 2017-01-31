@@ -219,6 +219,9 @@ Other settings that might be interesting in no particular order:
 * ``ENABLE_QUERY``: Defaults to ``True`` causing a Query tab to show up in the
   web interface allowing users to write and execute arbitrary queries against
   a set of endpoints in PuppetDB. Change this to ``False`` to disable this.
+* ``GRAPH_TYPE```: Specify the type of graph to display.   Default is
+  pie, other good option is donut.   Other choices can be found here:
+  `_C3JS_documentation`
 * ``GRAPH_FACTS``: A list of fact names to tell PuppetBoard to generate a
   pie-chart on the fact page. With some fact values being unique per node,
   like ipaddress, uuid, and serial number, as well as structured facts it was
@@ -241,6 +244,7 @@ Other settings that might be interesting in no particular order:
 
 .. _pypuppetdb documentation: http://pypuppetdb.readthedocs.org/en/v0.1.0/quickstart.html#ssl
 .. _Flask documentation: http://flask.pocoo.org/docs/0.10/quickstart/#sessions
+.. _C3JS_documentation:  http://c3js.org/examples.html#chart
 
 Puppet Enterprise
 -----------------

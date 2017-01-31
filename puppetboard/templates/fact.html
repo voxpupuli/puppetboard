@@ -30,7 +30,7 @@ if (otherdata.length > 0) {
     bindto: '#factChart',
     data: {
         columns: realdata,
-        type : 'donut',
+        type : '{{config.GRAPH_TYPE|default('pie')}}',
     }
 });
 {% endblock onload_script %}
