@@ -72,6 +72,14 @@ h1.ui.header.no-margin-bottom {
   background-color: #DB843D;
 }
 
+.ui.header.total {
+  color: #989898;
+}
+
+.ui.label.total {
+  background-color: #989898;
+}
+
 .ui.label.unchanged {
   background-color: #89A54E;
 }
