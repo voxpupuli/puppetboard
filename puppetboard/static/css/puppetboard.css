@@ -14,7 +14,7 @@ h1.ui.header.no-margin-bottom {
 }
 
 .ui.grid.padding-bottom {
-  padding-bottom: 40px !important;
+  padding-bottom: 4em !important;
 }
 
 .status {

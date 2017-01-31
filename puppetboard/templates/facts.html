@@ -1,29 +1,29 @@
 {% extends 'layout.html' %}
 {% block content %}
-<div class="ui fluid icon input hide" style="margin-bottom:20px">
+<div class="ui fluid icon input" style="margin-bottom:20px">
   <input autofocus="autofocus" class="filter-list" placeholder="Type here to filter...">
 </div>
 <div class="ui searchable stackable doubling four column grid factlist">
- <div class="column">
- {%- set facts_count = 0 -%}
- {%- set break = facts_len//4 + 1 -%}
- {%- for key,facts_list in facts_dict %}
-   <div class="ui segment">
-     <a class="ui darkblue ribbon label">{{key}}</a>
-     <ul>
-     {%- for fact in facts_list %}
-     <li><a href="{{url_for('fact', env=current_env, fact=fact)}}">{{fact}}</a></li>
-     {%- endfor %}
-     </ul>
-   </div>
-   {%- set facts_count = facts_count + facts_list|length -%}
-   {%- if facts_count >= break -%}
- </div>
- <div class="column">
-   {%- set break = facts_len//4  + 1 + break -%}
-   {%- endif -%}
-   {%- set facts_count = facts_count + 5 -%}
- {% endfor %}
- </div>
+  <div class="column">
+  {%- set facts_count = 0 -%}
+  {%- set break = facts_len//4 + 1 -%}
+  {%- for key,facts_list in facts_dict %}
+    <div class="ui list_hide_segment segment">
+      <a class="ui darkblue ribbon label">{{key}}</a>
+      <ul>
+        {%- for fact in facts_list %}
+        <li><a href="{{url_for('fact', env=current_env, fact=fact)}}">{{fact}}</a></li>
+        {%- endfor %}
+      </ul>
+    </div>
+    {%- set facts_count = facts_count + facts_list|length -%}
+    {%- if facts_count >= break -%}
+    </div>
+    <div class="column">
+    {%- set break = facts_len//4  + 1 + break -%}
+    {%- endif -%}
+    {%- set facts_count = facts_count + 5 -%}
+  {% endfor %}
+  </div>
 </div>
 {% endblock content %}

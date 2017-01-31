@@ -57,7 +57,7 @@
   {% endif %}
 {%- endmacro %}
 
-{% macro datatable_init(table_html_id, ajax_url, default_length, length_selector, extra_options=None, columns) -%}
+{% macro datatable_init(table_html_id, ajax_url, default_length, length_selector, extra_options=None) -%}
   // Init datatable
   $.fn.dataTable.ext.errMode = 'throw';
   var table = $('#{{ table_html_id }}').DataTable({
