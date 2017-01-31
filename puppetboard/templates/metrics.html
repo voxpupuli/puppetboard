@@ -2,13 +2,18 @@
 {% block content %}
 <h1>Metrics</h1>
 <div class="ui fluid icon input hide" style="margin-bottom:20px">
-  <input autofocus="autofocus" class="filter-list" placeholder="Type here to filter...">
+  <input autofocus="autofocus" class="filter-table" placeholder="Type here to filter...">
 </div>
-<ul class="ui list searchable">
+<table class='ui very compact very basic sortable table'>
+<thead>
+  <tr>Metric</tr>
+</thead>
+<tbody class="searchable">
   {% for metric in metrics %}
-  <li>
-    <a href="{{url_for('metric', env=current_env, metric=metric)}}">{{metric}}</a>
-  </li>
+  <tr>
+    <td><a href="{{url_for('metric', env=current_env, metric=metric)}}">{{metric}}</a></td>
+  </tr>
   {% endfor %}
-</ul>
+</tbody>
+</table>
 {% endblock content %}
