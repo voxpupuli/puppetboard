@@ -57,16 +57,16 @@
   {% endif %}
 {%- endmacro %}
 
-{% macro report_status(caller, status, node_name, events, current_env, unreported_time=False, report_hash=False) -%}
+{% macro report_status(caller, status, node_name, metrics, current_env, unreported_time=False, report_hash=False) -%}
   <a class="ui {{status}} label status" href="{{url_for('report', env=current_env, node_name=node_name, report_id=report_hash)}}">{{ status|upper }}</a>
   {% if status == 'unreported' %}
     <span class="ui label status"> {{ unreported_time|upper }} </span>
   {% else %}
-    <span title="Total resources" class="ui small count label{% if events['total'] %} total">{{events['total']}}{% else %}">0{% endif%}</span>
-    <span title="Failure events" class="ui small count label{% if events['failure'] %} failed">{{events['failure']}}{% else %}">0{% endif%}</span>
-    <span title="Success events" class="ui small count label{% if events['success'] %} changed">{{events['success']}}{% else %}">0{% endif%}</span>
-    <span title="Skip events" class="ui small count label{% if events['skipped'] %} skipped">{{events['skipped']}}{% else %}">0{% endif%}</span>
-    <span title="Noop resources" class="ui small count label{% if events['noop'] %} noop">{{events['noop']}}{% else %}">0{% endif%}</span>
+    <span title="Total resources" class="ui small count label{% if metrics.resources.total %} total">{{ metrics.resources.total }}{% else %}">0{% endif%}</span>
+    <span title="Failure events" class="ui small count label{% if metrics.events.failure %} failed">{{ metrics.events.failure }}{% else %}">0{% endif%}</span>
+    <span title="Success events" class="ui small count label{% if metrics.events.success %} changed">{{ metrics.events.success }}{% else %}">0{% endif%}</span>
+    <span title="Skipped resources" class="ui small count label{% if metrics.resources.skipped %} skipped">{{ metrics.resources.skipped }}{% else %}">0{% endif%}</span>
+    <span title="Noop events" class="ui small count label{% if metrics.events.noop %} noop">{{ metrics.events.noop }}{% else %}">0{% endif%}</span>
   {% endif %}
 {%- endmacro %}
 
