@@ -62,11 +62,11 @@
   {% if status == 'unreported' %}
     <span class="ui label status"> {{ unreported_time|upper }} </span>
   {% else %}
-    <span title="Total resources" class="ui small count label{% if metrics.resources.total %} total">{{ metrics.resources.total }}{% else %}">0{% endif%}</span>
-    <span title="Failure events" class="ui small count label{% if metrics.events.failure %} failed">{{ metrics.events.failure }}{% else %}">0{% endif%}</span>
-    <span title="Success events" class="ui small count label{% if metrics.events.success %} changed">{{ metrics.events.success }}{% else %}">0{% endif%}</span>
-    <span title="Skipped resources" class="ui small count label{% if metrics.resources.skipped %} skipped">{{ metrics.resources.skipped }}{% else %}">0{% endif%}</span>
-    <span title="Noop events" class="ui small count label{% if metrics.events.noop %} noop">{{ metrics.events.noop }}{% else %}">0{% endif%}</span>
+    {% for metric in config.DISPLAYED_METRICS %}
+      {% set path = metric.split('.') %}
+      {% set title = ' '.join(path) %}
+      <span title="{{ title }}" class="ui small count label{% if metrics[path[0]] and metrics[path[0]][path[1]] %} {{ title }}">{{ "%.2g"|format(metrics[path[0]][path[1]]) }}{% else %}">0{% endif%}</span>
+    {% endfor %}
   {% endif %}
 {%- endmacro %}
 

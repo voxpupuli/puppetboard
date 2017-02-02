@@ -18,6 +18,11 @@ LOGLEVEL = 'info'
 NORMAL_TABLE_COUNT = 100
 LITTLE_TABLE_COUNT = 10
 TABLE_COUNT_SELECTOR = [10, 20, 50, 100, 500]
+DISPLAYED_METRICS = ['resources.total',
+                     'events.failure',
+                     'events.success',
+                     'resources.skipped',
+                     'events.noop']
 OFFLINE_MODE = False
 ENABLE_CATALOG = False
 OVERVIEW_FILTER = None

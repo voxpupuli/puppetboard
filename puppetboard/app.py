@@ -537,7 +537,7 @@ def reports_ajax(env, node_name):
         if total is None:
             total = puppetdb.total
 
-        metrics[report.hash_] = {'resources': {}, 'events': {}}
+        metrics[report.hash_] = {}
         for m in report.metrics:
             if m['category'] not in metrics[report.hash_]:
                 metrics[report.hash_][m['category']] = {}
