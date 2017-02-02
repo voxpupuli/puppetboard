@@ -41,14 +41,20 @@
     <script src="{{ url_for('static', filename='Semantic-UI-2.1.8/semantic.min.js') }}"></script>
     <script src="{{ url_for('static', filename='js/lists.js') }}"></script>
     <script src="{{ url_for('static', filename='js/scroll.top.js') }}"></script>
+    <script src="{{url_for('static', filename='js/d3.min.js')}}"></script>
+    <script src="{{url_for('static', filename='js/c3.min.js')}}"></script>
+    <script src="{{url_for('static',
+                  filename='jquery-tablesort-v.0.0.7/jquery.tablesort.min.js')}}"></script>
+    {% block script %} {% endblock script %}
     <script type="text/javascript">
+    {% block javascript %} {% endblock javascript %}
       $(document).ready(function(){
           $(".ui.dropdown").dropdown();
+          $.getScript('{{url_for('static', filename='js/lists.js')}}')
+          $.getScript('{{url_for('static', filename='js/tables.js')}}')
           {% block onload_script %} {% endblock onload_script %}
-
         })
     </script>
-    {% block script %} {% endblock script %}
     {% block head %} {% endblock head %}
   </head>
 

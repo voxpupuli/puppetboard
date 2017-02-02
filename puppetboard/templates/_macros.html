@@ -46,39 +46,6 @@
 </table>
 {%- endmacro %}
 
-{% macro facts_graph(facts, autofocus=False, condensed=False, show_node=False, margin_top=20, margin_bottom=20) -%}
-<script src="{{url_for('static', filename='js/d3.min.js')}}"></script>
-<script src="{{url_for('static', filename='js/c3.min.js')}}"></script>
-<div id="factChart" width="300" height="300"></div>
-<script type="text/javascript">
-  var data = [
-{% for fact in facts|groupby('value') %}
-    {
-    label: '{{ fact.grouper.replace("\n", " ") }}',
-    value: {{ fact.list|length }}
-    },
-{% endfor %}
-    {
-    value: 0,
-    }
-  ]
-  var fact_values = data.map(function(item) { return [item.label, item.value]; }).filter(function(item){return item[0];}).sort(function(a,b){return b[1] - a[1];});
-  var realdata = fact_values.slice(0, 15);
-  var otherdata = fact_values.slice(15);
-  if (otherdata.length > 0) {
-    realdata.push(["other", otherdata.reduce(function(a,b){return a + b[1];},0)]);
-  }
-  var chart = c3.generate({
-      bindto: '#factChart',
-      data: {
-          columns: realdata,
-          type : 'pie',
-      }
-  });
-
-</script>
-{%- endmacro %}
-
 {% macro status_counts(caller, status, node_name, events, current_env, unreported_time=False, report_hash=False) -%}
   <a class="ui {{status}} label status" href="{{url_for('report', env=current_env, node_name=node_name, report_id=report_hash)}}">{{ status|upper }}</a>
   {% if status == 'unreported' %}
@@ -90,7 +57,7 @@
   {% endif %}
 {%- endmacro %}
 
-{% macro datatable_init(table_html_id, ajax_url, default_length, length_selector, extra_options=None, columns) -%}
+{% macro datatable_init(table_html_id, ajax_url, default_length, length_selector, extra_options=None) -%}
   // Init datatable
   $.fn.dataTable.ext.errMode = 'throw';
   var table = $('#{{ table_html_id }}').DataTable({

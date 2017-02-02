@@ -47,6 +47,8 @@ GRAPH_FACTS = [x.strip() for x in os.getenv('GRAPH_FACTS',
                                             GRAPH_FACTS_DEFAULT).split(',')]
 
 
+GRAPH_TYPE = os.getenv('GRAPH_TYPE', 'pie')
+
 # Tuples are hard to express as an environment variable, so here
 # the tupple can be listed as a list of items
 # export INVENTORY_FACTS="Hostname, fqdn, IP Address, ipaddress,.. etc"

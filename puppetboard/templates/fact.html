@@ -1,10 +1,47 @@
 {% extends 'layout.html' %}
 {% import '_macros.html' as macros %}
-{% block content %}
-<h1>{{name}}{% if value %}/{{value}}{% endif %} ({{facts|length}})</h1>
+
+{% block javascript %}
 {% if render_graph %}
-{{macros.facts_graph(facts, autofocus=True, show_node=True, margin_bottom=10)}}
+var chart = null;
+var data = [
+{% for fact in facts|groupby('value') %}
+  {
+  label: '{{ fact.grouper.replace("\n", " ") }}',
+  value: {{ fact.list|length }}
+  },
+{% endfor %}
+  {
+  value: 0,
+}
+]
+var fact_values = data.map(function(item) { return [item.label, item.value]; }).filter(function(item){return item[0];}).sort(function(a,b){return b[1] - a[1];});
+var realdata = fact_values.slice(0, 15);
+var otherdata = fact_values.slice(15);
+if (otherdata.length > 0) {
+  realdata.push(["other", otherdata.reduce(function(a,b){return a + b[1];},0)]);
+}
 {% endif %}
+{% endblock javascript %}
+
+{% block onload_script %}
+  $('table').tablesort();
+  {% if render_graph %}
+  chart = c3.generate({
+    bindto: '#factChart',
+    data: {
+        columns: realdata,
+        type : '{{config.GRAPH_TYPE|default('pie')}}',
+    }
+  });
+  {% endif %}
+{% endblock onload_script %}
+
+{% block content %}
+<div id="factChart" width="300" height="300"></div>
+<h1>{{name}}{% if value %}/{{value}}{% endif %} ({{facts|length}})</h1>
+
+
 {% if value %}
 {{macros.facts_table(facts, current_env=current_env, autofocus=True, show_node=True, show_value=False, margin_bottom=10)}}
 {% else %}
