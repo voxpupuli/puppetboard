@@ -21,7 +21,7 @@ from pypuppetdb.QueryBuilder import *
 
 from puppetboard.forms import (CatalogForm, QueryForm)
 from puppetboard.utils import (
-    get_or_abort, yield_or_stop,
+    get_or_abort, yield_or_stop, get_db_version,
     jsonprint, prettyprint
 )
 from puppetboard.dailychart import get_daily_reports_chart
@@ -173,15 +173,23 @@ def index(env):
         query = app.config['OVERVIEW_FILTER']
 
         prefix = 'puppetlabs.puppetdb.population'
+        query_type = ''
+
+        # Puppet DB version changed the query format from 3.2.0
+        # to 4.0 when querying mbeans
+        if get_db_version(puppetdb) < (4, 0, 0):
+            query_type = 'type=default,'
+
         num_nodes = get_or_abort(
             puppetdb.metric,
-            "{0}{1}".format(prefix, ':name=num-nodes'))
+            "{0}{1}".format(prefix, ':%sname=num-nodes' % query_type))
         num_resources = get_or_abort(
             puppetdb.metric,
-            "{0}{1}".format(prefix, ':name=num-resources'))
+            "{0}{1}".format(prefix, ':%sname=num-resources' % query_type))
         avg_resources_node = get_or_abort(
             puppetdb.metric,
-            "{0}{1}".format(prefix, ':name=avg-resources-per-node'))
+            "{0}{1}".format(prefix,
+                            ':%sname=avg-resources-per-node' % query_type))
         metrics['num_nodes'] = num_nodes['Value']
         metrics['num_resources'] = num_resources['Value']
         metrics['avg_resources_node'] = "{0:10.0f}".format(
@@ -971,10 +979,13 @@ def radiator(env):
     check_env(env, envs)
 
     if env == '*':
+        query_type = ''
+        if get_db_version(puppetdb) < (4, 0, 0):
+            query_type = 'type=default,'
         query = None
         metrics = get_or_abort(
             puppetdb.metric,
-            'puppetlabs.puppetdb.population:name=num-nodes')
+            'puppetlabs.puppetdb.population:%sname=num-nodes' % query_type)
         num_nodes = metrics['Value']
     else:
         query = AndOperator()
