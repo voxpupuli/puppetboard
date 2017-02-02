@@ -4,13 +4,13 @@
   "recordsTotal": {{total}},
   "recordsFiltered": {{total_filtered}},
   "data": [
+    {%- set report_flag = false -%}
     {% for report in reports -%}
-      {%- if report_flag %},{%- endif %}
-      {%- set report_flag = True -%}
+      {%- if not loop.first %},{%- endif -%}
       [
+        {%- set column_flag = false -%}
         {%- for column in columns -%}
-          {%- if column_flag %},{%- endif -%}
-          {%- set column_flag = True -%}
+          {%- if not loop.first %},{%- endif -%}
           {%- if column.type == 'datetime' -%}
             "<span rel=\"utctimestamp\">{{ report[column.attr] }}</span>"
           {%- elif column.type == 'status' -%}
