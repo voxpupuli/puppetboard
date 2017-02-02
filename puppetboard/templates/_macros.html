@@ -65,7 +65,17 @@
     {% for metric in config.DISPLAYED_METRICS %}
       {% set path = metric.split('.') %}
       {% set title = ' '.join(path) %}
-      <span title="{{ title }}" class="ui small count label{% if metrics[path[0]] and metrics[path[0]][path[1]] %} {{ title }}">{{ "%.2g"|format(metrics[path[0]][path[1]]) }}{% else %}">0{% endif%}</span>
+      {% if metrics[path[0]] and metrics[path[0]][path[1]] %}
+      {% set value = metrics[path[0]][path[1]] %}
+      {% if value != 0 and value|int != value %}
+        {% set format_str = '%.2f' %}
+      {% else %}
+        {% set format_str = '%s' %}
+      {% endif %}
+        <span title="{{ title }}" class="ui small count label {{ title }}">{{ format_str|format(value) }}</span>
+      {% else %}
+        <span title="{{ title }}" class="ui small count label">0</span>
+      {% endif%}
     {% endfor %}
   {% endif %}
 {%- endmacro %}
