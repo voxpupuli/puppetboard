@@ -523,3 +523,26 @@ def test_json_report_ok(client, mocker, input_data):
 
     assert 'data' in result_json
     assert len(result_json['data']) == 100
+
+
+def test_json_daily_reports_chart_ok(client, mocker):
+    mock_puppetdb_environments(mocker)
+    mock_puppetdb_default_nodes(mocker)
+
+    query_data = {
+        'reports': [
+            [{'status': 'changed', 'count': 1}]
+            for i in range(app.app.config['DAILY_REPORTS_CHART_DAYS'])
+        ]
+    }
+
+    import logging
+    logging.error(query_data)
+
+    dbquery = MockDbQuery(query_data)
+
+    mocker.patch.object(app.puppetdb, '_query', side_effect=dbquery.get)
+
+    rv = client.get('/daily_reports_chart.json')
+
+    assert rv.status_code == 200
