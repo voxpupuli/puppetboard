@@ -3,11 +3,7 @@ from __future__ import absolute_import
 import os
 import subprocess
 
-if 'PUPPETBOARD_SETTINGS' not in os.environ:
-    os.environ['PUPPETBOARD_SETTINGS'] = os.path.join(
-        os.getcwd(), 'settings.py'
-    )
-
+# Set PUPPETBOARD_SETTINGS to your settings.py
 from puppetboard.app import app
 
 if __name__ == '__main__':

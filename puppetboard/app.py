@@ -17,6 +17,7 @@ from flask import (
 )
 
 from pypuppetdb import connect
+from pypuppetdb.errors import EmptyResponseError
 from pypuppetdb.QueryBuilder import *
 
 from puppetboard.forms import (CatalogForm, QueryForm)
@@ -115,10 +116,14 @@ class NoContent(ex.HTTPException):
 
 abort.mapping[204] = NoContent
 
-
-@app.errorhandler(204)
-def no_content(e):
-    return '', 204
+try:
+    @app.errorhandler(204)
+    def no_content(e):
+        return '', 204
+except KeyError:
+    @app.errorhandler(EmptyResponseError)
+    def no_content(e):
+        return '', 204
 
 
 @app.errorhandler(400)
@@ -203,7 +208,7 @@ def index(env):
         num_nodes_query.add_field(FunctionOperator('count'))
         num_nodes_query.add_query(query)
 
-        if app.config['OVERVIEW_FILTER'] != None:
+        if app.config['OVERVIEW_FILTER'] is not None:
             query.add(app.config['OVERVIEW_FILTER'])
 
         num_resources_query = ExtractOperator()
