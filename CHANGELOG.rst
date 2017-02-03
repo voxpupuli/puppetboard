@@ -4,6 +4,32 @@ Changelog
 
 This is the changelog for Puppetboard.
 
+0.2.1
+=====
+
+* Daily Charts
+* Fixed missing javascript files on radiator view.
+* TravisCI and Coveralls integration.
+* Fixed app crash in catalog view.
+* Upgrade pypuppetdb to 0.3.2
+* Enhanced queries for Node and Report (#271)
+* Optimize Inventory Code.
+* Use certname instead of hostname to identify nodes when applicable.
+* Add environment filter for facts.
+* Update cs.js to 0.4.11
+* Fix radiator column alignment
+* Security checks with bandit
+* Dockerfile now uses gunicorn and environment variables for
+  configuration.
+* Handle division by zero errors.
+* Implement new Jquery Datatables.
+* JSON output for radiator. * Move javascript to head tag.
+* Optimize reports and node page queries.
+* Fix all environments for PuppetDB 3.2
+* Fact graph chart now configurable.
+* Support for Flask 0.12 and Jinja2 2.9
+* Fix misreporting noops as changes.
+
 0.2.0
 =====
 
@@ -35,10 +61,10 @@ This is the changelog for Puppetboard.
 0.1.2
 ====
 
-* Add configuration option to set the default environment with new 
+* Add configuration option to set the default environment with new
   configuration option DEFAULT_ENVIRONMENT, defaults to 'production'.
-* Loading all available environments with every page load. 
-* Adding an "All Environments" item to the Environments dropdown to 
+* Loading all available environments with every page load.
+* Adding an "All Environments" item to the Environments dropdown to
   remove all environment filters on PuppetDB data.
 * Updating README.rst to update links and describe new configuration
   options.
