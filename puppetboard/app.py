@@ -104,6 +104,38 @@ def environments():
     return x
 
 
+def reports_noop_query():
+    """Compatibility function building a query string
+    to select noop reports.
+    Direct access fields 'noop' and 'noop_pending' are not set
+    by 3.X clients on a 4.X database.
+    """
+    noop_event_query = EqualsOperator('status', 'noop')
+    noop_subquery = SubqueryOperator('events')
+    noop_subquery.add_query(noop_event_query)
+    noop_extract = ExtractOperator()
+    noop_extract.add_field(str('certname'))
+    noop_extract.add_query(noop_subquery)
+    noop_in_query = InOperator('certname')
+    noop_in_query.add_query(noop_extract)
+
+    other_event_query = NotOperator()
+    other_event_query.add(EqualsOperator('status', 'noop'))
+    other_subquery = SubqueryOperator('events')
+    other_subquery.add_query(other_event_query)
+    other_extract = ExtractOperator()
+    other_extract.add_field(str('certname'))
+    other_extract.add_query(other_subquery)
+    other_in_query = InOperator('certname')
+    other_in_query.add_query(other_extract)
+    other_not_in = NotOperator()
+    other_not_in.add(other_in_query)
+
+    result = AndOperator()
+    result.add([noop_in_query, other_not_in])
+    return result
+
+
 def check_env(env, envs):
     if env != '*' and env not in envs:
         abort(404)
@@ -511,18 +543,13 @@ def reports_ajax(env, node_name):
         if status_arg in ['failed', 'changed', 'unchanged']:
             arg_query = AndOperator()
             arg_query.add(EqualsOperator('status', status_arg))
-            arg_query.add(EqualsOperator('noop', False))
-            status_query.add(arg_query)
             if status_arg == 'unchanged':
-                arg_query = AndOperator()
-                arg_query.add(EqualsOperator('noop', True))
-                arg_query.add(EqualsOperator('noop_pending', False))
-                status_query.add(arg_query)
-        elif status_arg == 'noop':
-            arg_query = AndOperator()
-            arg_query.add(EqualsOperator('noop', True))
-            arg_query.add(EqualsOperator('noop_pending', True))
+                noop_query = NotOperator()
+                noop_query.add(reports_noop_query())
+                arg_query.add(noop_query)
             status_query.add(arg_query)
+        elif status_arg == 'noop':
+            status_query.add(reports_noop_query())
 
     if len(status_query.operations) == 0:
         if len(reports_query.operations) == 0:
@@ -537,26 +564,14 @@ def reports_ajax(env, node_name):
             order_by=order_args,
             include_total=True,
             **paging_args)
-        reports, reports_events = tee(reports)
-        total = None
+        reports, reports_total = tee(reports)
+        for r in reports_total:
+            break
+        total = puppetdb.total
+        if total is None:
+            total = 0
     else:
         reports = []
-        reports_events = []
-        total = 0
-
-    # Convert metrics to relational dict
-    metrics = {}
-    for report in reports_events:
-        if total is None:
-            total = puppetdb.total
-
-        metrics[report.hash_] = {}
-        for m in report.metrics:
-            if m['category'] not in metrics[report.hash_]:
-                metrics[report.hash_][m['category']] = {}
-            metrics[report.hash_][m['category']][m['name']] = m['value']
-
-    if total is None:
         total = 0
 
     return render_template(
@@ -565,7 +580,6 @@ def reports_ajax(env, node_name):
         total=total,
         total_filtered=total,
         reports=reports,
-        metrics=metrics,
         envs=envs,
         current_env=env,
         columns=REPORTS_COLUMNS[:max_col])

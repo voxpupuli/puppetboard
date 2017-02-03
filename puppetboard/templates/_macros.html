@@ -9,27 +9,27 @@
   {% endif %}
 {%- endmacro %}
 
-{% macro report_status(caller, status, node_name, metrics, current_env, unreported_time=False, report_hash=False) -%}
-  <a class="ui {{status}} label status" href="{{url_for('report', env=current_env, node_name=node_name, report_id=report_hash)}}">{{ status|upper }}</a>
-  {% if status == 'unreported' %}
+{% macro report_status(caller, status, report, current_env, unreported_time=False) -%}
+  <a class="ui {{status}} label status" href="{{ url_for('report', env=current_env, node_name=report.node, report_id=report.hash_) }}">{{ status|upper }}</a>
+  {% if status == 'unreported' -%}
     <span class="ui label status"> {{ unreported_time|upper }} </span>
-  {% else %}
-    {% for metric in config.DISPLAYED_METRICS %}
-      {% set path = metric.split('.') %}
-      {% set title = ' '.join(path) %}
-      {% if metrics[path[0]] and metrics[path[0]][path[1]] %}
-      {% set value = metrics[path[0]][path[1]] %}
-      {% if value != 0 and value|int != value %}
-        {% set format_str = '%.2f' %}
-      {% else %}
-        {% set format_str = '%s' %}
-      {% endif %}
+  {% else -%}
+    {%- for metric in config.DISPLAYED_METRICS -%}
+      {%- set path = metric.split('.') -%}
+      {%- set title = ' '.join(path) -%}
+      {%- set value = report.metric(path[0], path[1]) -%}
+      {%- if value -%}
+        {%- if value != 0 and value|int != value -%}
+          {%- set format_str = '%.2f' -%}
+        {%- else -%}
+          {%- set format_str = '%s' -%}
+        {%- endif -%}
         <span title="{{ title }}" class="ui small count label {{ title }}">{{ format_str|format(value) }}</span>
-      {% else %}
+      {% else -%}
         <span title="{{ title }}" class="ui small count label">0</span>
-      {% endif%}
-    {% endfor %}
-  {% endif %}
+      {% endif -%}
+    {%- endfor -%}
+  {%- endif -%}
 {%- endmacro %}
 
 {% macro datatable_init(table_html_id, ajax_url, default_length, length_selector, extra_options=None) -%}
