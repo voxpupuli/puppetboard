@@ -1,56 +1,64 @@
 {% extends 'layout.html' %}
 {% import '_macros.html' as macros %}
 {% block content %}
-<div class="ui fluid icon input hide" style="margin-bottom:20px">
-  <input autofocus="autofocus" class="filter-table" placeholder="Type here to filter...">
-</div>
-<table class='ui very compact very basic sortable table'>
-  <thead>
-    <tr>
-      <th>Status</th>
-      <th class="default">Certname</th>
-      <th class="date default-sort">Catalog</th>
-      <th class="date">Report</th>
-      <th>&nbsp;</th>
-    </tr>
-  </thead>
-  <tbody class="searchable">
-    {% for node in nodes %}
-    <tr>
-      <td>
-        {% if node.latest_report_hash %}
-          {{macros.status_counts(status=node.status, node_name=node.name, events=node.events, unreported_time=node.unreported_time, current_env=current_env, report_hash=node.latest_report_hash)}}
-        {% else %}
-          {{macros.status_counts(status=node.status, node_name=node.name, events=node.events, unreported_time=node.unreported_time, current_env=current_env)}}
-        {% endif %}
-      </td>
-      <td><a href="{{url_for('node', env=current_env, node_name=node.name)}}">{{node.name}}</a></td>
-      <td><a rel="utctimestamp" href="{{url_for('catalog_node', env=current_env, node_name=node.name)}}">{{node.catalog_timestamp}}</a></td>
-      <td>
-        {% if node.report_timestamp %}
-          <a href="{{url_for('report', env=current_env, node_name=node.name, report_id=node.latest_report_hash)}}" rel='utctimestamp'>{{ node.report_timestamp }}</a>
-        {% else %}
-          <i class="large darkblue ban icon"></i>
-        {% endif %}
-      </td>
-      <td>
-        {% if node.report_timestamp %}
-        <a title='Reports' href="{{url_for('reports', env=current_env, node_name=node.name)}}"><i class='large darkblue book icon'></i></a>
-        {% endif %}
-      </td>
-    </tr>
+<div class="ui wide grid">
+  <div class="wide row">
+    <div class="four wide column">
+      <div class="ui">Status</div>
+    </div>
+    {% for status in ['failed', 'changed', 'unchanged', 'noop', 'unreported'] %}
+      <div class="two wide column">
+        <div class="ui checked checkbox">
+          {% if status_pick is none or status_pick == status %}
+            <input id="{{ status }}" checked="" type="checkbox">
+          {% else %}
+            <input id="{{ status }}" type="checkbox">
+          {% endif %}
+          <label>{{ status|capitalize }}</label>
+        </div>
+      </div>
     {% endfor %}
-  </tbody>
-</table>
-<div class="ui dropdown" style="float:right;">
-  <div class="text">Filter By</div>
-  <i class="dropdown icon"></i>
-  <div class="menu">
-    <a class="item" href="{{url_for_field('status', 'failed')}}">Failed</a>
-    <a class="item" href="{{url_for_field('status', 'changed')}}">Changed</a>
-    <a class="item" href="{{url_for_field('status', 'unchanged')}}">Unchanged</a>
-    <a class="item" href="{{url_for_field('status', 'noop')}}">Noop</a>
-    <a class="item" href="{{url_for_field('status', 'unreported')}}">Unreported</a>
   </div>
 </div>
+<table id="nodes_table" class='ui very basic table stackable'>
+  <thead>
+    <tr>
+      {% for column in columns %}
+      <th>{{ column.name }}</th>
+      {% endfor %}
+    </tr>
+  </thead>
+  <tbody>
+  </tbody>
+</table>
 {% endblock content %}
+{% block onload_script %}
+{% macro extra_options(caller) %}
+  // No initial loading
+  "deferLoading": true,
+{% endmacro %}
+  {{ macros.datatable_init(table_html_id="nodes_table", ajax_url=url_for('nodes_ajax', env=current_env), default_length=config.NORMAL_TABLE_COUNT, length_selector=config.TABLE_COUNT_SELECTOR, extra_options=extra_options) }}
+
+  // Event listener for status filters
+  function status_filter_change(){
+    var sum = '';
+    var failed = $('#failed').prop('checked');
+    var changed = $('#changed').prop('checked');
+    var unchanged = $('#unchanged').prop('checked');
+    var noop = $('#noop').prop('checked');
+    var unreported = $('#unreported').prop('checked');
+    if ( failed && changed && unchanged && noop && unreported) { sum = '*'; }
+    else if (!(failed || changed || unchanged || noop || unreported)) { sum = 'none'; }
+    else {
+      if (failed) { sum += 'failed|'; }
+      if (changed) { sum += 'changed|'; }
+      if (unchanged) { sum += 'unchanged|'; }
+      if (noop) { sum += 'noop|'; }
+      if (unreported) { sum += 'unreported|'; }
+    }
+    table.column(1).search(sum).draw();
+  }
+  $('#failed, #changed, #unchanged, #noop, #unreported').change(status_filter_change);
+  // Call at init - fix page reload behavior
+  status_filter_change();
+{% endblock onload_script %}

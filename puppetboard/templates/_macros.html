@@ -1,7 +1,7 @@
 {% macro status_counts(caller, status, node_name, events, current_env, unreported_time=False, report_hash=False) -%}
   <a class="ui {{status}} label status" href="{{url_for('report', env=current_env, node_name=node_name, report_id=report_hash)}}">{{ status|upper }}</a>
   {% if status == 'unreported' %}
-    <span class="ui label status"> {{ unreported_time|upper }} </span>
+    <span class="ui label status" rel="utctimestamp"> {{ unreported_time|upper }} </span>
   {% else %}
     {% if events['failures'] %}<span class="ui small count label failed">{{events['failures']}}</span>{% else %}<span class="ui small count label">0</span>{% endif%}
     {% if events['successes'] %}<span class="ui small count label changed">{{events['successes']}}</span>{% else %}<span class="ui small count label">0</span>{% endif%}

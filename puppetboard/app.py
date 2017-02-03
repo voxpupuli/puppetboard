@@ -18,6 +18,7 @@ from flask import (
 
 from pypuppetdb import connect
 from pypuppetdb.QueryBuilder import *
+from pypuppetdb.utils import UTC
 
 from puppetboard.forms import QueryForm
 from puppetboard.utils import (
@@ -46,6 +47,19 @@ CATALOGS_COLUMNS = [
     {'attr': 'certname', 'name': 'Certname', 'type': 'node'},
     {'attr': 'catalog_timestamp', 'name': 'Compile Time'},
     {'attr': 'form', 'name': 'Compare'},
+]
+
+NODES_COLUMNS = [
+    {'attr': 'catalog_timestamp', 'filter': 'catalog_timestamp',
+     'name': 'Catalog', 'type': 'datetime'},
+    {'attr': 'status', 'filter': 'latest_report_status',
+     'name': 'Status', 'type': 'status'},
+    {'attr': 'name', 'filter': 'certname',
+     'name': 'Certname', 'type': 'node'},
+    {'attr': 'report_timestamp', 'filter': 'report_timestamp',
+     'name': 'Report', 'type': 'datetime'},
+    {'attr': 'report_timestamp', 'filter': 'report_timestamp',
+     'name': '', 'type': 'datetime'},
 ]
 
 app = Flask(__name__)
@@ -134,6 +148,26 @@ def reports_noop_query():
     result = AndOperator()
     result.add([noop_in_query, other_not_in])
     return result
+
+
+def node_unreported_time():
+    return (
+        datetime.datetime.utcnow() -
+        timedelta(hours=app.config['UNRESPONSIVE_HOURS'])
+    ).replace(microsecond=0, tzinfo=UTC())
+
+
+def node_unreported_query():
+    query = OrOperator()
+    query.add(NullOperator('report_timestamp', True))
+    query.add(LessEqualOperator(
+        'report_timestamp', node_unreported_time().isoformat()))
+    return query
+
+
+def node_reported_query():
+    return GreaterOperator(
+        'report_timestamp', node_unreported_time().isoformat())
 
 
 def check_env(env, envs):
@@ -295,64 +329,113 @@ def index(env):
     )
 
 
-@app.route('/nodes', defaults={'env': app.config['DEFAULT_ENVIRONMENT']})
-@app.route('/<env>/nodes')
-def nodes(env):
-    """Fetch all (active) nodes from PuppetDB and stream a table displaying
-    those nodes.
-
-    Downside of the streaming aproach is that since we've already sent our
-    headers we can't abort the request if we detect an error. Because of this
-    we'll end up with an empty table instead because of how yield_or_stop
-    works. Once pagination is in place we can change this but we'll need to
-    provide a search feature instead.
+@app.route('/nodes',
+           defaults={'env': app.config['DEFAULT_ENVIRONMENT'], 'status': None})
+@app.route('/<env>/nodes', defaults={'status': None})
+@app.route('/nodes/<status>',
+           defaults={'env': app.config['DEFAULT_ENVIRONMENT']})
+@app.route('/<env>/nodes/<status>')
+def nodes(env, status):
+    """Display all (active) nodes from PuppetDB (with Jquery datatables)
 
     :param env: Search for nodes in this (Catalog and Fact) environment
     :type env: :obj:`string`
     """
     envs = environments()
-    status_arg = request.args.get('status', '')
     check_env(env, envs)
+    return render_template(
+        'nodes.html',
+        envs=envs,
+        current_env=env,
+        status_pick=status,
+        columns=NODES_COLUMNS)
 
+
+@app.route('/nodes/json', defaults={'env': app.config['DEFAULT_ENVIRONMENT']})
+@app.route('/<env>/nodes/json')
+def nodes_ajax(env):
+    """Query and return JSON data for nodes pages
+
+    :param env: Search for nodes in this (Catalog and Fact) environment
+    :type env: :obj:`string`
+    """
+    draw = int(request.args.get('draw', 0))
+    start = int(request.args.get('start', 0))
+    length = int(request.args.get('length', app.config['NORMAL_TABLE_COUNT']))
+    paging_args = {'limit': length, 'offset': start}
+    search_arg = request.args.get('search[value]')
+    order_column = int(request.args.get('order[0][column]', 0))
+    order_filter = NODES_COLUMNS[order_column].get(
+        'filter', NODES_COLUMNS[order_column]['attr'])
+    order_dir = request.args.get('order[0][dir]', 'desc')
+    order_args = '[{"field": "%s", "order": "%s"}]' % (order_filter, order_dir)
+    status_args = request.args.get('columns[1][search][value]', '').split('|')
+
+    envs = environments()
+    check_env(env, envs)
     query = AndOperator()
 
     if env != '*':
         query.add(EqualsOperator("catalog_environment", env))
-        query.add(EqualsOperator("facts_environment", env))
 
-    if status_arg in ['failed', 'changed', 'unchanged']:
-        query.add(EqualsOperator('latest_report_status', status_arg))
-    elif status_arg == 'unreported':
-        unreported = datetime.datetime.utcnow()
-        unreported = (unreported -
-                      timedelta(hours=app.config['UNRESPONSIVE_HOURS']))
-        unreported = unreported.replace(microsecond=0).isoformat()
+    if search_arg:
+        search_query = OrOperator()
+        search_query.add(RegexOperator("certname", r"%s" % search_arg))
+        query.add(search_query)
 
-        unrep_query = OrOperator()
-        unrep_query.add(NullOperator('report_timestamp', True))
-        unrep_query.add(LessEqualOperator('report_timestamp', unreported))
+    status_query = OrOperator()
+    for status_arg in status_args:
+        if status_arg in ['failed', 'changed', 'unchanged']:
+            arg_query = AndOperator()
+            arg_query.add(EqualsOperator('latest_report_status', status_arg))
+            arg_query.add(node_reported_query())
+            if status_arg == 'unchanged':
+                noop_query = NotOperator()
+                noop_query.add(reports_noop_query())
+                arg_query.add(noop_query)
+            status_query.add(arg_query)
+        elif status_arg == 'noop':
+            arg_query = AndOperator()
+            arg_query.add(reports_noop_query())
+            arg_query.add(node_reported_query())
+            status_query.add(arg_query)
+        elif status_arg == 'unreported':
+            status_query.add(node_unreported_query())
 
-        query.add(unrep_query)
+    if len(status_query.operations) == 0:
+        if len(query.operations) == 0:
+            query = None
+    else:
+        query.add(status_query)
 
-    if len(query.operations) == 0:
-        query = None
+    if status_args[0] != 'none':
+        nodes = get_or_abort(
+            puppetdb.nodes,
+            query=query,
+            order_by=order_args,
+            with_status=True,
+            unreported=app.config['UNRESPONSIVE_HOURS'],
+            include_total=True,
+            **paging_args)
+        nodes, nodes_events = tee(nodes)
+        for r in nodes_events:
+            break
+        total = puppetdb.total
+        if total is None:
+            total = 0
+    else:
+        results = []
+        total = 0
 
-    nodelist = puppetdb.nodes(
-        query=query,
-        unreported=app.config['UNRESPONSIVE_HOURS'],
-        with_status=True)
-    nodes = []
-    for node in yield_or_stop(nodelist):
-        if status_arg:
-            if node.status == status_arg:
-                nodes.append(node)
-        else:
-            nodes.append(node)
-    return Response(stream_with_context(
-        stream_template('nodes.html',
-                        nodes=nodes,
-                        envs=envs,
-                        current_env=env)))
+    return render_template(
+        'nodes.json.tpl',
+        draw=draw,
+        total=total,
+        total_filtered=total,
+        nodes=nodes,
+        envs=envs,
+        current_env=env,
+        columns=NODES_COLUMNS)
 
 
 def inventory_facts():
