@@ -60,15 +60,15 @@
     <div class="column">
     </div>
     <div class="column">
-      <h1 class="ui header darkblue no-margin-bottom">{{metrics['num_nodes']}}</h1>
+      <h1 class="ui header darkblue no-margin-bottom">{{stats['total']}}</h1>
       <span>Population</span>
     </div>
     <div class="column">
-      <h1 class="ui header darkblue no-margin-bottom">{{metrics['num_resources']}}</h1>
+      <h1 class="ui header darkblue no-margin-bottom">{{stats['num_resources']}}</h1>
       <span>Resources managed</span>
     </div>
     <div class="column">
-      <h1 class="ui header darkblue no-margin-bottom">{{metrics['avg_resources_node']}}</h1>
+      <h1 class="ui header darkblue no-margin-bottom">{{stats['avg_resources_node']}}</h1>
       <span>Avg. resources/node</span>
     </div>
   </div>
@@ -80,9 +80,9 @@
   <div class="ui divider"></div>
   <div class="one column row">
     <div class="column">
+      <h2 class="ui two">Latest nodes runs</h2>
       {% if nodes %}
-      <h2>Nodes status detail ({{nodes|length}})</h2>
-      <table class='ui sortable very compact very basic table'>
+      <table class='ui very compact very basic table'>
         <thead>
           <tr>
             <th class="five wide">Status</th>
@@ -96,11 +96,7 @@
           {% if node.status != 'unchanged' %}
           <tr>
             <td>
-              {% if node.latest_report_hash %}
-                {{macros.status_counts(status=node.status, node_name=node.name, events=node.events, unreported_time=node.unreported_time, current_env=current_env, report_hash=node.latest_report_hash)}}
-              {% else %}
-                {{macros.status_counts(status=node.status, node_name=node.name, events=node.events, unreported_time=node.unreported_time, current_env=current_env)}}
-              {% endif %}
+              {{ macros.report_status(status=node.status, report=node.report, unreported_time=node.unreported_time, current_env=current_env) }}
             </td>
             <td>
               <a href="{{url_for('node', env=current_env, node_name=node.name)}}">{{ node.name }}</a>
@@ -123,7 +119,6 @@
         </tbody>
       </table>
       {% else %}
-      <h2>Nodes status detail</h2>
       <div class="ui info message">
         Nothing seems to be changing.
       </div>
