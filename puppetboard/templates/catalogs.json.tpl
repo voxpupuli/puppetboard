@@ -4,12 +4,10 @@
   "recordsFiltered": {{total_filtered}},
   "data": [
     {% for catalog in catalogs -%}
-      {%- if catalog_flag %},{%- endif %}
-      {%- set catalog_flag = True -%}
+      {%- if not loop.first %},{%- endif -%}
       [
         {%- for column in columns -%}
-          {%- if column_flag %},{%- endif -%}
-          {%- set column_flag = True -%}
+          {%- if not loop.first %},{%- endif -%}
           {%- if column.attr == 'catalog_timestamp' -%}
             "<a rel=\"utctimestamp\" href=\"{{url_for('catalog_node', env=current_env, node_name=catalog.certname)}}\">{{ catalog.catalog_timestamp }}</a>"
           {%- elif column.type == 'node' -%}

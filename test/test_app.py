@@ -537,9 +537,6 @@ def test_json_daily_reports_chart_ok(client, mocker):
         ]
     }
 
-    import logging
-    logging.error(query_data)
-
     dbquery = MockDbQuery(query_data)
 
     mocker.patch.object(app.puppetdb, '_query', side_effect=dbquery.get)
@@ -558,3 +555,49 @@ def test_json_daily_reports_chart_ok(client, mocker):
         cur_day = next_day
 
     assert rv.status_code == 200
+
+
+def test_catalogs_disabled(client, mocker,
+                           mock_puppetdb_environments,
+                           mock_puppetdb_default_nodes):
+    app.app.config['ENABLE_CATALOG'] = False
+    rv = client.get('/catalogs')
+    assert rv.status_code == 403
+
+
+def test_catalogs_view(client, mocker,
+                       mock_puppetdb_environments,
+                       mock_puppetdb_default_nodes):
+    app.app.config['ENABLE_CATALOG'] = True
+    rv = client.get('/catalogs')
+    assert rv.status_code == 200
+    soup = BeautifulSoup(rv.data, 'html.parser')
+    assert soup.title.contents[0] == 'Puppetboard'
+
+
+def test_catalogs_json(client, mocker,
+                       mock_puppetdb_environments,
+                       mock_puppetdb_default_nodes):
+    app.app.config['ENABLE_CATALOG'] = True
+    rv = client.get('/catalogs/json')
+    assert rv.status_code == 200
+
+    result_json = json.loads(rv.data.decode('utf-8'))
+    assert 'data' in result_json
+
+    for line in result_json['data']:
+        assert len(line) == 3
+
+
+def test_catalogs_json_compare(client, mocker,
+                               mock_puppetdb_environments,
+                               mock_puppetdb_default_nodes):
+    app.app.config['ENABLE_CATALOG'] = True
+    rv = client.get('/catalogs/compare/1234567/json')
+    assert rv.status_code == 200
+
+    result_json = json.loads(rv.data.decode('utf-8'))
+    assert 'data' in result_json
+
+    for line in result_json['data']:
+        assert len(line) == 3
