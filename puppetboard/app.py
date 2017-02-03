@@ -395,7 +395,7 @@ def nodes_ajax(env):
 
     status_query = OrOperator()
     for status_arg in status_args:
-        if status_arg not in ['', '*']:
+        if status_arg not in ['', '*', 'none']:
             arg_query = get_node_status_query(status_arg)
             if arg_query:
                 status_query.add(arg_query)

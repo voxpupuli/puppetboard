@@ -40,38 +40,25 @@ def mock_puppetdb_environments(mocker):
 
 @pytest.fixture
 def mock_puppetdb_default_nodes(mocker):
+    timestamp = '2013-08-01T09:57:00.000Z'
+    report_hash = '1234567'
+    transaction = '7890'
+    version = '3.8.5'
     node_list = [
-        Node('_', 'node-unreported',
-             report_timestamp='2013-08-01T09:57:00.000Z',
-             latest_report_hash='1234567',
-             catalog_timestamp='2013-08-01T09:57:00.000Z',
-             facts_timestamp='2013-08-01T09:57:00.000Z',
-             status_report='unreported'),
-        Node('_', 'node-changed',
-             report_timestamp='2013-08-01T09:57:00.000Z',
-             latest_report_hash='1234567',
-             catalog_timestamp='2013-08-01T09:57:00.000Z',
-             facts_timestamp='2013-08-01T09:57:00.000Z',
-             status_report='changed'),
-        Node('_', 'node-failed',
-             report_timestamp='2013-08-01T09:57:00.000Z',
-             latest_report_hash='1234567',
-             catalog_timestamp='2013-08-01T09:57:00.000Z',
-             facts_timestamp='2013-08-01T09:57:00.000Z',
-             status_report='failed'),
-        Node('_', 'node-noop',
-             report_timestamp='2013-08-01T09:57:00.000Z',
-             latest_report_hash='1234567',
-             catalog_timestamp='2013-08-01T09:57:00.000Z',
-             facts_timestamp='2013-08-01T09:57:00.000Z',
-             status_report='noop'),
-        Node('_', 'node-unchanged',
-             report_timestamp='2013-08-01T09:57:00.000Z',
-             latest_report_hash='1234567',
-             catalog_timestamp='2013-08-01T09:57:00.000Z',
-             facts_timestamp='2013-08-01T09:57:00.000Z',
-             status_report='unchanged'),
+        Node(
+            '_', 'node-%s' % status,
+            report_timestamp=timestamp,
+            latest_report_hash=report_hash,
+            catalog_timestamp=timestamp,
+            facts_timestamp=timestamp,
+            status_report=status,
+            report=Report(
+                '_', 'node-%s', report_hash,
+                timestamp, timestamp, timestamp,
+                version, '6', version, transaction))
+        for status in ['failed', 'changed', 'unchanged', 'noop', 'unreported']
     ]
+
     return mocker.patch.object(app.puppetdb, 'nodes',
                                return_value=iter(node_list))
 
@@ -102,11 +89,18 @@ def test_no_env(client, mock_puppetdb_environments):
     assert rv.status_code == 404
 
 
-def test_get_index(client, mocker,
-                   mock_puppetdb_environments,
-                   mock_puppetdb_default_nodes):
+def test_index(client, mocker,
+               mock_puppetdb_environments,
+               mock_puppetdb_default_nodes):
     query_data = {
-        'nodes': [[{'count': 10}]],
+        'nodes': [
+            [{'count': 5}],
+            [{'count': 1}],
+            [{'count': 1}],
+            [{'count': 1}],
+            [{'count': 1}],
+            [{'count': 1}],
+        ],
         'resources': [[{'count': 40}]],
     }
 
@@ -116,107 +110,14 @@ def test_get_index(client, mocker,
     rv = client.get('/')
     soup = BeautifulSoup(rv.data, 'html.parser')
     assert soup.title.contents[0] == 'Puppetboard'
-    assert rv.status_code == 200
 
-
-def test_index_all(client, mocker,
-                   mock_puppetdb_environments,
-                   mock_puppetdb_default_nodes):
-
-    base_str = 'puppetlabs.puppetdb.population:'
-    query_data = {
-        'version': [{'version': '4.2.0'}],
-        'mbean': [
-            {
-                'validate': {
-                    'data': {'Value': '50'},
-                    'checks': {
-                        'path': '%sname=num-nodes' % base_str
-                    }
-                }
-            },
-            {
-                'validate': {
-                    'data': {'Value': '60'},
-                    'checks': {
-                        'path': '%sname=num-resources' % base_str
-                    }
-                }
-            },
-            {
-                'validate': {
-                    'data': {'Value': 60.3},
-                    'checks': {
-                        'path': '%sname=avg-resources-per-node' % base_str
-                    }
-                }
-            }
-        ]
-    }
-    dbquery = MockDbQuery(query_data)
-    mocker.patch.object(app.puppetdb, '_query', side_effect=dbquery.get)
-    rv = client.get('/%2A/')
-
-    soup = BeautifulSoup(rv.data, 'html.parser')
-    assert soup.title.contents[0] == 'Puppetboard'
     vals = soup.find_all('h1',
                          {"class": "ui header darkblue no-margin-bottom"})
 
     assert len(vals) == 3
-    assert vals[0].string == '50'
-    assert vals[1].string == '60'
-    assert vals[2].string == '        60'
-
-    assert rv.status_code == 200
-
-
-def test_index_all_older_puppetdb(client, mocker,
-                                  mock_puppetdb_environments,
-                                  mock_puppetdb_default_nodes):
-
-    base_str = 'puppetlabs.puppetdb.population:type=default,'
-    query_data = {
-        'version': [{'version': '3.2.0'}],
-        'mbean': [
-            {
-                'validate': {
-                    'data': {'Value': '50'},
-                    'checks': {
-                        'path': '%sname=num-nodes' % base_str
-                    }
-                }
-            },
-            {
-                'validate': {
-                    'data': {'Value': '60'},
-                    'checks': {
-                        'path': '%sname=num-resources' % base_str
-                    }
-                }
-            },
-            {
-                'validate': {
-                    'data': {'Value': 60.3},
-                    'checks': {
-                        'path': '%sname=avg-resources-per-node' % base_str
-                    }
-                }
-            }
-        ]
-    }
-    dbquery = MockDbQuery(query_data)
-    mocker.patch.object(app.puppetdb, '_query', side_effect=dbquery.get)
-    rv = client.get('/%2A/')
-
-    soup = BeautifulSoup(rv.data, 'html.parser')
-    assert soup.title.contents[0] == 'Puppetboard'
-    vals = soup.find_all('h1',
-                         {"class": "ui header darkblue no-margin-bottom"})
-
-    assert len(vals) == 3
-    assert vals[0].string == '50'
-    assert vals[1].string == '60'
-    assert vals[2].string == '        60'
+    assert vals[0].string == '5'
+    assert vals[1].string == '40'
+    assert vals[2].string == '         8'
 
     assert rv.status_code == 200
 
@@ -226,7 +127,14 @@ def test_index_division_by_zero(client, mocker):
     mock_puppetdb_default_nodes(mocker)
 
     query_data = {
-        'nodes': [[{'count': 0}]],
+        'nodes': [
+            [{'count': 0}],
+            [{'count': 1}],
+            [{'count': 1}],
+            [{'count': 1}],
+            [{'count': 1}],
+            [{'count': 1}],
+        ],
         'resources': [[{'count': 40}]],
     }
 
@@ -254,7 +162,14 @@ def test_offline_mode(client, mocker):
     mock_puppetdb_default_nodes(mocker)
 
     query_data = {
-        'nodes': [[{'count': 10}]],
+        'nodes': [
+            [{'count': 0}],
+            [{'count': 1}],
+            [{'count': 1}],
+            [{'count': 1}],
+            [{'count': 1}],
+            [{'count': 1}],
+        ],
         'resources': [[{'count': 40}]],
     }
 
@@ -274,29 +189,91 @@ def test_offline_mode(client, mocker):
     assert rv.status_code == 200
 
 
-def test_default_node_view(client, mocker,
-                           mock_puppetdb_environments,
-                           mock_puppetdb_default_nodes):
-
+def test_node_view(client, mocker,
+                   mock_puppetdb_environments,
+                   mock_puppetdb_default_nodes):
     rv = client.get('/nodes')
     soup = BeautifulSoup(rv.data, 'html.parser')
     assert soup.title.contents[0] == 'Puppetboard'
+    assert rv.status_code == 200
 
-    for label in ['failed', 'changed', 'unreported', 'noop']:
-        vals = soup.find_all('a',
-                             {"class": "ui %s label status" % label})
-        assert len(vals) == 1
-        assert 'node-%s' % (label) in vals[0].attrs['href']
+
+def test_node_view_status_pick(client, mocker,
+                               mock_puppetdb_environments,
+                               mock_puppetdb_default_nodes):
+    rv = client.get('/nodes/failed')
+    soup = BeautifulSoup(rv.data, 'html.parser')
+    assert soup.title.contents[0] == 'Puppetboard'
+    assert rv.status_code == 200
+    vals = soup.find_all('input', {'id': 'failed', 'checked': ""})
+    assert len(vals) == 1
+
+
+def test_node_json_all_env(client, mocker,
+                           mock_puppetdb_environments,
+                           mock_puppetdb_default_nodes):
+    app.puppetdb.last_total = 5
+    rv = client.get('/%2A/nodes/json')
 
     assert rv.status_code == 200
+    result_json = json.loads(rv.data.decode('utf-8'))
+
+    assert 'data' in result_json
+    assert len(result_json['data']) == 5
+
+    for node in result_json['data']:
+        assert len(node) == 5
+
+
+def test_node_json_parameters(client, mocker,
+                              mock_puppetdb_environments,
+                              mock_puppetdb_default_nodes):
+    app.puppetdb.last_total = 2
+    rv = client.get('/nodes/json',
+                    query_string={
+                        "columns[1][search][value]": "failed|changed",
+                        "length": 1,
+                        "search[value]": "search"
+                    })
+
+    assert rv.status_code == 200
+    result_json = json.loads(rv.data.decode('utf-8'))
+
+    assert 'data' in result_json
+    assert len(result_json['data']) == 5
+
+    for node in result_json['data']:
+        assert len(node) == 5
+
+
+def test_node_json_no_pick(client, mocker,
+                           mock_puppetdb_environments,
+                           mock_puppetdb_default_nodes):
+    app.puppetdb.last_total = 2
+    rv = client.get('/nodes/json',
+                    query_string={
+                        "columns[1][search][value]": "none"
+                    })
+
+    assert rv.status_code == 200
+    result_json = json.loads(rv.data.decode('utf-8'))
+
+    assert 'data' in result_json
+    assert len(result_json['data']) == 0
 
 
 def test_radiator_view(client, mocker,
                        mock_puppetdb_environments,
                        mock_puppetdb_default_nodes):
     query_data = {
-        'nodes': [[{'count': 10}]],
-        'resources': [[{'count': 40}]],
+        'nodes': [
+            [{'count': 5}],
+            [{'count': 1}],
+            [{'count': 1}],
+            [{'count': 1}],
+            [{'count': 1}],
+            [{'count': 1}],
+        ]
     }
 
     dbquery = MockDbQuery(query_data)
@@ -312,40 +289,20 @@ def test_radiator_view(client, mocker,
     assert soup.h1 != 'Not Found'
     total = soup.find(class_='total')
 
-    assert '10' in total.text
+    assert '5' in total.text
 
 
-def test_radiator_view_all(client, mocker,
-                           mock_puppetdb_environments,
-                           mock_puppetdb_default_nodes):
-    base_str = 'puppetlabs.puppetdb.population:'
+def test_radiator_view_all_env(client, mocker,
+                               mock_puppetdb_environments,
+                               mock_puppetdb_default_nodes):
     query_data = {
-        'version': [{'version': '4.2.0'}],
-        'mbean': [
-            {
-                'validate': {
-                    'data': {'Value': '50'},
-                    'checks': {
-                        'path': '%sname=num-nodes' % base_str
-                    }
-                }
-            },
-            {
-                'validate': {
-                    'data': {'Value': '60'},
-                    'checks': {
-                        'path': '%sname=num-resources' % base_str
-                    }
-                }
-            },
-            {
-                'validate': {
-                    'data': {'Value': 60.3},
-                    'checks': {
-                        'path': '%sname=avg-resources-per-node' % base_str
-                    }
-                }
-            }
+        'nodes': [
+            [{'count': 5}],
+            [{'count': 1}],
+            [{'count': 1}],
+            [{'count': 1}],
+            [{'count': 1}],
+            [{'count': 1}],
         ]
     }
 
@@ -362,65 +319,21 @@ def test_radiator_view_all(client, mocker,
     assert soup.h1 != 'Not Found'
     total = soup.find(class_='total')
 
-    assert '50' in total.text
-
-
-def test_radiator_view_all_old_version(client, mocker,
-                                       mock_puppetdb_environments,
-                                       mock_puppetdb_default_nodes):
-    base_str = 'puppetlabs.puppetdb.population:type=default,'
-    query_data = {
-        'version': [{'version': '3.2.0'}],
-        'mbean': [
-            {
-                'validate': {
-                    'data': {'Value': '50'},
-                    'checks': {
-                        'path': '%sname=num-nodes' % base_str
-                    }
-                }
-            },
-            {
-                'validate': {
-                    'data': {'Value': '60'},
-                    'checks': {
-                        'path': '%sname=num-resources' % base_str
-                    }
-                }
-            },
-            {
-                'validate': {
-                    'data': {'Value': 60.3},
-                    'checks': {
-                        'path': '%sname=avg-resources-per-node' % base_str
-                    }
-                }
-            }
-        ]
-    }
-
-    dbquery = MockDbQuery(query_data)
-
-    mocker.patch.object(app.puppetdb, '_query', side_effect=dbquery.get)
-
-    rv = client.get('/%2A/radiator')
-
-    assert rv.status_code == 200
-
-    soup = BeautifulSoup(rv.data, 'html.parser')
-    assert soup.title.contents[0] == 'Puppetboard'
-    assert soup.h1 != 'Not Found'
-    total = soup.find(class_='total')
-
-    assert '50' in total.text
+    assert '5' in total.text
 
 
 def test_radiator_view_json(client, mocker,
                             mock_puppetdb_environments,
                             mock_puppetdb_default_nodes):
     query_data = {
-        'nodes': [[{'count': 10}]],
-        'resources': [[{'count': 40}]],
+        'nodes': [
+            [{'count': 5}],
+            [{'count': 1}],
+            [{'count': 1}],
+            [{'count': 1}],
+            [{'count': 1}],
+            [{'count': 1}],
+        ]
     }
 
     dbquery = MockDbQuery(query_data)
@@ -432,25 +345,15 @@ def test_radiator_view_json(client, mocker,
     assert rv.status_code == 200
     json_data = json.loads(rv.data.decode('utf-8'))
 
-    assert json_data['unreported'] == 1
-    assert json_data['noop'] == 1
-    assert json_data['failed'] == 1
-    assert json_data['changed'] == 1
-    assert json_data['unchanged'] == 1
+    for status in ['failed', 'changed', 'unchanged', 'noop', 'unreported']:
+        assert json_data[status] == 1
+        assert json_data["%s_percent" % status] == 20
+    assert json_data['total'] == 5
 
 
 def test_radiator_view_bad_env(client, mocker):
     mock_puppetdb_environments(mocker)
     mock_puppetdb_default_nodes(mocker)
-
-    query_data = {
-        'nodes': [[{'count': 10}]],
-        'resources': [[{'count': 40}]],
-    }
-
-    dbquery = MockDbQuery(query_data)
-
-    mocker.patch.object(app.puppetdb, '_query', side_effect=dbquery.get)
 
     rv = client.get('/nothere/radiator')
 
@@ -465,10 +368,15 @@ def test_radiator_view_division_by_zero(client, mocker):
     mock_puppetdb_default_nodes(mocker)
 
     query_data = {
-        'nodes': [[{'count': 0}]],
-        'resources': [[{'count': 40}]],
+        'nodes': [
+            [{'count': 0}],
+            [{'count': 1}],
+            [{'count': 1}],
+            [{'count': 1}],
+            [{'count': 1}],
+            [{'count': 1}],
+        ]
     }
-
     dbquery = MockDbQuery(query_data)
 
     mocker.patch.object(app.puppetdb, '_query', side_effect=dbquery.get)

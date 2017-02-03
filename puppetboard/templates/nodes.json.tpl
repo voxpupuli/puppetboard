@@ -5,12 +5,10 @@
   "recordsFiltered": {{total_filtered}},
   "data": [
     {% for node in nodes -%}
-      {%- if flag %},{%- endif %}
-      {%- set flag = True -%}
+      {%- if not loop.first %},{%- endif -%}
       [
         {%- for column in columns -%}
-          {%- if column_flag %},{%- endif -%}
-          {%- set column_flag = True -%}
+          {%- if not loop.first %},{%- endif -%}
           {%- if column.type == 'datetime' -%}
             {%- if column.name == "Catalog" -%}
               "<a rel=\"utctimestamp\" href=\"{{ url_for('catalog_node', env=current_env, node_name=node.name) }}\">{{node.catalog_timestamp}}</a>"

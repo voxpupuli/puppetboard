@@ -4,11 +4,9 @@
   "recordsTotal": {{total}},
   "recordsFiltered": {{total_filtered}},
   "data": [
-    {%- set report_flag = false -%}
     {% for report in reports -%}
       {%- if not loop.first %},{%- endif -%}
       [
-        {%- set column_flag = false -%}
         {%- for column in columns -%}
           {%- if not loop.first %},{%- endif -%}
           {%- if column.type == 'datetime' -%}
