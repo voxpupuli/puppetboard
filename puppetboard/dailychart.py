@@ -9,7 +9,7 @@ DATE_FORMAT = "%Y-%m-%d"
 DATETIME_FORMAT = "%Y-%m-%dT%H:%M:%S.%fZ"
 
 
-def _iter_dates(days_number):
+def _iter_dates(days_number, reverse=False):
     """Return a list of datetime pairs AB, BC, CD, ... that represent the
        24hs time ranges of today (until this midnight) and the
        previous days.
@@ -18,6 +18,9 @@ def _iter_dates(days_number):
     today = datetime.utcnow().replace(hour=0, minute=0, second=0,
                                       microsecond=0, tzinfo=UTC())
     days_list = list(today + one_day * (1 - i) for i in range(days_number + 1))
+    if reverse:
+        days_list.reverse()
+        return zip(days_list, days_list[1:])
     return zip(days_list[1:], days_list)
 
 
@@ -65,7 +68,7 @@ def get_daily_reports_chart(db, env, days_number, certname=None):
     the database will be considered.
     """
     result = []
-    for start, end in reversed(_iter_dates(days_number)):
+    for start, end in _iter_dates(days_number, reverse=True):
         query = _build_query(
             env=env,
             start=start.strftime(DATETIME_FORMAT),
