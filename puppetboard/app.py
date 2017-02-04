@@ -418,12 +418,12 @@ def inventory_ajax(env):
     total = len(fact_data)
 
     return render_template(
-            'inventory.json.tpl',
-            draw=draw,
-            total=total,
-            total_filtered=total,
-            fact_data=fact_data,
-            columns=fact_names)
+        'inventory.json.tpl',
+        draw=draw,
+        total=total,
+        total_filtered=total,
+        fact_data=fact_data,
+        columns=fact_names)
 
 
 @app.route('/node/<node_name>/',
