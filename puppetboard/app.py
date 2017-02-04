@@ -857,7 +857,9 @@ def catalogs(env, compare):
     return render_template(
         'catalogs.html',
         compare=compare,
-        columns=CATALOGS_COLUMNS)
+        columns=CATALOGS_COLUMNS,
+        envs=envs,
+        current_env=env)
 
 
 @app.route('/catalogs/json',
