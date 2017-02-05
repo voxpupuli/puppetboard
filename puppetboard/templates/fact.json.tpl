@@ -26,10 +26,10 @@
   ]
   {%- if render_graph %},
   "chart": [
-    {% for fact_h in facts | groupby('value') -%}
+    {% for fact_h in facts | map('format_attribute', 'value', '{0}') | groupby('value') -%}
     {%- if not loop.first %},{%- endif -%}
     {
-      "label": {{ fact_h.grouper.replace("\n", " ") | jsonprint }},
+      "label": {{ fact_h.grouper | replace("\n", " ") | jsonprint }},
       "value": {{ fact_h.list|length }}
     }
     {% endfor %}

@@ -78,6 +78,12 @@ def version():
     return __version__
 
 
+@app.template_filter()
+def format_attribute(obj, attr, format_str):
+    setattr(obj, attr, format_str.format(getattr(obj, attr)))
+    return obj
+
+
 def stream_template(template_name, **context):
     app.update_template_context(context)
     t = app.jinja_env.get_template(template_name)

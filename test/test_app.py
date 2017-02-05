@@ -699,7 +699,7 @@ def test_node_view(client, mocker,
 def test_fact_json_with_graph(client, mocker,
                               mock_puppetdb_environments,
                               mock_puppetdb_default_nodes):
-    values = ['a', 'b', 'b', 'd']
+    values = ['a', 'b', 'b', 'd', True, 'a\nb']
     query_data = {'facts': []}
     query_data['facts'].append([])
     for i, value in enumerate(values):
@@ -720,14 +720,14 @@ def test_fact_json_with_graph(client, mocker,
     result_json = json.loads(rv.data.decode('utf-8'))
 
     assert 'data' in result_json
-    assert len(result_json['data']) == 4
+    assert len(result_json['data']) == 6
     for line in result_json['data']:
         assert len(line) == 2
 
     assert 'chart' in result_json
-    assert len(result_json['chart']) == 3
+    assert len(result_json['chart']) == 5
     # Test group_by
-    assert result_json['chart'][1]['value'] == 2
+    assert result_json['chart'][3]['value'] == 2
 
 
 def test_fact_json_without_graph(client, mocker,
