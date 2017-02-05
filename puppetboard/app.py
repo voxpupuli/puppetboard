@@ -630,33 +630,33 @@ def facts(env):
     check_env(env, envs)
     facts = []
     order_by = '[{"field": "name", "order": "asc"}]'
+    facts = get_or_abort(puppetdb.fact_names)
 
-    if env == '*':
-        facts = get_or_abort(puppetdb.fact_names)
-    else:
-        query = ExtractOperator()
-        query.add_field(str('name'))
-        query.add_query(EqualsOperator("environment", env))
-        query.add_group_by(str("name"))
-
-        for names in get_or_abort(puppetdb._query,
-                                  'facts',
-                                  query=query,
-                                  order_by=order_by):
-            facts.append(names['name'])
-
-    facts_dict = collections.defaultdict(list)
+    facts_columns = [[]]
+    letter = None
+    letter_list = None
+    break_size = (len(facts) / 4) + 1
+    next_break = break_size
+    count = 0
     for fact in facts:
-        letter = fact[0].upper()
-        letter_list = facts_dict[letter]
-        letter_list.append(fact)
-        facts_dict[letter] = letter_list
+        count += 1
 
-    sorted_facts_dict = sorted(facts_dict.items())
+        if letter != fact[0].upper() or not letter:
+            if count > next_break:
+                # Create a new column
+                facts_columns.append([])
+                next_break += break_size
+            if letter_list:
+                facts_columns[-1].append(letter_list)
+            # Reset
+            letter = fact[0].upper()
+            letter_list = []
+
+        letter_list.append(fact)
+    facts_columns[-1].append(letter_list)
+
     return render_template('facts.html',
-                           facts_dict=sorted_facts_dict,
-                           facts_len=(sum(map(len, facts_dict.values())) +
-                                      len(facts_dict) * 5),
+                           facts_columns=facts_columns,
                            envs=envs,
                            current_env=env)
 

@@ -4,26 +4,19 @@
   <input autofocus="autofocus" class="filter-list" placeholder="Type here to filter...">
 </div>
 <div class="ui searchable stackable doubling four column grid factlist">
+  {%- for column in facts_columns %}
   <div class="column">
-  {%- set facts_count = 0 -%}
-  {%- set break = facts_len//4 + 1 -%}
-  {%- for key,facts_list in facts_dict %}
+    {%- for letter in column %}
     <div class="ui list_hide_segment segment">
-      <a class="ui darkblue ribbon label">{{key}}</a>
+      <a class="ui darkblue ribbon label">{{ letter[0][0]|upper }}</a>
       <ul>
-        {%- for fact in facts_list %}
-        <li><a href="{{url_for('fact', env=current_env, fact=fact)}}">{{fact}}</a></li>
+        {%- for fact in letter %}
+        <li><a href="{{url_for('fact', env=current_env, fact=fact)}}">{{ fact }}</a></li>
         {%- endfor %}
       </ul>
     </div>
-    {%- set facts_count = facts_count + facts_list|length -%}
-    {%- if facts_count >= break -%}
-    </div>
-    <div class="column">
-    {%- set break = facts_len//4  + 1 + break -%}
-    {%- endif -%}
-    {%- set facts_count = facts_count + 5 -%}
-  {% endfor %}
+    {%- endfor %}
   </div>
+  {%- endfor %}
 </div>
 {% endblock content %}

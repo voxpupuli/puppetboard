@@ -620,3 +620,22 @@ def test_catalogs_json_compare(client, mocker,
                      "action": "/catalogs/compare/node-unreported...node-%s" %
                      found_status})
         assert len(val) == 1
+
+
+def test_facts_view(client, mocker, mock_puppetdb_environments):
+    query_data = {
+        'fact-names': [[chr(i) for i in range(ord('a'), ord('z') + 1)]]
+    }
+
+    dbquery = MockDbQuery(query_data)
+
+    mocker.patch.object(app.puppetdb, '_query', side_effect=dbquery.get)
+
+    rv = client.get('/facts')
+    assert rv.status_code == 200
+    soup = BeautifulSoup(rv.data, 'html.parser')
+    assert soup.title.contents[0] == 'Puppetboard'
+
+    searchable = soup.find('div', {'class': 'searchable'})
+    vals = searchable.find_all('div', {'class': 'column'})
+    assert len(vals) == 4
