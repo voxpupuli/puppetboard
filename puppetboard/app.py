@@ -391,9 +391,9 @@ def inventory(env):
         )))
 
 
-@app.route('/node/<node_name>/',
+@app.route('/node/<node_name>',
            defaults={'env': app.config['DEFAULT_ENVIRONMENT']})
-@app.route('/<env>/node/<node_name>/')
+@app.route('/<env>/node/<node_name>')
 def node(env, node_name):
     """Display a dashboard for a node showing as much data as we have on that
     node. This includes facts and reports but not Resources as that is too
@@ -421,11 +421,11 @@ def node(env, node_name):
         columns=REPORTS_COLUMNS[:2])
 
 
-@app.route('/reports/',
+@app.route('/reports',
            defaults={'env': app.config['DEFAULT_ENVIRONMENT'],
                      'node_name': None})
-@app.route('/<env>/reports/', defaults={'node_name': None})
-@app.route('/reports/<node_name>/',
+@app.route('/<env>/reports', defaults={'node_name': None})
+@app.route('/reports/<node_name>',
            defaults={'env': app.config['DEFAULT_ENVIRONMENT']})
 @app.route('/<env>/reports/<node_name>')
 def reports(env, node_name):
