@@ -412,11 +412,10 @@ def node(env, node_name):
     query.add(EqualsOperator("certname", node_name))
 
     node = get_or_abort(puppetdb.node, node_name)
-    facts = node.facts()
+
     return render_template(
         'node.html',
         node=node,
-        facts=yield_or_stop(facts),
         envs=envs,
         current_env=env,
         columns=REPORTS_COLUMNS[:2])
@@ -661,73 +660,102 @@ def facts(env):
                            current_env=env)
 
 
-@app.route('/fact/<fact>', defaults={'env': app.config['DEFAULT_ENVIRONMENT']})
-@app.route('/<env>/fact/<fact>')
-def fact(env, fact):
-    """Fetches the specific fact from PuppetDB and displays its value per
+@app.route('/fact/<fact>',
+           defaults={'env': app.config['DEFAULT_ENVIRONMENT'], 'value': None})
+@app.route('/<env>/fact/<fact>', defaults={'value': None})
+@app.route('/fact/<fact>/<value>',
+           defaults={'env': app.config['DEFAULT_ENVIRONMENT']})
+@app.route('/<env>/fact/<fact>/<value>')
+def fact(env, fact, value):
+    """Fetches the specific fact(/value) from PuppetDB and displays per
     node for which this fact is known.
 
     :param env: Searches for facts in this environment
     :type env: :obj:`string`
     :param fact: Find all facts with this name
     :type fact: :obj:`string`
+    :param fact: Find all facts with this value
+    :type fact: :obj:`string`
     """
     envs = environments()
     check_env(env, envs)
 
-    # we can only consume the generator once, lists can be doubly consumed
-    # om nom nom
     render_graph = False
-    if fact in graph_facts:
+    if fact in graph_facts and not value:
         render_graph = True
 
-    if env == '*':
-        query = None
-    else:
-        query = EqualsOperator("environment", env)
-
-    localfacts = [f for f in yield_or_stop(puppetdb.facts(
-        name=fact, query=query))]
-    return Response(stream_with_context(stream_template(
+    return render_template(
         'fact.html',
-        name=fact,
+        fact=fact,
+        value=value,
         render_graph=render_graph,
-        facts=localfacts,
         envs=envs,
-        current_env=env)))
+        current_env=env)
 
 
-@app.route('/fact/<fact>/<value>',
-           defaults={'env': app.config['DEFAULT_ENVIRONMENT']})
-@app.route('/<env>/fact/<fact>/<value>')
-def fact_value(env, fact, value):
-    """On asking for fact/value get all nodes with that fact.
+@app.route('/fact/<fact>/json',
+           defaults={'env': app.config['DEFAULT_ENVIRONMENT'],
+                     'node': None, 'value': None})
+@app.route('/<env>/fact/<fact>/json', defaults={'node': None, 'value': None})
+@app.route('/fact/<fact>/<value>/json',
+           defaults={'env': app.config['DEFAULT_ENVIRONMENT'], 'node': None})
+@app.route('/<env>/fact/<fact>/<value>/json', defaults={'node': None})
+@app.route('/node/<node>/facts/json',
+           defaults={'env': app.config['DEFAULT_ENVIRONMENT'],
+                     'fact': None, 'value': None})
+@app.route('/<env>/node/<node>/facts/json',
+           defaults={'fact': None, 'value': None})
+def fact_ajax(env, node, fact, value):
+    """Fetches the specific facts matching (node/fact/value) from PuppetDB and
+    return a JSON table
 
     :param env: Searches for facts in this environment
     :type env: :obj:`string`
+    :param fact: Find all facts for this node
+    :type fact: :obj:`string`
     :param fact: Find all facts with this name
     :type fact: :obj:`string`
-    :param value: Filter facts whose value is equal to this
-    :type value: :obj:`string`
+    :param fact: Find all facts with this value
+    :type fact: :obj:`string`
     """
+    draw = int(request.args.get('draw', 0))
+
     envs = environments()
     check_env(env, envs)
 
-    if env == '*':
-        query = None
-    else:
-        query = EqualsOperator("environment", env)
+    render_graph = False
+    if fact in graph_facts and not value and not node:
+        render_graph = True
 
-    facts = get_or_abort(puppetdb.facts,
-                         name=fact,
-                         value=value,
-                         query=query)
-    localfacts = [f for f in yield_or_stop(facts)]
-    return render_template(
-        'fact.html',
+    query = AndOperator()
+    if node:
+        query.add(EqualsOperator("certname", node))
+
+    if env != '*':
+        query.add(EqualsOperator("environment", env))
+
+    if len(query.operations) == 0:
+        query = None
+
+    # Generator needs to be converted (graph / total)
+    facts = [f for f in get_or_abort(
+        puppetdb.facts,
         name=fact,
         value=value,
-        facts=localfacts,
+        query=query)]
+
+    total = len(facts)
+
+    return render_template(
+        'fact.json.tpl',
+        fact=fact,
+        node=node,
+        value=value,
+        draw=draw,
+        total=total,
+        total_filtered=total,
+        render_graph=render_graph,
+        facts=facts,
         envs=envs,
         current_env=env)
 
