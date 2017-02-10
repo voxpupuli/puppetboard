@@ -22,8 +22,7 @@ matrix:
 
 install:
   - if [ "${PINNED}" == "FALSE" ]; then python scripts/unpin.py; fi
-  - pip install -r requirements.txt
-  - pip install -U -r requirements-test.txt
+  - pip install -r requirements-test.txt
   - pip install -q coverage coveralls --use-wheel
 script:
   - py.test --cov=puppetboard --pep8  -v
