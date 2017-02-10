@@ -9,7 +9,7 @@ if sys.argv[-1] == 'publish':
     os.system('python setup.py sdist upload')
     sys.exit()
 
-VERSION = "0.2.1"
+exec(open('puppetboard/version.py').read())
 
 with codecs.open('README.rst', encoding='utf-8') as f:
     README = f.read()
@@ -19,7 +19,7 @@ with codecs.open('CHANGELOG.rst', encoding='utf-8') as f:
 
 setup(
     name='puppetboard',
-    version=VERSION,
+    version=__version__,
     author='Corey Hammerton',
     author_email='corey.hammerton@gmail.com',
     packages=find_packages(),

@@ -29,6 +29,8 @@ from puppetboard.dailychart import get_daily_reports_chart
 
 import werkzeug.exceptions as ex
 
+from . import __version__
+
 REPORTS_COLUMNS = [
     {'attr': 'end', 'filter': 'end_time',
      'name': 'End time', 'type': 'datetime'},
@@ -64,6 +66,11 @@ if not isinstance(numeric_level, int):
     raise ValueError('Invalid log level: %s' % app.config['LOGLEVEL'])
 logging.basicConfig(level=numeric_level)
 log = logging.getLogger(__name__)
+
+
+@app.template_global()
+def version():
+    return __version__
 
 
 def stream_template(template_name, **context):
