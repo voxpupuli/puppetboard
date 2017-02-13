@@ -6,28 +6,27 @@ python:
   - "3.5"
   - "3.6"
 env:
-  - PINNED=TRUE
-  - PINNED=FALSE
+  global:
+    - TEST_DEPS="True"
+  matrix:
+    - DEPS_RESOLVE=""
+    - DEPS_RESOLVE="PINNED"
+    - DEPS_RESOLVE="UNPINNED"
 
 matrix:
   allow_failures:
-    - python: 2.6
-      env: PINNED=FALSE
-    - python: 2.7
-      env: PINNED=FALSE
-    - python: 3.5
-      env: PINNED=FALSE
-    - python: 3.6
-      env: PINNED=FALSE
+    - env: DEPS_RESOLVE="UNPINNED"
 
 install:
-  - if [ "${PINNED}" == "FALSE" ]; then python scripts/unpin.py; fi
+  # Travis already include pytest, need to upgrade it when unpinned
+  - if [[ "${DEPS_RESOLVE}" == "UNPINNED" ]]; then pip install -U pytest; fi
   - pip install -r requirements.txt
-  - pip install -U -r requirements-test.txt
-  - pip install -q coverage coveralls --use-wheel
+  - pip install -q coveralls --use-wheel
+
 script:
-  - py.test --cov=puppetboard --pep8  -v
-  - ./bandit.sh
+  - py.test --cov=puppetboard --pep8 -v
+  - if [ "${TRAVIS_PYTHON_VERSION}" != "2.6" ]; then bandit -r puppetboard; fi
+  - if [ "${TRAVIS_PYTHON_VERSION}" != "2.6" ]; then bandit -r tests; fi
 
 after_success:
   - coveralls
