@@ -110,12 +110,12 @@ Native packages for your operating system will be provided in the near future.
 +-------------------+-----------+--------------------------------------------+
 | `ArchLinux`_      | available | Maintained by `Tim Meusel`_                |
 +-------------------+-----------+--------------------------------------------+
-| `OpenBSD`_        | available | Maintained by `Jasper Lievisse Adriaanse`_ |
+| `OpenBSD`_        | available | Maintained by `Sebastian Reitenbach`_      |
 +-------------------+-----------+--------------------------------------------+
 
 .. _ArchLinux: https://aur.archlinux.org/packages/python2-puppetboard/
 .. _Tim Meusel: https://github.com/bastelfreak
-.. _Jasper Lievisse Adriaanse: https://github.com/jasperla
+.. _Sebastian Reitenbach: https://github.com/buzzdeee
 .. _OpenBSD: http://www.openbsd.org/cgi-bin/cvsweb/ports/www/puppetboard/
 .. _OpenSuSE Build Service: https://build.opensuse.org/package/show/systemsmanagement:puppet/python-puppetboard
 .. _OpenSuSE 12/13: https://build.opensuse.org/package/show/systemsmanagement:puppet/python-puppetboard
@@ -683,11 +683,11 @@ Some people have already started building things with and around Puppetboard.
 
 Packages
 --------
-* An OpenBSD port is being maintained by `Jasper Lievisse Adriaanse`_ and can be viewed `here <http://www.openbsd.org/cgi-bin/cvsweb/ports/www/puppetboard/>`_.
+* An OpenBSD port is being maintained by `Sebastian Reitenbach`_ and can be viewed `here <http://www.openbsd.org/cgi-bin/cvsweb/ports/www/puppetboard/>`_.
 
 * A Docker image is being maintained by `Julien K.`_ and can be viewed `here <https://registry.hub.docker.com/u/kassis/puppetboard/>`_.
 
-.. _Jasper Lievisse Adriaanse: https://github.com/jasperla
+.. _Sebastian Reitenbach: https://github.com/buzzdeee
 .. _Julien K.: https://github.com/juliengk
 
 Contributing
