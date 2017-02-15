@@ -7,17 +7,17 @@ from setuptools import setup, find_packages
 from puppetboard.version import __version__
 
 install_requires = [
-    "Flask >= 0.10.1",
-    "Flask-WTF >= 0.12, <= 0.13",
-    "WTForms >= 2.0, < 3.0",
-    "pypuppetdb >= 0.3.2, < 0.4.0",
+    "Flask == 0.10.1",
+    "Flask-WTF == 0.12",
+    "WTForms == 2.1",
+    "pypuppetdb == 0.3.2",
 ]
 
 install_pinned_requires = [
-    "Jinja2 >= 2.7.2",
-    "MarkupSafe >= 0.19",
-    "Werkzeug >= 0.11.10",
-    "itsdangerous >= 0.23",
+    "Jinja2 == 2.7.2",
+    "MarkupSafe == 0.19",
+    "Werkzeug == 0.11.10",
+    "itsdangerous == 0.23",
     "requests == 2.6.0",
 ]
 
@@ -88,6 +88,10 @@ for arg in sys.argv[:]:
         sys.argv.remove(arg)
         test_deps = True
 
+env_setting = os.getenv('PUPPETBOARD_SETTINGS', None)
+if env_setting == 'docker_settings.py':
+    install_requires.extend(docker_requires)
+
 if test_deps:
     install_requires.extend(tests_require)
 
@@ -112,7 +116,7 @@ setup(
     long_description='\n'.join((README, CHANGELOG)),
     zip_safe=False,
     install_requires=install_requires,
-    test_requires=tests_require,
+    test_require=tests_require,
     keywords="puppet puppetdb puppetboard",
     classifiers=[
         'Development Status :: 3 - Alpha',
