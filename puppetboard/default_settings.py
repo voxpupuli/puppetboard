@@ -43,3 +43,12 @@ INVENTORY_FACTS = [('Hostname', 'fqdn'),
 REFRESH_RATE = 30
 DAILY_REPORTS_CHART_ENABLED = True
 DAILY_REPORTS_CHART_DAYS = 8
+ENDPOINTS = [('index', 'Overview'),
+             ('nodes', 'Nodes'),
+             ('facts', 'Facts'),
+             ('reports', 'Reports'),
+             ('metrics', 'Metrics'),
+             ('inventory', 'Inventory'),
+             ('catalogs', 'Catalogs'),
+             ('radiator', 'Radiator'),
+             ('query', 'Query'), ]
