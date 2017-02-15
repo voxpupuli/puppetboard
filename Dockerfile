@@ -8,7 +8,8 @@ RUN mkdir -p /puppetboard
 WORKDIR /puppetboard
 
 COPY . /puppetboard
-RUN python setup.py install docker
+RUN pip install -r requirements.txt
+RUN python setup.py install
 RUN rm -rf /puppetboard
 
 CMD gunicorn -b 0.0.0.0:${PUPPETBOARD_PORT} --access-logfile=/dev/stdout puppetboard.app:app
