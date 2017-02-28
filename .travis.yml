@@ -6,13 +6,15 @@ python:
   - "3.5"
   - "3.6"
 env:
-  matrix:
-    - UNPINNED="true"
-    - PINNED=true
+  - UNPINNED="true"
+  - PINNED=true
 
 matrix:
   allow_failures:
     - env: UNPINNED="true"
+
+install:
+  - pip install -q coveralls --use-wheel
 
 script:
   - python setup.py test
