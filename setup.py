@@ -49,7 +49,7 @@ setup(
     include_package_data=True,
     long_description='\n'.join((README, CHANGELOG)),
     zip_safe=False,
-    setup_requires=['pytest-runner >=2.11.1'],
+    setup_requires=['pytest-runner >=2.0,<3dev'],
     install_requires=requirements,
     tests_require=requirements_test,
     keywords="puppet puppetdb puppetboard",
