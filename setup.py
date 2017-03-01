@@ -38,7 +38,7 @@ with open('requirements-test.txt', 'r') as f:
 requirements = [pypi for pypi in reversed(requirements)]
 
 print ("===========")
-print "Requirements:"
+print ("Requirements:")
 print ('\n'.join(requirements))
 print ("Testing:")
 print ('\n'.join(requirements_test))
