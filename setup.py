@@ -3,6 +3,8 @@ import os
 import codecs
 import re
 
+import setuptools
+
 UNPINNED = os.getenv('UNPINNED', None)
 VERSION_RE = r'^(?P<name>[^\s<=>]+)\s*(?P<pick>[^;]*)(?P<test>(|;.*))$'
 
@@ -34,10 +36,15 @@ with open('requirements-test.txt', 'r') as f:
                          if not line.startswith('-')]
 
 requirements = [pypi for pypi in reversed(requirements)]
-print requirements
+
+print ("===========")
+print "Requirements:"
+print ('\n'.join(requirements))
+print ("Testing:")
+print ('\n'.join(requirements_test))
 
 
-setup(
+params = dict(
     name='puppetboard',
     version=__version__,
     author='Corey Hammerton',
@@ -69,3 +76,6 @@ setup(
         'Programming Language :: Python :: 3.3',
     ],
 )
+
+if __name__ == '__main__':
+	setuptools.setup(**params)
