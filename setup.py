@@ -58,7 +58,7 @@ params = dict(
     zip_safe=False,
     setup_requires=['pytest-runner >=2.0,<3dev'],
     install_requires=requirements,
-    extra_require= {'test': requirements_test},
+    extras_require={'test': requirements_test},
     keywords="puppet puppetdb puppetboard",
     classifiers=[
         'Development Status :: 3 - Alpha',
