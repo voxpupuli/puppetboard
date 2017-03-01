@@ -15,13 +15,14 @@ matrix:
     - env: UNPINNED="true"
 
 install:
+  - python setup.py develop
   - pip install -q coveralls --use-wheel
 
 script:
   - python setup.py test
   - if [ "${TRAVIS_PYTHON_VERSION}" != "2.6" ]; then
-      bandit -r puppetboard
-      bandit -r test
+      bandit -r puppetboard;
+      bandit -r test;
     fi
 after_success:
   - coveralls
