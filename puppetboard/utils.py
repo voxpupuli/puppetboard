@@ -51,7 +51,7 @@ def formatvalue(value):
     if isinstance(value, str):
         return value
     elif isinstance(value, list):
-        return ", ".join(value)
+        return ", ".join(map(formatvalue, value))
     elif isinstance(value, dict):
         ret = ""
         for k in value:
