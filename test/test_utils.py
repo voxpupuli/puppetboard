@@ -12,7 +12,6 @@ from werkzeug.exceptions import NotFound, InternalServerError
 
 from puppetboard import utils
 from puppetboard import app
-from puppetboard.app import NoContent
 
 from bs4 import BeautifulSoup
 import logging
@@ -106,19 +105,6 @@ def test_http_connection_error(mock_log):
     with pytest.raises(InternalServerError):
         utils.get_or_abort(connection_error)
         mock_log.error.assert_called_with(err)
-
-
-def test_http_empty(mock_log, mocker):
-    err = "Empty Response"
-
-    def connection_error():
-        raise EmptyResponseError(err)
-
-    flask_abort = mocker.patch('flask.abort')
-    with pytest.raises(NoContent):
-        utils.get_or_abort(connection_error)
-        mock_log.error.assert_called_with(err)
-        flask_abort.assert_called_with('204')
 
 
 def test_db_version_good(mocker, mock_info_log):
