@@ -5,28 +5,15 @@ python:
   - "2.7"
   - "3.5"
   - "3.6"
-env:
-  global:
-    - TEST_DEPS="True"
-  matrix:
-    - DEPS_RESOLVE=""
-    - DEPS_RESOLVE="PINNED"
-    - DEPS_RESOLVE="UNPINNED"
-
-matrix:
-  allow_failures:
-    - env: DEPS_RESOLVE="UNPINNED"
 
 install:
-  # Travis already include pytest, need to upgrade it when unpinned
-  - if [[ "${DEPS_RESOLVE}" == "UNPINNED" ]]; then pip install -U pytest; fi
-  - pip install -r requirements.txt
+  - pip install -r requirements-test.txt
   - pip install -q coveralls --use-wheel
-
 script:
-  - py.test --cov=puppetboard --pep8 -v
-  - if [ "${TRAVIS_PYTHON_VERSION}" != "2.6" ]; then bandit -r puppetboard; fi
-  - if [ "${TRAVIS_PYTHON_VERSION}" != "2.6" ]; then bandit -r tests; fi
-
+  - pytest
+  - if [ "${TRAVIS_PYTHON_VERSION}" != "2.6" ]; then
+      pip install bandit;
+      bandit -r puppetboard;
+    fi
 after_success:
   - coveralls

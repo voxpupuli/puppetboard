@@ -1,1 +1,9 @@
--e .
+Flask >=0.10.1
+Flask-WTF >=0.12,<=0.13
+Jinja2 >=2.7.2
+MarkupSafe >=0.19
+WTForms >=2.0,<3.0
+Werkzeug >=0.7,<= 0.11.5
+itsdangerous >=0.23
+pypuppetdb >=0.3.2
+requests >=2.6.0
