@@ -1,14 +1,14 @@
 from __future__ import unicode_literals
 from __future__ import absolute_import
 
-from flask.ext.wtf import Form
+from flask_wtf import FlaskForm
 from wtforms import (
     HiddenField, RadioField, SelectField,
     TextAreaField, BooleanField, validators
 )
 
 
-class QueryForm(Form):
+class QueryForm(FlaskForm):
     """The form used to allow freeform queries to be executed against
     PuppetDB."""
     query = TextAreaField('Query', [validators.Required(
@@ -30,7 +30,7 @@ class QueryForm(Form):
     rawjson = BooleanField('Raw JSON')
 
 
-class CatalogForm(Form):
+class CatalogForm(FlaskForm):
     """The form used to compare the catalogs of different nodes."""
     compare = HiddenField('compare')
     against = SelectField('against')
