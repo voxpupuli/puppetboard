@@ -1,9 +1,9 @@
-Flask >=0.10.1
-Flask-WTF >=0.12,<=0.13
-Jinja2 >=2.7.2
+Flask >=0.12
+Flask-WTF >=0.14.2
+Jinja2 >=2.9.5
 MarkupSafe >=0.19
-WTForms >=2.0,<3.0
-Werkzeug >=0.7,<= 0.11.5
+WTForms >=2.1
+Werkzeug >=0.12.1
 itsdangerous >=0.23
 pypuppetdb >=0.3.2
-requests >=2.6.0
+requests >=2.13.0
