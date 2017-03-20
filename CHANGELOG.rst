@@ -4,6 +4,10 @@ Changelog
 
 This is the changelog for Puppetboard.
 
+0.2.2
+=====
+ * Ensure Werkzeug <= 0.11.5
+
 0.2.1
 =====
 
