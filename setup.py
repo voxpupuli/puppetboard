@@ -33,6 +33,7 @@ setup(
         "Flask >= 0.10.1",
         "Flask-WTF >= 0.12, <= 0.13",
         "WTForms >= 2.0, < 3.0",
+        "Werkzeug >=0.7, <= 0.11.5",
         "pypuppetdb >= 0.3.0, < 0.4.0",
     ],
     keywords="puppet puppetdb puppetboard",
