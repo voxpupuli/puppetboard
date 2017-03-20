@@ -9,7 +9,7 @@ if sys.argv[-1] == 'publish':
     os.system('python setup.py sdist upload')
     sys.exit()
 
-VERSION = "0.2.1"
+VERSION = "0.2.2"
 
 with codecs.open('README.rst', encoding='utf-8') as f:
     README = f.read()
