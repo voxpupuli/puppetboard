@@ -5,23 +5,8 @@ python:
   - "2.7"
   - "3.5"
   - "3.6"
-env:
-  - PINNED=TRUE
-  - PINNED=FALSE
-
-matrix:
-  allow_failures:
-    - python: 2.6
-      env: PINNED=FALSE
-    - python: 2.7
-      env: PINNED=FALSE
-    - python: 3.5
-      env: PINNED=FALSE
-    - python: 3.6
-      env: PINNED=FALSE
 
 install:
-  - if [ "${PINNED}" == "FALSE" ]; then python scripts/unpin.py; fi
   - pip install -r requirements.txt
   - pip install -U -r requirements-test.txt
   - pip install -q coverage coveralls --use-wheel
