@@ -17,7 +17,6 @@ from flask import (
 )
 
 from pypuppetdb import connect
-from pypuppetdb.errors import EmptyResponseError
 from pypuppetdb.QueryBuilder import *
 
 from puppetboard.forms import (CatalogForm, QueryForm)
@@ -117,26 +116,6 @@ def utility_processor():
         """returns the formated datetime"""
         return datetime.datetime.now().strftime(format)
     return dict(now=now)
-
-
-#
-# 204 doesn't have a mapping in werkzeug, we need to define a custom
-# class and then set it to the mappings.
-#
-class NoContent(ex.HTTPException):
-    code = 204
-    description = '<p>No content</p'
-
-abort.mapping[204] = NoContent
-
-try:
-    @app.errorhandler(204)
-    def no_content(e):
-        return '', 204
-except KeyError:
-    @app.errorhandler(EmptyResponseError)
-    def no_content(e):
-        return '', 204
 
 
 @app.errorhandler(400)

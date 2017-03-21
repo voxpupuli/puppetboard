@@ -16,12 +16,6 @@ def mock_puppetdb_environments(mocker):
                                return_value=environemnts)
 
 
-def test_error_no_content():
-    result = app.no_content(None)
-    assert result[0] == ''
-    assert result[1] == 204
-
-
 def test_error_bad_request(mock_puppetdb_environments):
     with app.app.test_request_context():
         (output, error_code) = app.bad_request(None)
