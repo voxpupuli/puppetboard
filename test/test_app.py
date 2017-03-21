@@ -837,3 +837,23 @@ def test_offline_static(client):
     assert 'Content-Type' in rv.headers
     assert 'text/css' in rv.headers['Content-Type']
     assert rv.status_code == 200
+
+
+def test_custom_title(client, mocker):
+    custom_title = 'Dev - Puppetboard'
+    app.app.config['PAGE_TITLE'] = custom_title
+
+    mock_puppetdb_environments(mocker)
+    mock_puppetdb_default_nodes(mocker)
+
+    query_data = {
+        'nodes': [[{'count': 10}]],
+        'resources': [[{'count': 40}]],
+    }
+
+    dbquery = MockDbQuery(query_data)
+
+    mocker.patch.object(app.puppetdb, '_query', side_effect=dbquery.get)
+    rv = client.get('/')
+    soup = BeautifulSoup(rv.data, 'html.parser')
+    assert soup.title.contents[0] == custom_title
