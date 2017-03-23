@@ -727,7 +727,7 @@ def test_fact_json_with_graph(client, mocker,
     assert 'chart' in result_json
     assert len(result_json['chart']) == 5
     # Test group_by
-    assert result_json['chart'][3]['value'] == 2
+    assert result_json['chart'][0]['value'] == 2
 
 
 def test_fact_json_without_graph(client, mocker,

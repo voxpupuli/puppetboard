@@ -78,12 +78,6 @@ def version():
     return __version__
 
 
-@app.template_filter()
-def format_attribute(obj, attr, format_str):
-    setattr(obj, attr, format_str.format(getattr(obj, attr)))
-    return obj
-
-
 def stream_template(template_name, **context):
     app.update_template_context(context)
     t = app.jinja_env.get_template(template_name)
@@ -752,18 +746,38 @@ def fact_ajax(env, node, fact, value):
 
     total = len(facts)
 
-    return render_template(
-        'fact.json.tpl',
-        fact=fact,
-        node=node,
-        value=value,
-        draw=draw,
-        total=total,
-        total_filtered=total,
-        render_graph=render_graph,
-        facts=facts,
-        envs=envs,
-        current_env=env)
+    counts = {}
+    json = {
+        'draw': draw,
+        'recordsTotal': total,
+        'recordsFiltered': total,
+        'data': []}
+
+    for fact_h in facts:
+        line = []
+        if not fact:
+            line.append(fact_h.name)
+        if not node:
+            line.append('<a href="{0}">'.format(url_for(
+                'node', env=env, node_name=fact_h.node)))
+        if not value:
+            line.append('<a href="{0}">'.format(url_for(
+                'fact', env=env, fact=fact_h.name, value=fact_h.value)))
+
+        json['data'].append(line)
+
+        if render_graph:
+            if fact_h.value not in counts:
+                counts[fact_h.value] = 0
+            counts[fact_h.value] += 1
+
+    if render_graph:
+        json['chart'] = [
+            {"label": "{0}".format(k).replace('\n', ' '),
+             "value": counts[k]}
+            for k in sorted(counts, key=lambda k: counts[k], reverse=True)]
+
+    return jsonify(json)
 
 
 @app.route('/query', methods=('GET', 'POST'),
