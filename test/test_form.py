@@ -3,7 +3,7 @@ from puppetboard import app, forms
 
 
 def test_form_valid(capsys):
-    for form in [forms.QueryForm, forms.CatalogForm]:
+    for form in [forms.QueryForm]:
         with app.app.test_request_context():
             qf = form()
             out, err = capsys.readouterr()

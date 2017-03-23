@@ -19,7 +19,7 @@ from flask import (
 from pypuppetdb import connect
 from pypuppetdb.QueryBuilder import *
 
-from puppetboard.forms import (CatalogForm, QueryForm)
+from puppetboard.forms import QueryForm
 from puppetboard.utils import (
     get_or_abort, yield_or_stop, get_db_version,
     jsonprint, prettyprint
