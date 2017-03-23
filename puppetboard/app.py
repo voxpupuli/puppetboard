@@ -680,8 +680,8 @@ def fact(env, fact, value):
     :type env: :obj:`string`
     :param fact: Find all facts with this name
     :type fact: :obj:`string`
-    :param fact: Find all facts with this value
-    :type fact: :obj:`string`
+    :param value: Find all facts with this value
+    :type value: :obj:`string`
     """
     envs = environments()
     check_env(env, envs)
@@ -717,12 +717,12 @@ def fact_ajax(env, node, fact, value):
 
     :param env: Searches for facts in this environment
     :type env: :obj:`string`
-    :param fact: Find all facts for this node
-    :type fact: :obj:`string`
+    :param node: Find all facts for this node
+    :type node: :obj:`string`
     :param fact: Find all facts with this name
     :type fact: :obj:`string`
-    :param fact: Find all facts with this value
-    :type fact: :obj:`string`
+    :param value: Filter facts whose value is equal to this
+    :type value: :obj:`string`
     """
     draw = int(request.args.get('draw', 0))
 
