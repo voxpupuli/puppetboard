@@ -758,11 +758,14 @@ def fact_ajax(env, node, fact, value):
         if not fact:
             line.append(fact_h.name)
         if not node:
-            line.append('<a href="{0}">'.format(url_for(
-                'node', env=env, node_name=fact_h.node)))
+            line.append('<a href="{0}">{1}</a>'.format(
+                url_for('node', env=env, node_name=fact_h.node),
+                fact_h.node))
         if not value:
-            line.append('<a href="{0}">'.format(url_for(
-                'fact', env=env, fact=fact_h.name, value=fact_h.value)))
+            line.append('<a href="{0}">{1}</a>'.format(
+                url_for(
+                    'fact', env=env, fact=fact_h.name, value=fact_h.value),
+                fact_h.value))
 
         json['data'].append(line)
 
