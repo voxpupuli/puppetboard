@@ -159,19 +159,18 @@ def get_node_unreported_time():
 
 def get_node_status_query(status_arg):
     """Return query selecting nodes matching status_arg status"""
-    if status_arg in ['failed', 'changed', 'unchanged']:
+    if status_arg in ['failed', 'changed']:
         arg_query = AndOperator()
         arg_query.add(EqualsOperator('latest_report_status', status_arg))
         arg_query.add(GreaterOperator(
             'report_timestamp', get_node_unreported_time().isoformat()))
-        if status_arg == 'unchanged':
-            noop_query = NotOperator()
-            noop_query.add(get_reports_noop_query())
-            arg_query.add(noop_query)
         return arg_query
-    elif status_arg == 'noop':
+    elif status_arg in ['noop', 'unchanged']:
         arg_query = AndOperator()
-        arg_query.add(get_reports_noop_query())
+        status_op = OrOperator()
+        status_op.add(EqualsOperator('latest_report_status', 'unchanged'))
+        status_op.add(EqualsOperator('latest_report_status', 'noop'))
+        arg_query.add(status_op)
         arg_query.add(GreaterOperator(
             'report_timestamp', get_node_unreported_time().isoformat()))
         return arg_query
@@ -263,11 +262,23 @@ def status_count(env):
     # num_nodes
     stats['total'] = get_count('nodes', get_node_env_query(env))
 
-    # per status bucket
-    for status_arg in ['changed', 'failed', 'unchanged', 'noop', 'unreported']:
+    # per status bucket (noop handled in unchanged)
+    for status_arg in ['changed', 'failed', 'unchanged', 'unreported']:
         arg_query = get_node_status_query(status_arg)
-        stats[status_arg] = get_count(
-            'nodes', get_node_env_query(env, arg_query))
+        if status_arg == 'unchanged':
+            res = puppetdb.nodes(query=arg_query)
+            unchanged = 0
+            noop = 0
+            for node in res:
+                if node.status == 'unchanged':
+                    unchanged += 1
+                else:
+                    noop += 1
+            stats['unchanged'] = unchanged
+            stats['noop'] = noop
+        else:
+            stats[status_arg] = get_count(
+                'nodes', get_node_env_query(env, arg_query))
         try:
             stats["%s_percent" % status_arg] = int(
                 100 * stats[status_arg] / float(stats['total']))
@@ -311,15 +322,33 @@ def index(env):
     check_env(env, envs)
 
     stats = status_count(env)
-    stats['num_resources'] = get_count(
-        'resources', EqualsOperator("environment", env))
+    if stats['total'] < 1000:
+        stats['num_resources'] = get_count(
+            'resources', EqualsOperator("environment", env))
 
-    # average resource / node
-    try:
-        stats['avg_resources_node'] = "{0:10.0f}".format(
-            (stats['num_resources'] / stats['total']))
-    except ZeroDivisionError:
-        stats['avg_resources_node'] = 0
+        # average resource / node
+        try:
+            stats['avg_resources_node'] = "{0:10.0f}".format(
+                (stats['num_resources'] / stats['total']))
+        except ZeroDivisionError:
+            stats['avg_resources_node'] = 0
+
+    else:
+        prefix = 'puppetlabs.puppetdb.population'
+        query_type = ''
+
+        # Puppet DB version changed the query format from 3.2.0
+        # to 4.0 when querying mbeans
+        if get_db_version(puppetdb) < (4, 0, 0):
+            query_type = 'type=default,'
+
+        stats['num_resources'] = get_or_abort(
+            puppetdb.metric, "{0}{1}".format(
+                prefix, ':%sname=num-resources' % query_type))['Value']
+        stats['avg_resources_node'] = int(get_or_abort(
+            puppetdb.metric, "{0}{1}".format(
+                prefix,
+                ':%sname=avg-resources-per-node' % query_type))['Value'])
 
     paging_args = {'limit': app.config['NORMAL_TABLE_COUNT'], 'offset': 0}
     order_arg = '[{"field": "catalog_timestamp", "order": "desc"}]'

@@ -34,7 +34,7 @@ def get_db_version(puppetdb):
         version = puppetdb.current_version()
         (major, minor, build) = [int(x) for x in version.split('.')]
         ver = (major, minor, build)
-        log.info("PuppetDB Version %d.%d.%d" % (major, minor, build))
+        log.debug("PuppetDB Version %d.%d.%d" % (major, minor, build))
     except ValueError as e:
         log.error("Unable to determine version from string: '%s'" % version)
         ver = (4, 2, 0)
