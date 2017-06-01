@@ -1,0 +1,3 @@
+[submodule "examples/visibilityspots"]
+	path = examples/visibilityspots
+	url = git@github.com:visibilityspots/vagrant-puppet.git
