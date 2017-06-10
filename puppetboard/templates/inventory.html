@@ -1,24 +1,21 @@
 {% extends 'layout.html' %}
+{% import '_macros.html' as macros %}
 {% block content %}
-<div class="ui fluid icon input hide" style="margin-bottom:20px">
-  <input autofocus="autofocus" class="filter-table" placeholder="Type here to filter...">
-</div>
-<table class='ui compact very basic sortable table'>
+<table id="inventory_table" class='ui fixed compact very basic sortable table'>
   <thead>
     <tr>
-      {% for head in headers %}
-      <th{% if loop.index == 1 %} class="default-sort"{% endif %}>{{head}}</th>
+      {% for head in fact_headers %}
+      <th>{{head}}</th>
       {% endfor %}
     </tr>
   </thead>
   <tbody class="searchable">
-    {% for node, facts in fact_data.iteritems() %}
-    <tr>
-      {% for name in fact_names %}
-      <td><a href="{{url_for('node', env=current_env, node_name=node)}}">{{facts.get(name, 'undef')}}</a></td>
-      {% endfor %}
-    </tr>
-    {% endfor %}
   </tbody>
 </table>
 {% endblock content %}
+{% block onload_script %}
+{% macro extra_options(caller) %}
+  'serverSide': false,
+{% endmacro %}
+{{ macros.datatable_init(table_html_id="inventory_table", ajax_url=url_for('inventory_ajax', env=current_env), default_length=config.NORMAL_TABLE_COUNT, length_selector=config.TABLE_COUNT_SELECTOR, extra_options=extra_options) }}
+{% endblock onload_script %}

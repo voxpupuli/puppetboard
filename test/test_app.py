@@ -620,3 +620,49 @@ def test_catalogs_json_compare(client, mocker,
                      "action": "/catalogs/compare/node-unreported...node-%s" %
                      found_status})
         assert len(val) == 1
+
+
+def test_inventory_view(client, mocker, mock_puppetdb_environments):
+    rv = client.get('/inventory')
+    assert rv.status_code == 200
+    soup = BeautifulSoup(rv.data, 'html.parser')
+    assert soup.title.contents[0] == 'Puppetboard'
+
+
+def test_inventory_json(client, mocker, mock_puppetdb_environments):
+    facts = ['fqdn', 'ipaddress', 'lsbdistdescription', 'hardwaremodel',
+             'kernelrelease', 'puppetversion']
+    values = [
+        ['node-1', 'X.X.X.X', 'os7', 'server', '4.3', 'X.X.X'],
+        ['node-2', 'X.X.X.X', 'os5', 'server', '4.1', 'X.X.X'],
+        ['node-3', 'X.X.X.X', 'os6', 'server', '4.2', 'X.X.X'],
+        ['node-4', 'X.X.X.X', 'os4', 'server', '4.3', 'X.X.X'],
+    ]
+    query_data = {'facts': []}
+    query_data['facts'].append([])
+
+    for i, value in enumerate(values):
+        for idx, column in enumerate(facts):
+            query_data['facts'][0].append({
+                'certname': value[0],
+                'name': column,
+                'value': value[idx],
+                'environment': 'production'
+            })
+
+    dbquery = MockDbQuery(query_data)
+
+    mocker.patch.object(app.puppetdb, '_query', side_effect=dbquery.get)
+
+    rv = client.get('/inventory/json')
+    assert rv.status_code == 200
+    result_json = json.loads(rv.data.decode('utf-8'))
+    assert 'data' in result_json
+
+    for value in values:
+        for line in result_json['data']:
+            if value[0] in line[0]:
+                assert line[1:] == value[1:]
+                break
+        else:
+            raise Exception("Input %s not found" % value)
