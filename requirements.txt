@@ -7,3 +7,4 @@ Werkzeug >=0.12.1
 itsdangerous >=0.23
 pypuppetdb >=0.3.2
 requests >=2.13.0
+CommonMark==0.7.2

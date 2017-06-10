@@ -27,6 +27,7 @@ from puppetboard.utils import (
 from puppetboard.dailychart import get_daily_reports_chart
 
 import werkzeug.exceptions as ex
+import CommonMark
 
 from . import __version__
 
@@ -322,29 +323,11 @@ def nodes(env):
                         current_env=env)))
 
 
-@app.route('/inventory', defaults={'env': app.config['DEFAULT_ENVIRONMENT']})
-@app.route('/<env>/inventory')
-def inventory(env):
-    """Fetch all (active) nodes from PuppetDB and stream a table displaying
-    those nodes along with a set of facts about them.
-
-    Downside of the streaming aproach is that since we've already sent our
-    headers we can't abort the request if we detect an error. Because of this
-    we'll end up with an empty table instead because of how yield_or_stop
-    works. Once pagination is in place we can change this but we'll need to
-    provide a search feature instead.
-
-    :param env: Search for facts in this environment
-    :type env: :obj:`string`
-    """
-    envs = environments()
-    check_env(env, envs)
-
-    headers = []        # a list of fact descriptions to go
-    # in the table header
-    fact_names = []     # a list of inventory fact names
-    fact_data = {}      # a multidimensional dict for node and
-    # fact data
+def inventory_facts():
+    # a list of facts descriptions to go in table header
+    headers = []
+    # a list of inventory fact names
+    fact_names = []
 
     # load the list of items/facts we want in our inventory
     try:
@@ -362,33 +345,65 @@ def inventory(env):
         headers.append(desc)
         fact_names.append(name)
 
+    return headers, fact_names
+
+
+@app.route('/inventory', defaults={'env': app.config['DEFAULT_ENVIRONMENT']})
+@app.route('/<env>/inventory')
+def inventory(env):
+    """Fetch all (active) nodes from PuppetDB and stream a table displaying
+    those nodes along with a set of facts about them.
+
+    :param env: Search for facts in this environment
+    :type env: :obj:`string`
+    """
+    envs = environments()
+    check_env(env, envs)
+    headers, fact_names = inventory_facts()
+
+    return render_template(
+        'inventory.html',
+        envs=envs,
+        current_env=env,
+        fact_headers=headers)
+
+
+@app.route('/inventory/json',
+           defaults={'env': app.config['DEFAULT_ENVIRONMENT']})
+@app.route('/<env>/inventory/json')
+def inventory_ajax(env):
+    """Backend endpoint for inventory table"""
+    draw = int(request.args.get('draw', 0))
+
+    envs = environments()
+    check_env(env, envs)
+    headers, fact_names = inventory_facts()
+
     query = AndOperator()
     fact_query = OrOperator()
     fact_query.add([EqualsOperator("name", name) for name in fact_names])
+    query.add(fact_query)
 
     if env != '*':
         query.add(EqualsOperator("environment", env))
 
-    query.add(fact_query)
-
-    # get all the facts from PuppetDB
     facts = puppetdb.facts(query=query)
 
+    fact_data = {}
     for fact in facts:
         if fact.node not in fact_data:
             fact_data[fact.node] = {}
-
         fact_data[fact.node][fact.name] = fact.value
 
-    return Response(stream_with_context(
-        stream_template(
-            'inventory.html',
-            headers=headers,
-            fact_names=fact_names,
-            fact_data=fact_data,
-            envs=envs,
-            current_env=env
-        )))
+    total = len(fact_data)
+
+    return render_template(
+        'inventory.json.tpl',
+        draw=draw,
+        total=total,
+        total_filtered=total,
+        fact_data=fact_data,
+        columns=fact_names)
 
 
 @app.route('/node/<node_name>',
@@ -529,26 +544,17 @@ def reports_ajax(env, node_name):
         reports_events = []
         total = 0
 
-    report_event_counts = {}
-    # Create a map from the metrics data to what the templates
-    # use to express the data.
-    report_map = {
-        'success': 'successes',
-        'failure': 'failures',
-        'skipped': 'skips',
-        'noops': 'noop'
-    }
+    # Convert metrics to relational dict
+    metrics = {}
     for report in reports_events:
         if total is None:
             total = puppetdb.total
 
-        report_counts = {'successes': 0, 'failures': 0, 'skips': 0}
-        for metrics in report.metrics:
-            if 'name' in metrics and metrics['name'] in report_map:
-                key_name = report_map[metrics['name']]
-                report_counts[key_name] = metrics['value']
-
-        report_event_counts[report.hash_] = report_counts
+        metrics[report.hash_] = {}
+        for m in report.metrics:
+            if m['category'] not in metrics[report.hash_]:
+                metrics[report.hash_][m['category']] = {}
+            metrics[report.hash_][m['category']][m['name']] = m['value']
 
     if total is None:
         total = 0
@@ -559,7 +565,7 @@ def reports_ajax(env, node_name):
         total=total,
         total_filtered=total,
         reports=reports,
-        report_event_counts=report_event_counts,
+        metrics=metrics,
         envs=envs,
         current_env=env,
         columns=REPORTS_COLUMNS[:max_col])
@@ -604,6 +610,8 @@ def report(env, node_name, report_id):
         report = next(reports)
     except StopIteration:
         abort(404)
+
+    report.version = CommonMark.commonmark(report.version)
 
     return render_template(
         'report.html',

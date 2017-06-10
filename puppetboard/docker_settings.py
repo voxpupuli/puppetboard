@@ -33,6 +33,13 @@ TABLE_COUNT_DEF = "10,20,50,100,500"
 TABLE_COUNT_SELECTOR = [int(x) for x in os.getenv('TABLE_COUNT_SELECTOR',
                                                   TABLE_COUNT_DEF).split(',')]
 
+DISP_METR_DEF = ','.join(['resources.total', 'events.failure',
+                          'events.success', 'resources.skipped',
+                          'events.noop'])
+
+DISPLAYED_METRICS = [x.strip() for x in os.getenv('DISPLAYED_METRICS',
+                                                  DISP_METR_DEF).split(',')]
+
 OFFLINE_MODE = bool(os.getenv('OFFLINE_MODE', 'False').upper() == 'TRUE')
 ENABLE_CATALOG = bool(os.getenv('ENABLE_CATALOG', 'False').upper() == 'TRUE')
 OVERVIEW_FILTER = os.getenv('OVERVIEW_FILTER', None)
@@ -45,7 +52,6 @@ GRAPH_FACTS_DEFAULT = ','.join(['architecture', 'clientversion', 'domain',
 
 GRAPH_FACTS = [x.strip() for x in os.getenv('GRAPH_FACTS',
                                             GRAPH_FACTS_DEFAULT).split(',')]
-
 
 GRAPH_TYPE = os.getenv('GRAPH_TYPE', 'pie')
 

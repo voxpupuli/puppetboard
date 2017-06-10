@@ -14,7 +14,7 @@
     <tr>
       <td><a href="{{url_for('node', env=current_env, node_name=report.node)}}">{{ report.node }}</a></td>
       <td>
-        {{report.version}}
+        {{report.version|safe}}
       </td>
       <td rel="utctimestamp">
         {{report.start}}
