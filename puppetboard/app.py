@@ -480,7 +480,7 @@ def reports_ajax(env, node_name):
     order_column = int(request.args.get('order[0][column]', 0))
     order_filter = REPORTS_COLUMNS[order_column].get(
         'filter', REPORTS_COLUMNS[order_column]['attr'])
-    order_dir = request.args.get('order[0][dir]')
+    order_dir = request.args.get('order[0][dir]', 'desc')
     order_args = '[{"field": "%s", "order": "%s"}]' % (order_filter, order_dir)
     status_args = request.args.get('columns[1][search][value]', '').split('|')
     max_col = len(REPORTS_COLUMNS)
