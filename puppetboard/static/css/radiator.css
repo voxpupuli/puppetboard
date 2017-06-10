@@ -12,20 +12,20 @@ body.radiator_controller table.node_summary {padding:20px;position:absolute;heig
 body.radiator_controller table.node_summary .count_column {min-width:2em;width:2em;}
 body.radiator_controller table.node_summary tr:last-child td {border-bottom:none;}
 body.radiator_controller table.node_summary tr:last-child td .label {border-left:0px #000 solid;}
-body.radiator_controller table.node_summary tr.unreported .percent {background-color:#ee7722;border-radius:0 3px 3px 0;}
-body.radiator_controller table.node_summary tr.unreported .label,body.radiator_controller table.node_summary tr.unreported .count {color:#ee7722;}
+body.radiator_controller table.node_summary tr.unreported .percent {background-color:#3D96AE;border-radius:0 3px 3px 0;}
+body.radiator_controller table.node_summary tr.unreported .label,body.radiator_controller table.node_summary tr.unreported .count {color:#3D96AE;}
 body.radiator_controller table.node_summary tr.unreported .label {border-left:1px #333 dashed;}
 body.radiator_controller table.node_summary tr.failed .percent {background-color:#cc2211;border-radius:0 3px 3px 0;}
 body.radiator_controller table.node_summary tr.failed .label,body.radiator_controller table.node_summary tr.failed .count {color:#cc2211;}
 body.radiator_controller table.node_summary tr.failed .label {border-left:1px #333 dashed;}
-body.radiator_controller table.node_summary tr.noop .percent {background-color:#eddc21;border-radius:0 3px 3px 0;}
-body.radiator_controller table.node_summary tr.noop .label,body.radiator_controller table.node_summary tr.noop .count {color:#eddc21;}
+body.radiator_controller table.node_summary tr.noop .percent {background-color:#DB843D;border-radius:0 3px 3px 0;}
+body.radiator_controller table.node_summary tr.noop .label,body.radiator_controller table.node_summary tr.noop .count {color:#DB843D;}
 body.radiator_controller table.node_summary tr.noop .label {border-left:1px #333 dashed;}
-body.radiator_controller table.node_summary tr.changed .percent {background-color:#009933;border-radius:0 3px 3px 0;}
-body.radiator_controller table.node_summary tr.changed .label,body.radiator_controller table.node_summary tr.changed .count {color:#009933;}
+body.radiator_controller table.node_summary tr.changed .percent {background-color:#4572A7;border-radius:0 3px 3px 0;}
+body.radiator_controller table.node_summary tr.changed .label,body.radiator_controller table.node_summary tr.changed .count {color:#4572A7;}
 body.radiator_controller table.node_summary tr.changed .label {border-left:1px #333 dashed;}
-body.radiator_controller table.node_summary tr.unchanged .percent {background-color:#2198ed;border-radius:0 3px 3px 0;}
-body.radiator_controller table.node_summary tr.unchanged .label,body.radiator_controller table.node_summary tr.unchanged .count {color:#2198ed;}
+body.radiator_controller table.node_summary tr.unchanged .percent {background-color:#89A54E;border-radius:0 3px 3px 0;}
+body.radiator_controller table.node_summary tr.unchanged .label,body.radiator_controller table.node_summary tr.unchanged .count {color:#89A54E;}
 body.radiator_controller table.node_summary tr.unchanged .label {border-left:1px #333 dashed;}
 body.radiator_controller table.node_summary tr.total {color:#fff;background-color:#181818;}
 body.radiator_controller table.node_summary tr.total .percent {background-color:white;border-radius:0 3px 3px 0;}
