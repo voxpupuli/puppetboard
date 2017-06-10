@@ -1,0 +1,11 @@
+#!/bin/bash
+
+version=$(git describe HEAD --abbrev=4)
+
+cat << EOF > puppetboard/version.py
+#
+# Puppetboard version module
+#
+__version__ = '${version}'
+EOF
+
