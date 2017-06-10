@@ -116,3 +116,11 @@ def test_env_table_selector(cleanUpEnv):
     os.environ['TABLE_COUNT_SELECTOR'] = '5,15,25'
     reload(docker_settings)
     assert [5, 15, 25] == docker_settings.TABLE_COUNT_SELECTOR
+
+
+def test_env_column_options(cleanUpEnv):
+    os.environ['DISPLAYED_METRICS'] = 'resources.total, events.failure'
+
+    reload(docker_settings)
+    assert ['resources.total',
+            'events.failure'] == docker_settings.DISPLAYED_METRICS

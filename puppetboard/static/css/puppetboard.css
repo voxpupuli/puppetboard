@@ -44,7 +44,7 @@ h1.ui.header.no-margin-bottom {
   color: #AA4643;
 }
 
-.ui.label.failed {
+.ui.label.failed, .ui.label.events.failure {
   background-color: #AA4643;
 }
 
@@ -52,7 +52,7 @@ h1.ui.header.no-margin-bottom {
   color: #4572A7;
 }
 
-.ui.label.changed {
+.ui.label.changed, .ui.label.events.success {
   background-color: #4572A7;
 }
 
@@ -68,8 +68,12 @@ h1.ui.header.no-margin-bottom {
   color: #DB843D;
 }
 
-.ui.label.noop {
+.ui.label.noop, .ui.label.events.noop {
   background-color: #DB843D;
+}
+
+.ui.label.resources.total {
+  background-color: #989898;
 }
 
 .ui.label.unchanged {
@@ -80,7 +84,7 @@ h1.ui.header.no-margin-bottom {
   color: orange;
 }
 
-.ui.label.skipped {
+.ui.label.skipped, .ui.label.resources.skipped {
   background-color: orange;
 }
 
