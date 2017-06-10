@@ -28,9 +28,3 @@ class QueryForm(FlaskForm):
         ('pql', 'PQL'),
     ])
     rawjson = BooleanField('Raw JSON')
-
-
-class CatalogForm(FlaskForm):
-    """The form used to compare the catalogs of different nodes."""
-    compare = HiddenField('compare')
-    against = SelectField('against')

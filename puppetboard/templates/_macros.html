@@ -1,51 +1,3 @@
-{% macro facts_table(facts, current_env, autofocus=False, condensed=False, show_node=False, show_value=True, link_facts=False, margin_top=20, margin_bottom=20) -%}
-<div class="ui fluid icon input hide" style="margin-bottom:20px">
-  <input {% if autofocus %} autofocus="autofocus" {% endif %} class="filter-table" placeholder="Type here to filter...">
-</div>
-<table class="ui very basic {% if condensed %}very{% endif%} compact sortable table" style="table-layout: fixed;">
-  <thead>
-    <tr>
-      {% if show_node %}
-      <th>Node</th>
-      {% else %}
-      <th class="default-sort">Fact</th>
-      {% endif %}
-      {% if show_value %}
-      <th>Value</th>
-      {% endif %}
-    </tr>
-  </thead>
-  <tbody class="searchable">
-    {% for fact in facts %}
-    <tr>
-      {% if show_node %}
-        <td><a href="{{url_for('node', env=current_env, node_name=fact.node)}}">{{fact.node}}</a></td>
-      {% else %}
-        <td><a href="{{url_for('fact', env=current_env, fact=fact.name)}}">{{fact.name}}</a></td>
-      {% endif %}
-      {% if show_value %}
-      <td style="word-wrap:break-word">
-        {% if link_facts %}
-          {% if fact.value is mapping %}
-            <a href="{{url_for('fact_value', env=current_env, fact=fact.name, value=fact.value)}}"><pre>{{fact.value|jsonprint}}</pre></a>
-          {% else %}
-            <a href="{{url_for('fact_value', env=current_env, fact=fact.name, value=fact.value)}}">{{fact.value}}</a>
-          {% endif %}
-        {% else %}
-          {% if fact.value is mapping %}
-            <pre>{{fact.value|jsonprint}}</pre>
-          {% else %}
-            {{fact.value}}
-          {% endif %}
-        {% endif %}
-      </td>
-      {% endif %}
-    </tr>
-    {% endfor %}
-  </tbody>
-</table>
-{%- endmacro %}
-
 {% macro status_counts(caller, status, node_name, events, current_env, unreported_time=False, report_hash=False) -%}
   <a class="ui {{status}} label status" href="{{url_for('report', env=current_env, node_name=node_name, report_id=report_hash)}}">{{ status|upper }}</a>
   {% if status == 'unreported' %}
@@ -99,6 +51,8 @@
     // Paging options
     "lengthMenu": {{ length_selector }},
     "pageLength": {{ default_length }},
+    // Search as regex (does not apply if serverSide)
+    "search": {"regex": true},
     // Default sort
     "order": [[ 0, "desc" ]],
     // Custom options
