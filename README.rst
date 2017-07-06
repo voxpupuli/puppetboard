@@ -300,6 +300,14 @@ scenarios:
 If you deploy Puppetboard through a different setup we'd welcome a pull
 request that adds the instructions to this section.
 
+Installation On Linux Distros
+^^^^^^^^^^^^^^^^^^^^^^^^
+
+`Debian Jessie Install`_.
+
+.. _Debian Jessie Install: docs/Debian-Jessie.md
+
+
 Apache + mod_wsgi
 ^^^^^^^^^^^^^^^^^
 
