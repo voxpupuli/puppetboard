@@ -1,6 +1,7 @@
 from __future__ import absolute_import
 from __future__ import unicode_literals
 
+import os.path
 import json
 import logging
 
@@ -9,6 +10,7 @@ from requests.exceptions import HTTPError, ConnectionError
 from pypuppetdb.errors import EmptyResponseError
 
 from flask import abort, request, url_for
+from jinja2.utils import contextfunction
 
 # Python 3 compatibility
 try:
@@ -17,6 +19,14 @@ except NameError:
     xrange = range
 
 log = logging.getLogger(__name__)
+
+
+@contextfunction
+def url_static_offline(context, value):
+    request_parts = os.path.split(os.path.dirname(context.name))
+    static_path = '/'.join(request_parts[1:])
+
+    return url_for('static', filename="%s/%s" % (static_path, value))
 
 
 def url_for_field(field, value):

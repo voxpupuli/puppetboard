@@ -266,6 +266,9 @@ def test_offline_mode(client, mocker):
     assert soup.title.contents[0] == 'Puppetboard'
     for link in soup.find_all('link'):
         assert "//" not in link['href']
+        if 'offline' in link['href']:
+            static_rv = client.get(link['href'])
+            assert rv.status_code == 200
 
     for script in soup.find_all('script'):
         if "src" in script.attrs:
@@ -821,3 +824,16 @@ def test_node_facts_json(client, mocker,
         assert len(line) == 2
 
     assert 'chart' not in result_json
+
+
+def test_offline_static(client):
+    rv = client.get('/offline/css/google_fonts.css')
+
+    assert 'Content-Type' in rv.headers
+    assert 'text/css' in rv.headers['Content-Type']
+    assert rv.status_code == 200
+
+    rv = client.get('/offline/Semantic-UI-2.1.8/semantic.min.css')
+    assert 'Content-Type' in rv.headers
+    assert 'text/css' in rv.headers['Content-Type']
+    assert rv.status_code == 200
