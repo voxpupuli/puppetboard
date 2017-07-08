@@ -15,6 +15,7 @@ from flask import (
     Response, stream_with_context, redirect,
     request, session, jsonify
 )
+from jinja2.utils import contextfunction
 
 from pypuppetdb.QueryBuilder import *
 
@@ -1091,3 +1092,15 @@ def daily_reports_chart(env):
         certname=certname,
     )
     return jsonify(result=result)
+
+
+@app.route('/offline/<path:filename>')
+def offline_static(filename):
+    mimetype = 'text/html'
+    if filename.endswith('.css'):
+        mimetype = 'text/css'
+    elif filename.endswith('.js'):
+        mimetype = 'text/javascript'
+
+    return Response(response=render_template('static/%s' % filename),
+                    status=200, mimetype=mimetype)

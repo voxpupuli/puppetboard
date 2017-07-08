@@ -7,7 +7,7 @@ from flask import Flask
 
 from pypuppetdb import connect
 from puppetboard.utils import (jsonprint, prettyprint, url_for_field,
-                               get_or_abort)
+                               url_static_offline, get_or_abort)
 
 from . import __version__
 
@@ -31,6 +31,7 @@ def get_app():
         app.jinja_env.filters['jsonprint'] = jsonprint
         app.jinja_env.filters['prettyprint'] = prettyprint
         app.jinja_env.globals['url_for_field'] = url_for_field
+        app.jinja_env.globals['url_static_offline'] = url_static_offline
         APP = app
 
     return APP
