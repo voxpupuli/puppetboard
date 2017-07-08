@@ -35,6 +35,7 @@
 {% macro datatable_init(table_html_id, ajax_url, default_length, length_selector, extra_options=None) -%}
   // Init datatable
   $.fn.dataTable.ext.errMode = 'throw';
+
   var table = $('#{{ table_html_id }}').DataTable({
     // Permit flow auto-readjust (responsive)
     "autoWidth": false,
@@ -58,6 +59,11 @@
     // Custom options
     {% if extra_options %}{% call extra_options() %}Callback to parent defined options{% endcall %}{% endif %}
   });
+
+  table.on('error', function ( e, settings, json ) {
+    table.clear().draw();
+    $('#facts_table_processing').hide(); })
+
 
   table.on('draw.dt', function(){
     $('#{{ table_html_id }} [rel=utctimestamp]').each(

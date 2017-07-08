@@ -4,9 +4,9 @@ from __future__ import absolute_import
 import logging
 import collections
 try:
-    from urllib import unquote
+    from urllib import unquote, unquote_plus, quote_plus
 except ImportError:
-    from urllib.parse import unquote
+    from urllib.parse import unquote, unquote_plus, quote_plus
 from datetime import datetime, timedelta
 from itertools import tee
 
@@ -626,10 +626,15 @@ def fact(env, fact, value):
     if fact in graph_facts and not value:
         render_graph = True
 
+    value_safe = value
+    if value is not None:
+        value_safe = unquote_plus(value)
+
     return render_template(
         'fact.html',
         fact=fact,
         value=value,
+        value_safe=value_safe,
         render_graph=render_graph,
         envs=envs,
         current_env=env)
@@ -640,6 +645,8 @@ def fact(env, fact, value):
                      'node': None, 'value': None})
 @app.route('/<env>/fact/<fact>/json', defaults={'node': None, 'value': None})
 @app.route('/fact/<fact>/<value>/json',
+           defaults={'env': app.config['DEFAULT_ENVIRONMENT'], 'node': None})
+@app.route('/fact/<fact>/<path:value>/json',
            defaults={'env': app.config['DEFAULT_ENVIRONMENT'], 'node': None})
 @app.route('/<env>/fact/<fact>/<value>/json', defaults={'node': None})
 @app.route('/node/<node>/facts/json',
@@ -680,10 +687,17 @@ def fact_ajax(env, node, fact, value):
         query = None
 
     # Generator needs to be converted (graph / total)
+    try:
+        value = int(value)
+    except ValueError:
+        if value is not None:
+            query.add(EqualsOperator('value', unquote_plus(value)))
+    except TypeError:
+        pass
+
     facts = [f for f in get_or_abort(
         puppetdb.facts,
         name=fact,
-        value=value,
         query=query)]
 
     total = len(facts)
@@ -704,9 +718,13 @@ def fact_ajax(env, node, fact, value):
                 url_for('node', env=env, node_name=fact_h.node),
                 fact_h.node))
         if not value:
+            fact_value = fact_h.value
+            if isinstance(fact_value, unicode) or isinstance(fact_value, str):
+                fact_value = quote_plus(fact_h.value)
+
             line.append('<a href="{0}">{1}</a>'.format(
                 url_for(
-                    'fact', env=env, fact=fact_h.name, value=fact_h.value),
+                    'fact', env=env, fact=fact_h.name, value=fact_value),
                 fact_h.value))
 
         json['data'].append(line)
