@@ -1,7 +1,9 @@
 import pytest
 from flask import Flask, current_app
+from werkzeug.exceptions import InternalServerError
 from puppetboard import app
-
+from puppetboard.errors import (bad_request, forbidden, not_found,
+                                precond_failed, server_error)
 from bs4 import BeautifulSoup
 
 
@@ -16,9 +18,17 @@ def mock_puppetdb_environments(mocker):
                                return_value=environemnts)
 
 
+@pytest.fixture
+def mock_server_error(mocker):
+    def raiseInternalServerError():
+        raise InternalServerError('Hello world')
+    return mocker.patch('puppetboard.core.environments',
+                        side_effect=raiseInternalServerError)
+
+
 def test_error_bad_request(mock_puppetdb_environments):
     with app.app.test_request_context():
-        (output, error_code) = app.bad_request(None)
+        (output, error_code) = bad_request(None)
         soup = BeautifulSoup(output, 'html.parser')
 
         assert 'The request sent to PuppetDB was invalid' in soup.p.text
@@ -27,7 +37,7 @@ def test_error_bad_request(mock_puppetdb_environments):
 
 def test_error_forbidden(mock_puppetdb_environments):
     with app.app.test_request_context():
-        (output, error_code) = app.forbidden(None)
+        (output, error_code) = forbidden(None)
         soup = BeautifulSoup(output, 'html.parser')
 
         long_string = "%s %s" % ('What you were looking for has',
@@ -38,7 +48,7 @@ def test_error_forbidden(mock_puppetdb_environments):
 
 def test_error_not_found(mock_puppetdb_environments):
     with app.app.test_request_context():
-        (output, error_code) = app.not_found(None)
+        (output, error_code) = not_found(None)
         soup = BeautifulSoup(output, 'html.parser')
 
         long_string = "%s %s" % ('What you were looking for could not',
@@ -49,7 +59,7 @@ def test_error_not_found(mock_puppetdb_environments):
 
 def test_error_precond(mock_puppetdb_environments):
     with app.app.test_request_context():
-        (output, error_code) = app.precond_failed(None)
+        (output, error_code) = precond_failed(None)
         soup = BeautifulSoup(output, 'html.parser')
 
         long_string = "%s %s" % ('You\'ve configured Puppetboard with an API',
@@ -60,8 +70,16 @@ def test_error_precond(mock_puppetdb_environments):
 
 def test_error_server(mock_puppetdb_environments):
     with app.app.test_request_context():
-        (output, error_code) = app.server_error(None)
+        (output, error_code) = server_error(None)
         soup = BeautifulSoup(output, 'html.parser')
 
+        assert 'Internal Server Error' in soup.h2.text
+        assert error_code == 500
+
+
+def test_early_error_server(mock_server_error):
+    with app.app.test_request_context():
+        (output, error_code) = server_error(None)
+        soup = BeautifulSoup(output, 'html.parser')
         assert 'Internal Server Error' in soup.h2.text
         assert error_code == 500

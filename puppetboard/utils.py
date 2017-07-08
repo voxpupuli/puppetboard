@@ -8,8 +8,7 @@ from math import ceil
 from requests.exceptions import HTTPError, ConnectionError
 from pypuppetdb.errors import EmptyResponseError
 
-from flask import abort
-
+from flask import abort, request, url_for
 
 # Python 3 compatibility
 try:
@@ -18,6 +17,13 @@ except NameError:
     xrange = range
 
 log = logging.getLogger(__name__)
+
+
+def url_for_field(field, value):
+    args = request.view_args.copy()
+    args.update(request.args.copy())
+    args[field] = value
+    return url_for(request.endpoint, **args)
 
 
 def jsonprint(value):

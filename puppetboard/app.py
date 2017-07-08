@@ -16,20 +16,21 @@ from flask import (
     request, session, jsonify
 )
 
-from pypuppetdb import connect
 from pypuppetdb.QueryBuilder import *
 
 from puppetboard.forms import QueryForm
-from puppetboard.utils import (
-    get_or_abort, yield_or_stop, get_db_version,
-    jsonprint, prettyprint
-)
+from puppetboard.utils import (get_or_abort, yield_or_stop,
+                               get_db_version)
 from puppetboard.dailychart import get_daily_reports_chart
 
 import werkzeug.exceptions as ex
 import CommonMark
 
+from puppetboard.core import get_app, get_puppetdb, environments
+import puppetboard.errors
+
 from . import __version__
+
 
 REPORTS_COLUMNS = [
     {'attr': 'end', 'filter': 'end_time',
@@ -48,30 +49,14 @@ CATALOGS_COLUMNS = [
     {'attr': 'form', 'name': 'Compare'},
 ]
 
-app = Flask(__name__)
-
-app.config.from_object('puppetboard.default_settings')
+app = get_app()
 graph_facts = app.config['GRAPH_FACTS']
-app.config.from_envvar('PUPPETBOARD_SETTINGS', silent=True)
-graph_facts += app.config['GRAPH_FACTS']
-app.secret_key = app.config['SECRET_KEY']
-
-app.jinja_env.filters['jsonprint'] = jsonprint
-app.jinja_env.filters['prettyprint'] = prettyprint
-
-puppetdb = connect(
-    host=app.config['PUPPETDB_HOST'],
-    port=app.config['PUPPETDB_PORT'],
-    ssl_verify=app.config['PUPPETDB_SSL_VERIFY'],
-    ssl_key=app.config['PUPPETDB_KEY'],
-    ssl_cert=app.config['PUPPETDB_CERT'],
-    timeout=app.config['PUPPETDB_TIMEOUT'],)
-
 numeric_level = getattr(logging, app.config['LOGLEVEL'].upper(), None)
-if not isinstance(numeric_level, int):
-    raise ValueError('Invalid log level: %s' % app.config['LOGLEVEL'])
+
 logging.basicConfig(level=numeric_level)
 log = logging.getLogger(__name__)
+
+puppetdb = get_puppetdb()
 
 
 @app.template_global()
@@ -87,28 +72,9 @@ def stream_template(template_name, **context):
     return rv
 
 
-def url_for_field(field, value):
-    args = request.view_args.copy()
-    args.update(request.args.copy())
-    args[field] = value
-    return url_for(request.endpoint, **args)
-
-
-def environments():
-    envs = get_or_abort(puppetdb.environments)
-    x = []
-
-    for env in envs:
-        x.append(env['name'])
-
-    return x
-
-
 def check_env(env, envs):
     if env != '*' and env not in envs:
         abort(404)
-
-app.jinja_env.globals['url_for_field'] = url_for_field
 
 
 @app.context_processor
@@ -117,38 +83,6 @@ def utility_processor():
         """returns the formated datetime"""
         return datetime.datetime.now().strftime(format)
     return dict(now=now)
-
-
-@app.errorhandler(400)
-def bad_request(e):
-    envs = environments()
-    return render_template('400.html', envs=envs), 400
-
-
-@app.errorhandler(403)
-def forbidden(e):
-    envs = environments()
-    return render_template('403.html', envs=envs), 403
-
-
-@app.errorhandler(404)
-def not_found(e):
-    envs = environments()
-    return render_template('404.html', envs=envs), 404
-
-
-@app.errorhandler(412)
-def precond_failed(e):
-    """We're slightly abusing 412 to handle missing features
-    depending on the API version."""
-    envs = environments()
-    return render_template('412.html', envs=envs), 412
-
-
-@app.errorhandler(500)
-def server_error(e):
-    envs = environments()
-    return render_template('500.html', envs=envs), 500
 
 
 @app.route('/', defaults={'env': app.config['DEFAULT_ENVIRONMENT']})
