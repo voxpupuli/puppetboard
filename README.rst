@@ -151,7 +151,7 @@ and then install the requirements through:
 
 .. code-block:: bash
 
-   $ pip install -r requirements.txt
+   $ pip install -r requirements-test.txt
 
 You're advised to do this inside a virtualenv specifically created to work on
 Puppetboard as to not pollute your global Python installation.
@@ -241,6 +241,21 @@ Other settings that might be interesting in no particular order:
 * ``OFFLINE_MODE``: If set to ``True`` load static assets (jquery,
   semantic-ui, etc) from the local web server instead of a CDN.
   Defaults to ``False``.
+* ``DAILY_REPORTS_CHART_ENABLED``: Enable the use of daily chart graphs when
+  looking at dashboard and node view.
+* ``DAILY_REPORTS_CHART_DAYS``: Number of days to show history for on the daily
+  report graphs.
+* ``DISPLAYED_METRICS``: Metrics to show when displying node summary. Example:
+  ``'resources.total'``, ``'events.noop'``.
+* ``TABLE_COUNT_SELECTOR``: Configure the dropdown to limit number of hosts to
+  show per page.
+* ``LITTLE_TABLE_COUNT``: Default number of reports to show when when looking at a node.
+* ``NORMAL_TABLE_COUNT``: Default number of nodes to show when displaying reports
+  and catalog nodes.
+* ``LOCALISE_TIMESTAMP``: Normalize time based on localserver time.
+* ``DEV_LISTEN_HOST``: For use with `dev.py` for development.  Default is localhost
+* ``DEV_LISTEN_PORT``: For use with `dev.py` for development.  Default is 5000
+
 
 .. _pypuppetdb documentation: http://pypuppetdb.readthedocs.org/en/v0.1.0/quickstart.html#ssl
 .. _Flask documentation: http://flask.pocoo.org/docs/0.10/quickstart/#sessions
@@ -284,6 +299,14 @@ scenarios:
 
 If you deploy Puppetboard through a different setup we'd welcome a pull
 request that adds the instructions to this section.
+
+Installation On Linux Distros
+^^^^^^^^^^^^^^^^^^^^^^^^
+
+`Debian Jessie Install`_.
+
+.. _Debian Jessie Install: docs/Debian-Jessie.md
+
 
 Apache + mod_wsgi
 ^^^^^^^^^^^^^^^^^
