@@ -43,6 +43,7 @@ DISPLAYED_METRICS = [x.strip() for x in os.getenv('DISPLAYED_METRICS',
 OFFLINE_MODE = bool(os.getenv('OFFLINE_MODE', 'False').upper() == 'TRUE')
 ENABLE_CATALOG = bool(os.getenv('ENABLE_CATALOG', 'False').upper() == 'TRUE')
 OVERVIEW_FILTER = os.getenv('OVERVIEW_FILTER', None)
+PAGE_TITLE = os.getenv('PAGE_TITLE', 'Puppetboard')
 
 GRAPH_FACTS_DEFAULT = ','.join(['architecture', 'clientversion', 'domain',
                                 'lsbcodename', 'lsbdistcodename', 'lsbdistid',
