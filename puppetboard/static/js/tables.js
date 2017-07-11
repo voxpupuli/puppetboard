@@ -11,7 +11,8 @@
   }
 
   $('thead th.date').data('sortBy', function(th, td, tablesort) {
-    return moment.utc(td.text()).unix();
+    var tdTime = td.text().replace("-", "");
+    return moment.utc(tdTime).unix();
   });
 
   $('input.filter-table').parent('div').removeClass('hide');
