@@ -1,17 +1,5 @@
 {% extends 'layout.html' %}
 {% import '_macros.html' as macros %}
-{% block head %}
-{% if config.DAILY_REPORTS_CHART_ENABLED %}
-<link href="{{ url_for('static', filename='css/c3.min.css') }}" rel="stylesheet" />
-{% endif %}
-{% block script %}
-{% if config.DAILY_REPORTS_CHART_ENABLED %}
-<script src="{{url_for('static', filename='js/d3.min.js')}}"></script>
-<script src="{{url_for('static', filename='js/c3.min.js')}}"></script>
-<script src="{{url_for('static', filename='js/dailychart.js')}}"></script>
-{% endif %}
-{% endblock script %}
-{% endblock head %}
 {% block onload_script %}
 {% macro extra_options(caller) %}
   'pagingType': 'simple',
