@@ -11,8 +11,9 @@
   }
 
   $('thead th.date').data('sortBy', function(th, td, tablesort) {
-    var tdTime = td.text().replace("-", "");
-    return moment.utc(new Date(tdTime)).unix();
+    var tdTime = new Date(td.text().replace("-", ""));
+    if(isNaN(tdTime)) return 0;
+    else return tdTime;
   });
 
   $('input.filter-table').parent('div').removeClass('hide');
