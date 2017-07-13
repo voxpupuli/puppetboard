@@ -12,7 +12,7 @@
 
   $('thead th.date').data('sortBy', function(th, td, tablesort) {
     var tdTime = td.text().replace("-", "");
-    return moment.utc(tdTime).unix();
+    return moment.utc(new Date(tdTime)).unix();
   });
 
   $('input.filter-table').parent('div').removeClass('hide');
