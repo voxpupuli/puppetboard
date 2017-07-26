@@ -548,11 +548,16 @@ def report(env, node_name, report_id):
 
     report.version = CommonMark.commonmark(report.version)
 
+    report_logs = []
+    for log_dict in report.logs:
+      log_dict['message'] = log_dict['message'].split('\n')
+      report_logs.append(log_dict)
+
     return render_template(
         'report.html',
         report=report,
         events=yield_or_stop(report.events()),
-        logs=report.logs,
+        logs=report_logs,
         metrics=report.metrics,
         envs=envs,
         current_env=env)
