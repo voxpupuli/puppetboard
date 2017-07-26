@@ -550,8 +550,8 @@ def report(env, node_name, report_id):
 
     report_logs = []
     for log_dict in report.logs:
-      log_dict['message'] = log_dict['message'].split('\n')
-      report_logs.append(log_dict)
+        log_dict['message'] = log_dict['message'].split('\n')
+        report_logs.append(log_dict)
 
     return render_template(
         'report.html',
