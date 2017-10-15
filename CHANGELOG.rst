@@ -4,6 +4,22 @@ Changelog
 
 This is the changelog for Puppetboard.
 
+0.3.0
+=====
+
+* Core UI Reowrk
+* Update to pypuppetdb 0.3.3
+* Fix sorty on data for index
+* Update debian documentation
+* Offline mode fix
+* Fix fact attrbitue error on paths
+* Enhanced testing
+* Radiator CSS uses same coloring
+* Markdown in config version
+* Update Flask
+* Cleanup requirements.txt
+* Update package maintainer for OpenBSD
+
 0.2.1
 =====
 
