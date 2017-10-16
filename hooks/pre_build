@@ -1,6 +1,16 @@
 #!/bin/bash
 
-version=$(git describe HEAD --abbrev=4)
+
+
+git_version=$(git describe HEAD --tags --abbrev=4)
+
+
+if [ ${SOURCE_BRANCH} == "master" ]
+then
+    version=$git_version
+else
+    version=$(echo ${SOURCE_BRANCH} | sed 's/v//')
+fi
 
 cat << EOF > puppetboard/version.py
 #
