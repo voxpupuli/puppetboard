@@ -14,7 +14,7 @@ functionality of `Puppet Dashboard`_.
 Puppetboard relies on the `pypuppetdb`_ library to fetch data from PuppetDB
 and is built with the help of the `Flask`_ microframework.
 
-As of version 0.1.0 and higher, Puppetboard **requires** PuppetDB 3. Version 0.3.0 has been tested with PuppetDB 5.
+As of version 0.1.0 and higher, Puppetboard **requires** PuppetDB 3. Version 0.3.0 has been tested with PuppetDB version 3 through 5.
 
 .. _pypuppetdb: https://pypi.python.org/pypi/pypuppetdb
 .. _PuppetDB: http://docs.puppetlabs.com/puppetdb/latest/index.html
