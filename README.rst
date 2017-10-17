@@ -34,18 +34,6 @@ At the current time of writing, Puppetboard supports the following Python versio
 
 .. contents::
 
-Word of caution
-===============
-
-Puppetboard is very, very young but it works fairly well.
-
-That being said a lot of the code is very experimental, just trying
-to figure out what works and what not, what we need to do different
-and what features we need on the PuppetDB side of things.
-
-As such you should be at least comfortable handling a few errors
-this might throw at you.
-
 Installation
 ============
 
