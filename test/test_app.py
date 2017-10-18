@@ -838,6 +838,7 @@ def test_offline_static(client):
     assert 'text/css' in rv.headers['Content-Type']
     assert rv.status_code == 200
 
+
 def test_custom_title(client, mocker):
     custom_title = 'Dev - Puppetboard'
     app.app.config['PAGE_TITLE'] = custom_title
@@ -856,4 +857,3 @@ def test_custom_title(client, mocker):
     rv = client.get('/')
     soup = BeautifulSoup(rv.data, 'html.parser')
     assert soup.title.contents[0] == custom_title
-
