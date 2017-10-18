@@ -14,7 +14,7 @@ functionality of `Puppet Dashboard`_.
 Puppetboard relies on the `pypuppetdb`_ library to fetch data from PuppetDB
 and is built with the help of the `Flask`_ microframework.
 
-As of version 0.1.0 and higher, Puppetboard **requires** PuppetDB 3.
+As of version 0.1.0 and higher, Puppetboard **requires** PuppetDB 3. Version 0.3.0 has been tested with PuppetDB versions 3 through 5.
 
 .. _pypuppetdb: https://pypi.python.org/pypi/pypuppetdb
 .. _PuppetDB: http://docs.puppetlabs.com/puppetdb/latest/index.html
@@ -25,7 +25,7 @@ As of version 0.1.0 and higher, Puppetboard **requires** PuppetDB 3.
 At the current time of writing, Puppetboard supports the following Python versions:
     * Python 2.6
     * Python 2.7
-
+    * Python 3.6
 .. image:: screenshots/overview.png
    :alt: View of a node
    :width: 1024
@@ -33,18 +33,6 @@ At the current time of writing, Puppetboard supports the following Python versio
    :align: center
 
 .. contents::
-
-Word of caution
-===============
-
-Puppetboard is very, very young but it works fairly well.
-
-That being said a lot of the code is very experimental, just trying
-to figure out what works and what not, what we need to do different
-and what features we need on the PuppetDB side of things.
-
-As such you should be at least comfortable handling a few errors
-this might throw at you.
 
 Installation
 ============
