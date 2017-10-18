@@ -26,6 +26,7 @@ DISPLAYED_METRICS = ['resources.total',
 OFFLINE_MODE = False
 ENABLE_CATALOG = False
 OVERVIEW_FILTER = None
+PAGE_TITLE = "Puppetboard"
 GRAPH_TYPE = 'pie'
 GRAPH_FACTS = ['architecture',
                'clientversion',
