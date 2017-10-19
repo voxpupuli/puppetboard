@@ -2,7 +2,7 @@
 <html lang="en">
   <head>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{{config.PAGE_TITLE}}</title>
+    <title>Puppetboard</title>
     {% if config.OFFLINE_MODE %}
     <style>
       @font-face {
@@ -18,14 +18,18 @@
     <link href='//fonts.googleapis.com/css?family=Open+Sans' rel='stylesheet' type='text/css' />
     <link href="{{ url_for('static', filename='Semantic-UI-2.1.8/semantic.min.css') }}" rel="stylesheet" />
     <link href='//cdnjs.cloudflare.com/ajax/libs/datatables/1.10.13/css/dataTables.semanticui.min.css' rel='stylesheet' type='text/css'>
+    
     {% endif %}
-    <link href="{{ url_for('static', filename='css/c3.min.css') }}" rel="stylesheet" />
     <link href="{{ url_for('static', filename='css/puppetboard.css') }}" rel="stylesheet" />
 
     {% if config.OFFLINE_MODE %}
       <script src="{{ url_for('static', filename='jquery-2.1.1/jquery.min.js') }}"></script>
       <script src="{{ url_for('static', filename='jquery-datatables-1.10.13/jquery.dataTables.min.js') }}"></script>
       <script src="{{ url_for('static', filename='jquery-datatables-1.10.13/dataTables.semanticui.min.js') }}"></script>
+      <script src="{{ url_for('static', filename='DataTables/Buttons-1.4.2/js/dataTables.buttons.min.js') }}"></script>
+      <script src="{{ url_for('static', filename='DataTables/Buttons-1.4.2/js/dataTables.semanticui.min.js') }}"></script>
+      <script src="{{ url_for('static', filename='DataTables/Buttons-1.4.2/js/js/buttons.html5.min.js') }}"></script>
+      
       {% if config.LOCALISE_TIMESTAMP %}
       <script src="{{ url_for('static', filename='moment.js-2.7.0/moment.min.js') }}"></script>
       {% endif %}
@@ -46,7 +50,8 @@
     <script src="{{url_for('static', filename='js/d3.min.js')}}"></script>
     <script src="{{url_for('static', filename='js/c3.min.js')}}"></script>
     <script src="{{url_for('static',
-                  filename='jquery-tablesort-v.0.0.11/jquery.tablesort.min.js')}}"></script>
+    filename='jquery-tablesorter-v.2.0.5/jquery.tablesorter.min.js')}}"></script>
+
     {% block script %} {% endblock script %}
     <script type="text/javascript">
     {% block javascript %} {% endblock javascript %}
@@ -56,8 +61,28 @@
           $.getScript('{{url_for('static', filename='js/tables.js')}}')
           {% block onload_script %} {% endblock onload_script %}
         })
+
+    
+      $("table:visible").DataTable( {
+          dom: 'Bfrtip',
+                buttons: [
+      
+                  'copy',
+      
+                  'csv',
+      
+                  'excel',
+
+	          'pdf',
+
+                  'print',
+      
+              ]
+      
+      } );
     </script>
     {% block head %} {% endblock head %}
+
   </head>
 
   <body>
