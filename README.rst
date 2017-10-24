@@ -118,7 +118,9 @@ image is planned for the 0.2.x series.
 .. _Dockerfile: https://github.com/voxpupuli/puppetboard/blob/master/Dockerfile
 
 Usage:
+
 .. code-block:: bash
+
   $ docker build -t puppetboard .
   $ docker run -it -p 9080:80 -v /etc/puppetlabs/puppet/ssl:/etc/puppetlabs/puppet/ssl \
     -e PUPPETDB_HOST=<hostname> \
