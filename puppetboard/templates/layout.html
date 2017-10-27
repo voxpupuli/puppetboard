@@ -3,7 +3,7 @@
   <head>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Puppetboard</title>
-    <button id="export" style='margin-left: 50 px;'>export csv</button>
+    <button id="export" style="color:#b53f3f;box-shadow: 4px 4px #0a214a;margin-top: 5 px; margin-left: 5 px">Export data as csv</button>
     {% if config.OFFLINE_MODE %}
     <style>
       @font-face {
@@ -104,15 +104,16 @@
   /*
    * Convert our data to CSV string
    */
-  var CSVString = prepCSVRow(titles, titles.length);
-  CSVString += prepCSVRow(data, titles.length);
+  var CSVString = prepCSVRow(titles, titles.length, '');
+  CSVString = prepCSVRow(data, titles.length, CSVString);
 
   /*
    * Make CSV downloadable
    */
   var downloadLink = document.createElement("a");
-  blob = new Blob([CSVString]);
-  downloadLink.href = URL.createObjectURL(blob);
+  var blob = new Blob(["\ufeff", CSVString]);
+  var url = URL.createObjectURL(blob);
+  downloadLink.href = url;
   downloadLink.download = "data.csv";
 
   /*
@@ -169,7 +170,7 @@ function prepCSVRow(arr, columnCount, initial) {
   return initial + row;
 }
 
-document.write('<button type="button" onclick="#export()">Test :)</button>');
+//document.write('<button type="button" onclick="#export()">Export will be here :)</button>');
 
 </script>
     </script>
