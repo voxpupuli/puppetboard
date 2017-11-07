@@ -25,14 +25,8 @@
     {% if config.OFFLINE_MODE %}
       <script src="{{ url_for('static', filename='jquery-2.1.1/jquery.min.js') }}"></script>
       <script src="{{ url_for('static', filename='jquery-datatables-1.10.13/jquery.dataTables.min.js') }}"></script>
-      <script src="{{ url_for('static', filename='jquery-plugin/dataTables.filesizeTypeDetect.js') }}"></script>
-      <script src="{{ url_for('static', filename='jquery-plugin/dataTables.filesizeSort.js') }}"></script>
-      <script src="{{ url_for('static', filename='jquery-plugin/ip-adress_Det.js') }}"></script>
-      <script src="{{ url_for('static', filename='jquery-plugin/ip-adress_SORT.js') }}"></script>
       <script src="{{ url_for('static', filename='jquery-datatables-1.10.13/dataTables.semanticui.min.js') }}"></script>
-      <script src="{{ url_for('static', filename='DataTables/Buttons-1.4.2/js/dataTables.buttons.min.js') }}"></script>
-      <script src="{{ url_for('static', filename='DataTables/Buttons-1.4.2/js/dataTables.semanticui.min.js') }}"></script>
-      <script src="{{ url_for('static', filename='DataTables/Buttons-1.4.2/js/js/buttons.html5.min.js') }}"></script>
+
       
       {% if config.LOCALISE_TIMESTAMP %}
       <script src="{{ url_for('static', filename='moment.js-2.7.0/moment.min.js') }}"></script>
@@ -40,7 +34,6 @@
     {% else %}
       <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
       <script src="//cdnjs.cloudflare.com/ajax/libs/datatables/1.10.13/js/jquery.dataTables.min.js"></script>
-      <script src="https://cdn.datatables.net/buttons/1.4.2/css/buttons.dataTables.min.css"></script>
       <script src="//cdnjs.cloudflare.com/ajax/libs/datatables/1.10.13/js/dataTables.semanticui.min.js"></script>
       {% if config.LOCALISE_TIMESTAMP %}
         <script src="//cdnjs.cloudflare.com/ajax/libs/moment.js/2.7.0/moment.min.js"></script>
@@ -54,8 +47,8 @@
     <script src="{{ url_for('static', filename='js/scroll.top.js') }}"></script>
     <script src="{{url_for('static', filename='js/d3.min.js')}}"></script>
     <script src="{{url_for('static', filename='js/c3.min.js')}}"></script>
-    <script src="{{url_for('static',
-    filename='jquery-tablesorter-v.2.0.5/jquery.tablesorter.min.js')}}"></script>
+    <script src="{{url_for('static', filename='jquery-tablesort-v.0.0.11/jquery.tablesort.min.js')}}"></script> 
+
 
     {% block script %} {% endblock script %}
     <script type="text/javascript">
@@ -68,20 +61,6 @@
         })
 
     
-      $("table:visible").DataTable( {
-          dom: 'Bfrtip',
-                buttons: [
-      
-                  'copyHtml5',
-      
-                  'excelHtml5',
-      
-                  'csvHtml5',
-      
-              ]
-      
-      } );
-
       $('#export').click(function() {
       var titles = [];
       var data = [];
@@ -170,7 +149,6 @@ function prepCSVRow(arr, columnCount, initial) {
   return initial + row;
 }
 
-//document.write('<button type="button" onclick="#export()">Export will be here :)</button>');
 
 </script>
     </script>
