@@ -40,3 +40,26 @@
   });
 
 }).call(this);
+
+// Add function to easily get URL params
+$.urlParam = function(name){
+  var results = new RegExp('[\?&]' + name + '=([^&#]*)').exec(window.location.href);
+  if (results==null){
+    return null;
+  }
+  else{
+    return decodeURI(results[1]) || 0;
+  }
+}
+
+// On startup if url param sort is set replace default sort
+if($.urlParam('sort')) {
+  $('.default-sort').removeClass('default-sort');
+  $("th:contains('"+$.urlParam('sort')+"')").addClass('default-sort');
+}
+
+// When a table header is clicked update the URL without refreshing page
+$( "th" ).click(function() {
+  var newUrl = location.origin + location.pathname + "?sort=" + $(this).text();
+  history.pushState({}, null, newUrl);
+});
