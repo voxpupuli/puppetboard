@@ -16,6 +16,17 @@
     else return tdTime;
   });
 
+    $('thead th.IP Address').data('myIpArray', myIpArray) // save IP adresses from th. IP Addresses (unsure about the name) in myIpArray
+  myIpArray.sort(function(a,b){ // sort array in myIpArray
+    aa = getIP(a).split(".");
+    bb = getIP(b).split(".");
+  
+    for (var i=0, n=Math.max(aa.length, bb.length); i<n; i++) {
+        if (aa[i] !== bb[i]) return aa[i] - bb[i];
+    }
+    return 0;
+  });
+  
   $('input.filter-table').parent('div').removeClass('hide');
 
   $("input.filter-table").on("keyup", function(e) {
