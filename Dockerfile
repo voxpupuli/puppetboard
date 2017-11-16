@@ -3,7 +3,7 @@ FROM python:2.7-alpine
 ENV PUPPETBOARD_PORT 80
 EXPOSE 80
 
-ENV PUPPETBOARD_SETTINGS docker_settings.py
+ENV PUPPETBOARD_SETTINGS /usr/src/app/puppetboard/docker_settings.py
 RUN mkdir -p /usr/src/app/
 WORKDIR /usr/src/app/
 
