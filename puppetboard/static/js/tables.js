@@ -16,7 +16,7 @@
     else return tdTime;
   });
 
-    $('thead th.IP Address').data('myIpArray', myIpArray) // save IP adresses from th. IP Addresses (unsure about the name) in myIpArray
+    $('thead th.ipaddress').data('myIpArray', myIpArray) // save IP adresses from th. IP Addresses (unsure about the name) in myIpArray
   myIpArray.sort(function(a,b){ // sort array in myIpArray
     aa = getIP(a).split(".");
     bb = getIP(b).split(".");
