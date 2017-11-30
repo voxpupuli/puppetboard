@@ -2,9 +2,8 @@
 <html lang="en">
   <head>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Puppetboard</title>
-    <button id="export" style="clear: right;width:127px;height:50px;color:#0a214a;box-shadow: 4px 4px #0a214a;margin-top: 5 px; margin-left: 5 px">Export data as csv</button>
-
+    <title>{{config.PAGE_TITLE}}</title>
+    <button id="export_data_button" style="clear: right;width:127px;height:50px;color:#0a214a;box-shadow: 4px 4px #0a214a;margin-top: 5 px; margin-left: 5 px">Export data as csv</button>
     {% if config.OFFLINE_MODE %}
     <style>
       @font-face {
@@ -21,14 +20,13 @@
     <link href="{{ url_for('static', filename='Semantic-UI-2.1.8/semantic.min.css') }}" rel="stylesheet" />
     <link href='//cdnjs.cloudflare.com/ajax/libs/datatables/1.10.13/css/dataTables.semanticui.min.css' rel='stylesheet' type='text/css'>
     {% endif %}
+    <link href="{{ url_for('static', filename='css/c3.min.css') }}" rel="stylesheet" />
     <link href="{{ url_for('static', filename='css/puppetboard.css') }}" rel="stylesheet" />
 
     {% if config.OFFLINE_MODE %}
       <script src="{{ url_for('static', filename='jquery-2.1.1/jquery.min.js') }}"></script>
       <script src="{{ url_for('static', filename='jquery-datatables-1.10.13/jquery.dataTables.min.js') }}"></script>
       <script src="{{ url_for('static', filename='jquery-datatables-1.10.13/dataTables.semanticui.min.js') }}"></script>
-
-      
       {% if config.LOCALISE_TIMESTAMP %}
       <script src="{{ url_for('static', filename='moment.js-2.7.0/moment.min.js') }}"></script>
       {% endif %}
@@ -48,9 +46,8 @@
     <script src="{{ url_for('static', filename='js/scroll.top.js') }}"></script>
     <script src="{{url_for('static', filename='js/d3.min.js')}}"></script>
     <script src="{{url_for('static', filename='js/c3.min.js')}}"></script>
-    <script src="{{url_for('static', filename='jquery-tablesort-v.0.0.11/jquery.tablesort.min.js')}}"></script> 
-
-
+    <script src="{{url_for('static',
+                  filename='jquery-tablesort-v.0.0.11/jquery.tablesort.min.js')}}"></script>
     {% block script %} {% endblock script %}
     <script type="text/javascript">
     {% block javascript %} {% endblock javascript %}
@@ -60,68 +57,65 @@
           $.getScript('{{url_for('static', filename='js/tables.js')}}')
           {% block onload_script %} {% endblock onload_script %}
         })
+       
+      $('#export_data_button').click(function() {
+        var titles = [];
+        var data = [];
 
-    
-      $('#export').click(function() {
-      var titles = [];
-      var data = [];
+        $('.dataTable th').each(function() {
+          titles.push($(this).text());
+          });
 
-  $('.dataTable th').each(function() {
-    titles.push($(this).text());
-  });
-
-  $('.dataTable td').each(function() {
-    data.push($(this).text());
-  });
+        $('.dataTable td').each(function() {
+          data.push($(this).text());
+          });
   
-  var CSVString = prepCSVRow(titles, titles.length, '');
-  CSVString = prepCSVRow(data, titles.length, CSVString);
+        var CSVString = prepCSVRow(titles, titles.length, '');
+        CSVString = prepCSVRow(data, titles.length, CSVString);
 
-  var downloadLink = document.createElement("a");
-  var blob = new Blob(["\ufeff", CSVString]);
-  var url = URL.createObjectURL(blob);
-  downloadLink.href = url;
-  downloadLink.download = "data.csv";
+        var downloadLink = document.createElement("a");
+        var blob = new Blob(["\ufeff", CSVString]);
+        var url = URL.createObjectURL(blob);
+        downloadLink.href = url;
+        downloadLink.download = "puppetboard_data.csv";
 
-  document.body.appendChild(downloadLink);
-  downloadLink.click();
-  document.body.removeChild(downloadLink);
-});
+        document.body.appendChild(downloadLink);
+        downloadLink.click();
+        document.body.removeChild(downloadLink);
+        });
 
-function prepCSVRow(arr, columnCount, initial) {
-  var row = ''; // this will hold data
-  var delimeter = ','; // data slice separator, in excel it's `;`, in usual CSv it's `,`
-  var newLine = '\r\n'; // newline separator for CSV row
+      function prepCSVRow(arr, columnCount, initial) {
+        var row = ''; 
+        var delimeter = ','; 
+        var newLine = '\r\n'; 
 
-  function splitArray(_arr, _count) {
-    var splitted = [];
-    var result = [];
-    _arr.forEach(function(item, idx) {
-      if ((idx + 1) % _count === 0) {
-        splitted.push(item);
-        result.push(splitted);
-        splitted = [];
-      } else {
-        splitted.push(item);
-      }
-    });
-    return result;
-  }
-  var plainArr = splitArray(arr, columnCount);
-  plainArr.forEach(function(arrItem) {
-    arrItem.forEach(function(item, idx) {
-      row += item + ((idx + 1) === arrItem.length ? '' : delimeter);
-    });
-    row += newLine;
-  });
-  return initial + row;
-}
+        function splitArray(_arr, _count) {
+          var splitted = [];
+          var result = [];
+          _arr.forEach(function(item, idx) {
+            if ((idx + 1) % _count === 0) {
+              splitted.push(item);
+              result.push(splitted);
+              splitted = [];
+              } else {
+              splitted.push(item);
+              }
+            });
+            return result;
+            }
+          var plainArr = splitArray(arr, columnCount);
 
+          plainArr.forEach(function(arrItem) {
+            arrItem.forEach(function(item, idx) {
+             row += item + ((idx + 1) === arrItem.length ? '' : delimeter);
+             });
+           row += newLine;
+           });
+            return initial + row;
+        };
 
-</script>
     </script>
     {% block head %} {% endblock head %}
-
   </head>
 
   <body>
