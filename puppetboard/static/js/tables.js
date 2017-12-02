@@ -7,7 +7,11 @@
   $(function() {});
 
   if ($('th.default-sort').data()) {
-    $('table.sortable').tablesort().data('tablesort').sort($("th.default-sort"), "desc");
+    $.tablesort.DEBUG = false;
+    var tablesort = $('table.sortable').tablesort().data('tablesort');
+    // explicitly set the current index so we don't get default sort (asc)
+    tablesort.index = $('th.default-sort').index();
+    tablesort.sort($("th.default-sort"), 'desc');
   }
 
   $('thead th.date').data('sortBy', function(th, td, tablesort) {
