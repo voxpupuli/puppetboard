@@ -6,19 +6,18 @@
 
   $(function() {});
 
-  if ($('th.default-sort').data()) {
-    $.tablesort.DEBUG = false;
-    var tablesort = $('table.sortable').tablesort().data('tablesort');
-    // explicitly set the current index so we don't get default sort (asc)
-    tablesort.index = $('th.default-sort').index();
-    tablesort.sort($("th.default-sort"), 'desc');
-  }
-
   $('thead th.date').data('sortBy', function(th, td, tablesort) {
     var tdTime = new Date(td.text().replace("-", ""));
     if(isNaN(tdTime)) return 0;
     else return tdTime;
   });
+
+  if ($('th.default-sort').data()) {
+    var tablesort = $('table.sortable').tablesort().data('tablesort');
+    tablesort.index = $('th.default-sort').index();
+    tablesort.sort($("th.default-sort"), 'desc');
+  }
+
 
   $('input.filter-table').parent('div').removeClass('hide');
 
