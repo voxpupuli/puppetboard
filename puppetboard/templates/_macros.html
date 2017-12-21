@@ -56,6 +56,19 @@
     "search": {"regex": true},
     // Default sort
     "order": [[ 0, "desc" ]],
+    //Sort ip adresses and parse integers where applicable
+    "columnDefs": [    
+    
+    { type: 'ip-address', targets: 1 },
+
+    {"targets": -1,
+    "render": function ( data, type, row )
+     {if (isNaN(parseInt(data)))
+      return (data)
+      else
+     return parseInt(data)}
+     },
+    ],
     // Custom options
     {% if extra_options %}{% call extra_options() %}Callback to parent defined options{% endcall %}{% endif %}
   });
