@@ -103,14 +103,15 @@
             });
             return result;
             }
+      
           var plainArr = splitArray(arr, columnCount);
 
-          plainArr.forEach(function(arrItem) {
-            arrItem.forEach(function(item, idx) {
-             row += item + ((idx + 1) === arrItem.length ? '' : delimeter);
-             });
-           row += newLine;
-           });
+         plainArr.forEach(function(arrItem) {
+           arrItem.forEach(function(item, idx) {
+            row += item + ((idx + 1) === arrItem.length ? '' : delimeter);
+            });
+          row += newLine;
+          });
             return initial + row;
         };
 
