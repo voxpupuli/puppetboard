@@ -56,6 +56,9 @@
     "search": {"regex": true},
     // Default sort
     "order": [[ 0, "desc" ]],
+    //Sort ipadresses
+    columnDefs: [{ type: 'ip-address', targets: 1 }],
+
     // Custom options
     {% if extra_options %}{% call extra_options() %}Callback to parent defined options{% endcall %}{% endif %}
   });
