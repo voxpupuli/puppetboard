@@ -691,7 +691,7 @@ def fact_ajax(env, node, fact, value):
     try:
         value = int(value)
     except ValueError:
-        if value is not None:
+        if value is not None and query is not None:
             query.add(EqualsOperator('value', unquote_plus(value)))
     except TypeError:
         pass
