@@ -742,7 +742,7 @@ Examples
 
 .. _vagrant-puppetboard: https://github.com/visibilityspots/vagrant-puppet/tree/puppetboard
 
-A vagrant project to show off the puppetboard functionallity using the puppetboard puppet module on a puppetserver with puppetdb.
+A vagrant project to show off the puppetboard functionality using the puppetboard puppet module on a puppetserver with puppetdb.
 
 Screenshots
 ===========
