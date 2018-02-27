@@ -235,7 +235,7 @@ Other settings that might be interesting in no particular order:
   looking at dashboard and node view.
 * ``DAILY_REPORTS_CHART_DAYS``: Number of days to show history for on the daily
   report graphs.
-* ``DISPLAYED_METRICS``: Metrics to show when displying node summary. Example:
+* ``DISPLAYED_METRICS``: Metrics to show when displaying node summary. Example:
   ``'resources.total'``, ``'events.noop'``.
 * ``TABLE_COUNT_SELECTOR``: Configure the dropdown to limit number of hosts to
   show per page.
