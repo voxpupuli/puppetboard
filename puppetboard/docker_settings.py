@@ -2,7 +2,7 @@ import os
 
 PUPPETDB_HOST = os.getenv('PUPPETDB_HOST', 'puppetdb')
 PUPPETDB_PORT = int(os.getenv('PUPPETDB_PORT', '8080'))
-# Since this is an env it will alwas be a string, we need
+# Since this is an env it will always be a string, we need
 # to conver that string to a bool
 SSL_VERIFY = os.getenv('PUPPETDB_SSL_VERIFY', 'True')
 if SSL_VERIFY.upper() == 'TRUE':
@@ -14,6 +14,7 @@ else:
 
 PUPPETDB_KEY = os.getenv('PUPPETDB_KEY', None)
 PUPPETDB_CERT = os.getenv('PUPPETDB_CERT', None)
+PUPPETDB_PROTO = os.getenv('PUPPETDB_PROTO', None)
 PUPPETDB_TIMEOUT = int(os.getenv('PUPPETDB_TIMEOUT', '20'))
 DEFAULT_ENVIRONMENT = os.getenv('DEFAULT_ENVIRONMENT', 'production')
 SECRET_KEY = os.getenv('SECRET_KEY', os.urandom(24))

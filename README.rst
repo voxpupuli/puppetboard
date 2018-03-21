@@ -190,7 +190,8 @@ connect. Therefor you'll also have to supply the following settings:
 * ``PUPPETDB_CERT = /path/to/public/keyfile.crt``
 
 For information about how to generate the correct keys please refer to the
-`pypuppetdb documentation`_.
+`pypuppetdb documentation`_. Alternatively is possible to explicitly specify
+the protocol to be used setting the ``PUPPETDB_PROTO`` variable.
 
 Other settings that might be interesting in no particular order:
 

@@ -40,6 +40,12 @@ def test_set_host_port(cleanUpEnv):
     assert docker_settings.PUPPETDB_PORT == 9081
 
 
+def test_set_proto(cleanUpEnv):
+    os.environ['PUPPETDB_PROTO'] = 'https'
+    reload(docker_settings)
+    assert docker_settings.PUPPETDB_PROTO == 'https'
+
+
 def test_cert_true_test(cleanUpEnv):
     os.environ['PUPPETDB_SSL_VERIFY'] = 'True'
     reload(docker_settings)
