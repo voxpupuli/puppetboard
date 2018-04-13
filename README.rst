@@ -129,7 +129,7 @@ Usage:
     -e PUPPETDB_KEY=/etc/puppetlabs/puppetdb/ssl/private.pem \
     -e PUPPETDB_CERT=/etc/puppetlabs/puppetdb/ssl/public.pem \
     -e INVENTORY_FACTS='Hostname,fqdn, IP Address,ipaddress' \
-    -e ENABLE_CATALOG=true \
+    -e ENABLE_CATALOG=True \
     -e GRAPH_FACTS='architecture,puppetversion,osfamily' \
     puppetboard
 
