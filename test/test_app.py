@@ -857,3 +857,10 @@ def test_custom_title(client, mocker):
     rv = client.get('/')
     soup = BeautifulSoup(rv.data, 'html.parser')
     assert soup.title.contents[0] == custom_title
+
+
+def test_health_status(client):
+    rv = client.get('/status')
+
+    assert rv.status_code == 200
+    assert rv.data.decode('utf-8') == 'OK'
