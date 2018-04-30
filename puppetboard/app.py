@@ -13,16 +13,22 @@ from itertools import tee
 from flask import (
     Flask, render_template, abort, url_for,
     Response, stream_with_context, redirect,
-    request, session, jsonify
+    request, session, jsonify, flash
+)
+from flask_login import (
+    LoginManager, login_required,
+    login_user, logout_user
 )
 from jinja2.utils import contextfunction
 
 from pypuppetdb.QueryBuilder import *
 
-from puppetboard.forms import QueryForm
+from puppetboard.forms import QueryForm, LoginForm
 from puppetboard.utils import (get_or_abort, yield_or_stop,
                                get_db_version)
 from puppetboard.dailychart import get_daily_reports_chart
+from puppetboard.models import db, Users
+from sqlalchemy.exc import OperationalError
 
 import werkzeug.exceptions as ex
 import CommonMark
@@ -51,6 +57,19 @@ CATALOGS_COLUMNS = [
 ]
 
 app = get_app()
+login_manager = LoginManager()
+login_manager.init_app(app)
+login_manager.login_view = "login"
+if not app.config['LOGIN_DISABLED']:
+    try:
+        users = Users.query.all()
+    except OperationalError:
+        db.create_all()
+        users = Users.query.all()
+    if len(users) < 1:
+        admin_user = Users(username='admin', password='admin123')
+        db.session.add(admin_user)
+        db.session.commit()
 graph_facts = app.config['GRAPH_FACTS']
 numeric_level = getattr(logging, app.config['LOGLEVEL'].upper(), None)
 
@@ -88,6 +107,7 @@ def utility_processor():
 
 @app.route('/', defaults={'env': app.config['DEFAULT_ENVIRONMENT']})
 @app.route('/<env>/')
+@login_required
 def index(env):
     """This view generates the index page and displays a set of metrics and
     latest reports on nodes fetched from PuppetDB.
@@ -200,6 +220,7 @@ def index(env):
 
 @app.route('/nodes', defaults={'env': app.config['DEFAULT_ENVIRONMENT']})
 @app.route('/<env>/nodes')
+@login_required
 def nodes(env):
     """Fetch all (active) nodes from PuppetDB and stream a table displaying
     those nodes.
@@ -285,6 +306,7 @@ def inventory_facts():
 
 @app.route('/inventory', defaults={'env': app.config['DEFAULT_ENVIRONMENT']})
 @app.route('/<env>/inventory')
+@login_required
 def inventory(env):
     """Fetch all (active) nodes from PuppetDB and stream a table displaying
     those nodes along with a set of facts about them.
@@ -306,6 +328,7 @@ def inventory(env):
 @app.route('/inventory/json',
            defaults={'env': app.config['DEFAULT_ENVIRONMENT']})
 @app.route('/<env>/inventory/json')
+@login_required
 def inventory_ajax(env):
     """Backend endpoint for inventory table"""
     draw = int(request.args.get('draw', 0))
@@ -344,6 +367,7 @@ def inventory_ajax(env):
 @app.route('/node/<node_name>',
            defaults={'env': app.config['DEFAULT_ENVIRONMENT']})
 @app.route('/<env>/node/<node_name>')
+@login_required
 def node(env, node_name):
     """Display a dashboard for a node showing as much data as we have on that
     node. This includes facts and reports but not Resources as that is too
@@ -378,6 +402,7 @@ def node(env, node_name):
 @app.route('/reports/<node_name>',
            defaults={'env': app.config['DEFAULT_ENVIRONMENT']})
 @app.route('/<env>/reports/<node_name>')
+@login_required
 def reports(env, node_name):
     """Query and Return JSON data to reports Jquery datatable
 
@@ -401,6 +426,7 @@ def reports(env, node_name):
 @app.route('/reports/<node_name>/json',
            defaults={'env': app.config['DEFAULT_ENVIRONMENT']})
 @app.route('/<env>/reports/<node_name>/json')
+@login_required
 def reports_ajax(env, node_name):
     """Query and Return JSON data to reports Jquery datatable
 
@@ -509,6 +535,7 @@ def reports_ajax(env, node_name):
 @app.route('/report/<node_name>/<report_id>',
            defaults={'env': app.config['DEFAULT_ENVIRONMENT']})
 @app.route('/<env>/report/<node_name>/<report_id>')
+@login_required
 def report(env, node_name, report_id):
     """Displays a single report including all the events associated with that
     report and their status.
@@ -560,6 +587,7 @@ def report(env, node_name, report_id):
 
 @app.route('/facts', defaults={'env': app.config['DEFAULT_ENVIRONMENT']})
 @app.route('/<env>/facts')
+@login_required
 def facts(env):
     """Displays an alphabetical list of all facts currently known to
     PuppetDB.
@@ -609,6 +637,7 @@ def facts(env):
 @app.route('/fact/<fact>/<value>',
            defaults={'env': app.config['DEFAULT_ENVIRONMENT']})
 @app.route('/<env>/fact/<fact>/<value>')
+@login_required
 def fact(env, fact, value):
     """Fetches the specific fact(/value) from PuppetDB and displays per
     node for which this fact is known.
@@ -655,6 +684,7 @@ def fact(env, fact, value):
                      'fact': None, 'value': None})
 @app.route('/<env>/node/<node>/facts/json',
            defaults={'fact': None, 'value': None})
+@login_required
 def fact_ajax(env, node, fact, value):
     """Fetches the specific facts matching (node/fact/value) from PuppetDB and
     return a JSON table
@@ -747,6 +777,7 @@ def fact_ajax(env, node, fact, value):
 @app.route('/query', methods=('GET', 'POST'),
            defaults={'env': app.config['DEFAULT_ENVIRONMENT']})
 @app.route('/<env>/query', methods=('GET', 'POST'))
+@login_required
 def query(env):
     """Allows to execute raw, user created querries against PuppetDB. This is
     currently highly experimental and explodes in interesting ways since none
@@ -792,6 +823,7 @@ def query(env):
 
 @app.route('/metrics', defaults={'env': app.config['DEFAULT_ENVIRONMENT']})
 @app.route('/<env>/metrics')
+@login_required
 def metrics(env):
     """Lists all available metrics that PuppetDB is aware of.
 
@@ -812,6 +844,7 @@ def metrics(env):
 @app.route('/metric/<path:metric>',
            defaults={'env': app.config['DEFAULT_ENVIRONMENT']})
 @app.route('/<env>/metric/<path:metric>')
+@login_required
 def metric(env, metric):
     """Lists all information about the metric of the given name.
 
@@ -839,6 +872,7 @@ def metric(env, metric):
 @app.route('/catalogs/compare/<compare>',
            defaults={'env': app.config['DEFAULT_ENVIRONMENT']})
 @app.route('/<env>/catalogs/compare/<compare>')
+@login_required
 def catalogs(env, compare):
     """Lists all nodes with a compiled catalog.
 
@@ -867,6 +901,7 @@ def catalogs(env, compare):
 @app.route('/catalogs/compare/<compare>/json',
            defaults={'env': app.config['DEFAULT_ENVIRONMENT']})
 @app.route('/<env>/catalogs/compare/<compare>/json')
+@login_required
 def catalogs_ajax(env, compare):
     """Server data to catalogs as JSON to Jquery datatables
     """
@@ -926,6 +961,7 @@ def catalogs_ajax(env, compare):
 @app.route('/catalog/<node_name>',
            defaults={'env': app.config['DEFAULT_ENVIRONMENT']})
 @app.route('/<env>/catalog/<node_name>')
+@login_required
 def catalog_node(env, node_name):
     """Fetches from PuppetDB the compiled catalog of a given node.
 
@@ -950,6 +986,7 @@ def catalog_node(env, node_name):
 @app.route('/catalogs/compare/<compare>...<against>',
            defaults={'env': app.config['DEFAULT_ENVIRONMENT']})
 @app.route('/<env>/catalogs/compare/<compare>...<against>')
+@login_required
 def catalog_compare(env, compare, against):
     """Compares the catalog of one node, parameter compare, with that of
        with that of another node, parameter against.
@@ -978,6 +1015,7 @@ def catalog_compare(env, compare, against):
 
 @app.route('/radiator', defaults={'env': app.config['DEFAULT_ENVIRONMENT']})
 @app.route('/<env>/radiator')
+@login_required
 def radiator(env):
     """This view generates a simplified monitoring page
     akin to the radiator view in puppet dashboard
@@ -1077,6 +1115,7 @@ def radiator(env):
 @app.route('/daily_reports_chart.json',
            defaults={'env': app.config['DEFAULT_ENVIRONMENT']})
 @app.route('/<env>/daily_reports_chart.json')
+@login_required
 def daily_reports_chart(env):
     """Return JSON data to generate a bar chart of daily runs.
 
@@ -1104,3 +1143,38 @@ def offline_static(filename):
 
     return Response(response=render_template('static/%s' % filename),
                     status=200, mimetype=mimetype)
+
+
+@app.route("/login", methods=["GET", "POST"])
+def login():
+    form = LoginForm(meta={
+        'csrf_secret': app.config['SECRET_KEY'],
+        'csrf_context': session})
+    if form.validate_on_submit():
+        user = Users.query.filter_by(username=form.username.data).first()
+        if user and user.password == form.password.data:
+            login_user(user, remember=form.remember.data)
+            return redirect(url_for('index'))
+        else:
+            flash('Login failed.', 'error')
+    return render_template('login.html', form=form)
+
+
+@app.route("/users")
+@login_required
+def users():
+    users = Users.query.all()
+    return render_template('users.html', users=users)
+
+
+@app.route("/logout")
+@login_required
+def logout():
+    logout_user()
+    flash('You have been logged out.', 'info')
+    return redirect(url_for('login'))
+
+
+@login_manager.user_loader
+def load_user(user_id):
+    return Users.query.filter_by(id=int(user_id)).first()
