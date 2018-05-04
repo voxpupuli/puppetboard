@@ -1104,3 +1104,8 @@ def offline_static(filename):
 
     return Response(response=render_template('static/%s' % filename),
                     status=200, mimetype=mimetype)
+
+
+@app.route('/status')
+def health_status():
+    return 'OK'
