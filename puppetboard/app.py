@@ -1178,3 +1178,8 @@ def logout():
 @login_manager.user_loader
 def load_user(user_id):
     return Users.query.filter_by(id=int(user_id)).first()
+
+
+@app.route('/status')
+def health_status():
+    return 'OK'
