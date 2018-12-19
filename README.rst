@@ -53,6 +53,8 @@ You can install it with:
 .. _Spencer Krum: https://github.com/nibalizer
 .. _Puppet module: https://forge.puppetlabs.com/puppet/puppetboard
 
+To see how to get it working with EL7 check out these `docs <https://github.com/voxpupuli/puppetboard/blob/master/docs/EL7.md>`_.
+
 Manual
 ^^^^^^
 
