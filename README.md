@@ -5,7 +5,7 @@ Puppetboard
 
 [![image](https://coveralls.io/repos/github/voxpupuli/puppetboard/badge.svg?branch=master)](https://coveralls.io/github/voxpupuli/puppetboard?branch=master)
 
-Puppetboard is a web interface to [PuppetDB](http://docs.puppetlabs.com/puppetdb/latest/index.html) aiming to replace the reporting functionality of [Puppet Dashboard](http://docs.puppetlabs.com/dashboard/).
+Puppetboard is a web interface to [PuppetDB](https://puppet.com/docs/puppetdb/latest/index.html) aiming to replace the reporting functionality of [Puppet Dashboard](http://docs.puppetlabs.com/dashboard/).
 
 Puppetboard relies on the [pypuppetdb](https://pypi.python.org/pypi/pypuppetdb) library to fetch data from PuppetDB and is built with the help of the [Flask](http://flask.pocoo.org) microframework.
 
@@ -160,9 +160,9 @@ The following instructions will help you configure Puppetboard and your HTTPD.
 
 ### Puppet
 
-Puppetboard is built completely around PuppetDB which means your environment needs to be configured [to do that](https://docs.puppetlabs.com/puppetdb/latest/connect_puppet_master.html#step-2-edit-config-files).
+Puppetboard is built completely around PuppetDB which means your environment needs to be configured [to do that](https://puppet.com/docs/puppetdb/latest/connect_puppet_master.html#step-2-edit-config-files).
 
-In order to get the reports to show up in Puppetboard you need to configure your environment to store those reports in PuppetDB. Have a look at [the documentation](https://docs.puppetlabs.com/puppetdb/latest/connect_puppet_master.html#edit-puppetconf) about this, specifically the *Enabling report storage* section.
+In order to get the reports to show up in Puppetboard you need to configure your environment to store those reports in PuppetDB. Have a look at [the documentation](https://puppet.com/docs/puppetdb/latest/connect_puppet_master.html#edit-puppetconf) about this, specifically the *Enabling report storage* section.
 
 ### Settings
 
