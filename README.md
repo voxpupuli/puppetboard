@@ -143,6 +143,9 @@ $ docker run -it -p 9080:80 -v /etc/puppetlabs/puppet/ssl:/etc/puppetlabs/puppet
   puppetboard
 ```
 
+To set a URL prefix you can use the optional `PUPPETBOARD_URL_PREFIX`
+environment variable.
+
 ### Development
 
 If you wish to hack on Puppetboard you should fork/clone the Github repository and then install the requirements through:
@@ -639,4 +642,3 @@ Screenshots
 ![Query view](screenshots/query.png)
 
 ![Error page](screenshots/broken.png)
-
