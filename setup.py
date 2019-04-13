@@ -1,7 +1,5 @@
 import sys
-import os
 import codecs
-import re
 from setuptools.command.test import test as TestCommand
 from setuptools import setup, find_packages
 from puppetboard.version import __version__
