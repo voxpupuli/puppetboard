@@ -56,7 +56,17 @@
     "search": {"regex": true},
     // Default sort
     "order": [[ 0, "desc" ]],
-    // Custom options
+   // Rendering - add rendering options for columns
+    "columnDefs": [ {
+      "targets": -1,
+      "data:": null,
+      "render": function (data, type, full, meta) {
+       shorta = data.replace(/[{},]/g, "<br />");
+       shortb = shorta.replace(/u'/g, " "); 
+       shortc = shortb.replace(/'/g, " "); 
+       return shortc;
+       }}],
+      // Custom options
     {% if extra_options %}{% call extra_options() %}Callback to parent defined options{% endcall %}{% endif %}
   });
 
