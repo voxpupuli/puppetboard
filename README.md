@@ -9,7 +9,7 @@ Puppetboard is a web interface to [PuppetDB](https://puppet.com/docs/puppetdb/la
 
 Puppetboard relies on the [pypuppetdb](https://pypi.python.org/pypi/pypuppetdb) library to fetch data from PuppetDB and is built with the help of the [Flask](http://flask.pocoo.org) microframework.
 
-As of version 0.1.0 and higher, Puppetboard **requires** PuppetDB 3. Version 0.3.0 has been tested with PuppetDB versions 3 through 5.
+As of version 0.1.0 and higher, Puppetboard **requires** PuppetDB 3. Version 0.3.0 has been tested with PuppetDB versions 3 through 6.
 
 At the current time of writing, Puppetboard supports the following Python versions:
 
