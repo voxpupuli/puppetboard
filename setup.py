@@ -1,16 +1,14 @@
 import sys
-import os
 import codecs
-import re
 from setuptools.command.test import test as TestCommand
 from setuptools import setup, find_packages
 from puppetboard.version import __version__
 
 
-with codecs.open('README.rst', encoding='utf-8') as f:
+with codecs.open('README.md', encoding='utf-8') as f:
     README = f.read()
 
-with codecs.open('CHANGELOG.rst', encoding='utf-8') as f:
+with codecs.open('CHANGELOG.md', encoding='utf-8') as f:
     CHANGELOG = f.read()
 
 
