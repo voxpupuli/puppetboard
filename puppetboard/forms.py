@@ -4,7 +4,8 @@ from __future__ import absolute_import
 from flask_wtf import FlaskForm
 from wtforms import (
     HiddenField, RadioField, SelectField,
-    TextAreaField, BooleanField, validators
+    TextAreaField, BooleanField, StringField,
+    PasswordField, validators
 )
 
 
@@ -28,3 +29,10 @@ class QueryForm(FlaskForm):
         ('pql', 'PQL'),
     ])
     rawjson = BooleanField('Raw JSON')
+
+
+class LoginForm(FlaskForm):
+    """The form used to login to Puppetboard"""
+    username = StringField('Username', [validators.DataRequired(message='Username is required')])
+    password = PasswordField('Password', [validators.DataRequired(message='Password is required')])
+    remember = BooleanField('Remember me')

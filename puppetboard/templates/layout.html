@@ -89,7 +89,28 @@
           {% endfor %}
         </div>
       </div>
-      <div class="item right"><a href="https://github.com/voxpupuli/puppetboard" target="_blank">{{version()}}</a></div>
+      {%- if current_user.is_authenticated -%}
+      <div class="ui dropdown item">
+        Settings
+        <i class="dropdown icon"></i>
+        <div class="menu">
+            <a class="item" href="{{url_for('users')}}">Users</a>
+        </div>
+      </div>
+      {%- endif -%}
+      <div class="right menu">
+        {%- if current_user.is_authenticated -%}
+        <div class="ui dropdown item">
+          Logged in as: {{ current_user.username }}
+          <i class="dropdown icon"></i>
+          <div class="menu">
+            <a class="item" href="{{url_for('index')}}">Change Password</a>
+            <a class="item" href="{{url_for('logout')}}">Logout</a>
+          </div>
+        </div>
+        {%- endif -%}
+        <a class= "item" href="https://github.com/voxpupuli/puppetboard" target="_blank">{{version()}}</a>
+      </div>
     </div>
     <div class="ui grid padding-bottom">
       <div class="one wide column"></div>

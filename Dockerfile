@@ -7,6 +7,8 @@ ENV PUPPETBOARD_SETTINGS docker_settings.py
 RUN mkdir -p /usr/src/app/
 WORKDIR /usr/src/app/
 
+VOLUME /var/lib/puppetboard
+
 COPY requirements*.txt /usr/src/app/
 RUN pip install -r requirements-docker.txt
 

@@ -1,0 +1,36 @@
+{% extends 'layout.html' %}
+{% import '_macros.html' as macros %}
+{% block content %}
+<div class="ui fluid icon input hide" style="margin-bottom:20px">
+  <input autofocus="autofocus" class="filter-table" placeholder="Type here to filter...">
+</div>
+<div class="ui fluid icon" style="margin-bottom:20px">
+  <button class="ui basic button">
+    <i class='large darkblue plus icon'></i>
+    Add user
+  </button>
+</div>
+<table class='ui very compact very basic sortable table'>
+  <thead>
+    <tr>
+      <th>Username</th>
+      <th class="date default-sort">Created</th>
+      <th class="date">Modified</th>
+      <th>&nbsp;</th>
+    </tr>
+  </thead>
+  <tbody class="searchable">
+    {% for user in users %}
+    <tr>
+      <td>{{ user.username }}</td>
+      <td>{{ user.created.strftime('%Y-%m-%d %H:%M:%S') }}</td>
+      <td>{{ user.modified.strftime('%Y-%m-%d %H:%M:%S') }}</td>
+      <td>
+        <i class='large darkblue edit icon'></i>
+        <i class='large darkblue trash alternate icon'></i>
+      </td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% endblock content %}

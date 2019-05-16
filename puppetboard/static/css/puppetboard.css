@@ -124,6 +124,24 @@ h1.ui.header.no-margin-bottom {
   color: #FFF;
 }
 
+.ui.toggle.checkbox input:focus:checked ~ .box:before, .ui.toggle.checkbox input:focus:checked ~ label:before {
+  background-color: #2C3E50 !important;
+}
+
+.ui.button.darkblue {
+  background-color: #2C3E50;
+  border-color: #2C3E50;
+  color: #FFF;
+}
+
+.ui.button.darkblue:hover {
+  background-color: #2C3E50DB;
+}
+
+.inline.field.left {
+  text-align: left;
+}
+
 .ui.menu.yellow {
   background-color: #F0E965;
 }
