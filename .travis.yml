@@ -1,21 +1,54 @@
 dist: xenial
 language: python
-
 python:
-  - "2.7"
-  - "3.5"
-  - "3.6"
-  - "3.7"
+  - &latest_py2 2.7
+  - 3.5
+  - 3.6
+  - &latest_py3 3.7
+
+jobs:
+  fast_finish: true
+  include:
+  - python: *latest_py3
+    env: LANG=C
+  - python: *latest_py2
+    env: LANG=C
+  - stage: deploy (to PyPI for tagged commits)
+    if: tag IS present
+    python: *latest_py3
+    install: skip
+    script: skip
+    after_success: true
+    before_deploy:
+    - python setup.py sdist bdist_wheel
+    deploy:
+      provider: pypi
+      user: voxpupuliorg
+      distributions: sdist bdist_wheel
+      skip_cleanup: true
+      skip_upload_docs: true
+      password:
+        secure: "GfyMIBl4EawAgZrVAvtpNQ4S1tPUUTr/sKKGPK3+ApmcCYLx3jxhK1cp39ztTNFlMQS0LktTbOU/mF8r6UoWOs1CXs3PHz88U7zh1zbzrGXoiKg4qRqBg+km6xMkzayX/H5m3Br/yo1ouhhROa193YLGk+0ivZD33Cg5WKE0w64="
+      on:
+        tags: true
+        all_branches: true
+
+cache: pip
 
 install:
   - pip install -r requirements-test.txt
-  - pip install -q coveralls
 script:
   - pytest --pep8
-  - pip install bandit
   - bandit -r puppetboard
 after_success:
   - coveralls
+notifications:
+  email: false
+  irc:
+    on_success: always
+    on_failure: always
+    channels:
+      - "chat.freenode.org#voxpupuli-notifications"
 matrix:
   allow_failures:
-    - python: "3.7"
+    - python: 3.7

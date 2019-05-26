@@ -9,3 +9,5 @@ pytest-mock==1.5.0
 cov-core==1.15.0
 unittest2==1.1.0; python_version < '2.7'
 beautifulsoup4==4.5.3
+bandit
+coveralls
