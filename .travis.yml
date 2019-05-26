@@ -49,6 +49,3 @@ notifications:
     on_failure: always
     channels:
       - "chat.freenode.org#voxpupuli-notifications"
-matrix:
-  allow_failures:
-    - python: 3.7

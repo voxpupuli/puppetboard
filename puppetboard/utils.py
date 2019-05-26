@@ -125,7 +125,5 @@ def yield_or_stop(generator):
     while True:
         try:
             yield next(generator)
-        except StopIteration:
-            raise
-        except (EmptyResponseError, ConnectionError, HTTPError):
-            raise StopIteration
+        except (EmptyResponseError, ConnectionError, HTTPError, StopIteration):
+            return
