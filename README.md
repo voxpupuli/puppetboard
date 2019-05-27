@@ -16,6 +16,7 @@ At the current time of writing, Puppetboard supports the following Python versio
 * Python 2.7
 * Python 3.5
 * Python 3.6
+* Python 3.7
 
 ![View of a node](screenshots/overview.png)
 
