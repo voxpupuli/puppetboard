@@ -14,6 +14,8 @@ DEV_LISTEN_PORT = 5000
 DEV_COFFEE_LOCATION = 'coffee'
 UNRESPONSIVE_HOURS = 2
 ENABLE_QUERY = True
+# Uncomment to restrict the enabled PuppetDB endpoints in the query page.
+# ENABLED_QUERY_ENDPOINTS = ['facts', 'nodes']
 LOCALISE_TIMESTAMP = True
 LOGLEVEL = 'info'
 NORMAL_TABLE_COUNT = 100

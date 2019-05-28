@@ -19,7 +19,7 @@ from jinja2.utils import contextfunction
 
 from pypuppetdb.QueryBuilder import *
 
-from puppetboard.forms import QueryForm
+from puppetboard.forms import ENABLED_QUERY_ENDPOINTS, QueryForm
 from puppetboard.utils import (get_or_abort, yield_or_stop,
                                get_db_version)
 from puppetboard.dailychart import get_daily_reports_chart
@@ -49,6 +49,7 @@ CATALOGS_COLUMNS = [
     {'attr': 'catalog_timestamp', 'name': 'Compile Time'},
     {'attr': 'form', 'name': 'Compare'},
 ]
+
 
 app = get_app()
 graph_facts = app.config['GRAPH_FACTS']
@@ -758,36 +759,42 @@ def query(env):
         select field in the environment block
     :type env: :obj:`string`
     """
-    if app.config['ENABLE_QUERY']:
-        envs = environments()
-        check_env(env, envs)
+    if not app.config['ENABLE_QUERY']:
+        log.warn('Access to query interface disabled by administrator.')
+        abort(403)
 
-        form = QueryForm(meta={
-            'csrf_secret': app.config['SECRET_KEY'],
-            'csrf_context': session})
-        if form.validate_on_submit():
-            if form.endpoints.data == 'pql':
-                query = form.query.data
-            elif form.query.data[0] == '[':
-                query = form.query.data
-            else:
-                query = '[{0}]'.format(form.query.data)
-            result = get_or_abort(
-                puppetdb._query,
-                form.endpoints.data,
-                query=query)
-            return render_template('query.html',
-                                   form=form,
-                                   result=result,
-                                   envs=envs,
-                                   current_env=env)
+    envs = environments()
+    check_env(env, envs)
+
+    form = QueryForm(meta={
+        'csrf_secret': app.config['SECRET_KEY'],
+        'csrf_context': session})
+    if form.validate_on_submit():
+        if form.endpoints.data not in ENABLED_QUERY_ENDPOINTS:
+            log.warn('Access to query endpoint %s disabled by administrator.',
+                     form.endpoints.data)
+            abort(403)
+
+        if form.endpoints.data == 'pql':
+            query = form.query.data
+        elif form.query.data[0] == '[':
+            query = form.query.data
+        else:
+            query = '[{0}]'.format(form.query.data)
+
+        result = get_or_abort(
+            puppetdb._query,
+            form.endpoints.data,
+            query=query)
         return render_template('query.html',
                                form=form,
+                               result=result,
                                envs=envs,
                                current_env=env)
-    else:
-        log.warn('Access to query interface disabled by administrator..')
-        abort(403)
+    return render_template('query.html',
+                           form=form,
+                           envs=envs,
+                           current_env=env)
 
 
 @app.route('/metrics', defaults={'env': app.config['DEFAULT_ENVIRONMENT']})
