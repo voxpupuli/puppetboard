@@ -7,6 +7,7 @@ This is the changelog for Puppetboard.
 -----
 
 -   CI enhancements
+-   Allow to configure which PuppetDB endpoints are allowed
 -   Update c3 to 4.22
 -   Add basic health check endpoint
 -   Allow to force the PuppetDB connection protocol
