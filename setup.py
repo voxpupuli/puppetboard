@@ -49,6 +49,7 @@ setup(
     description='Web frontend for PuppetDB',
     include_package_data=True,
     long_description='\n'.join((README, CHANGELOG)),
+    long_description_content_type='text/markdown',
     zip_safe=False,
     install_requires=requirements,
     tests_require=requirements_test,
