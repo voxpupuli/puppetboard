@@ -3,15 +3,34 @@ Changelog
 
 This is the changelog for Puppetboard.
 
+1.0.0
+-----
+
+-   CI enhancements
+-   Allow to configure which PuppetDB endpoints are allowed
+-   Update c3 to 4.22
+-   Add basic health check endpoint
+-   Allow to force the PuppetDB connection protocol
+-   Update jquery-tablesort to 0.0.11
+-   Fix bug breaking date/time sort
+-   Fix formatvalue for list of dicts
+-   Modify date sort to handle failed
+-   Include template files for altering Semantic css and Google fonts
+-   Make 320px the max width for columns
+-   If query is None don't perform add on it
+-   Query using producer\_timestamp index vs. start\_time
+-   Add missing components for building source packages
+-   Add support for URL prefixes to Docker image
+
 0.3.0
 -----
 
--   Core UI Reowrk
+-   Core UI Rework
 -   Update to pypuppetdb 0.3.3
 -   Fix sorty on data for index
 -   Update debian documentation
 -   Offline mode fix
--   Fix fact attrbitue error on paths
+-   Fix fact attribute error on paths
 -   Enhanced testing
 -   Radiator CSS uses same coloring
 -   Markdown in config version

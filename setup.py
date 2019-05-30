@@ -41,8 +41,8 @@ class PyTest(TestCommand):
 setup(
     name='puppetboard',
     version=__version__,
-    author='Corey Hammerton',
-    author_email='corey.hammerton@gmail.com',
+    author='Vox Pupuli',
+    author_email='voxpupuli@groups.io',
     packages=find_packages(),
     url='https://github.com/voxpupuli/puppetboard',
     license='Apache License 2.0',
@@ -56,7 +56,7 @@ setup(
     keywords="puppet puppetdb puppetboard",
     cmdclass={'test': PyTest},
     classifiers=[
-        'Development Status :: 3 - Alpha',
+        'Development Status :: 5 - Production/Stable',
         'Environment :: Web Environment',
         'Framework :: Flask',
         'Intended Audience :: System Administrators',
@@ -64,10 +64,10 @@ setup(
         'License :: OSI Approved :: Apache Software License',
         'Operating System :: POSIX',
         'Programming Language :: Python :: 2',
-        'Programming Language :: Python :: 2.6',
         'Programming Language :: Python :: 2.7',
         'Programming Language :: Python :: 3',
-        'Programming Language :: Python :: 3.2',
-        'Programming Language :: Python :: 3.3',
+        'Programming Language :: Python :: 3.5',
+        'Programming Language :: Python :: 3.6',
+        'Programming Language :: Python :: 3.7',
     ],
 )
