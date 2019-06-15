@@ -163,7 +163,8 @@ def index(env):
     nodes = get_or_abort(puppetdb.nodes,
                          query=query,
                          unreported=app.config['UNRESPONSIVE_HOURS'],
-                         with_status=True)
+                         with_status=True,
+                         with_event_numbers=app.config['WITH_EVENT_NUMBERS'])
 
     nodes_overview = []
     stats = {
@@ -244,7 +245,8 @@ def nodes(env):
     nodelist = puppetdb.nodes(
         query=query,
         unreported=app.config['UNRESPONSIVE_HOURS'],
-        with_status=True)
+        with_status=True,
+        with_event_numbers=app.config['WITH_EVENT_NUMBERS'])
     nodes = []
     for node in yield_or_stop(nodelist):
         if status_arg:
