@@ -19,7 +19,6 @@
     <link href="{{ url_for('static', filename='Semantic-UI-2.1.8/semantic.min.css') }}" rel="stylesheet" />
     <link href='//cdnjs.cloudflare.com/ajax/libs/datatables/1.10.13/css/dataTables.semanticui.min.css' rel='stylesheet' type='text/css'>
     {% endif %}
-    <link href="{{ url_for('static', filename='css/c3.min.css') }}" rel="stylesheet" />
     <link href="{{ url_for('static', filename='css/puppetboard.css') }}" rel="stylesheet" />
 
     {% if config.OFFLINE_MODE %}
@@ -43,8 +42,6 @@
     <script src="{{ url_for('static', filename='Semantic-UI-2.1.8/semantic.min.js') }}"></script>
     <script src="{{ url_for('static', filename='js/lists.js') }}"></script>
     <script src="{{ url_for('static', filename='js/scroll.top.js') }}"></script>
-    <script src="{{url_for('static', filename='js/d3.min.js')}}"></script>
-    <script src="{{url_for('static', filename='js/c3.min.js')}}"></script>
     <script src="{{url_for('static',
                   filename='jquery-tablesort-v.0.0.11/jquery.tablesort.min.js')}}"></script>
     {% block script %} {% endblock script %}
