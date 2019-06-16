@@ -1,6 +1,8 @@
 jQuery(function ($) {
   function generateChart(el) {
-    var url = "daily_reports_chart.json";
+    var url = window.location.protocol + "//" 
+    + window.location.hostname 
+    + (window.location.port ? ':' + window.location.port : '') + "/daily_reports_chart.json";
     var certname = $(el).attr('data-certname');
     if (typeof certname !== typeof undefined && certname !== false) {
       url = url + "?certname=" + certname;
