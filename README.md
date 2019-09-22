@@ -214,6 +214,7 @@ Other settings that might be interesting in no particular order:
 -   `LITTLE_TABLE_COUNT`: Default number of reports to show when when looking at a node.
 -   `NORMAL_TABLE_COUNT`: Default number of nodes to show when displaying reports and catalog nodes.
 -   `LOCALISE_TIMESTAMP`: Normalize time based on localserver time.
+-   `WITH_EVENT_NUMBERS`: If set to `True` then Overview and Nodes list shows exact number of changed resources in last report. Otherwise shows only 'some' string if there are resources with given status. Setting to `False` gives performance benefits, especially in big Puppet environments (more than few hundreds of nodes). Defaults to `True`.
 -   `DEV_LISTEN_HOST`: For use with dev.py for development. Default is localhost
 -   `DEV_LISTEN_PORT`: For use with dev.py for development. Default is 5000
 
