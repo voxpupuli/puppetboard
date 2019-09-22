@@ -54,6 +54,8 @@ setup(
     install_requires=requirements,
     tests_require=requirements_test,
     extras_require={'test': requirements_test},
+    data_files=[('requirements_for_tests', ['requirements-test.txt']),
+                ('requirements_for_docker', ['requirements-docker.txt'])],
     keywords="puppet puppetdb puppetboard",
     cmdclass={'test': PyTest},
     classifiers=[
