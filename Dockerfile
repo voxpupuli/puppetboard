@@ -1,4 +1,4 @@
-FROM python:3.6-alpine
+FROM python:3.7-alpine
 
 ENV PUPPETBOARD_PORT 80
 EXPOSE 80
