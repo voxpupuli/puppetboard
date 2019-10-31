@@ -25,7 +25,11 @@ from puppetboard.utils import (get_or_abort, yield_or_stop,
 from puppetboard.dailychart import get_daily_reports_chart
 
 import werkzeug.exceptions as ex
-import CommonMark
+
+try:
+    import CommonMark as commonmark
+except ImportError:
+    import commonmark
 
 from puppetboard.core import get_app, get_puppetdb, environments
 import puppetboard.errors
@@ -547,7 +551,7 @@ def report(env, node_name, report_id):
     except StopIteration:
         abort(404)
 
-    report.version = CommonMark.commonmark(report.version)
+    report.version = commonmark.commonmark(report.version)
 
     return render_template(
         'report.html',
