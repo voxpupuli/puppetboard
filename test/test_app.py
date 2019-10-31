@@ -1,12 +1,12 @@
-import pytest
 import json
 import os
 from datetime import datetime
-from puppetboard import app
-from pypuppetdb.types import Node, Report
-from puppetboard import default_settings
 
+import pytest
 from bs4 import BeautifulSoup
+from pypuppetdb.types import Node
+
+from puppetboard import app
 
 
 class MockDbQuery(object):
@@ -122,7 +122,6 @@ def test_get_index(client, mocker,
 def test_index_all(client, mocker,
                    mock_puppetdb_environments,
                    mock_puppetdb_default_nodes):
-
     base_str = 'puppetlabs.puppetdb.population:'
     query_data = {
         'version': [{'version': '4.2.0'}],
@@ -173,7 +172,6 @@ def test_index_all(client, mocker,
 def test_index_all_older_puppetdb(client, mocker,
                                   mock_puppetdb_environments,
                                   mock_puppetdb_default_nodes):
-
     base_str = 'puppetlabs.puppetdb.population:type=default,'
     query_data = {
         'version': [{'version': '3.2.0'}],
@@ -221,10 +219,9 @@ def test_index_all_older_puppetdb(client, mocker,
     assert rv.status_code == 200
 
 
-def test_index_division_by_zero(client, mocker):
-    mock_puppetdb_environments(mocker)
-    mock_puppetdb_default_nodes(mocker)
-
+def test_index_division_by_zero(client, mocker,
+                                mock_puppetdb_environments,
+                                mock_puppetdb_default_nodes):
     query_data = {
         'nodes': [[{'count': 0}]],
         'resources': [[{'count': 40}]],
@@ -247,11 +244,10 @@ def test_index_division_by_zero(client, mocker):
     assert vals[2].string == '0'
 
 
-def test_offline_mode(client, mocker):
+def test_offline_mode(client, mocker,
+                      mock_puppetdb_environments,
+                      mock_puppetdb_default_nodes):
     app.app.config['OFFLINE_MODE'] = True
-
-    mock_puppetdb_environments(mocker)
-    mock_puppetdb_default_nodes(mocker)
 
     query_data = {
         'nodes': [[{'count': 10}]],
@@ -280,7 +276,6 @@ def test_offline_mode(client, mocker):
 def test_default_node_view(client, mocker,
                            mock_puppetdb_environments,
                            mock_puppetdb_default_nodes):
-
     rv = client.get('/nodes')
     soup = BeautifulSoup(rv.data, 'html.parser')
     assert soup.title.contents[0] == 'Puppetboard'
@@ -442,10 +437,9 @@ def test_radiator_view_json(client, mocker,
     assert json_data['unchanged'] == 1
 
 
-def test_radiator_view_bad_env(client, mocker):
-    mock_puppetdb_environments(mocker)
-    mock_puppetdb_default_nodes(mocker)
-
+def test_radiator_view_bad_env(client, mocker,
+                               mock_puppetdb_environments,
+                               mock_puppetdb_default_nodes):
     query_data = {
         'nodes': [[{'count': 10}]],
         'resources': [[{'count': 40}]],
@@ -463,10 +457,9 @@ def test_radiator_view_bad_env(client, mocker):
     assert soup.h1.text == 'Not Found'
 
 
-def test_radiator_view_division_by_zero(client, mocker):
-    mock_puppetdb_environments(mocker)
-    mock_puppetdb_default_nodes(mocker)
-
+def test_radiator_view_division_by_zero(client, mocker,
+                                        mock_puppetdb_environments,
+                                        mock_puppetdb_default_nodes):
     query_data = {
         'nodes': [[{'count': 0}]],
         'resources': [[{'count': 40}]],
@@ -487,10 +480,9 @@ def test_radiator_view_division_by_zero(client, mocker):
     assert '0' in total.text
 
 
-def test_json_report_ok(client, mocker, input_data):
-    mock_puppetdb_environments(mocker)
-    mock_puppetdb_default_nodes(mocker)
-
+def test_json_report_ok(client, mocker, input_data,
+                        mock_puppetdb_environments,
+                        mock_puppetdb_default_nodes):
     query_response = json.loads(input_data)
 
     query_data = {
@@ -521,10 +513,9 @@ def test_json_report_ok(client, mocker, input_data):
     assert len(result_json['data']) == 100
 
 
-def test_json_daily_reports_chart_ok(client, mocker):
-    mock_puppetdb_environments(mocker)
-    mock_puppetdb_default_nodes(mocker)
-
+def test_json_daily_reports_chart_ok(client, mocker,
+                                     mock_puppetdb_environments,
+                                     mock_puppetdb_default_nodes):
     query_data = {
         'reports': [
             [{'status': 'changed', 'count': 1}]
@@ -621,7 +612,7 @@ def test_catalogs_json_compare(client, mocker,
         val = BeautifulSoup(line[2], 'html.parser').find_all(
             'form', {"method": "GET",
                      "action": "/catalogs/compare/node-unreported...node-%s" %
-                     found_status})
+                               found_status})
         assert len(val) == 1
 
 
@@ -839,12 +830,11 @@ def test_offline_static(client):
     assert rv.status_code == 200
 
 
-def test_custom_title(client, mocker):
+def test_custom_title(client, mocker,
+                      mock_puppetdb_environments,
+                      mock_puppetdb_default_nodes):
     custom_title = 'Dev - Puppetboard'
     app.app.config['PAGE_TITLE'] = custom_title
-
-    mock_puppetdb_environments(mocker)
-    mock_puppetdb_default_nodes(mocker)
 
     query_data = {
         'nodes': [[{'count': 10}]],
