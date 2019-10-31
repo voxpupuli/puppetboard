@@ -858,7 +858,7 @@ def catalogs(env, compare):
     check_env(env, envs)
 
     if not app.config['ENABLE_CATALOG']:
-        log.warn('Access to catalog interface disabled by administrator')
+        log.warning('Access to catalog interface disabled by administrator')
         abort(403)
 
     return render_template(

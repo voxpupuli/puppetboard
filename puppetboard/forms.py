@@ -35,7 +35,7 @@ ENABLED_QUERY_ENDPOINTS = app.config.get(
 class QueryForm(FlaskForm):
     """The form used to allow freeform queries to be executed against
     PuppetDB."""
-    query = TextAreaField('Query', [validators.Required(
+    query = TextAreaField('Query', [validators.DataRequired(
         message='A query is required.')])
     endpoints = RadioField('API endpoint', choices=[
         (key, value) for key, value in QUERY_ENDPOINTS.items()
