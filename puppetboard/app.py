@@ -131,7 +131,6 @@ def index(env):
     else:
         query = AndOperator()
         query.add(EqualsOperator('catalog_environment', env))
-        query.add(EqualsOperator('facts_environment', env))
 
         num_nodes_query = ExtractOperator()
         num_nodes_query.add_field(FunctionOperator('count'))
@@ -223,7 +222,6 @@ def nodes(env):
 
     if env != '*':
         query.add(EqualsOperator("catalog_environment", env))
-        query.add(EqualsOperator("facts_environment", env))
 
     if status_arg in ['failed', 'changed', 'unchanged']:
         query.add(EqualsOperator('latest_report_status', status_arg))
@@ -1008,7 +1006,6 @@ def radiator(env):
         metric_query = ExtractOperator()
 
         query.add(EqualsOperator("catalog_environment", env))
-        query.add(EqualsOperator("facts_environment", env))
         metric_query.add_field(FunctionOperator('count'))
         metric_query.add_query(query)
 
