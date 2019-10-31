@@ -13,10 +13,9 @@ As of version 0.1.0 and higher, Puppetboard **requires** PuppetDB 3. Version 0.3
 
 At the current time of writing, Puppetboard supports the following Python versions:
 
-* Python 2.7 (NB! [Python 2.7 is deprecated and should not be used](https://pythonclock.org/))
-* Python 3.5
 * Python 3.6
 * Python 3.7
+* Python 3.8
 
 ![View of a node](screenshots/overview.png)
 
@@ -330,7 +329,7 @@ Here is a sample configuration for Fedora:
     CustomLog logs/puppetboard-access_log combined
 
     Alias /static /usr/lib/pythonX.Y/site-packages/puppetboard/static
-    <Directory /usr/lib/python2.X/site-packages/puppetboard/static>
+    <Directory /usr/lib/pythonX.Y/site-packages/puppetboard/static>
         Satisfy Any
         Allow from all
     </Directory>
@@ -533,7 +532,7 @@ import multiprocessing
 
 bind    = '127.0.0.1:9090'
 workers = multiprocessing.cpu_count() * 2 + 1
-chdir   = '/usr/lib/python2.7/site-packages/puppetboard'
+chdir   = '/usr/lib/pythonX.Y/site-packages/puppetboard'
 raw_env = ['PUPPETBOARD_SETTINGS=/var/www/puppetboard/settings.py', 'http_proxy=']
 ```
 

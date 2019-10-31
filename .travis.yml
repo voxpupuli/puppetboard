@@ -1,17 +1,14 @@
 dist: xenial
 language: python
 python:
-  - &latest_py2 2.7
-  - 3.5
   - 3.6
-  - &latest_py3 3.7
+  - 3.7
+  - &latest_py3 3.8
 
 jobs:
   fast_finish: true
   include:
   - python: *latest_py3
-    env: LANG=C
-  - python: *latest_py2
     env: LANG=C
   - stage: deploy (to PyPI for tagged commits)
     if: tag IS present
