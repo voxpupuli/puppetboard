@@ -1,4 +1,3 @@
-import pytest
 from puppetboard import app, forms
 
 

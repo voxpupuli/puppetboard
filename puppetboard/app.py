@@ -1,8 +1,6 @@
-from __future__ import unicode_literals
 from __future__ import absolute_import
+from __future__ import unicode_literals
 
-import logging
-import collections
 try:
     from urllib import unquote, unquote_plus, quote_plus
 except ImportError:
@@ -11,11 +9,9 @@ from datetime import datetime, timedelta
 from itertools import tee
 
 from flask import (
-    Flask, render_template, abort, url_for,
-    Response, stream_with_context, redirect,
-    request, session, jsonify
+    render_template, abort, url_for,
+    Response, stream_with_context, request, session, jsonify
 )
-from jinja2.utils import contextfunction
 
 from pypuppetdb.QueryBuilder import *
 
@@ -24,15 +20,12 @@ from puppetboard.utils import (get_or_abort, yield_or_stop,
                                get_db_version)
 from puppetboard.dailychart import get_daily_reports_chart
 
-import werkzeug.exceptions as ex
-
 try:
     import CommonMark as commonmark
 except ImportError:
     import commonmark
 
 from puppetboard.core import get_app, get_puppetdb, environments
-import puppetboard.errors
 
 from . import __version__
 

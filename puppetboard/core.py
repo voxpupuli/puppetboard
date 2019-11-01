@@ -1,15 +1,12 @@
-from __future__ import unicode_literals
 from __future__ import absolute_import
+from __future__ import unicode_literals
 
 import logging
 
 from flask import Flask
-
 from pypuppetdb import connect
-from puppetboard.utils import (jsonprint, prettyprint, url_for_field,
-                               url_static_offline, get_or_abort)
 
-from . import __version__
+from puppetboard.utils import (get_or_abort, jsonprint, prettyprint, url_for_field, url_static_offline)
 
 APP = None
 PUPPETDB = None

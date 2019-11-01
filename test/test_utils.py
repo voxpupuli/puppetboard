@@ -1,20 +1,16 @@
-import pytest
-import sys
 import json
-import mock
-
+import logging
 from types import GeneratorType
 
-from requests.exceptions import HTTPError, ConnectionError
+import pytest
+from bs4 import BeautifulSoup
 from pypuppetdb.errors import EmptyResponseError
 from requests import Response
-from werkzeug.exceptions import NotFound, InternalServerError
+from requests.exceptions import ConnectionError, HTTPError
+from werkzeug.exceptions import InternalServerError, NotFound
 
-from puppetboard import utils
 from puppetboard import app
-
-from bs4 import BeautifulSoup
-import logging
+from puppetboard import utils
 
 
 def test_json_format():

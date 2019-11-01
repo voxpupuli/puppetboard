@@ -1,7 +1,9 @@
-import pytest
 import os
-from puppetboard import docker_settings
+
+import pytest
+
 import puppetboard.core
+from puppetboard import docker_settings
 
 try:
     import future.utils
