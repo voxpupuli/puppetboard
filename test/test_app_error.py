@@ -1,10 +1,10 @@
 import pytest
-from flask import Flask, current_app
+from bs4 import BeautifulSoup
 from werkzeug.exceptions import InternalServerError
+
 from puppetboard import app
 from puppetboard.errors import (bad_request, forbidden, not_found,
                                 precond_failed, server_error)
-from bs4 import BeautifulSoup
 
 
 @pytest.fixture
@@ -22,6 +22,7 @@ def mock_puppetdb_environments(mocker):
 def mock_server_error(mocker):
     def raiseInternalServerError():
         raise InternalServerError('Hello world')
+
     return mocker.patch('puppetboard.core.environments',
                         side_effect=raiseInternalServerError)
 

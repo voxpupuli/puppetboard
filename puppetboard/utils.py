@@ -1,22 +1,15 @@
 from __future__ import absolute_import
 from __future__ import unicode_literals
 
-import os.path
 import json
 import logging
-
-from math import ceil
-from requests.exceptions import HTTPError, ConnectionError
-from pypuppetdb.errors import EmptyResponseError
+import os.path
 
 from flask import abort, request, url_for
 from jinja2.utils import contextfunction
+from pypuppetdb.errors import EmptyResponseError
+from requests.exceptions import ConnectionError, HTTPError
 
-# Python 3 compatibility
-try:
-    xrange
-except NameError:
-    xrange = range
 
 log = logging.getLogger(__name__)
 
@@ -93,7 +86,7 @@ def prettyprint(value):
         html += "</tr>"
 
     html += "</tbody></table>"
-    return(html)
+    return (html)
 
 
 def get_or_abort(func, *args, **kwargs):

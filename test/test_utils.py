@@ -1,20 +1,16 @@
-import pytest
-import sys
 import json
-import mock
-
+import logging
 from types import GeneratorType
 
-from requests.exceptions import HTTPError, ConnectionError
+import pytest
+from bs4 import BeautifulSoup
 from pypuppetdb.errors import EmptyResponseError
 from requests import Response
-from werkzeug.exceptions import NotFound, InternalServerError
+from requests.exceptions import ConnectionError, HTTPError
+from werkzeug.exceptions import InternalServerError, NotFound
 
-from puppetboard import utils
 from puppetboard import app
-
-from bs4 import BeautifulSoup
-import logging
+from puppetboard import utils
 
 
 def test_json_format():
@@ -206,6 +202,7 @@ def test_stop_conn_error():
         yield 1
         raise ConnectionError
         yield 2
+
     gen = utils.yield_or_stop(my_generator())
     for val in gen:
         assert 1 == val
@@ -216,6 +213,7 @@ def test_stop_http_error():
         yield 1
         raise HTTPError
         yield 2
+
     gen = utils.yield_or_stop(my_generator())
     for val in gen:
         assert 1 == val

@@ -1,9 +1,9 @@
 from datetime import datetime, timedelta
+
+from pypuppetdb.QueryBuilder import (AndOperator, EqualsOperator,
+                                     ExtractOperator, FunctionOperator,
+                                     GreaterEqualOperator, LessOperator)
 from pypuppetdb.utils import UTC
-from pypuppetdb.QueryBuilder import (
-    ExtractOperator, FunctionOperator, AndOperator,
-    GreaterEqualOperator, LessOperator, EqualsOperator,
-)
 
 DATE_FORMAT = "%Y-%m-%d"
 DATETIME_FORMAT = "%Y-%m-%dT%H:%M:%S.%fZ"

@@ -6,7 +6,9 @@ pytest==5.2.2
 pytest-pep8==1.0.6
 pytest-cov==2.8.1
 pytest-mock==1.11.2
+pytest-mypy==0.4.1
 cov-core==1.15.0
 beautifulsoup4==4.8.1
 bandit
 coveralls
+mypy==0.740

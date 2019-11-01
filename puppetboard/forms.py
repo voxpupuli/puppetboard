@@ -1,16 +1,12 @@
-from __future__ import unicode_literals
 from __future__ import absolute_import
+from __future__ import unicode_literals
 
 from collections import OrderedDict
 
 from flask_wtf import FlaskForm
-from wtforms import (
-    HiddenField, RadioField, SelectField,
-    TextAreaField, BooleanField, validators
-)
+from wtforms import (BooleanField, RadioField, TextAreaField, validators)
 
 from puppetboard.core import get_app
-
 
 app = get_app()
 QUERY_ENDPOINTS = OrderedDict([

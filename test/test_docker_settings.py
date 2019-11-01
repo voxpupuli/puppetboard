@@ -1,7 +1,9 @@
-import pytest
 import os
-from puppetboard import docker_settings
+
+import pytest
+
 import puppetboard.core
+from puppetboard import docker_settings
 
 try:
     import future.utils
@@ -9,7 +11,7 @@ except:
     pass
 
 try:
-    from imp import reload as reload
+    from importlib import reload as reload
 except:
     pass
 

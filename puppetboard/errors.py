@@ -1,10 +1,10 @@
-from __future__ import unicode_literals
 from __future__ import absolute_import
+from __future__ import unicode_literals
 
-from puppetboard.core import get_app, environments
-from werkzeug.exceptions import InternalServerError
 from flask import render_template
-from . import __version__
+from werkzeug.exceptions import InternalServerError
+
+from puppetboard.core import environments, get_app
 
 app = get_app()
 
