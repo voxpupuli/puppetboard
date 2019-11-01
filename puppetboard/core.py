@@ -6,7 +6,8 @@ import logging
 from flask import Flask
 from pypuppetdb import connect
 
-from puppetboard.utils import (get_or_abort, jsonprint, prettyprint, url_for_field, url_static_offline)
+from puppetboard.utils import (get_or_abort, jsonprint, prettyprint,
+                               url_for_field, url_static_offline)
 
 APP = None
 PUPPETDB = None

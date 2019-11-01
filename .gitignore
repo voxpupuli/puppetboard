@@ -11,6 +11,7 @@
 *.egg-info
 dist
 build
+.eggs
 eggs
 parts
 bin
@@ -28,6 +29,8 @@ pip-log.txt
 .cache
 .coverage
 .tox
+.mypy_cache
+.pytest_cache
 nosetests.xml
 
 # Translations
@@ -43,3 +46,6 @@ nosetests.xml
 
 # Virtual Environment
 venv
+
+# IDE files
+.idea

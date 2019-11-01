@@ -1,6 +1,7 @@
 from datetime import datetime, timedelta
 
-from pypuppetdb.QueryBuilder import (AndOperator, EqualsOperator, ExtractOperator, FunctionOperator,
+from pypuppetdb.QueryBuilder import (AndOperator, EqualsOperator,
+                                     ExtractOperator, FunctionOperator,
                                      GreaterEqualOperator, LessOperator)
 from pypuppetdb.utils import UTC
 

@@ -1,19 +1,22 @@
 from __future__ import absolute_import
 from __future__ import unicode_literals
 
-try:
-    from urllib import unquote, unquote_plus, quote_plus
-except ImportError:
-    from urllib.parse import unquote, unquote_plus, quote_plus
+
+from urllib.parse import unquote, unquote_plus, quote_plus
 from datetime import datetime, timedelta
 from itertools import tee
-
+import sys
 from flask import (
     render_template, abort, url_for,
     Response, stream_with_context, request, session, jsonify
 )
 
-from pypuppetdb.QueryBuilder import *
+import logging
+
+from pypuppetdb.QueryBuilder import (ExtractOperator, AndOperator,
+                                     EqualsOperator, FunctionOperator,
+                                     NullOperator, OrOperator,
+                                     LessEqualOperator, RegexOperator)
 
 from puppetboard.forms import ENABLED_QUERY_ENDPOINTS, QueryForm
 from puppetboard.utils import (get_or_abort, yield_or_stop,
@@ -78,7 +81,7 @@ def check_env(env, envs):
 def utility_processor():
     def now(format='%m/%d/%Y %H:%M:%S'):
         """returns the formated datetime"""
-        return datetime.datetime.now().strftime(format)
+        return datetime.now().strftime(format)
 
     return dict(now=now)
 
@@ -222,7 +225,7 @@ def nodes(env):
     if status_arg in ['failed', 'changed', 'unchanged']:
         query.add(EqualsOperator('latest_report_status', status_arg))
     elif status_arg == 'unreported':
-        unreported = datetime.datetime.utcnow()
+        unreported = datetime.utcnow()
         unreported = (unreported -
                       timedelta(hours=app.config['UNRESPONSIVE_HOURS']))
         unreported = unreported.replace(microsecond=0).isoformat()
@@ -717,7 +720,7 @@ def fact_ajax(env, node, fact, value):
                 fact_h.node))
         if not value:
             fact_value = fact_h.value
-            if isinstance(fact_value, unicode) or isinstance(fact_value, str):
+            if isinstance(fact_value, str):
                 fact_value = quote_plus(fact_h.value)
 
             line.append('<a href="{0}">{1}</a>'.format(

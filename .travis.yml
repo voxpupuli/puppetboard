@@ -35,7 +35,7 @@ cache: pip
 install:
   - pip install -r requirements-test.txt
 script:
-  - pytest --pep8
+  - pytest --pep8 --mypy --strict
   - bandit -r puppetboard
 after_success:
   - coveralls
