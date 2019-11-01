@@ -29,7 +29,6 @@ from puppetboard.core import get_app, get_puppetdb, environments
 
 from . import __version__
 
-
 REPORTS_COLUMNS = [
     {'attr': 'end', 'filter': 'end_time',
      'name': 'End time', 'type': 'datetime'},
@@ -46,7 +45,6 @@ CATALOGS_COLUMNS = [
     {'attr': 'catalog_timestamp', 'name': 'Compile Time'},
     {'attr': 'form', 'name': 'Compare'},
 ]
-
 
 app = get_app()
 graph_facts = app.config['GRAPH_FACTS']
@@ -81,6 +79,7 @@ def utility_processor():
     def now(format='%m/%d/%Y %H:%M:%S'):
         """returns the formated datetime"""
         return datetime.datetime.now().strftime(format)
+
     return dict(now=now)
 
 

@@ -11,7 +11,7 @@ except:
     pass
 
 try:
-    from imp import reload as reload
+    from importlib import reload as reload
 except:
     pass
 

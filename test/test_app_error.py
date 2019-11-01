@@ -22,6 +22,7 @@ def mock_puppetdb_environments(mocker):
 def mock_server_error(mocker):
     def raiseInternalServerError():
         raise InternalServerError('Hello world')
+
     return mocker.patch('puppetboard.core.environments',
                         side_effect=raiseInternalServerError)
 

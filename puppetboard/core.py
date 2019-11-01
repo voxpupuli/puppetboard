@@ -45,7 +45,7 @@ def get_puppetdb():
                            ssl_key=app.config['PUPPETDB_KEY'],
                            ssl_cert=app.config['PUPPETDB_CERT'],
                            timeout=app.config['PUPPETDB_TIMEOUT'],
-                           protocol=app.config['PUPPETDB_PROTO'],)
+                           protocol=app.config['PUPPETDB_PROTO'], )
         PUPPETDB = puppetdb
 
     return PUPPETDB

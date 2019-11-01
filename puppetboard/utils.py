@@ -10,11 +10,6 @@ from jinja2.utils import contextfunction
 from pypuppetdb.errors import EmptyResponseError
 from requests.exceptions import ConnectionError, HTTPError
 
-# Python 3 compatibility
-try:
-    xrange
-except NameError:
-    xrange = range
 
 log = logging.getLogger(__name__)
 
@@ -91,7 +86,7 @@ def prettyprint(value):
         html += "</tr>"
 
     html += "</tbody></table>"
-    return(html)
+    return (html)
 
 
 def get_or_abort(func, *args, **kwargs):

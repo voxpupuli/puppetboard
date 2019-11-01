@@ -202,6 +202,7 @@ def test_stop_conn_error():
         yield 1
         raise ConnectionError
         yield 2
+
     gen = utils.yield_or_stop(my_generator())
     for val in gen:
         assert 1 == val
@@ -212,6 +213,7 @@ def test_stop_http_error():
         yield 1
         raise HTTPError
         yield 2
+
     gen = utils.yield_or_stop(my_generator())
     for val in gen:
         assert 1 == val
