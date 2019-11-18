@@ -1,14 +1,14 @@
 -r requirements.txt
-pep8==1.7.1
-coverage==4.5.4
-mock==3.0.5
-pytest==5.2.2
-pytest-pep8==1.0.6
-pytest-cov==2.8.1
-pytest-mock==1.11.2
-pytest-mypy==0.4.1
-cov-core==1.15.0
-beautifulsoup4==4.8.1
+pep8
+coverage
+mock
+pytest
+pytest-pep8
+pytest-cov
+pytest-mock
+pytest-mypy
+cov-core
+beautifulsoup4
 bandit
 coveralls
-mypy==0.740
+mypy
