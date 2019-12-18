@@ -61,7 +61,7 @@
       "targets": -1,
       "data:": null,
       "render": function (data, type, full, meta) {
-       shorta = data.replace(/[{},]/g, "<br />");
+       shorta = data.toString().replace(/[{},]/g, "<br />");
        shortb = shorta.replace(/u'/g, " "); 
        shortc = shortb.replace(/'/g, " "); 
        return shortc;
