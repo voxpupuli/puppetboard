@@ -3,6 +3,18 @@ Changelog
 
 This is the changelog for Puppetboard.
 
+2.0.0
+----
+
+* Dockerfile: Switch to python:3.7-alpine image
+* pypuppetdb: raise version requirement `>=1.2.0` to `>=2.0.0`
+* Drop support for python2.7 and python3.5 & Add python3.8 to buildmatrix
+* Upgrade of tests requirements + resolving current deprecation warnings
+* Ignore facts environment for compatibility and performance
+* Adding mypy + Cleanup + CommonMark upgrade to 0.9.1
+* Update docker and fix coveralls not running.
+* Cast inventory data toString
+
 1.1.0
 -----
 
