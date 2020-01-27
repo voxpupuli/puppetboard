@@ -1,8 +1,11 @@
 from __future__ import absolute_import
 from __future__ import unicode_literals
 
-
-from urllib.parse import unquote, unquote_plus, quote_plus
+try:
+    from urllib import unquote, unquote_plus, quote_plus  # Python 2.X
+except ImportError:
+    from urllib.parse import unquote, unquote_plus, quote_plus  # Python 3+
+    
 from datetime import datetime, timedelta
 from itertools import tee
 import sys
