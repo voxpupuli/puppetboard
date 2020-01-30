@@ -5,6 +5,6 @@ MarkupSafe >=1.1.1
 WTForms >=2.2.1
 Werkzeug >=0.16.0
 itsdangerous >=1.1.0
-pypuppetdb >=2.0.0
+pypuppetdb <2.0.0
 requests >=2.22.0
 CommonMark==0.9.1
