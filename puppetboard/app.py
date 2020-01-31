@@ -3,6 +3,12 @@ from __future__ import unicode_literals
 
 
 from urllib.parse import unquote, unquote_plus, quote_plus
+try:
+    from urllib.parse import unquote, unquote_plus, quote_plus  # Python 3+
+except ImportError:
+    # Fallback for Python 2.x support
+    from urllib import unquote, unquote_plus, quote_plus  # Python 2.X
+    
 from datetime import datetime, timedelta
 from itertools import tee
 import sys
