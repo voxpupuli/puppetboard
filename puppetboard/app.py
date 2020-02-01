@@ -1,14 +1,12 @@
 from __future__ import absolute_import
 from __future__ import unicode_literals
 
-
-from urllib.parse import unquote, unquote_plus, quote_plus
+# load python 3, fallback to python 2 if it fails
 try:
-    from urllib.parse import unquote, unquote_plus, quote_plus  # Python 3+
+    from urllib.parse import unquote, unquote_plus, quote_plus
 except ImportError:
-    # Fallback for Python 2.x support
-    from urllib import unquote, unquote_plus, quote_plus  # Python 2.X
-    
+    from urllib import unquote, unquote_plus, quote_plus  # type: ignore
+
 from datetime import datetime, timedelta
 from itertools import tee
 import sys
