@@ -71,36 +71,6 @@ Native packages for your operating system will be provided in the near future.
 </thead>
 <tbody>
 <tr class="odd">
-<td align="left">Debian 6/Squeeze</td>
-<td align="left">planned</td>
-<td align="left">Requires Backports</td>
-</tr>
-<tr class="even">
-<td align="left">Debian 7/Wheezy</td>
-<td align="left">planned</td>
-<td align="left"></td>
-</tr>
-<tr class="odd">
-<td align="left">Ubuntu 13.04</td>
-<td align="left">planned</td>
-<td align="left"></td>
-</tr>
-<tr class="even">
-<td align="left">Ubuntu 13.10</td>
-<td align="left">planned</td>
-<td align="left"></td>
-</tr>
-<tr class="odd">
-<td align="left">CentOS/RHEL 5</td>
-<td align="left">n/a</td>
-<td align="left">Python 2.4</td>
-</tr>
-<tr class="even">
-<td align="left">CentOS/RHEL 6</td>
-<td align="left">planned</td>
-<td align="left"></td>
-</tr>
-<tr class="odd">
 <td align="left"><a href="https://build.opensuse.org/package/show/systemsmanagement:puppet/python-puppetboard">OpenSuSE 12/13</a></td>
 <td align="left">available</td>
 <td align="left">Maintained on <a href="https://build.opensuse.org/package/show/systemsmanagement:puppet/python-puppetboard">OpenSuSE Build Service</a></td>
