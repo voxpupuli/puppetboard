@@ -2,7 +2,11 @@ from __future__ import absolute_import
 from __future__ import unicode_literals
 
 
-from urllib.parse import unquote, unquote_plus, quote_plus
+# load python 3, fallback to python 2 if it fails
+try:
+    from urllib.parse import unquote, unquote_plus, quote_plus
+except ImportError:
+    from urllib import unquote, unquote_plus, quote_plus  # type: ignore
 from datetime import datetime, timedelta
 from itertools import tee
 import sys
@@ -835,9 +839,9 @@ def metrics(env):
     metrics_domains = get_or_abort(puppetdb.metrics)
     metrics = []
     # get all of the domains
-    for domain in metrics_domains.keys():
+    for domain in list(metrics_domains.keys()):
         # iterate over all of the properties in this domain
-        properties = metrics_domains[domain].keys()
+        properties = list(metrics_domains[domain].keys())
         for prop in properties:
             # combine the current domain and each property with a ":" in between
             metrics.append(domain + ':' + prop)
