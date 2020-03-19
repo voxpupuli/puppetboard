@@ -125,8 +125,14 @@ def index(env):
                             ':%sname=avg-resources-per-node' % query_type))
         metrics['num_nodes'] = num_nodes['Value']
         metrics['num_resources'] = num_resources['Value']
-        metrics['avg_resources_node'] = "{0:10.0f}".format(
-            avg_resources_node['Value'])
+        try:
+            # Compute our own average because avg_resources_node['Value'] returns
+            # a string of the format "num_resources/num_nodes" example: "1234/9"
+            # instead of doing the division itself.
+            metrics['avg_resources_node'] = "{0:10.0f}".format(
+                (num_resources['Value'] / num_nodes['Value']))
+        except ZeroDivisionError:
+            metrics['avg_resources_node'] = 0
     else:
         query = AndOperator()
         query.add(EqualsOperator('catalog_environment', env))
@@ -808,9 +814,35 @@ def metrics(env):
     envs = environments()
     check_env(env, envs)
 
-    metrics = get_or_abort(puppetdb._query, 'mbean')
+    # the list response is a dict in the format:
+    # {
+    #   "domain1": {
+    #     "property1": {
+    #      ...
+    #     }
+    #   },
+    #   "domain2": {
+    #     "property2": {
+    #      ...
+    #     }
+    #   }
+    # }
+    # The MBean names are the combination of the domain and the properties
+    # with a ":" in between, example:
+    #   domain1:property1
+    #   domain2:property2
+    # reference: https://jolokia.org/reference/html/protocol.html#list
+    metrics_domains = get_or_abort(puppetdb.metrics)
+    metrics = []
+    # get all of the domains
+    for domain in metrics_domains.keys():
+        # iterate over all of the properties in this domain
+        properties = metrics_domains[domain].keys()
+        for prop in properties:
+            # combine the current domain and each property with a ":" in between
+            metrics.append(domain + ':' + prop)
     return render_template('metrics.html',
-                           metrics=sorted(metrics.keys()),
+                           metrics=sorted(metrics),
                            envs=envs,
                            current_env=env)
 

@@ -3,6 +3,12 @@ Changelog
 
 This is the changelog for Puppetboard.
 
+Development
+-----------
+
+* Fixed Puppetboard's usage for the new metrics v2 API both on the home page for computing the average resources/node and the `Metrics` listing page. This change now supports the changes in PuppetDB >= 6.9.1 (https://puppet.com/security/cve/CVE-2020-7943/)
+* pypuppetdb: raise version requirement `>=2.1.0` because changes were needed in this library to support the metrics v2 fixes.
+
 2.0.0
 ----
 
