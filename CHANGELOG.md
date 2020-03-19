@@ -7,6 +7,10 @@ Development
 -----------
 
 * Fixed Puppetboard's usage for the new metrics v2 API both on the home page for computing the average resources/node and the `Metrics` listing page. This change now supports the changes in PuppetDB >= 6.9.1 (https://puppet.com/security/cve/CVE-2020-7943/)
+* Added backwards compatability support for both the metric `v1` and `v2` endpoints
+  depending on the version of the server. Any PuppetDB >= `6.9.1` will be queried with
+  the `v2` endpoint automatically (because `v1` is disabled from here forward). Any
+  PuppetDB <= `6.9.0` will use `v1`.
 * pypuppetdb: raise version requirement `>=2.1.0` because changes were needed in this library to support the metrics v2 fixes.
 * app.py: Added python2 backwards compatability fix for importing `urllib`.
 

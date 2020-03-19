@@ -81,6 +81,23 @@ def check_env(env, envs):
         abort(404)
 
 
+def metric_params(db_version):
+    query_type = ''
+
+    # PuppetDB moved to a new metrics API (v2) in 6.9.1
+    if db_version > (6, 9, 0):
+        metric_version = 'v2'
+    else:
+        metric_version = 'v1'
+
+    # Puppet DB version changed the query format from 3.2.0
+    # to 4.0 when querying mbeans
+    if db_version < (4, 0, 0):
+        query_type = 'type=default,'
+
+    return query_type, metric_version
+
+
 @app.context_processor
 def utility_processor():
     def now(format='%m/%d/%Y %H:%M:%S'):
@@ -110,29 +127,28 @@ def index(env):
         query = app.config['OVERVIEW_FILTER']
 
         prefix = 'puppetlabs.puppetdb.population'
-        query_type = ''
-
-        # Puppet DB version changed the query format from 3.2.0
-        # to 4.0 when querying mbeans
-        if get_db_version(puppetdb) < (4, 0, 0):
-            query_type = 'type=default,'
+        db_version = get_db_version(puppetdb)
+        query_type, metric_version = metric_params(db_version)
 
         num_nodes = get_or_abort(
             puppetdb.metric,
-            "{0}{1}".format(prefix, ':%sname=num-nodes' % query_type))
+            "{0}{1}".format(prefix, ':%sname=num-nodes' % query_type),
+            version=metric_version)
         num_resources = get_or_abort(
             puppetdb.metric,
-            "{0}{1}".format(prefix, ':%sname=num-resources' % query_type))
+            "{0}{1}".format(prefix, ':%sname=num-resources' % query_type),
+            version=metric_version)
         avg_resources_node = get_or_abort(
             puppetdb.metric,
             "{0}{1}".format(prefix,
-                            ':%sname=avg-resources-per-node' % query_type))
+                            ':%sname=avg-resources-per-node' % query_type),
+            version=metric_version)
         metrics['num_nodes'] = num_nodes['Value']
         metrics['num_resources'] = num_resources['Value']
         try:
-            # Compute our own average because avg_resources_node['Value'] returns
-            # a string of the format "num_resources/num_nodes" example: "1234/9"
-            # instead of doing the division itself.
+            # Compute our own average because avg_resources_node['Value']
+            # returns a string of the format "num_resources/num_nodes"
+            # example: "1234/9" instead of doing the division itself.
             metrics['avg_resources_node'] = "{0:10.0f}".format(
                 (num_resources['Value'] / num_nodes['Value']))
         except ZeroDivisionError:
@@ -818,33 +834,44 @@ def metrics(env):
     envs = environments()
     check_env(env, envs)
 
-    # the list response is a dict in the format:
-    # {
-    #   "domain1": {
-    #     "property1": {
-    #      ...
-    #     }
-    #   },
-    #   "domain2": {
-    #     "property2": {
-    #      ...
-    #     }
-    #   }
-    # }
-    # The MBean names are the combination of the domain and the properties
-    # with a ":" in between, example:
-    #   domain1:property1
-    #   domain2:property2
-    # reference: https://jolokia.org/reference/html/protocol.html#list
-    metrics_domains = get_or_abort(puppetdb.metrics)
-    metrics = []
-    # get all of the domains
-    for domain in list(metrics_domains.keys()):
-        # iterate over all of the properties in this domain
-        properties = list(metrics_domains[domain].keys())
-        for prop in properties:
-            # combine the current domain and each property with a ":" in between
-            metrics.append(domain + ':' + prop)
+    db_version = get_db_version(puppetdb)
+    query_type, metric_version = metric_params(db_version)
+    if metric_version == 'v1':
+        mbeans = get_or_abort(puppetdb._query, 'mbean')
+        metrics = list(mbeans.keys())
+    elif metric_version == 'v2':
+        # the list response is a dict in the format:
+        # {
+        #   "domain1": {
+        #     "property1": {
+        #      ...
+        #     }
+        #   },
+        #   "domain2": {
+        #     "property2": {
+        #      ...
+        #     }
+        #   }
+        # }
+        # The MBean names are the combination of the domain and the properties
+        # with a ":" in between, example:
+        #   domain1:property1
+        #   domain2:property2
+        # reference: https://jolokia.org/reference/html/protocol.html#list
+        metrics_domains = get_or_abort(puppetdb.metric)
+        metrics = []
+        # get all of the domains
+        for domain in list(metrics_domains.keys()):
+            # iterate over all of the properties in this domain
+            properties = list(metrics_domains[domain].keys())
+            for prop in properties:
+                # combine the current domain and each property with
+                # a ":" in between
+                metrics.append(domain + ':' + prop)
+    else:
+        raise ValueError("Unknown metric version {} for database version {}"
+                         .format(metric_version, database_version))
+
     return render_template('metrics.html',
                            metrics=sorted(metrics),
                            envs=envs,
@@ -864,8 +891,11 @@ def metric(env, metric):
     envs = environments()
     check_env(env, envs)
 
+    db_version = get_db_version(puppetdb)
+    query_type, metric_version = metric_params(db_version)
+
     name = unquote(metric)
-    metric = get_or_abort(puppetdb.metric, metric)
+    metric = get_or_abort(puppetdb.metric, metric, version=metric_version)
     return render_template(
         'metric.html',
         name=name,
@@ -1028,13 +1058,14 @@ def radiator(env):
     check_env(env, envs)
 
     if env == '*':
-        query_type = ''
-        if get_db_version(puppetdb) < (4, 0, 0):
-            query_type = 'type=default,'
+        db_version = get_db_version(puppetdb)
+        query_type, metric_version = metric_params(db_version)
+
         query = None
         metrics = get_or_abort(
             puppetdb.metric,
-            'puppetlabs.puppetdb.population:%sname=num-nodes' % query_type)
+            'puppetlabs.puppetdb.population:%sname=num-nodes' % query_type,
+            version=metric_version)
         num_nodes = metrics['Value']
     else:
         query = AndOperator()

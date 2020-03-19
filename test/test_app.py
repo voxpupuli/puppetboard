@@ -122,13 +122,71 @@ def test_get_index(client, mocker,
 def test_index_all(client, mocker,
                    mock_puppetdb_environments,
                    mock_puppetdb_default_nodes):
+    # starting with v6.9.1 they changed the metric API to v2
+    # and a totally different format
+    base_str = 'puppetlabs.puppetdb.population:'
+    query_data = {
+        'version': [{'version': '6.9.1'}],
+        'metrics': [
+            {
+                'validate': {
+                    'data': {
+                        'value': {'Value': 10}
+                    },
+                    'checks': {
+                        'path': '%sname=num-nodes' % base_str
+                    }
+                }
+            },
+            {
+                'validate': {
+                    'data': {
+                        'value': {'Value': 63}
+                    },
+                    'checks': {
+                        'path': '%sname=num-resources' % base_str
+                    }
+                }
+            },
+            {
+                'validate': {
+                    'data': {
+                        'value': {'Value': 6.3}
+                    },
+                    'checks': {
+                        'path': '%sname=avg-resources-per-node' % base_str
+                    }
+                }
+            }
+        ]
+    }
+    dbquery = MockDbQuery(query_data)
+    mocker.patch.object(app.puppetdb, '_query', side_effect=dbquery.get)
+    rv = client.get('/%2A/')
+
+    soup = BeautifulSoup(rv.data, 'html.parser')
+    assert soup.title.contents[0] == 'Puppetboard'
+    vals = soup.find_all('h1',
+                         {"class": "ui header darkblue no-margin-bottom"})
+
+    assert len(vals) == 3
+    assert vals[0].string == '10'
+    assert vals[1].string == '63'
+    assert vals[2].string == '         6'
+
+    assert rv.status_code == 200
+
+
+def test_index_all_puppetdb_v4(client, mocker,
+                               mock_puppetdb_environments,
+                               mock_puppetdb_default_nodes):
     base_str = 'puppetlabs.puppetdb.population:'
     query_data = {
         'version': [{'version': '4.2.0'}],
         'mbean': [
             {
                 'validate': {
-                    'data': {'Value': '50'},
+                    'data': {'Value': 10},
                     'checks': {
                         'path': '%sname=num-nodes' % base_str
                     }
@@ -136,7 +194,7 @@ def test_index_all(client, mocker,
             },
             {
                 'validate': {
-                    'data': {'Value': '60'},
+                    'data': {'Value': 63},
                     'checks': {
                         'path': '%sname=num-resources' % base_str
                     }
@@ -144,7 +202,7 @@ def test_index_all(client, mocker,
             },
             {
                 'validate': {
-                    'data': {'Value': 60.3},
+                    'data': {'Value': 6.3},
                     'checks': {
                         'path': '%sname=avg-resources-per-node' % base_str
                     }
@@ -162,23 +220,23 @@ def test_index_all(client, mocker,
                          {"class": "ui header darkblue no-margin-bottom"})
 
     assert len(vals) == 3
-    assert vals[0].string == '50'
-    assert vals[1].string == '60'
-    assert vals[2].string == '        60'
+    assert vals[0].string == '10'
+    assert vals[1].string == '63'
+    assert vals[2].string == '         6'
 
     assert rv.status_code == 200
 
 
-def test_index_all_older_puppetdb(client, mocker,
-                                  mock_puppetdb_environments,
-                                  mock_puppetdb_default_nodes):
+def test_index_all_puppetdb_v3(client, mocker,
+                               mock_puppetdb_environments,
+                               mock_puppetdb_default_nodes):
     base_str = 'puppetlabs.puppetdb.population:type=default,'
     query_data = {
         'version': [{'version': '3.2.0'}],
         'mbean': [
             {
                 'validate': {
-                    'data': {'Value': '50'},
+                    'data': {'Value': 10},
                     'checks': {
                         'path': '%sname=num-nodes' % base_str
                     }
@@ -186,7 +244,7 @@ def test_index_all_older_puppetdb(client, mocker,
             },
             {
                 'validate': {
-                    'data': {'Value': '60'},
+                    'data': {'Value': 60},
                     'checks': {
                         'path': '%sname=num-resources' % base_str
                     }
@@ -194,7 +252,7 @@ def test_index_all_older_puppetdb(client, mocker,
             },
             {
                 'validate': {
-                    'data': {'Value': 60.3},
+                    'data': {'Value': 6.3},
                     'checks': {
                         'path': '%sname=avg-resources-per-node' % base_str
                     }
@@ -212,9 +270,9 @@ def test_index_all_older_puppetdb(client, mocker,
                          {"class": "ui header darkblue no-margin-bottom"})
 
     assert len(vals) == 3
-    assert vals[0].string == '50'
+    assert vals[0].string == '10'
     assert vals[1].string == '60'
-    assert vals[2].string == '        60'
+    assert vals[2].string == '         6'
 
     assert rv.status_code == 200
 
@@ -316,6 +374,64 @@ def test_radiator_view(client, mocker,
 def test_radiator_view_all(client, mocker,
                            mock_puppetdb_environments,
                            mock_puppetdb_default_nodes):
+    # starting with v6.9.1 they changed the metric API to v2
+    # and a totally different format
+    base_str = 'puppetlabs.puppetdb.population:'
+    query_data = {
+        'version': [{'version': '6.9.1'}],
+        'metrics': [
+            {
+                'validate': {
+                    'data': {
+                        'value': {'Value': '50'}
+                    },
+                    'checks': {
+                        'path': '%sname=num-nodes' % base_str
+                    }
+                }
+            },
+            {
+                'validate': {
+                    'data': {
+                        'value': {'Value': '60'}
+                    },
+                    'checks': {
+                        'path': '%sname=num-resources' % base_str
+                    }
+                }
+            },
+            {
+                'validate': {
+                    'data': {
+                        'value': {'Value': 60.3}
+                    },
+                    'checks': {
+                        'path': '%sname=avg-resources-per-node' % base_str
+                    }
+                }
+            }
+        ]
+    }
+
+    dbquery = MockDbQuery(query_data)
+
+    mocker.patch.object(app.puppetdb, '_query', side_effect=dbquery.get)
+
+    rv = client.get('/%2A/radiator')
+
+    assert rv.status_code == 200
+
+    soup = BeautifulSoup(rv.data, 'html.parser')
+    assert soup.title.contents[0] == 'Puppetboard'
+    assert soup.h1 != 'Not Found'
+    total = soup.find(class_='total')
+
+    assert '50' in total.text
+
+
+def test_radiator_view_all_v4(client, mocker,
+                              mock_puppetdb_environments,
+                              mock_puppetdb_default_nodes):
     base_str = 'puppetlabs.puppetdb.population:'
     query_data = {
         'version': [{'version': '4.2.0'}],
@@ -363,9 +479,9 @@ def test_radiator_view_all(client, mocker,
     assert '50' in total.text
 
 
-def test_radiator_view_all_old_version(client, mocker,
-                                       mock_puppetdb_environments,
-                                       mock_puppetdb_default_nodes):
+def test_radiator_view_all_v3(client, mocker,
+                              mock_puppetdb_environments,
+                              mock_puppetdb_default_nodes):
     base_str = 'puppetlabs.puppetdb.population:type=default,'
     query_data = {
         'version': [{'version': '3.2.0'}],
@@ -830,6 +946,199 @@ def test_offline_static(client):
     assert rv.status_code == 200
 
 
+def test_health_status(client):
+    rv = client.get('/status')
+
+    assert rv.status_code == 200
+    assert rv.data.decode('utf-8') == 'OK'
+
+
+def test_metric_params_691():
+    query_type, metric_version = app.metric_params((6, 9, 1))
+    assert query_type == ''
+    assert metric_version == 'v2'
+
+    query_type, metric_version = app.metric_params((6, 9, 0))
+    assert query_type == ''
+    assert metric_version == 'v1'
+
+
+def test_metric_params_320():
+    query_type, metric_version = app.metric_params((3, 2, 0))
+    assert query_type == 'type=default,'
+    assert metric_version == 'v1'
+
+    query_type, metric_version = app.metric_params((4, 0, 0))
+    assert query_type == ''
+    assert metric_version == 'v1'
+
+
+def test_metrics_v2_api(client, mocker,
+                        mock_puppetdb_environments,
+                        mock_puppetdb_default_nodes):
+    # starting with v6.9.1 they changed the metric API to v2
+    # and a totally different format
+    query_data = {
+        'version': [{'version': '6.9.1'}],
+        'metrics-list': [
+            {
+                'validate': {
+                    'data': {
+                        'value': {
+                            'java.lang': {
+                                'type=Memory': {}
+                            },
+                            'puppetlabs.puppetdb.population': {
+                                'name=num-nodes': {}
+                            },
+                        }
+                    },
+                    'checks': {
+                    }
+                }
+            }
+        ]
+    }
+    dbquery = MockDbQuery(query_data)
+    mocker.patch.object(app.puppetdb, '_query', side_effect=dbquery.get)
+    rv = client.get('/metrics')
+
+    soup = BeautifulSoup(rv.data, 'html.parser')
+    assert soup.title.contents[0] == 'Puppetboard'
+    ul_list = soup.find_all('ul', attrs={'class': 'ui list searchable'})
+    assert len(ul_list) == 1
+    vals = ul_list[0].find_all('a')
+
+    assert len(vals) == 2
+    assert vals[0].string == 'java.lang:type=Memory'
+    assert vals[1].string == 'puppetlabs.puppetdb.population:name=num-nodes'
+
+    assert rv.status_code == 200
+
+
+def test_metrics_v1_api(client, mocker,
+                        mock_puppetdb_environments,
+                        mock_puppetdb_default_nodes):
+    query_data = {
+        'version': [{'version': '4.2.0'}],
+        'mbean': [
+            {
+                'validate': {
+                    'data': {
+                        'java.lang:type=Memory': {},
+                        'puppetlabs.puppetdb.population:name=num-nodes': {},
+                    },
+                    'checks': {
+                    }
+                }
+            }
+        ]
+    }
+    dbquery = MockDbQuery(query_data)
+    mocker.patch.object(app.puppetdb, '_query', side_effect=dbquery.get)
+    rv = client.get('/metrics')
+
+    soup = BeautifulSoup(rv.data, 'html.parser')
+    assert soup.title.contents[0] == 'Puppetboard'
+    ul_list = soup.find_all('ul', attrs={'class': 'ui list searchable'})
+    assert len(ul_list) == 1
+    vals = ul_list[0].find_all('a')
+
+    assert len(vals) == 2
+    assert vals[0].string == 'java.lang:type=Memory'
+    assert vals[1].string == 'puppetlabs.puppetdb.population:name=num-nodes'
+
+    assert rv.status_code == 200
+
+
+def test_metric_v2_api(client, mocker,
+                       mock_puppetdb_environments,
+                       mock_puppetdb_default_nodes):
+    # starting with v6.9.1 they changed the metric API to v2
+    # and a totally different format
+    metric_name = 'puppetlabs.puppetdb.population:name=num-nodes'
+    query_data = {
+        'version': [{'version': '6.9.1'}],
+        'metrics': [
+            {
+                'validate': {
+                    'data': {
+                        'value': {'Value': 50},
+                    },
+                    'checks': {
+                        'path': metric_name,
+                    }
+                }
+            }
+        ]
+    }
+    dbquery = MockDbQuery(query_data)
+    mocker.patch.object(app.puppetdb, '_query', side_effect=dbquery.get)
+    rv = client.get('/metric/' + metric_name)
+
+    soup = BeautifulSoup(rv.data, 'html.parser')
+    assert soup.title.contents[0] == 'Puppetboard'
+
+    small_list = soup.find_all('small')
+    assert len(small_list) == 1
+    assert small_list[0].string == metric_name
+
+    tbody_list = soup.find_all('tbody')
+    assert len(tbody_list) == 1
+    rows = tbody_list[0].find_all('tr')
+
+    assert len(rows) == 1
+    cols = rows[0].find_all('td')
+    assert len(cols) == 2
+    assert cols[0].string == 'Value'
+    assert cols[1].string == '50'
+
+    assert rv.status_code == 200
+
+
+def test_metric_v1_api(client, mocker,
+                       mock_puppetdb_environments,
+                       mock_puppetdb_default_nodes):
+    metric_name = 'puppetlabs.puppetdb.population:name=num-nodes'
+    query_data = {
+        'version': [{'version': '4.2.0'}],
+        'mbean': [
+            {
+                'validate': {
+                    'data': {'Value': 50},
+                    'checks': {
+                        'path': metric_name,
+                    }
+                }
+            }
+        ]
+    }
+    dbquery = MockDbQuery(query_data)
+    mocker.patch.object(app.puppetdb, '_query', side_effect=dbquery.get)
+    rv = client.get('/metric/' + metric_name)
+
+    soup = BeautifulSoup(rv.data, 'html.parser')
+    assert soup.title.contents[0] == 'Puppetboard'
+
+    small_list = soup.find_all('small')
+    assert len(small_list) == 1
+    assert small_list[0].string == metric_name
+
+    tbody_list = soup.find_all('tbody')
+    assert len(tbody_list) == 1
+    rows = tbody_list[0].find_all('tr')
+
+    assert len(rows) == 1
+    cols = rows[0].find_all('td')
+    assert len(cols) == 2
+    assert cols[0].string == 'Value'
+    assert cols[1].string == '50'
+
+    assert rv.status_code == 200
+
+
+# Running this test at the end because it changes the global state of the app
+# throwing off other tests if this one fails
 def test_custom_title(client, mocker,
                       mock_puppetdb_environments,
                       mock_puppetdb_default_nodes):
@@ -847,10 +1156,3 @@ def test_custom_title(client, mocker,
     rv = client.get('/')
     soup = BeautifulSoup(rv.data, 'html.parser')
     assert soup.title.contents[0] == custom_title
-
-
-def test_health_status(client):
-    rv = client.get('/status')
-
-    assert rv.status_code == 200
-    assert rv.data.decode('utf-8') == 'OK'
