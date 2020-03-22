@@ -84,8 +84,10 @@ def check_env(env, envs):
 def metric_params(db_version):
     query_type = ''
 
-    # PuppetDB moved to a new metrics API (v2) in 6.9.1
-    if db_version > (6, 9, 0):
+    # Puppet Server is enforcing new metrics API (v2)
+    # starting with versions 6.9.1 and 5.3.12
+    if (db_version > (6, 9, 0) or
+            (db_version > (5, 3, 11) and db_version < (6, 0, 0))):
         metric_version = 'v2'
     else:
         metric_version = 'v1'
