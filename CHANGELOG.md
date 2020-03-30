@@ -3,6 +3,17 @@ Changelog
 
 This is the changelog for Puppetboard.
 
+Development
+-----------
+
+
+2.1.1
+-----
+
+* Added support for new metrics API `v2` on PuppetDB >= `5.3.11` and < `6.0.0` (#558)
+* Added Python 3.5 back into test matrix (#559)
+* Fixed bug in `dailyreport.js` that caused it not to render when served under a non-default virtual host (#557)
+
 2.1.0
 -----
 
