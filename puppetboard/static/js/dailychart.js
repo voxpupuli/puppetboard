@@ -1,11 +1,10 @@
 jQuery(function ($) {
   function generateChart(el) {
-    var url = window.location.protocol + "//" 
-    + window.location.hostname 
-    + (window.location.port ? ':' + window.location.port : '') + "/daily_reports_chart.json";
+    var url = "daily_reports_chart.json";
     var certname = $(el).attr('data-certname');
     if (typeof certname !== typeof undefined && certname !== false) {
-      url = url + "?certname=" + certname;
+      // truncate /node/certname from URL, to determine path to json
+      url = window.location.href.replace(/\/node\/[^/]+$/,'') + "/daily_reports_chart.json?certname=" + certname;
     }
     d3.json(url, function(data) {
       var chart = c3.generate({
