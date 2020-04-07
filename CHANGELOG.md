@@ -6,6 +6,10 @@ This is the changelog for Puppetboard.
 Development
 -----------
 
+2.1.2
+----
+
+* Puppet DB 5.2.13 requires v2 metrics
 
 2.1.1
 -----
