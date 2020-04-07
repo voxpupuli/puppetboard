@@ -85,9 +85,10 @@ def metric_params(db_version):
     query_type = ''
 
     # Puppet Server is enforcing new metrics API (v2)
-    # starting with versions 6.9.1 and 5.3.12
+    # starting with versions 6.9.1, 5.3.12, and 5.2.13
     if (db_version > (6, 9, 0) or
-            (db_version > (5, 3, 11) and db_version < (6, 0, 0))):
+            (db_version > (5, 3, 11) and db_version < (6, 0, 0)) or
+            (db_version > (5, 2, 12) and db_version < (5, 3, 10))):
         metric_version = 'v2'
     else:
         metric_version = 'v1'
