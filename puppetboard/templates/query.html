@@ -14,25 +14,18 @@
   <form method="POST" action="{{ url_for('query', env=current_env) }}">
     {{ form.csrf_token }}
     <div class="field {% if form.query.errors %} error {% endif %}">
-      {{ form.query(autofocus="autofocus", rows=5, placeholder="Enter your query: [\"=\", \"certname\", \"hostname\"]. You may omit the opening and closing bracket.") }}
+      {{ form.query(autofocus="autofocus", rows=5, placeholder="nodes { certname = \"hostname\" }") }}
     </div>
     <div class="inline fields">
-      {% for subfield in form.endpoints %}
       <div class="field">
-        <div class="ui radio checkbox">
-          {{ subfield }}
-          {{ subfield.label }}
-        </div>
+        API Endpoint: {{ form.endpoints() }}
       </div>
-      {% endfor %}
-    </div>
-    <div class="inline fields">
       <div class="field">
         {{ form.rawjson(active=True) }} Raw JSON
       </div>
+      <input type=submit class="ui submit button" value='Submit'>
+      <input type=reset class="ui red submit button" value='Cancel'>
     </div>
-    <input type=submit class="ui submit button" value='Submit'>
-    <input type=reset class="ui red submit button" value='Cancel'>
   </form>
 </div>
 
