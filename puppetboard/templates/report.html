@@ -77,7 +77,11 @@
         <td rel="utctimestamp">{{log.time}}</td>
         <td>{{log.source}}</td>
         <td>{{log.tags|join(', ')}}</td>
-        <td>{{log.message}}</td>
+        {% if '\n' in log.message %}
+          <td><pre>{{log.message}}</pre></td>
+        {% else %}
+          <td>{{log.message}}</td>
+        {% endif %}
         {% if log.file != None and log.line != None %}
           <td>{{log.file}}:{{log.line}}</td>
         {% else %}
