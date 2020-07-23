@@ -4,13 +4,14 @@ from __future__ import unicode_literals
 from collections import OrderedDict
 
 from flask_wtf import FlaskForm
-from wtforms import (BooleanField, RadioField, TextAreaField, validators)
+from wtforms import (BooleanField, SelectField, TextAreaField, validators)
 
 from puppetboard.core import get_app
 
 app = get_app()
 QUERY_ENDPOINTS = OrderedDict([
     # PuppetDB API endpoint, Form name
+    ('pql', 'PQL'),
     ('nodes', 'Nodes'),
     ('resources', 'Resources'),
     ('facts', 'Facts'),
@@ -22,7 +23,6 @@ QUERY_ENDPOINTS = OrderedDict([
     ('catalogs', 'Catalogs'),
     ('edges', 'Edges'),
     ('environments', 'Environments'),
-    ('pql', 'PQL'),
 ])
 ENABLED_QUERY_ENDPOINTS = app.config.get(
     'ENABLED_QUERY_ENDPOINTS', list(QUERY_ENDPOINTS.keys()))
@@ -33,7 +33,7 @@ class QueryForm(FlaskForm):
     PuppetDB."""
     query = TextAreaField('Query', [validators.DataRequired(
         message='A query is required.')])
-    endpoints = RadioField('API endpoint', choices=[
+    endpoints = SelectField('API endpoint', choices=[
         (key, value) for key, value in QUERY_ENDPOINTS.items()
-        if key in ENABLED_QUERY_ENDPOINTS])
+        if key in ENABLED_QUERY_ENDPOINTS], default='pql')
     rawjson = BooleanField('Raw JSON')
