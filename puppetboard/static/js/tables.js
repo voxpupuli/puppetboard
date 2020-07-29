@@ -6,15 +6,19 @@
 
   $(function() {});
 
-  if ($('th.default-sort').data()) {
-    $('table.sortable').tablesort().data('tablesort').sort($("th.default-sort"), "desc");
-  }
-
   $('thead th.date').data('sortBy', function(th, td, tablesort) {
     var tdTime = new Date(td.text().replace("-", ""));
     if(isNaN(tdTime)) return 0;
     else return tdTime;
   });
+
+  var thDefaultSort = $('th.default-sort');
+  if (thDefaultSort.data()) {
+    var tablesort = $('table.sortable').tablesort().data('tablesort');
+    tablesort.index = thDefaultSort.index();
+    tablesort.sort(thDefaultSort, 'desc');
+  }
+
 
   $('input.filter-table').parent('div').removeClass('hide');
 
