@@ -12,10 +12,11 @@
     else return tdTime;
   });
 
-  if ($('th.default-sort').data()) {
+  var thDefaultSort = $('th.default-sort');
+  if (thDefaultSort.data()) {
     var tablesort = $('table.sortable').tablesort().data('tablesort');
-    tablesort.index = $('th.default-sort').index();
-    tablesort.sort($("th.default-sort"), 'desc');
+    tablesort.index = thDefaultSort.index();
+    tablesort.sort(thDefaultSort, 'desc');
   }
 
 
