@@ -6,6 +6,16 @@ This is the changelog for Puppetboard.
 Development
 -----------
 
+2.2.0
+-----
+
+* Fix default table sort (#444)
+* Use a select for endpoint select in query (#575)
+* Surround multiline messages with <pre> in reports (#576)
+* Fix CI builds by requiring pytest >= 4.6 (#577)
+* Add noop column in overview and nodes (#584)
+* Add title to events labels in overview and nodes (#585)
+
 2.1.2
 ----
 
