@@ -1,9 +1,12 @@
 Puppetboard
 ===========
 
-[![image](https://travis-ci.org/voxpupuli/puppetboard.svg?branch=master)](https://travis-ci.org/voxpupuli/puppetboard)
+[![PyPi Version](https://img.shields.io/pypi/v/puppetboard)](https://pypi.org/project/puppetboard/)
+[![PyPi Downloads](https://img.shields.io/pypi/dm/puppetboard)](https://pypi.org/project/puppetboard/)
+[![Build Status](https://img.shields.io/travis/voxpupuli/puppetboard/master.svg)](https://travis-ci.org/voxpupuli/puppetboard)
+[![Coverage Status](https://img.shields.io/coveralls/voxpupuli/puppetboard.svg)](https://coveralls.io/r/voxpupuli/puppetboard)
+[![By Voxpupuli](https://img.shields.io/badge/by-Vox%20Pupuli%20%F0%9F%A6%8A-ef902f.svg)](http://voxpupuli.org)
 
-[![image](https://coveralls.io/repos/github/voxpupuli/puppetboard/badge.svg?branch=master)](https://coveralls.io/github/voxpupuli/puppetboard?branch=master)
 
 Puppetboard is a web interface to [PuppetDB](https://puppet.com/docs/puppetdb/latest/index.html) aiming to replace the reporting functionality of [Puppet Dashboard](http://docs.puppetlabs.com/dashboard/).
 
