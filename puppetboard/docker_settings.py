@@ -1,5 +1,19 @@
 import os
 
+
+def coerce_bool(v, default):
+    """Convert boolean-like values into a boolean."""
+
+    if v in [True, False]:
+        return v
+    s = str(v).lower().strip()
+    if s in ['true', 't', 'y', 'yes', '1']:
+        return True
+    if s in ['false', 'f', 'n', 'no', '0']:
+        return False
+    return default
+
+
 PUPPETDB_HOST = os.getenv('PUPPETDB_HOST', 'puppetdb')
 PUPPETDB_PORT = int(os.getenv('PUPPETDB_PORT', '8080'))
 # Since this is an env it will always be a string, we need
@@ -84,3 +98,5 @@ REFRESH_RATE = int(os.getenv('REFRESH_RATE', '30'))
 DAILY_REPORTS_CHART_ENABLED = bool(os.getenv('DAILY_REPORTS_CHART_ENABLED',
                                              'True').upper() == 'TRUE')
 DAILY_REPORTS_CHART_DAYS = int(os.getenv('DAILY_REPORTS_CHART_DAYS', '8'))
+
+WITH_EVENT_NUMBERS = coerce_bool(os.getenv('WITH_EVENT_NUMBERS'), True)
