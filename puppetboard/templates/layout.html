@@ -23,14 +23,14 @@
     <link href="{{ url_for('static', filename='css/puppetboard.css') }}" rel="stylesheet" />
 
     {% if config.OFFLINE_MODE %}
-      <script src="{{ url_for('static', filename='jquery-3.4.1/jquery.min.js') }}"></script>
+      <script src="{{ url_for('static', filename='jquery-3.5.1/jquery.min.js') }}"></script>
       <script src="{{ url_for('static', filename='jquery-datatables-1.10.13/jquery.dataTables.min.js') }}"></script>
       <script src="{{ url_for('static', filename='jquery-datatables-1.10.13/dataTables.semanticui.min.js') }}"></script>
       {% if config.LOCALISE_TIMESTAMP %}
       <script src="{{ url_for('static', filename='moment.js-2.7.0/moment.min.js') }}"></script>
       {% endif %}
     {% else %}
-      <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+      <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
       <script src="//cdnjs.cloudflare.com/ajax/libs/datatables/1.10.13/js/jquery.dataTables.min.js"></script>
       <script src="//cdnjs.cloudflare.com/ajax/libs/datatables/1.10.13/js/dataTables.semanticui.min.js"></script>
       {% if config.LOCALISE_TIMESTAMP %}
