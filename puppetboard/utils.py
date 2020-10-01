@@ -4,6 +4,7 @@ from __future__ import unicode_literals
 import json
 import logging
 import os.path
+from distutils.util import strtobool
 
 from flask import abort, request, url_for
 from jinja2.utils import contextfunction
@@ -120,3 +121,15 @@ def yield_or_stop(generator):
             yield next(generator)
         except (EmptyResponseError, ConnectionError, HTTPError, StopIteration):
             return
+
+
+def is_bool(b):
+    try:
+        bool(strtobool(b))
+        return True
+    except ValueError:
+        return False
+    except TypeError:
+        return False
+    except AttributeError:
+        return False
