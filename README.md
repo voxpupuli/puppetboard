@@ -16,7 +16,6 @@ As of version 0.1.0 and higher, Puppetboard **requires** PuppetDB 3. Version 0.3
 
 At the current time of writing, Puppetboard supports the following Python versions:
 
-* Python 3.5
 * Python 3.6
 * Python 3.7
 * Python 3.8
