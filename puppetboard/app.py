@@ -9,6 +9,7 @@ except ImportError:
     from urllib import unquote, unquote_plus, quote_plus  # type: ignore
 from datetime import datetime, timedelta
 from itertools import tee
+from distutils.util import strtobool
 import sys
 from flask import (
     render_template, abort, url_for,
@@ -24,7 +25,7 @@ from pypuppetdb.QueryBuilder import (ExtractOperator, AndOperator,
 
 from puppetboard.forms import ENABLED_QUERY_ENDPOINTS, QueryForm
 from puppetboard.utils import (get_or_abort, yield_or_stop,
-                               get_db_version)
+                               get_db_version, is_bool)
 from puppetboard.dailychart import get_daily_reports_chart
 
 try:
@@ -721,7 +722,10 @@ def fact_ajax(env, node, fact, value):
         value = int(value)
     except ValueError:
         if value is not None and query is not None:
-            query.add(EqualsOperator('value', unquote_plus(value)))
+            if is_bool(value):
+                query.add(EqualsOperator('value', bool(strtobool(value))))
+            else:
+                query.add(EqualsOperator('value', unquote_plus(value)))
     except TypeError:
         pass
 
