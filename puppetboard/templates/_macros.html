@@ -55,8 +55,12 @@
     "pageLength": {{ default_length }},
     // Search as regex (does not apply if serverSide)
     "search": {"regex": true},
+    {% if table_html_id == 'facts_table' -%}
+    "order": [[ 0, "asc" ]],
+    {% else -%}
     // Default sort
     "order": [[ 0, "desc" ]],
+    {% endif -%}
    // Rendering - add rendering options for columns
     "columnDefs": [ {
       "targets": -1,
