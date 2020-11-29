@@ -2,7 +2,7 @@
 pep8
 coverage
 mock
-pytest >=4.6
+pytest >=4.6,<6
 pytest-pep8
 pytest-cov
 pytest-mock

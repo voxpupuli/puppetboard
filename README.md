@@ -115,9 +115,9 @@ Of course you need to configure your Puppet Server to store the Puppet run repor
 If you haven't done that already please follow the [PuppetDB documentation](https://puppet.com/docs/puppetdb/latest/connect_puppet_server.html)
 about this.
 
-Puppet Enterprise maintains a certificate white-list for which certificates are allowed to access data from PuppetDB.
-This whitelist is maintained in `/etc/puppetlabs/puppetdb/certificate-whitelist` and you have to add the certificate name to that file.
-Afterwards you'll need to restart `pe-puppetdb` and you should be able to query PuppetDB freely now.
+If you run Puppetboard on a different host than PuppetDB then you may want to configure the certificate
+allow-list for which certificates are allowed to access data from PuppetDB.
+Please read more about this feature in the [PuppetDB documentation here](https://puppet.com/docs/puppetdb/latest/configure.html#certificate-allowlist).
 
 ### App settings
 
