@@ -112,7 +112,7 @@ $ docker run -it -p 9080:80 -v /etc/puppetlabs/puppet/ssl:/etc/puppetlabs/puppet
   -e PUPPETDB_CERT=/etc/puppetlabs/puppetdb/ssl/public.pem \
   -e INVENTORY_FACTS='Hostname,fqdn, IP Address,ipaddress' \
   -e ENABLE_CATALOG=True \
-  -e GRAPH_FACTS='architecture,puppetversion,osfamily' \
+  -e GRAPH_FACTS=architecture,puppetversion,osfamily \
   puppetboard
 ```
 
