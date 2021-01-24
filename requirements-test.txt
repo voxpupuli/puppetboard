@@ -12,3 +12,4 @@ beautifulsoup4
 bandit
 coveralls
 mypy
+tox
