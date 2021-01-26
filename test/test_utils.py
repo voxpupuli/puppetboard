@@ -103,6 +103,20 @@ def test_http_connection_error(mock_log):
         mock_log.error.assert_called_with(err)
 
 
+def test_basic_exception(mock_log):
+    err = "Exception"
+
+    def exception_error():
+        x = Response()
+        x.reason = err
+        raise Exception(err)
+
+    with pytest.raises(Exception) as exception:
+        utils.get_or_abort(exception_error())
+        mock_log.error.assert_called_with(err)
+        assert exception.status_code == 500
+
+
 def test_db_version_good(mocker, mock_info_log):
     mocker.patch.object(app.puppetdb, 'current_version', return_value='4.2.0')
     err = 'PuppetDB Version %d.%d.%d' % (4, 2, 0)
