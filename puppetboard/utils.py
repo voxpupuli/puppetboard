@@ -107,6 +107,9 @@ def get_or_abort(func, *args, **kwargs):
     except EmptyResponseError as e:
         log.error(str(e))
         abort(204)
+    except Exception as e:
+        log.error(str(e))
+        abort(500)
 
 
 def yield_or_stop(generator):
