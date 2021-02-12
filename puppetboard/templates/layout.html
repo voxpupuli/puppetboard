@@ -4,22 +4,23 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{{config.PAGE_TITLE}}</title>
     {% if config.OFFLINE_MODE %}
-    <style>
-      @font-face {
-        font-family: 'Open Sans';
-        font-style: normal;
-        font-weight: 400;
-        src: local('Open Sans'), local('OpenSans'), url({{ url_for('static', filename='fonts/Open_Sans.woff') }}) format('woff');
-      }
-    </style>
-    <link href='{{ url_for('static', filename='jquery-datatables-1.10.13/dataTables.semanticui.min.css') }}' rel='stylesheet' type='text/css'>
-    <link href="{{ url_for('offline_static', filename='Semantic-UI-2.1.8/semantic.min.css') }}" rel="stylesheet" />
+      <style>
+        @font-face {
+          font-family: 'Open Sans';
+          font-style: normal;
+          font-weight: 400;
+          src: local('Open Sans'), local('OpenSans'), url({{ url_for('static', filename='fonts/Open_Sans.woff') }}) format('woff');
+        }
+      </style>
+      <link href='{{ url_for('static', filename='jquery-datatables-1.10.13/dataTables.semanticui.min.css') }}' rel='stylesheet' type='text/css'>
+      <link href="{{ url_for('offline_static', filename='Semantic-UI-2.1.8/semantic.min.css') }}" rel="stylesheet" />
+      <link href="{{ url_for('static', filename='css/c3.min.css') }}" rel="stylesheet" />
     {% else %}
-    <link href='//fonts.googleapis.com/css?family=Open+Sans' rel='stylesheet' type='text/css' />
-    <link href="{{ url_for('static', filename='Semantic-UI-2.1.8/semantic.min.css') }}" rel="stylesheet" />
-    <link href='//cdnjs.cloudflare.com/ajax/libs/datatables/1.10.13/css/dataTables.semanticui.min.css' rel='stylesheet' type='text/css'>
+      <link href='https://fonts.googleapis.com/css?family=Open+Sans' rel='stylesheet' type='text/css' />
+      <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/datatables/1.10.13/css/dataTables.semanticui.min.css" integrity="sha512-CHELgpUsYRrAwM9daSo22qlmK8N6sFRl1TYkZx0CqOdwhpa5vv6C9ogRxZ9qyHoF3bPMNLMHXqFiXjNhmu093A==" crossorigin="anonymous" />
+      <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.1.8/semantic.min.css" integrity="sha512-GbyTrK4wNa8DuGiZ0xUtlSBFr1S/2aqAs2tyk0hWdCxK7maobr5O/L0nW8gLuKQkhbWLpy6GUYUf8FSmZAEj6Q==" crossorigin="anonymous" />
+      <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/c3/0.4.22/c3.min.css" integrity="sha512-i6an+SVy8Q0HXieEwQFTzbnrE3xgfVly99YatczufZCQB0RI6wD+wb5fX3k3Co2KshtsMra/5OTdjCbpdJb/VQ==" crossorigin="anonymous" />
     {% endif %}
-    <link href="{{ url_for('static', filename='css/c3.min.css') }}" rel="stylesheet" />
     <link href="{{ url_for('static', filename='css/puppetboard.css') }}" rel="stylesheet" />
 
     {% if config.OFFLINE_MODE %}
@@ -27,26 +28,34 @@
       <script src="{{ url_for('static', filename='jquery-datatables-1.10.13/jquery.dataTables.min.js') }}"></script>
       <script src="{{ url_for('static', filename='jquery-datatables-1.10.13/dataTables.semanticui.min.js') }}"></script>
       {% if config.LOCALISE_TIMESTAMP %}
-      <script src="{{ url_for('static', filename='moment.js-2.7.0/moment.min.js') }}"></script>
+        <script src="{{ url_for('static', filename='moment.js-2.7.0/moment.min.js') }}"></script>
       {% endif %}
     {% else %}
-      <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-      <script src="//cdnjs.cloudflare.com/ajax/libs/datatables/1.10.13/js/jquery.dataTables.min.js"></script>
-      <script src="//cdnjs.cloudflare.com/ajax/libs/datatables/1.10.13/js/dataTables.semanticui.min.js"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js" integrity="sha512-bLT0Qm9VnAYZDflyKcBaQ2gg0hSYNQrJ8RilYldYQ1FxQYoCLtUjuuRuZo+fjqhx/qtq/1itJ0C2ejDxltZVFg==" crossorigin="anonymous"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/datatables/1.10.13/js/jquery.dataTables.min.js" integrity="sha512-GsFQLFpndObn08d92Q2GP3RTcc2TbYoWIKscSiEXP/zP0yfkNTld9mWHeeqHuq07X/hL8ZURDHvDGHES7oIJFw==" crossorigin="anonymous"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/datatables/1.10.13/js/dataTables.semanticui.min.js" integrity="sha512-X66NtcKI4YIdPlZTX+YcFNjIXvKyYpQKglfA9f8b6ykRaKzYJ4n0pLnT4b0d04tvGuzbWjsac9odraxIpgtPNw==" crossorigin="anonymous"></script>
       {% if config.LOCALISE_TIMESTAMP %}
-        <script src="//cdnjs.cloudflare.com/ajax/libs/moment.js/2.7.0/moment.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.7.0/moment.min.js" integrity="sha512-aY1i9Nq6hY6NeQCAZRzyR5v0c5Sh8nLr6odaEZUHr5MTr35rQ2shu+ZGwPHfXRjXjVTYUF8pRVRKNRoSrsvOiQ==" crossorigin="anonymous"></script>
       {% endif %}
     {% endif %}
     {% if config.LOCALISE_TIMESTAMP %}
       <script src="{{ url_for('static', filename='js/timestamps.js')}}"></script>
     {% endif %}
-    <script src="{{ url_for('static', filename='Semantic-UI-2.1.8/semantic.min.js') }}"></script>
-    <script src="{{ url_for('static', filename='js/lists.js') }}"></script>
-    <script src="{{ url_for('static', filename='js/scroll.top.js') }}"></script>
-    <script src="{{url_for('static', filename='js/d3.min.js')}}"></script>
-    <script src="{{url_for('static', filename='js/c3.min.js')}}"></script>
+
+    {% if config.OFFLINE_MODE %}
+      <script src="{{ url_for('static', filename='Semantic-UI-2.1.8/semantic.min.js') }}"></script>
+      <script src="{{url_for('static', filename='js/d3.min.js')}}"></script>
+      <script src="{{url_for('static', filename='js/c3.min.js')}}"></script>
+    {% else %}
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.1.8/semantic.min.js" integrity="sha512-0tFZADRFoUtpQI2iaQYaHPCtzjHF8Uh4ubPefkTlcyKv8DVbqAC5SCOW32845u1DmmYt69WLzXjTqr/ddA4R4g==" crossorigin="anonymous"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.4.9/d3.min.js" integrity="sha512-RPIlDnLubawr6Fz9XbviqhMcj28VVf2daawCv6ZU26Ik6tp9mrBgdQHbmSYJLjpppXJtjBBsp0TUJZJmReUmYw==" crossorigin="anonymous"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/c3/0.4.22/c3.min.js" integrity="sha512-y+qMlwO+SzpIAf1t754evnKZKBr+VVaTi0vFE29jaXAEuE37ez2McMianiaenQSPaubhzxVu6cWIl5KNlbGzPA==" crossorigin="anonymous"></script>
+    {% endif %}
     <script src="{{url_for('static',
                   filename='jquery-tablesort-v.0.0.11/jquery.tablesort.min.js')}}"></script>
+    <script src="{{ url_for('static', filename='js/lists.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/scroll.top.js') }}"></script>
+
     {% block script %} {% endblock script %}
     <script type="text/javascript">
     {% block javascript %} {% endblock javascript %}
