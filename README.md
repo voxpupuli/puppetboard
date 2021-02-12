@@ -2,7 +2,7 @@
 
 [![PyPi Version](https://img.shields.io/pypi/v/puppetboard)](https://pypi.org/project/puppetboard/)
 [![PyPi Downloads](https://img.shields.io/pypi/dm/puppetboard)](https://pypi.org/project/puppetboard/)
-[![Build Status](https://img.shields.io/travis/voxpupuli/puppetboard/master.svg)](https://travis-ci.org/voxpupuli/puppetboard)
+![Tests Status](https://github.com/voxpupuli/puppetboard/workflows/tests%20(unit)/badge.svg)
 [![Coverage Status](https://img.shields.io/coveralls/voxpupuli/puppetboard.svg)](https://coveralls.io/r/voxpupuli/puppetboard)
 [![By Voxpupuli](https://img.shields.io/badge/by-Vox%20Pupuli%20%F0%9F%A6%8A-ef902f.svg)](http://voxpupuli.org)
 
