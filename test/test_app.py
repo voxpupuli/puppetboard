@@ -751,6 +751,27 @@ def test_facts_view(client, mocker, mock_puppetdb_environments):
     assert len(vals) == 4
 
 
+def test_facts_view_empty_when_no_facts(client,
+                                        mocker,
+                                        mock_puppetdb_environments):
+    query_data = {
+        'fact-names': [[]]
+    }
+
+    dbquery = MockDbQuery(query_data)
+
+    mocker.patch.object(app.puppetdb, '_query', side_effect=dbquery.get)
+
+    rv = client.get('/facts')
+    assert rv.status_code == 200
+    soup = BeautifulSoup(rv.data, 'html.parser')
+    assert soup.title.contents[0] == 'Puppetboard'
+
+    searchable = soup.find('div', {'class': 'searchable'})
+    vals = searchable.find_all('div', {'class': 'column'})
+    assert len(vals) == 1
+
+
 def test_fact_view_with_graph(client, mocker,
                               mock_puppetdb_environments,
                               mock_puppetdb_default_nodes):
