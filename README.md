@@ -142,7 +142,7 @@ supply the following settings:
 -   `PUPPETDB_CERT = /path/to/public/keyfile.crt`
 
 For information about how to generate the correct keys please refer to the 
-[pypuppetdb documentation](https://pypuppetdb.readthedocs.io/en/v0.1.0/quickstart.html#ssl). Alternatively it is possible
+[pypuppetdb documentation](https://pypuppetdb.readthedocs.io/en/latest/connecting.html#ssl). Alternatively it is possible
 to explicitly specify the protocol to be used setting the `PUPPETDB_PROTO` variable.
 
 Other settings that might be interesting:
