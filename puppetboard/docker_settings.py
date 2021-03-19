@@ -43,7 +43,7 @@ ENABLE_QUERY = os.getenv('ENABLE_QUERY', 'True')
 LOCALISE_TIMESTAMP = bool(os.getenv('LOCALISE_TIMESTAMP',
                                     'True').upper() == 'TRUE')
 LOGLEVEL = os.getenv('LOGLEVEL', 'info')
-NORMAL_TABLE_COUNT = int(os.getenv('REPORTS_COUNT', '100'))
+NORMAL_TABLE_COUNT = int(os.getenv('NORMAL_TABLE_COUNT', '100'))
 LITTLE_TABLE_COUNT = int(os.getenv('LITTLE_TABLE_COUNT', '10'))
 
 TABLE_COUNT_DEF = "10,20,50,100,500"

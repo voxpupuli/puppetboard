@@ -150,7 +150,6 @@ class profile::puppetboard {
     puppetdb_key        => "${ssl_dir}/private_keys/${puppetboard_certname}.pem",
     puppetdb_ssl_verify => "${ssl_dir}/certs/ca.pem",
     puppetdb_cert       => "${ssl_dir}/certs/${puppetboard_certname}.pem",
-    reports_count       => 40,
   }
 
   class { '::apache::mod::wsgi':
