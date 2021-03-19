@@ -166,6 +166,8 @@ Other settings that might be interesting in no particular order:
     in the last report. Otherwise shows only 'some' string if there are resources with given status. Setting this
     to `False` gives performance benefits, especially in big Puppet environments (more than few hundreds of nodes).
     Defaults to `True`.
+-   `RESOURCES_STATS_ENABLED`: If set then such section of the front page (Overview) is shown. Defaults to `True`.
+-   `NODES_STATUS_DETAIL_ENABLED`: If set then such section of the front page (Overview) is shown. Defaults to `True`.
 -   `DEV_LISTEN_HOST`: For use with dev.py for development. Default is localhost
 -   `DEV_LISTEN_PORT`: For use with dev.py for development. Default is 5000
 

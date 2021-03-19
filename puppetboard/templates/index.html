@@ -58,6 +58,7 @@
       <span>total population</span>
     </div>
   </div>
+  {% if config.RESOURCES_STATS_ENABLED %}
   <div class="five column row">
     <div class="column">
     </div>
@@ -74,11 +75,13 @@
       <span>Avg. resources/node</span>
     </div>
   </div>
+  {% endif %}
   {% if config.DAILY_REPORTS_CHART_ENABLED %}
   <div id="dailyReportsChartContainer" class="one column row">
     <div id="dailyReportsChart"></div>
   </div>
   {% endif %}
+  {% if config.NODES_STATUS_DETAIL_ENABLED %}
   <div class="ui divider"></div>
   <div class="one column row">
     <div class="column">
@@ -132,5 +135,6 @@
       {% endif %}
     </div>
   </div>
+  {% endif %}
 </div>
 {% endblock content %}
