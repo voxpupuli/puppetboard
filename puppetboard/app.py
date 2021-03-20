@@ -136,11 +136,21 @@ def index(env):
     :type env: :obj:`string`
     """
     envs = environments()
+    check_env(env, envs)
+
     metrics = {
         'num_nodes': 0,
         'num_resources': 0,
-        'avg_resources_node': 0}
-    check_env(env, envs)
+        'avg_resources_node': 0,
+    }
+    nodes_overview = []
+    stats = {
+        'changed': 0,
+        'unchanged': 0,
+        'failed': 0,
+        'unreported': 0,
+        'noop': 0
+    }
 
     if env == '*':
         query = app.config['OVERVIEW_FILTER']
@@ -153,21 +163,22 @@ def index(env):
             puppetdb.metric,
             "{0}{1}".format(prefix, ':%sname=num-nodes' % query_type),
             version=metric_version)
-        num_resources = get_or_abort(
-            puppetdb.metric,
-            "{0}{1}".format(prefix, ':%sname=num-resources' % query_type),
-            version=metric_version)
 
-        metrics['num_nodes'] = num_nodes['Value']
-        metrics['num_resources'] = num_resources['Value']
-        try:
-            # Compute our own average because avg_resources_node['Value']
-            # returns a string of the format "num_resources/num_nodes"
-            # example: "1234/9" instead of doing the division itself.
-            metrics['avg_resources_node'] = "{0:10.0f}".format(
-                (num_resources['Value'] / num_nodes['Value']))
-        except ZeroDivisionError:
-            metrics['avg_resources_node'] = 0
+        if app.config['RESOURCES_STATS_ENABLED']:
+            num_resources = get_or_abort(
+                puppetdb.metric,
+                "{0}{1}".format(prefix, ':%sname=num-resources' % query_type),
+                version=metric_version)
+
+            metrics['num_resources'] = num_resources['Value']
+            try:
+                # Compute our own average because avg_resources_node['Value']
+                # returns a string of the format "num_resources/num_nodes"
+                # example: "1234/9" instead of doing the division itself.
+                metrics['avg_resources_node'] = "{0:10.0f}".format(
+                    (num_resources['Value'] / num_nodes['Value']))
+            except ZeroDivisionError:
+                metrics['avg_resources_node'] = 0
     else:
         query = AndOperator()
         query.add(EqualsOperator('catalog_environment', env))
@@ -179,55 +190,53 @@ def index(env):
         if app.config['OVERVIEW_FILTER'] is not None:
             query.add(app.config['OVERVIEW_FILTER'])
 
-        num_resources_query = ExtractOperator()
-        num_resources_query.add_field(FunctionOperator('count'))
-        num_resources_query.add_query(EqualsOperator("environment", env))
-
         num_nodes = get_or_abort(
             puppetdb._query,
             'nodes',
             query=num_nodes_query)
-        num_resources = get_or_abort(
-            puppetdb._query,
-            'resources',
-            query=num_resources_query)
+
         metrics['num_nodes'] = num_nodes[0]['count']
-        metrics['num_resources'] = num_resources[0]['count']
-        try:
-            metrics['avg_resources_node'] = "{0:10.0f}".format(
-                (num_resources[0]['count'] / num_nodes[0]['count']))
-        except ZeroDivisionError:
-            metrics['avg_resources_node'] = 0
 
-    nodes = get_or_abort(puppetdb.nodes,
-                         query=query,
-                         unreported=app.config['UNRESPONSIVE_HOURS'],
-                         with_status=True,
-                         with_event_numbers=app.config['WITH_EVENT_NUMBERS'])
+        if app.config['RESOURCES_STATS_ENABLED']:
 
-    nodes_overview = []
-    stats = {
-        'changed': 0,
-        'unchanged': 0,
-        'failed': 0,
-        'unreported': 0,
-        'noop': 0
-    }
+            num_resources_query = ExtractOperator()
+            num_resources_query.add_field(FunctionOperator('count'))
+            num_resources_query.add_query(EqualsOperator("environment", env))
 
-    for node in nodes:
-        if node.status == 'unreported':
-            stats['unreported'] += 1
-        elif node.status == 'changed':
-            stats['changed'] += 1
-        elif node.status == 'failed':
-            stats['failed'] += 1
-        elif node.status == 'noop':
-            stats['noop'] += 1
-        else:
-            stats['unchanged'] += 1
+            num_resources = get_or_abort(
+                puppetdb._query,
+                'resources',
+                query=num_resources_query)
 
-        if node.status != 'unchanged':
-            nodes_overview.append(node)
+            metrics['num_resources'] = num_resources[0]['count']
+            try:
+                metrics['avg_resources_node'] = "{0:10.0f}".format(
+                    (num_resources[0]['count'] / num_nodes[0]['count']))
+            except ZeroDivisionError:
+                metrics['avg_resources_node'] = 0
+
+    if app.config['NODES_STATUS_DETAIL_ENABLED']:
+
+        nodes = get_or_abort(puppetdb.nodes,
+                             query=query,
+                             unreported=app.config['UNRESPONSIVE_HOURS'],
+                             with_status=True,
+                             with_event_numbers=app.config['WITH_EVENT_NUMBERS'])
+
+        for node in nodes:
+            if node.status == 'unreported':
+                stats['unreported'] += 1
+            elif node.status == 'changed':
+                stats['changed'] += 1
+            elif node.status == 'failed':
+                stats['failed'] += 1
+            elif node.status == 'noop':
+                stats['noop'] += 1
+            else:
+                stats['unchanged'] += 1
+
+            if node.status != 'unchanged':
+                nodes_overview.append(node)
 
     return render_template(
         'index.html',
@@ -626,50 +635,32 @@ def facts(env):
     """
     envs = environments()
     check_env(env, envs)
+    facts = []
+    order_by = '[{"field": "name", "order": "asc"}]'
     facts = get_or_abort(puppetdb.fact_names)
 
-    # we consider a column label to count for ~5 lines
-    column_label_height = 5
-
-    # 1 label per different letter and up to 3 more labels for letters spanning
-    # multiple columns.
-    column_label_count = 3 + len(set(map(lambda fact: fact[0].upper(), facts)))
-
-    break_size = (len(facts) + column_label_count * column_label_height) / 4.0
-    next_break = break_size
-
-    facts_columns = []
-    facts_current_column = []
-    facts_current_letter = []
+    facts_columns = [[]]
     letter = None
+    letter_list = None
+    break_size = (len(facts) / 4) + 1
+    next_break = break_size
     count = 0
-
     for fact in facts:
         count += 1
 
-        if count > next_break:
-            next_break += break_size
-            if facts_current_letter:
-                facts_current_column.append(facts_current_letter)
-            if facts_current_column:
-                facts_columns.append(facts_current_column)
-            facts_current_column = []
-            facts_current_letter = []
-            letter = None
-
-        if letter != fact[0].upper():
-            if facts_current_letter:
-                facts_current_column.append(facts_current_letter)
-                facts_current_letter = []
+        if letter != fact[0].upper() or not letter:
+            if count > next_break:
+                # Create a new column
+                facts_columns.append([])
+                next_break += break_size
+            if letter_list:
+                facts_columns[-1].append(letter_list)
+            # Reset
             letter = fact[0].upper()
-            count += column_label_height
+            letter_list = []
 
-        facts_current_letter.append(fact)
-
-    if facts_current_letter:
-        facts_current_column.append(facts_current_letter)
-    if facts_current_column:
-        facts_columns.append(facts_current_column)
+        letter_list.append(fact)
+    facts_columns[-1].append(letter_list)
 
     return render_template('facts.html',
                            facts_columns=facts_columns,
@@ -923,7 +914,7 @@ def metrics(env):
                 metrics.append(domain + ':' + prop)
     else:
         raise ValueError("Unknown metric version {} for database version {}"
-                         .format(metric_version, db_version))
+                         .format(metric_version, database_version))
 
     return render_template('metrics.html',
                            metrics=sorted(metrics),
