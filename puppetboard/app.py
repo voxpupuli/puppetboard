@@ -121,11 +121,21 @@ def index(env):
     :type env: :obj:`string`
     """
     envs = environments()
+    check_env(env, envs)
+
     metrics = {
         'num_nodes': 0,
         'num_resources': 0,
-        'avg_resources_node': 0}
-    check_env(env, envs)
+        'avg_resources_node': 0,
+    }
+    nodes_overview = []
+    stats = {
+        'changed': 0,
+        'unchanged': 0,
+        'failed': 0,
+        'unreported': 0,
+        'noop': 0
+    }
 
     if env == '*':
         query = app.config['OVERVIEW_FILTER']
@@ -138,25 +148,29 @@ def index(env):
             puppetdb.metric,
             "{0}{1}".format(prefix, ':%sname=num-nodes' % query_type),
             version=metric_version)
-        num_resources = get_or_abort(
-            puppetdb.metric,
-            "{0}{1}".format(prefix, ':%sname=num-resources' % query_type),
-            version=metric_version)
-        avg_resources_node = get_or_abort(
-            puppetdb.metric,
-            "{0}{1}".format(prefix,
-                            ':%sname=avg-resources-per-node' % query_type),
-            version=metric_version)
+
         metrics['num_nodes'] = num_nodes['Value']
-        metrics['num_resources'] = num_resources['Value']
-        try:
-            # Compute our own average because avg_resources_node['Value']
-            # returns a string of the format "num_resources/num_nodes"
-            # example: "1234/9" instead of doing the division itself.
-            metrics['avg_resources_node'] = "{0:10.0f}".format(
-                (num_resources['Value'] / num_nodes['Value']))
-        except ZeroDivisionError:
-            metrics['avg_resources_node'] = 0
+
+        if app.config['RESOURCES_STATS_ENABLED']:
+            num_resources = get_or_abort(
+                puppetdb.metric,
+                "{0}{1}".format(prefix, ':%sname=num-resources' % query_type),
+                version=metric_version)
+            avg_resources_node = get_or_abort(
+                puppetdb.metric,
+                "{0}{1}".format(prefix,
+                                ':%sname=avg-resources-per-node' % query_type),
+                version=metric_version)
+
+            metrics['num_resources'] = num_resources['Value']
+            try:
+                # Compute our own average because avg_resources_node['Value']
+                # returns a string of the format "num_resources/num_nodes"
+                # example: "1234/9" instead of doing the division itself.
+                metrics['avg_resources_node'] = "{0:10.0f}".format(
+                    (num_resources['Value'] / num_nodes['Value']))
+            except ZeroDivisionError:
+                metrics['avg_resources_node'] = 0
     else:
         query = AndOperator()
         query.add(EqualsOperator('catalog_environment', env))
@@ -168,55 +182,53 @@ def index(env):
         if app.config['OVERVIEW_FILTER'] is not None:
             query.add(app.config['OVERVIEW_FILTER'])
 
-        num_resources_query = ExtractOperator()
-        num_resources_query.add_field(FunctionOperator('count'))
-        num_resources_query.add_query(EqualsOperator("environment", env))
-
         num_nodes = get_or_abort(
             puppetdb._query,
             'nodes',
             query=num_nodes_query)
-        num_resources = get_or_abort(
-            puppetdb._query,
-            'resources',
-            query=num_resources_query)
+
         metrics['num_nodes'] = num_nodes[0]['count']
-        metrics['num_resources'] = num_resources[0]['count']
-        try:
-            metrics['avg_resources_node'] = "{0:10.0f}".format(
-                (num_resources[0]['count'] / num_nodes[0]['count']))
-        except ZeroDivisionError:
-            metrics['avg_resources_node'] = 0
 
-    nodes = get_or_abort(puppetdb.nodes,
-                         query=query,
-                         unreported=app.config['UNRESPONSIVE_HOURS'],
-                         with_status=True,
-                         with_event_numbers=app.config['WITH_EVENT_NUMBERS'])
+        if app.config['RESOURCES_STATS_ENABLED']:
 
-    nodes_overview = []
-    stats = {
-        'changed': 0,
-        'unchanged': 0,
-        'failed': 0,
-        'unreported': 0,
-        'noop': 0
-    }
+            num_resources_query = ExtractOperator()
+            num_resources_query.add_field(FunctionOperator('count'))
+            num_resources_query.add_query(EqualsOperator("environment", env))
 
-    for node in nodes:
-        if node.status == 'unreported':
-            stats['unreported'] += 1
-        elif node.status == 'changed':
-            stats['changed'] += 1
-        elif node.status == 'failed':
-            stats['failed'] += 1
-        elif node.status == 'noop':
-            stats['noop'] += 1
-        else:
-            stats['unchanged'] += 1
+            num_resources = get_or_abort(
+                puppetdb._query,
+                'resources',
+                query=num_resources_query)
 
-        if node.status != 'unchanged':
-            nodes_overview.append(node)
+            metrics['num_resources'] = num_resources[0]['count']
+            try:
+                metrics['avg_resources_node'] = "{0:10.0f}".format(
+                    (num_resources[0]['count'] / num_nodes[0]['count']))
+            except ZeroDivisionError:
+                metrics['avg_resources_node'] = 0
+
+    if app.config['NODES_STATUS_DETAIL_ENABLED']:
+
+        nodes = get_or_abort(puppetdb.nodes,
+                             query=query,
+                             unreported=app.config['UNRESPONSIVE_HOURS'],
+                             with_status=True,
+                             with_event_numbers=app.config['WITH_EVENT_NUMBERS'])
+
+        for node in nodes:
+            if node.status == 'unreported':
+                stats['unreported'] += 1
+            elif node.status == 'changed':
+                stats['changed'] += 1
+            elif node.status == 'failed':
+                stats['failed'] += 1
+            elif node.status == 'noop':
+                stats['noop'] += 1
+            else:
+                stats['unchanged'] += 1
+
+            if node.status != 'unchanged':
+                nodes_overview.append(node)
 
     return render_template(
         'index.html',
