@@ -169,10 +169,14 @@ def test_index_all(client, mocker,
     vals = soup.find_all('h1',
                          {"class": "ui header darkblue no-margin-bottom"})
 
-    assert len(vals) == 3
-    assert vals[0].string == '10'
-    assert vals[1].string == '63'
-    assert vals[2].string == '         6'
+    assert len(vals) == 2
+    assert vals[0].string == '63'
+    assert vals[1].string == '         6'
+
+    vals2 = soup.find_all('h1',
+                          {"class": "ui header population no-margin-bottom"})
+    assert len(vals2) == 1
+    assert '10' in vals2[0].string
 
     assert rv.status_code == 200
 
@@ -219,10 +223,14 @@ def test_index_all_puppetdb_v4(client, mocker,
     vals = soup.find_all('h1',
                          {"class": "ui header darkblue no-margin-bottom"})
 
-    assert len(vals) == 3
-    assert vals[0].string == '10'
-    assert vals[1].string == '63'
-    assert vals[2].string == '         6'
+    assert len(vals) == 2
+    assert vals[0].string == '63'
+    assert vals[1].string == '         6'
+
+    vals2 = soup.find_all('h1',
+                          {"class": "ui header population no-margin-bottom"})
+    assert len(vals2) == 1
+    assert '10' in vals2[0].string
 
     assert rv.status_code == 200
 
@@ -269,10 +277,14 @@ def test_index_all_puppetdb_v3(client, mocker,
     vals = soup.find_all('h1',
                          {"class": "ui header darkblue no-margin-bottom"})
 
-    assert len(vals) == 3
-    assert vals[0].string == '10'
-    assert vals[1].string == '60'
-    assert vals[2].string == '         6'
+    assert len(vals) == 2
+    assert vals[0].string == '60'
+    assert vals[1].string == '         6'
+
+    vals2 = soup.find_all('h1',
+                          {"class": "ui header population no-margin-bottom"})
+    assert len(vals2) == 1
+    assert '10' in vals2[0].string
 
     assert rv.status_code == 200
 
@@ -298,8 +310,8 @@ def test_index_division_by_zero(client, mocker,
 
     vals = soup.find_all('h1',
                          {"class": "ui header darkblue no-margin-bottom"})
-    assert len(vals) == 3
-    assert vals[2].string == '0'
+    assert len(vals) == 2
+    assert vals[1].string == '0'
 
 
 def test_offline_mode(client, mocker,
