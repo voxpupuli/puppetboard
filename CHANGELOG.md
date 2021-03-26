@@ -6,6 +6,33 @@ This is the changelog for Puppetboard.
 Development
 -----------
 
+3.0.0
+-----
+
+This is a bugfix and maintenance release. The major version is bumped 
+because of the Python 3.5 support drop.
+ 
+Features:
+
+* Change the default sort order of facts table to a-z,
+  instead of z-a (#572)
+* Revamp the README (#601)
+
+Bugfixes:
+
+* Fix noop class in _macros.html (#588)
+* Fix listing nodes with boolean fact values (#583)
+* Fix auto-resize in radiator view (#605)
+* Fix issue with no render when facts are empty (#607)
+
+Other:
+
+* Drop Python 3.5 support (#593)
+* Update jQuery to 3.5.1 (#592)
+* Manage any other exception for get_or_abort (#606)
+* Improve getting resources from CDN (#609)  
+* Migrate from Travis to GitHub Actions (#604)
+
 2.2.0
 -----
 
