@@ -11,7 +11,7 @@ Puppetboard is a web interface to [PuppetDB](https://puppet.com/docs/puppetdb/la
 the reporting functionality of [Puppet Enterprise console (previously: Puppet Dashboard)](https://puppet.com/docs/pe/latest/console_accessing.html)
 for the open source Puppet.
 
-![View of a node](screenshots/overview.png)
+![View of a node](https://github.com/voxpupuli/puppetboard/blob/master/screenshots/overview.png)
 
 (See [more screenshots here](#more-screenshots).)
 
@@ -105,7 +105,7 @@ and minor python versions.
 
 You will need this path in order to configure your HTTPD and WSGI-capable application server.
 
-Please see [an article about more deployment setups here](https://github.com/voxpupuli/puppetboard/docs/Deployment-setups.md).
+Please see [an article about more deployment setups here](https://github.com/voxpupuli/puppetboard/blob/master/docs/Deployment-setups.md).
 
 ## Configuration
 
@@ -142,7 +142,7 @@ supply the following settings:
 -   `PUPPETDB_CERT = /path/to/public/keyfile.crt`
 
 For information about how to generate the correct keys please refer to the 
-[pypuppetdb documentation](https://pypuppetdb.readthedocs.io/en/v0.1.0/quickstart.html#ssl). Alternatively it is possible
+[pypuppetdb documentation](https://pypuppetdb.readthedocs.io/en/latest/connecting.html#ssl). Alternatively it is possible
 to explicitly specify the protocol to be used setting the `PUPPETDB_PROTO` variable.
 
 Other settings that might be interesting in no particular order:
@@ -251,26 +251,26 @@ by Tim Pope](https://tbaggery.com/2008/04/19/a-note-about-git-commit-messages.ht
 
 Up to date ones:
 
-![Overview / Index / Homepage](screenshots/overview.png)
+![Overview / Index / Homepage](https://github.com/voxpupuli/puppetboard/blob/master/screenshots/overview.png)
 
 Older ones, may be a bit outdated:
 
-![Nodes view, all active nodes](screenshots/nodes.png)
+![Nodes view, all active nodes](https://github.com/voxpupuli/puppetboard/blob/master/screenshots/nodes.png)
 
-![Single node page / overview](screenshots/node.png)
+![Single node page / overview](https://github.com/voxpupuli/puppetboard/blob/master/screenshots/node.png)
 
-![Report view](screenshots/report.png)
+![Report view](https://github.com/voxpupuli/puppetboard/blob/master/screenshots/report.png)
 
-![Facts view](screenshots/facts.png)
+![Facts view](https://github.com/voxpupuli/puppetboard/blob/master/screenshots/facts.png)
 
-![Single fact, with graphs](screenshots/fact.png)
+![Single fact, with graphs](https://github.com/voxpupuli/puppetboard/blob/master/screenshots/fact.png)
 
-![All nodes that have this fact with that value](screenshots/fact_value.png)
+![All nodes that have this fact with that value](https://github.com/voxpupuli/puppetboard/blob/master/screenshots/fact_value.png)
 
-![Metrics view](screenshots/metrics.png)
+![Metrics view](https://github.com/voxpupuli/puppetboard/blob/master/screenshots/metrics.png)
 
-![Single metric](screenshots/metric.png)
+![Single metric](https://github.com/voxpupuli/puppetboard/blob/master/screenshots/metric.png)
 
-![Query view](screenshots/query.png)
+![Query view](https://github.com/voxpupuli/puppetboard/blob/master/screenshots/query.png)
 
-![Error page](screenshots/broken.png)
+![Error page](https://github.com/voxpupuli/puppetboard/blob/master/screenshots/broken.png)
