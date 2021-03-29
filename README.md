@@ -11,7 +11,7 @@ Puppetboard is a web interface to [PuppetDB](https://puppet.com/docs/puppetdb/la
 the reporting functionality of [Puppet Enterprise console (previously: Puppet Dashboard)](https://puppet.com/docs/pe/latest/console_accessing.html)
 for the open source Puppet.
 
-![View of a node](https://github.com/voxpupuli/puppetboard/blob/master/screenshots/overview.png)
+![View of a node](https://raw.githubusercontent.com/voxpupuli/puppetboard/master/screenshots/overview.png)
 
 (See [more screenshots here](#more-screenshots).)
 
@@ -38,7 +38,7 @@ There is a [Puppet module](https://forge.puppetlabs.com/puppet/puppetboard) orig
  [Spencer Krum](https://github.com/nibalizer) and currently maintained by [Voxpupuli](https://voxpupuli.org/)
 that takes care of installing the Puppetboard for you.
 
-To see how to get it working with RedHat/Centos 7 check out these [docs](https://github.com/voxpupuli/puppetboard/blob/master/docs/EL7.md).
+To see how to get it working with RedHat/Centos 7 check out these [docs](https://github.com/voxpupuli/puppetboard/master/docs/EL7.md).
 
 ### From a package
 
@@ -105,7 +105,7 @@ and minor python versions.
 
 You will need this path in order to configure your HTTPD and WSGI-capable application server.
 
-Please see [an article about more deployment setups here](https://github.com/voxpupuli/puppetboard/blob/master/docs/Deployment-setups.md).
+Please see [an article about more deployment setups here](https://github.com/voxpupuli/puppetboard/master/docs/Deployment-setups.md).
 
 ## Configuration
 
@@ -123,7 +123,7 @@ Please read more about this feature in the [PuppetDB documentation here](https:/
 
 Puppetboard will look for a file pointed at by the `PUPPETBOARD_SETTINGS` environment variable.
 The file has to be identical to
-[default_settings.py](https://github.com/voxpupuli/puppetboard/blob/master/puppetboard/default_settings.py)
+[default_settings.py](https://github.com/voxpupuli/puppetboard/master/puppetboard/default_settings.py)
 but should only override the settings you need changed.
 
 If you run PuppetDB and Puppetboard on the same machine the default settings provided will be enough to get you started 
@@ -251,26 +251,26 @@ by Tim Pope](https://tbaggery.com/2008/04/19/a-note-about-git-commit-messages.ht
 
 Up to date ones:
 
-![Overview / Index / Homepage](https://github.com/voxpupuli/puppetboard/blob/master/screenshots/overview.png)
+![Overview / Index / Homepage](https://raw.githubusercontent.com/voxpupuli/puppetboard/master/screenshots/overview.png)
 
 Older ones, may be a bit outdated:
 
-![Nodes view, all active nodes](https://github.com/voxpupuli/puppetboard/blob/master/screenshots/nodes.png)
+![Nodes view, all active nodes](https://raw.githubusercontent.com/voxpupuli/puppetboard/master/screenshots/nodes.png)
 
-![Single node page / overview](https://github.com/voxpupuli/puppetboard/blob/master/screenshots/node.png)
+![Single node page / overview](https://raw.githubusercontent.com/voxpupuli/puppetboard/master/screenshots/node.png)
 
-![Report view](https://github.com/voxpupuli/puppetboard/blob/master/screenshots/report.png)
+![Report view](https://raw.githubusercontent.com/voxpupuli/puppetboard/master/screenshots/report.png)
 
-![Facts view](https://github.com/voxpupuli/puppetboard/blob/master/screenshots/facts.png)
+![Facts view](https://raw.githubusercontent.com/voxpupuli/puppetboard/master/screenshots/facts.png)
 
-![Single fact, with graphs](https://github.com/voxpupuli/puppetboard/blob/master/screenshots/fact.png)
+![Single fact, with graphs](https://raw.githubusercontent.com/voxpupuli/puppetboard/master/screenshots/fact.png)
 
-![All nodes that have this fact with that value](https://github.com/voxpupuli/puppetboard/blob/master/screenshots/fact_value.png)
+![All nodes that have this fact with that value](https://raw.githubusercontent.com/voxpupuli/puppetboard/master/screenshots/fact_value.png)
 
-![Metrics view](https://github.com/voxpupuli/puppetboard/blob/master/screenshots/metrics.png)
+![Metrics view](https://raw.githubusercontent.com/voxpupuli/puppetboard/master/screenshots/metrics.png)
 
-![Single metric](https://github.com/voxpupuli/puppetboard/blob/master/screenshots/metric.png)
+![Single metric](https://raw.githubusercontent.com/voxpupuli/puppetboard/master/screenshots/metric.png)
 
-![Query view](https://github.com/voxpupuli/puppetboard/blob/master/screenshots/query.png)
+![Query view](https://raw.githubusercontent.com/voxpupuli/puppetboard/master/screenshots/query.png)
 
-![Error page](https://github.com/voxpupuli/puppetboard/blob/master/screenshots/broken.png)
+![Error page](https://raw.githubusercontent.com/voxpupuli/puppetboard/master/screenshots/broken.png)
