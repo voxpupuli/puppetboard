@@ -40,72 +40,49 @@ that takes care of installing the Puppetboard for you.
 
 To see how to get it working with RedHat/Centos 7 check out these [docs](https://github.com/voxpupuli/puppetboard/master/docs/EL7.md).
 
+### Using Docker
+
+We provide [an official Docker image in the GitHub Container Registry](https://github.com/orgs/voxpupuli/packages/container/package/puppetboard).
+
+You can run the app using it with:
+
+```bash
+docker pull ghcr.io/voxpupuli/puppetboard
+
+docker run -it -p 9080:80 -v /etc/puppetlabs/puppet/ssl:/etc/puppetlabs/puppet/ssl \
+-e PUPPETDB_HOST=<hostname> \
+-e PUPPETDB_PORT=8081 \
+-e PUPPETDB_SSL_VERIFY=/etc/puppetlabs/puppetdb/ssl/ca.pem \
+-e PUPPETDB_KEY=/etc/puppetlabs/puppetdb/ssl/private.pem \
+-e PUPPETDB_CERT=/etc/puppetlabs/puppetdb/ssl/public.pem \
+ghcr.io/voxpupuli/puppetboard
+```
+
+We also provide the Dockerfile so you can build the image yourself:
+```bash
+docker build -t puppetboard .
+```
+
 ### From a package
 
 Actively maintained packages:
 
-<table>
-<colgroup>
-<col width="25%" />
-<col width="15%" />
-<col width="58%" />
-</colgroup>
-<thead>
-<tr class="header">
-<th align="left">OS</th>
-<th align="left">Status</th>
-<th align="left"></th>
-</tr>
-</thead>
-<tbody>
-<tr class="even">
-<td align="left"><a href="https://cvsweb.openbsd.org/cgi-bin/cvsweb/ports/www/puppetboard/">OpenBSD</a></td>
-<td align="left">available</td>
-<td align="left">Maintained by <a href="https://github.com/buzzdeee">Sebastian Reitenbach</a></td>
-</tr>
-</tbody>
-</table>
-
-### Using Docker
-
-Please see [camptocamp/puppetboard on DockerHub](https://hub.docker.com/r/camptocamp/puppetboard) for a maintained
-Docker image with the app.
-
-We also provide the Dockerfile so you can build the image yourself. You can build it and run it with:
-
- ``` {.sourceCode .bash}
- $ docker build -t puppetboard .
-
- $ docker run -it -p 9080:80 -v /etc/puppetlabs/puppet/ssl:/etc/puppetlabs/puppet/ssl \
-   -e PUPPETDB_HOST=<hostname> \
-   -e PUPPETDB_PORT=8081 \
-   -e PUPPETDB_SSL_VERIFY=/etc/puppetlabs/puppetdb/ssl/ca.pem \
-   -e PUPPETDB_KEY=/etc/puppetlabs/puppetdb/ssl/private.pem \
-   -e PUPPETDB_CERT=/etc/puppetlabs/puppetdb/ssl/public.pem \
-   -e INVENTORY_FACTS='Hostname,fqdn, IP Address,ipaddress' \
-   -e ENABLE_CATALOG=True \
-   -e GRAPH_FACTS='architecture,puppetversion,osfamily' \
-   puppetboard
-```
+* [OpenBSD](https://cvsweb.openbsd.org/cgi-bin/cvsweb/ports/www/puppetboard/)
+  maintained by [Sebastian Reitenbach](https://github.com/buzzdeee)
 
 ### Manually
 
-To install it simply issue the following command:
+You can also install the package from PyPI and configure a WSGI-capable application server to serve it.
 
-``` {.sourceCode .bash}
-$ pip install puppetboard
+We recommend using virtualenv to provide a separate environment for the app.
+
+```bash
+virtualenv -p python3 venv
+. venv/bin/activate
+pip install puppetboard
 ```
 
-This will install Puppetboard and take care of the dependencies. If you do this Puppetboard will be installed in the so 
-called site-packages or dist-packages of your Python distribution.
-
-The complete path on Debian and Ubuntu systems would be `/usr/local/lib/pythonX.Y/lib/dist-packages/puppetboard`
-and on Fedora would be `/usr/lib/pythonX.Y/site-packages/puppetboard` where `X` and `Y` are replaced by your major
-and minor python versions.
-
-You will need this path in order to configure your HTTPD and WSGI-capable application server.
-
-Please see [an article about more deployment setups here](https://github.com/voxpupuli/puppetboard/master/docs/Deployment-setups.md).
+Please see [an article about more deployment setups here](https://github.com/voxpupuli/puppetboard/blob/master/docs/Deployment-setups.md).
 
 ## Configuration
 
@@ -206,16 +183,16 @@ and is built with the help of the [Flask](https://flask.palletsprojects.com) mic
 
 If you wish to hack on Puppetboard you should fork/clone the Github repository and then install the requirements through:
 
-``` {.sourceCode .bash}
-$ pip install -r requirements-test.txt
+```bash
+pip install -r requirements-test.txt
 ```
 
 You're advised to do this inside a virtualenv specifically created to work on Puppetboard as to not pollute your global Python installation.
 
 You can run the app it in development mode by simply executing:
 
-``` {.sourceCode .bash}
-$ python dev.py
+```bash
+python dev.py
 ```
 
 Use `PUPPETBOARD_SETTINGS` to change the different settings or patch `default_settings.py` directly.
