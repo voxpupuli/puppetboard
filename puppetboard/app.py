@@ -604,28 +604,48 @@ def facts(env):
     order_by = '[{"field": "name", "order": "asc"}]'
     facts = get_or_abort(puppetdb.fact_names)
 
-    facts_columns = [[]]
-    letter = None
-    letter_list = None
-    break_size = (len(facts) / 4) + 1
+    # we consider a column label to count for ~5 lines
+    column_label_height = 5
+
+    # 1 label per different letter and up to 3 more labels for letters spanning
+    # multiple columns.
+    column_label_count = 3 + len(set(map(lambda fact: fact[0].upper(), facts)))
+
+    break_size = (len(facts) + column_label_count * column_label_height) / 4.0
     next_break = break_size
+
+    facts_columns = []
+    facts_current_column = []
+    facts_current_letter = []
+    letter = None
     count = 0
+
     for fact in facts:
         count += 1
 
-        if letter != fact[0].upper() or not letter:
-            if count > next_break:
-                # Create a new column
-                facts_columns.append([])
-                next_break += break_size
-            if letter_list:
-                facts_columns[-1].append(letter_list)
-            # Reset
-            letter = fact[0].upper()
-            letter_list = []
+        if count > next_break:
+            next_break += break_size
+            if facts_current_letter:
+                facts_current_column.append(facts_current_letter)
+            if facts_current_column:
+                facts_columns.append(facts_current_column)
+            facts_current_column = []
+            facts_current_letter = []
+            letter = None
 
-        letter_list.append(fact)
-    facts_columns[-1].append(letter_list)
+        if letter != fact[0].upper():
+            if facts_current_letter:
+                facts_current_column.append(facts_current_letter)
+                facts_current_letter = []
+            letter = fact[0].upper()
+            count += column_label_height
+
+        facts_current_letter.append(fact)
+
+    if facts_current_letter:
+        facts_current_column.append(facts_current_letter)
+    if facts_current_column:
+        facts_columns.append(facts_current_column)
 
     return render_template('facts.html',
                            facts_columns=facts_columns,
