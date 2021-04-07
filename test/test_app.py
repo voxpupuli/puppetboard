@@ -769,7 +769,7 @@ def test_facts_view_empty_when_no_facts(client,
 
     searchable = soup.find('div', {'class': 'searchable'})
     vals = searchable.find_all('div', {'class': 'column'})
-    assert len(vals) == 1
+    assert len(vals) == 0
 
 
 def test_fact_view_with_graph(client, mocker,
