@@ -6,6 +6,15 @@ This is the changelog for Puppetboard.
 Development
 -----------
 
+3.1.0
+-----
+
+* Improve facts columns balancing (#618)
+* Allow to toggle checkboxes by clicking their label (#617)
+* Add support for Python 3.9 (#619)
+* pypuppetdb: raise version requirement `>=2.4.0.rc1` because
+  we need it for Python 3.9 support
+
 3.0.0
 -----
 
