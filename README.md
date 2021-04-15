@@ -38,7 +38,7 @@ There is a [Puppet module](https://forge.puppetlabs.com/puppet/puppetboard) orig
  [Spencer Krum](https://github.com/nibalizer) and currently maintained by [Voxpupuli](https://voxpupuli.org/)
 that takes care of installing the Puppetboard for you.
 
-To see how to get it working with RedHat/Centos 7 check out these [docs](https://github.com/voxpupuli/puppetboard/master/docs/EL7.md).
+To see how to get it working with RedHat/Centos 7 check out these [docs](https://github.com/voxpupuli/puppetboard/blob/master/docs/EL7.md).
 
 ### Using Docker
 
@@ -100,7 +100,7 @@ Please read more about this feature in the [PuppetDB documentation here](https:/
 
 Puppetboard will look for a file pointed at by the `PUPPETBOARD_SETTINGS` environment variable.
 The file has to be identical to
-[default_settings.py](https://github.com/voxpupuli/puppetboard/master/puppetboard/default_settings.py)
+[default_settings.py](https://github.com/voxpupuli/puppetboard/blob/master/puppetboard/default_settings.py)
 but should only override the settings you need changed.
 
 If you run PuppetDB and Puppetboard on the same machine the default settings provided will be enough to get you started 
