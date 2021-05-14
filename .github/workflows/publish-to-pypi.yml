@@ -1,4 +1,4 @@
-name: publish 🐍 to PyPI
+name: publish 🐍 egg to PyPI
 
 on:
   push:
