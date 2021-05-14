@@ -38,10 +38,10 @@ jobs:
          github_ref: ${{ github.ref }}
 
       - name: Build and push
-          uses: docker/build-push-action@v2
-          with:
-            context: .
-            platforms: linux/amd64
-            push: true
-            tags: |
-              ghcr.io/voxpupuli/puppetboard:{{ version }}
+        uses: docker/build-push-action@v2
+        with:
+          context: .
+          platforms: linux/amd64
+          push: true
+          tags: |
+            ghcr.io/voxpupuli/puppetboard:{{ version }}
