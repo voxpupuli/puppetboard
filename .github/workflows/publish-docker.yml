@@ -41,6 +41,6 @@ jobs:
         with:
           context: .
           platforms: linux/amd64
-          push: false
+          push: true
           tags: |
             ghcr.io/voxpupuli/puppetboard:${{ env.version }}
