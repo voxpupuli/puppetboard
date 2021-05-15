@@ -32,8 +32,7 @@ jobs:
       # we want just the version as a tag, so remove the 'refs/tags/v' prefix
       - run: |
           version="${github_ref/refs\/tags\/v/}"
-          echo $version
-          echo "::set-env name=version::$version"
+          echo "version=$version" >> $GITHUB_ENV
         env:
          github_ref: ${{ github.ref }}
 
@@ -42,6 +41,6 @@ jobs:
         with:
           context: .
           platforms: linux/amd64
-          push: true
+          push: false
           tags: |
-            ghcr.io/voxpupuli/puppetboard:{{ version }}
+            ghcr.io/voxpupuli/puppetboard:${{ env.version }}
