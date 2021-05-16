@@ -36,7 +36,7 @@ jobs:
           from packaging.version import parse
 
           version = "${{ github.ref }}".replace("refs/tags/v", "")
-          image = "${{ github.repository }}"
+          image = "ghcr.io/${{ github.repository }}"
 
           tags = set()
 
