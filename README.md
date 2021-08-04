@@ -67,6 +67,7 @@ docker build -t puppetboard .
 
 Actively maintained packages:
 
+* [FreeBSD](https://www.freshports.org/www/py-puppetboard/)
 * [OpenBSD](https://cvsweb.openbsd.org/cgi-bin/cvsweb/ports/www/puppetboard/)
   maintained by [Sebastian Reitenbach](https://github.com/buzzdeee)
 
