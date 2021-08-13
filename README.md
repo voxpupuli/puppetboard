@@ -25,7 +25,7 @@ for the open source Puppet.
 
 ## Requirements
 
-* PuppetDB v. 3.0-6.0 (it may work with newer but this has not been verified)
+* PuppetDB v. 3.0-7.5 (will most probably work with newer, but this has not been tested yet)
 * Python 3.6 / 3.7 / 3.8 / 3.9
 
 ## Installation
