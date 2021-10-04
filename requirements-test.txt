@@ -2,15 +2,14 @@
 pep8
 coverage
 mock
-pytest >=4.6,<6
-pytest-pep8
+pytest<7
+pytest-flake8
 pytest-cov
 pytest-mock
 pytest-mypy
 cov-core
 beautifulsoup4
 bandit
-coveralls
 mypy
 tox
 types-requests
