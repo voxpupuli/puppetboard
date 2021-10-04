@@ -64,6 +64,30 @@ log = logging.getLogger(__name__)
 puppetdb = get_puppetdb()
 
 
+def build_menuentries():
+    entries = {
+        'index': 'Overview',
+        'nodes': 'Nodes',
+        'facts': 'Facts',
+        'reports': 'Reports',
+        'metrics': 'Metrics',
+        'inventory': 'Inventory',
+        'catalogs': 'Catalogs',
+        'radiator': 'Radiator',
+        'query': 'Query'
+    }
+    if not app.config.get('ENABLE_QUERY'):
+        del(entries['query'])
+
+    if not app.config.get('ENABLE_CATALOG'):
+        del(entries['catalogs'])
+
+    return ((x, entries[x]) for x in entries)
+
+
+app.jinja_env.globals.update(menu_entries=build_menuentries())
+
+
 @app.template_global()
 def version():
     return __version__
