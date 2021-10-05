@@ -3,6 +3,17 @@
 {% block content %}
 <div class="ui wide grid">
   <div class="wide row">
+      <div class="three wide column">
+        <div class="ui">End Time (between)</div>
+      </div>
+      <div class="three wide column">
+        <label for="min"></label><input type="date" id="min" name="min">
+      </div>
+      <div class="three wide column">
+        <label for="max"></label><input type="date" id="max" name="max">
+      </div>
+  </div>
+  <div class="wide row">
     <div class="three wide column">
       <div class="ui">Status</div>
     </div>
@@ -34,6 +45,22 @@
   "deferLoading": true,
 {% endmacro %}
   {{ macros.datatable_init(table_html_id="reports_table", ajax_url=url_for('reports_ajax', env=current_env, node_name=node_name), default_length=config.NORMAL_TABLE_COUNT, length_selector=config.TABLE_COUNT_SELECTOR, extra_options=extra_options) }}
+  function date_filter_change(){
+    var minDate = $('#min').prop('value');
+    var maxDate = $('#max').prop('value');
+
+    var data = {};
+
+    if(minDate != '') {
+        data['min'] = minDate;
+    }
+
+    if(maxDate != '') {
+        data['max'] = maxDate;
+    }
+
+    table.column(0).search(JSON.stringify(data)).draw();
+  }
 
   // Event listener for status filters
   function status_filter_change(){
@@ -52,7 +79,9 @@
     }
     table.column(1).search(sum).draw();
   }
-  $('#failed, #changed, #unchanged, #noop').change(status_filter_change);
+    $('#failed, #changed, #unchanged, #noop').change(status_filter_change);
+    $('#min, #max').change(date_filter_change);
   // Call at init - fix page reload behavior
   status_filter_change();
+  date_filter_change();
 {% endblock onload_script %}
