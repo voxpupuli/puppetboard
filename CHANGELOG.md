@@ -6,6 +6,8 @@ This is the changelog for Puppetboard.
 Development
 -----------
 
+* Add support for Python 3.10
+
 3.1.0
 -----
 

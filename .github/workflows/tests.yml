@@ -10,7 +10,7 @@ jobs:
     strategy:
       max-parallel: 5
       matrix:
-        python-version: [3.6, 3.7, 3.8, 3.9]
+        python-version: [3.6, 3.7, 3.8, 3.9, 3.10-dev]
 
     steps:
       - uses: actions/checkout@v2
@@ -20,12 +20,13 @@ jobs:
           python-version: ${{ matrix.python-version }}
       - name: Install dependencies
         run: |
+          pip install --upgrade wheel setuptools
           pip install -r requirements-test.txt
+          mypy --install-types --non-interactive puppetboard/ test/
       - name: Test
         run: |
-          pytest --pep8 --mypy --strict
-      - name: Run coveralls
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: |
-          coveralls --service=github
+          pytest --cov=. --cov-report=xml --flake8 --strict-markers --mypy puppetboard test
+      - name: Upload coverage to Codecov
+        uses: codecov/codecov-action@v2
+        with:
+          fail_ci_if_error: true

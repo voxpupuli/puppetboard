@@ -1,3 +1,14 @@
 [report]
 exclude_lines =
     pragma: notest
+
+[run]
+source =
+    puppetboard
+
+omit =
+    # don't check the test themselves, obviously
+    test/*
+
+    # no point in checking this
+    setup.py

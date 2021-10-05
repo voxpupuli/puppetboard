@@ -3,7 +3,7 @@
 [![PyPi Version](https://img.shields.io/pypi/v/puppetboard)](https://pypi.org/project/puppetboard/)
 [![PyPi Downloads](https://img.shields.io/pypi/dm/puppetboard)](https://pypi.org/project/puppetboard/)
 ![Tests Status](https://github.com/voxpupuli/puppetboard/workflows/tests%20(unit)/badge.svg)
-[![Coverage Status](https://img.shields.io/coveralls/voxpupuli/puppetboard.svg)](https://coveralls.io/r/voxpupuli/puppetboard)
+[![codecov](https://codecov.io/gh/voxpupuli/puppetboard/branch/master/graph/badge.svg?token=uez5RoiU6I)](https://codecov.io/gh/voxpupuli/puppetboard)
 [![By Voxpupuli](https://img.shields.io/badge/by-Vox%20Pupuli%20%F0%9F%A6%8A-ef902f.svg)](http://voxpupuli.org)
 
 
@@ -26,7 +26,7 @@ for the open source Puppet.
 ## Requirements
 
 * PuppetDB v. 3.0-7.5 (will most probably work with newer, but this has not been tested yet)
-* Python 3.6 / 3.7 / 3.8 / 3.9
+* Python 3.6 / 3.7 / 3.8 / 3.9 / 3.10
 
 ## Installation
 
@@ -185,10 +185,17 @@ and is built with the help of the [Flask](https://flask.palletsprojects.com) mic
 If you wish to hack on Puppetboard you should fork/clone the Github repository and then install the requirements through:
 
 ```bash
-pip install -r requirements-test.txt
+pip install --upgrade wheel setuptools
+pip install --upgrade -r requirements-test.txt
+mypy --install-types --non-interactive puppetboard/ test/
 ```
 
 You're advised to do this inside a virtualenv specifically created to work on Puppetboard as to not pollute your global Python installation.
+
+You can run the tests with:
+```bash
+pytest --cov=. --cov-report=xml --flake8 --strict-markers --mypy puppetboard test
+```
 
 You can run the app it in development mode by simply executing:
 
