@@ -16,9 +16,12 @@ def coerce_bool(v, default):
 
 PUPPETDB_HOST = os.getenv('PUPPETDB_HOST', 'puppetdb')
 PUPPETDB_PORT = int(os.getenv('PUPPETDB_PORT', '8080'))
-# Since this is an env it will always be a string, we need
-# to conver that string to a bool
-PUPPETDB_SSL_VERIFY = coerce_bool(os.getenv('PUPPETDB_SSL_VERIFY'), True)
+# This may be a bool in string - that's what coerce_bool is for
+# but if it is other string, then it's a path
+PUPPETDB_SSL_VERIFY = coerce_bool(
+    os.getenv('PUPPETDB_SSL_VERIFY', True),
+    os.getenv('PUPPETDB_SSL_VERIFY')
+)
 
 PUPPETDB_KEY = os.getenv('PUPPETDB_KEY', None)
 PUPPETDB_CERT = os.getenv('PUPPETDB_CERT', None)

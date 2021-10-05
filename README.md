@@ -186,11 +186,16 @@ If you wish to hack on Puppetboard you should fork/clone the Github repository a
 
 ```bash
 pip install --upgrade wheel setuptools
-pip install -r requirements-test.txt
+pip install --upgrade -r requirements-test.txt
 mypy --install-types --non-interactive puppetboard/ test/
 ```
 
 You're advised to do this inside a virtualenv specifically created to work on Puppetboard as to not pollute your global Python installation.
+
+You can run the tests with:
+```bash
+pytest --cov=. --cov-report=xml --flake8 --strict-markers --mypy puppetboard test
+```
 
 You can run the app it in development mode by simply executing:
 

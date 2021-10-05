@@ -132,7 +132,7 @@ def test_db_version_good(mocker, mock_info_log):
 
 def test_db_invalid_version(mocker, mock_err_log):
     mocker.patch.object(app.puppetdb, 'current_version', return_value='4')
-    err = u"Unable to determine version from string: '%s'" % (4)
+    err = u"Unable to determine version from string: '%s'" % 4
     result = utils.get_db_version(app.puppetdb)
     mock_err_log.assert_called_with(err)
     assert (4, 0, 0) < result
@@ -188,8 +188,8 @@ def test_iter():
     test_list = (0, 1, 2, 3)
 
     def my_generator():
-        for i in test_list:
-            yield i
+        for element in test_list:
+            yield element
 
     gen = utils.yield_or_stop(my_generator())
     assert isinstance(gen, GeneratorType)
@@ -204,7 +204,6 @@ def test_stop_empty():
     def my_generator():
         yield 1
         raise EmptyResponseError
-        yield 2
 
     gen = utils.yield_or_stop(my_generator())
     for val in gen:
@@ -215,7 +214,6 @@ def test_stop_conn_error():
     def my_generator():
         yield 1
         raise ConnectionError
-        yield 2
 
     gen = utils.yield_or_stop(my_generator())
     for val in gen:
@@ -226,7 +224,6 @@ def test_stop_http_error():
     def my_generator():
         yield 1
         raise HTTPError
-        yield 2
 
     gen = utils.yield_or_stop(my_generator())
     for val in gen:

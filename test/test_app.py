@@ -93,7 +93,7 @@ def client():
 
 
 def test_first_test():
-    assert app is not None, ("%s" % reg.app)
+    assert app is not None
 
 
 def test_no_env(client, mock_puppetdb_environments):
@@ -321,7 +321,7 @@ def test_offline_mode(client, mocker,
     for link in soup.find_all('link'):
         assert "//" not in link['href']
         if 'offline' in link['href']:
-            static_rv = client.get(link['href'])
+            rv = client.get(link['href'])
             assert rv.status_code == 200
 
     for script in soup.find_all('script'):
