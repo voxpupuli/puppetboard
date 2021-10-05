@@ -1,41 +1,34 @@
 from __future__ import absolute_import
 from __future__ import unicode_literals
 
-
-# load python 3, fallback to python 2 if it fails
-try:
-    from urllib.parse import unquote, unquote_plus, quote_plus
-except ImportError:
-    from urllib import unquote, unquote_plus, quote_plus  # type: ignore
+from urllib.parse import unquote, unquote_plus, quote_plus
 from datetime import datetime, timedelta
 from itertools import tee
 from distutils.util import strtobool
-import sys
 from flask import (
     render_template, abort, url_for,
     Response, stream_with_context, request, session, jsonify
 )
 
 import logging
+import json
 
 from pypuppetdb.QueryBuilder import (ExtractOperator, AndOperator,
                                      EqualsOperator, FunctionOperator,
                                      NullOperator, OrOperator,
-                                     LessEqualOperator, RegexOperator)
+                                     LessEqualOperator, RegexOperator,
+                                     GreaterEqualOperator)
 
 from puppetboard.forms import ENABLED_QUERY_ENDPOINTS, QueryForm
 from puppetboard.utils import (get_or_abort, yield_or_stop,
                                get_db_version, is_bool)
 from puppetboard.dailychart import get_daily_reports_chart
 
-try:
-    import CommonMark as commonmark
-except ImportError:
-    import commonmark
+import commonmark
 
 from puppetboard.core import get_app, get_puppetdb, environments
 
-from . import __version__
+from puppetboard.version import __version__
 
 REPORTS_COLUMNS = [
     {'attr': 'end', 'filter': 'end_time',
@@ -164,11 +157,7 @@ def index(env):
             puppetdb.metric,
             "{0}{1}".format(prefix, ':%sname=num-resources' % query_type),
             version=metric_version)
-        avg_resources_node = get_or_abort(
-            puppetdb.metric,
-            "{0}{1}".format(prefix,
-                            ':%sname=avg-resources-per-node' % query_type),
-            version=metric_version)
+
         metrics['num_nodes'] = num_nodes['Value']
         metrics['num_resources'] = num_resources['Value']
         try:
@@ -470,6 +459,7 @@ def reports_ajax(env, node_name):
     order_dir = request.args.get('order[0][dir]', 'desc')
     order_args = '[{"field": "%s", "order": "%s"}]' % (order_filter, order_dir)
     status_args = request.args.get('columns[1][search][value]', '').split('|')
+    date_args = request.args.get('columns[0][search][value]', '')
     max_col = len(REPORTS_COLUMNS)
     for i in range(len(REPORTS_COLUMNS)):
         if request.args.get("columns[%s][data]" % i, None):
@@ -492,6 +482,20 @@ def reports_ajax(env, node_name):
         search_query.add(RegexOperator(
             "configuration_version", r"%s" % search_arg))
         reports_query.add(search_query)
+
+    if date_args:
+        dates = json.loads(date_args)
+
+        if len(dates) > 0:
+            date_query = AndOperator()
+
+            if 'min' in dates:
+                date_query.add(GreaterEqualOperator('end_time', dates['min']))
+
+            if 'max' in dates:
+                date_query.add(LessEqualOperator('end_time', dates['max']))
+
+            reports_query.add(date_query)
 
     status_query = OrOperator()
     for status_arg in status_args:
@@ -622,8 +626,6 @@ def facts(env):
     """
     envs = environments()
     check_env(env, envs)
-    facts = []
-    order_by = '[{"field": "name", "order": "asc"}]'
     facts = get_or_abort(puppetdb.fact_names)
 
     # we consider a column label to count for ~5 lines
@@ -919,7 +921,7 @@ def metrics(env):
                 metrics.append(domain + ':' + prop)
     else:
         raise ValueError("Unknown metric version {} for database version {}"
-                         .format(metric_version, database_version))
+                         .format(metric_version, db_version))
 
     return render_template('metrics.html',
                            metrics=sorted(metrics),
