@@ -19,6 +19,9 @@ from pypuppetdb.QueryBuilder import (ExtractOperator, AndOperator,
                                      LessEqualOperator, RegexOperator,
                                      GreaterEqualOperator)
 
+from pypuppetdb.types import Node
+from pypuppetdb.utils import json_to_datetime
+
 from puppetboard.forms import ENABLED_QUERY_ENDPOINTS, QueryForm
 from puppetboard.utils import (get_or_abort, yield_or_stop,
                                get_db_version, is_bool)
@@ -152,6 +155,10 @@ def index(env):
         'noop': 0
     }
 
+    nodes = []
+
+    node_status_detail_enabled = app.config['NODES_STATUS_DETAIL_ENABLED']
+    resource_stats_enabled = app.config['RESOURCES_STATS_ENABLED']
     if env == '*':
         query = app.config['OVERVIEW_FILTER']
 
@@ -164,7 +171,7 @@ def index(env):
             "{0}{1}".format(prefix, ':%sname=num-nodes' % query_type),
             version=metric_version)
 
-        if app.config['RESOURCES_STATS_ENABLED']:
+        if resource_stats_enabled:
             num_resources = get_or_abort(
                 puppetdb.metric,
                 "{0}{1}".format(prefix, ':%sname=num-resources' % query_type),
@@ -179,6 +186,9 @@ def index(env):
                     (num_resources['Value'] / num_nodes['Value']))
             except ZeroDivisionError:
                 metrics['avg_resources_node'] = 0
+
+            if not node_status_detail_enabled:
+                nodes = get_node_status_summary(query)
     else:
         query = AndOperator()
         query.add(EqualsOperator('catalog_environment', env))
@@ -197,8 +207,7 @@ def index(env):
 
         metrics['num_nodes'] = num_nodes[0]['count']
 
-        if app.config['RESOURCES_STATS_ENABLED']:
-
+        if resource_stats_enabled:
             num_resources_query = ExtractOperator()
             num_resources_query.add_field(FunctionOperator('count'))
             num_resources_query.add_query(EqualsOperator("environment", env))
@@ -215,26 +224,29 @@ def index(env):
             except ZeroDivisionError:
                 metrics['avg_resources_node'] = 0
 
-    if app.config['NODES_STATUS_DETAIL_ENABLED']:
+            if not node_status_detail_enabled:
+                nodes = get_node_status_summary(query)
 
+    if node_status_detail_enabled:
         nodes = get_or_abort(puppetdb.nodes,
                              query=query,
                              unreported=app.config['UNRESPONSIVE_HOURS'],
                              with_status=True,
                              with_event_numbers=app.config['WITH_EVENT_NUMBERS'])
 
-        for node in nodes:
-            if node.status == 'unreported':
-                stats['unreported'] += 1
-            elif node.status == 'changed':
-                stats['changed'] += 1
-            elif node.status == 'failed':
-                stats['failed'] += 1
-            elif node.status == 'noop':
-                stats['noop'] += 1
-            else:
-                stats['unchanged'] += 1
+    for node in nodes:
+        if node.status == 'unreported':
+            stats['unreported'] += 1
+        elif node.status == 'changed':
+            stats['changed'] += 1
+        elif node.status == 'failed':
+            stats['failed'] += 1
+        elif node.status == 'noop':
+            stats['noop'] += 1
+        else:
+            stats['unchanged'] += 1
 
+        if node_status_detail_enabled:
             if node.status != 'unchanged':
                 nodes_overview.append(node)
 
@@ -246,6 +258,33 @@ def index(env):
         envs=envs,
         current_env=env
     )
+
+
+def get_node_status_summary(inner_query):
+    node_status_query = ExtractOperator()
+    node_status_query.add_field('certname')
+    node_status_query.add_field('report_timestamp')
+    node_status_query.add_field('latest_report_status')
+    node_status_query.add_query(inner_query)
+
+    node_status = get_or_abort(
+        puppetdb._query,
+        'nodes',
+        query=node_status_query
+    )
+
+    now = datetime.utcnow()
+    node_infos = []
+    for node_state in node_status:
+        last_report = json_to_datetime(node_state['report_timestamp'])
+        last_report = last_report.replace(tzinfo=None)
+        unreported_border = now - timedelta(hours=app.config['UNRESPONSIVE_HOURS'])
+        certname = node_state['certname']
+
+        node_infos.append(Node(node, name=certname, unreported=last_report < unreported_border,
+                               status_report=node_state['latest_report_status']))
+
+    return node_infos
 
 
 @app.route('/nodes', defaults={'env': app.config['DEFAULT_ENVIRONMENT']})
@@ -635,8 +674,6 @@ def facts(env):
     """
     envs = environments()
     check_env(env, envs)
-    facts = []
-    order_by = '[{"field": "name", "order": "asc"}]'
     facts = get_or_abort(puppetdb.fact_names)
 
     facts_columns = [[]]
@@ -912,7 +949,7 @@ def metrics(env):
                 metrics.append(domain + ':' + prop)
     else:
         raise ValueError("Unknown metric version {} for database version {}"
-                         .format(metric_version, database_version))
+                         .format(metric_version, db_version))
 
     return render_template('metrics.html',
                            metrics=sorted(metrics),
