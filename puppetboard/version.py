@@ -2,4 +2,4 @@
 # Puppetboard version module
 #
 
-__version__ = '3.1.0.post4'
+__version__ = '3.2.0rc1'
