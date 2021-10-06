@@ -11,9 +11,10 @@ Development
 
 * Add from/till filter for reports (issue [#625](https://github.com/voxpupuli/puppetboard/issues/625), PR [#625](https://github.com/voxpupuli/puppetboard/pull/638))
 * Remove tabs for disabled features (issue [#627](https://github.com/voxpupuli/puppetboard/issues/627), PR [#636](https://github.com/voxpupuli/puppetboard/pull/636))
+* Add support for FreeBSD ([#628](https://github.com/voxpupuli/puppetboard/pull/628))
 * Add support for Python 3.10 ([#637](https://github.com/voxpupuli/puppetboard/pull/637))
 
-Thanks to [@sebastianrakel](https://github.com/sebastianrakel) for his contributions!
+Thanks to [@smortex](https://github.com/smortex) and [@sebastianrakel](https://github.com/sebastianrakel) for their contributions!
 
 3.1.0
 -----
