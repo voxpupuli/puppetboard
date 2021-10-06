@@ -173,11 +173,6 @@ def test_index_all(client, mocker,
     assert vals[0].string == '63'
     assert vals[1].string == '         6'
 
-    vals2 = soup.find_all('h1',
-                          {"class": "ui header population no-margin-bottom"})
-    assert len(vals2) == 1
-    assert '10' in vals2[0].string
-
     assert rv.status_code == 200
 
 
@@ -227,11 +222,6 @@ def test_index_all_puppetdb_v4(client, mocker,
     assert vals[0].string == '63'
     assert vals[1].string == '         6'
 
-    vals2 = soup.find_all('h1',
-                          {"class": "ui header population no-margin-bottom"})
-    assert len(vals2) == 1
-    assert '10' in vals2[0].string
-
     assert rv.status_code == 200
 
 
@@ -280,11 +270,6 @@ def test_index_all_puppetdb_v3(client, mocker,
     assert len(vals) == 2
     assert vals[0].string == '60'
     assert vals[1].string == '         6'
-
-    vals2 = soup.find_all('h1',
-                          {"class": "ui header population no-margin-bottom"})
-    assert len(vals2) == 1
-    assert '10' in vals2[0].string
 
     assert rv.status_code == 200
 
