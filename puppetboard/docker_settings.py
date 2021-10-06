@@ -37,8 +37,7 @@ ENABLE_QUERY = os.getenv('ENABLE_QUERY', 'True')
 # Uncomment to restrict the enabled PuppetDB endpoints in the query page.
 # ENABLED_QUERY_ENDPOINTS = ['facts', 'nodes']
 
-LOCALISE_TIMESTAMP = bool(os.getenv('LOCALISE_TIMESTAMP',
-                                    'True').upper() == 'TRUE')
+LOCALISE_TIMESTAMP = coerce_bool(os.getenv('LOCALISE_TIMESTAMP'), True)
 LOGLEVEL = os.getenv('LOGLEVEL', 'info')
 NORMAL_TABLE_COUNT = int(os.getenv('REPORTS_COUNT', '100'))
 LITTLE_TABLE_COUNT = int(os.getenv('LITTLE_TABLE_COUNT', '10'))
@@ -54,8 +53,8 @@ DISP_METR_DEF = ','.join(['resources.total', 'events.failure',
 DISPLAYED_METRICS = [x.strip() for x in os.getenv('DISPLAYED_METRICS',
                                                   DISP_METR_DEF).split(',')]
 
-OFFLINE_MODE = bool(os.getenv('OFFLINE_MODE', 'False').upper() == 'TRUE')
-ENABLE_CATALOG = bool(os.getenv('ENABLE_CATALOG', 'False').upper() == 'TRUE')
+OFFLINE_MODE = coerce_bool(os.getenv('OFFLINE_MODE'), False)
+ENABLE_CATALOG = coerce_bool(os.getenv('ENABLE_CATALOG'), False)
 OVERVIEW_FILTER = os.getenv('OVERVIEW_FILTER', None)
 PAGE_TITLE = os.getenv('PAGE_TITLE', 'Puppetboard')
 
@@ -71,7 +70,7 @@ GRAPH_FACTS = [x.strip() for x in os.getenv('GRAPH_FACTS',
 GRAPH_TYPE = os.getenv('GRAPH_TYPE', 'pie')
 
 # Tuples are hard to express as an environment variable, so here
-# the tupple can be listed as a list of items
+# the tuple can be listed as a list of items
 # export INVENTORY_FACTS="Hostname, fqdn, IP Address, ipaddress,.. etc"
 # Define default array of of strings, this code is a bit neater than having
 # a large string
@@ -92,8 +91,7 @@ INVENTORY_FACTS = [(INV_STR[i].strip(),
 
 REFRESH_RATE = int(os.getenv('REFRESH_RATE', '30'))
 
-DAILY_REPORTS_CHART_ENABLED = bool(os.getenv('DAILY_REPORTS_CHART_ENABLED',
-                                             'True').upper() == 'TRUE')
+DAILY_REPORTS_CHART_ENABLED = coerce_bool(os.getenv('DAILY_REPORTS_CHART_ENABLED'), True)
 DAILY_REPORTS_CHART_DAYS = int(os.getenv('DAILY_REPORTS_CHART_DAYS', '8'))
 
 WITH_EVENT_NUMBERS = coerce_bool(os.getenv('WITH_EVENT_NUMBERS'), True)
