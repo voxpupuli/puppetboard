@@ -8,12 +8,8 @@ from jinja2.utils import contextfunction
 from pypuppetdb.errors import EmptyResponseError
 from requests.exceptions import ConnectionError, HTTPError
 
-from puppetboard.app import app
 
-numeric_level = getattr(logging, app.config['LOGLEVEL'].upper(), None)
-logging.basicConfig(level=numeric_level)
 log = logging.getLogger(__name__)
-
 
 
 @contextfunction
