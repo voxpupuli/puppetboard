@@ -6,7 +6,7 @@ This is the changelog for Puppetboard.
 Development
 -----------
 
-3.2.0 (unreleased)
+3.2.0
 -----
 
 * Add from/till filter for reports (issue [#625](https://github.com/voxpupuli/puppetboard/issues/625), PR [#625](https://github.com/voxpupuli/puppetboard/pull/638))
