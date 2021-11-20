@@ -4,7 +4,6 @@ from __future__ import unicode_literals
 from urllib.parse import unquote, unquote_plus, quote_plus
 from datetime import datetime, timedelta
 from itertools import tee
-from distutils.util import strtobool
 from flask import (
     render_template, abort, url_for,
     Response, stream_with_context, request, session, jsonify
@@ -21,7 +20,7 @@ from pypuppetdb.QueryBuilder import (ExtractOperator, AndOperator,
 
 from puppetboard.forms import ENABLED_QUERY_ENDPOINTS, QueryForm
 from puppetboard.utils import (get_or_abort, yield_or_stop,
-                               get_db_version, is_bool)
+                               get_db_version, parse_python)
 from puppetboard.dailychart import get_daily_reports_chart
 
 import commonmark
@@ -748,30 +747,22 @@ def fact_ajax(env, node, fact, value):
     check_env(env, envs)
 
     render_graph = False
-    if fact in graph_facts and not value and not node:
+    if fact in graph_facts and value is None and node is None:
         render_graph = True
 
     query = AndOperator()
-    if node:
+    if node is not None:
         query.add(EqualsOperator("certname", node))
 
     if env != '*':
         query.add(EqualsOperator("environment", env))
 
-    if len(query.operations) == 0:
-        query = None
-
-    # Generator needs to be converted (graph / total)
-    try:
-        value = int(value)
-    except ValueError:
-        if value is not None and query is not None:
-            if is_bool(value):
-                query.add(EqualsOperator('value', bool(strtobool(value))))
-            else:
-                query.add(EqualsOperator('value', unquote_plus(value)))
-    except TypeError:
-        pass
+    if value is not None:
+        value = unquote_plus(value)
+        # interpret the value as a proper type...
+        value = parse_python(value)
+        # ...to know if it should be quoted or not in the result query
+        query.add(EqualsOperator('value', value))
 
     facts = [f for f in get_or_abort(
         puppetdb.facts,
@@ -789,20 +780,21 @@ def fact_ajax(env, node, fact, value):
 
     for fact_h in facts:
         line = []
-        if not fact:
+        if fact is None:
             line.append(fact_h.name)
-        if not node:
+        if node is None:
             line.append('<a href="{0}">{1}</a>'.format(
                 url_for('node', env=env, node_name=fact_h.node),
                 fact_h.node))
-        if not value:
-            fact_value = fact_h.value
-            if isinstance(fact_value, str):
-                fact_value = quote_plus(fact_h.value)
+        if value is None:
+            if isinstance(fact_h.value, str):
+                value_for_url = quote_plus(fact_h.value)
+            else:
+                value_for_url = fact_h.value
 
             line.append('<a href="{0}">{1}</a>'.format(
                 url_for(
-                    'fact', env=env, fact=fact_h.name, value=fact_value),
+                    'fact', env=env, fact=fact_h.name, value=value_for_url),
                 fact_h.value))
 
         json['data'].append(line)
