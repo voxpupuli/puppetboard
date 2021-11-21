@@ -1,8 +1,9 @@
-from puppetboard import app, forms
+from puppetboard import app
+from puppetboard.views.query import QueryForm
 
 
 def test_form_valid(capsys):
-    for form in [forms.QueryForm]:
+    for form in [QueryForm]:
         with app.app.test_request_context():
             qf = form()
             out, err = capsys.readouterr()

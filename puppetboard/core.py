@@ -1,10 +1,64 @@
-import logging
-
 from flask import Flask
 from pypuppetdb import connect
+import json
+import logging
+import os.path
 
-from puppetboard.utils import (get_or_abort, jsonprint, prettyprint,
-                               url_for_field, url_static_offline)
+from flask import request, url_for
+from jinja2.utils import contextfunction
+
+
+@contextfunction
+def url_static_offline(context, value):
+    request_parts = os.path.split(os.path.dirname(context.name))
+    static_path = '/'.join(request_parts[1:])
+
+    return url_for('static', filename="%s/%s" % (static_path, value))
+
+
+def url_for_field(field, value):
+    args = request.view_args.copy()
+    args.update(request.args.copy())
+    args[field] = value
+    return url_for(request.endpoint, **args)
+
+
+def jsonprint(value):
+    return json.dumps(value, indent=2, separators=(',', ': '))
+
+
+def formatvalue(value):
+    if isinstance(value, str):
+        return value
+    elif isinstance(value, list):
+        return ", ".join(map(formatvalue, value))
+    elif isinstance(value, dict):
+        ret = ""
+        for k in value:
+            ret += k + " => " + formatvalue(value[k]) + ",<br/>"
+        return ret
+    else:
+        return str(value)
+
+
+def prettyprint(value):
+    html = '<table class="ui basic fixed sortable table"><thead><tr>'
+
+    # Get keys
+    for k in value[0]:
+        html += "<th>" + k + "</th>"
+
+    html += "</tr></thead><tbody>"
+
+    for e in value:
+        html += "<tr>"
+        for k in e:
+            html += "<td>" + formatvalue(e[k]) + "</td>"
+        html += "</tr>"
+
+    html += "</tbody></table>"
+    return html
+
 
 APP = None
 PUPPETDB = None
@@ -47,14 +101,3 @@ def get_puppetdb():
         PUPPETDB = puppetdb
 
     return PUPPETDB
-
-
-def environments():
-    puppetdb = get_puppetdb()
-    envs = get_or_abort(puppetdb.environments)
-    x = []
-
-    for env in envs:
-        x.append(env['name'])
-
-    return x

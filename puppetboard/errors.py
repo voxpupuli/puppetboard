@@ -1,7 +1,8 @@
 from flask import render_template
 from werkzeug.exceptions import InternalServerError
 
-from puppetboard.core import environments, get_app
+from puppetboard.core import get_app
+from puppetboard.utils import environments
 
 app = get_app()
 

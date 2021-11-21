@@ -1,12 +1,35 @@
 from datetime import datetime, timedelta
 
+from flask import jsonify, request
 from pypuppetdb.QueryBuilder import (AndOperator, EqualsOperator,
                                      ExtractOperator, FunctionOperator,
                                      GreaterEqualOperator, LessOperator)
 from pypuppetdb.utils import UTC
 
+from puppetboard.app import app, puppetdb
+from puppetboard.utils import get_or_abort
+
 DATE_FORMAT = "%Y-%m-%d"
 DATETIME_FORMAT = "%Y-%m-%dT%H:%M:%S.%fZ"
+
+
+@app.route('/daily_reports_chart.json', defaults={'env': app.config['DEFAULT_ENVIRONMENT']})
+@app.route('/<env>/daily_reports_chart.json')
+def daily_reports_chart(env):
+    """Return JSON data to generate a bar chart of daily runs.
+
+    If certname is passed as GET argument, the data will target that
+    node only.
+    """
+    certname = request.args.get('certname')
+    result = get_or_abort(
+        get_daily_reports_chart,
+        db=puppetdb,
+        env=env,
+        days_number=app.config['DAILY_REPORTS_CHART_DAYS'],
+        certname=certname,
+    )
+    return jsonify(result=result)
 
 
 def _iter_dates(days_number, reverse=False):

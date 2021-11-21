@@ -1,30 +1,17 @@
 import ast
 import json
 import logging
-import os.path
 
-from flask import abort, request, url_for
-from jinja2.utils import contextfunction
+from flask import abort
 from pypuppetdb.errors import EmptyResponseError
 from requests.exceptions import ConnectionError, HTTPError
 
+from puppetboard.app import app
+from puppetboard.core import get_puppetdb
 
+numeric_level = getattr(logging, app.config['LOGLEVEL'].upper(), None)
+logging.basicConfig(level=numeric_level)
 log = logging.getLogger(__name__)
-
-
-@contextfunction
-def url_static_offline(context, value):
-    request_parts = os.path.split(os.path.dirname(context.name))
-    static_path = '/'.join(request_parts[1:])
-
-    return url_for('static', filename="%s/%s" % (static_path, value))
-
-
-def url_for_field(field, value):
-    args = request.view_args.copy()
-    args.update(request.args.copy())
-    args[field] = value
-    return url_for(request.endpoint, **args)
 
 
 def jsonprint(value):
@@ -135,3 +122,14 @@ def yield_or_stop(generator):
             yield next(generator)
         except (EmptyResponseError, ConnectionError, HTTPError, StopIteration):
             return
+
+
+def environments():
+    puppetdb = get_puppetdb()
+    envs = get_or_abort(puppetdb.environments)
+    x = []
+
+    for env in envs:
+        x.append(env['name'])
+
+    return x
