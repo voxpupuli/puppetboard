@@ -61,52 +61,34 @@
     // Default sort
     "order": [[ 0, "desc" ]],
     {% endif -%}
-   // Rendering - add rendering options for columns
+    // Rendering - add rendering options for columns
     "columnDefs": [
     {% if table_html_id == 'facts_table' -%}
-    { "width": "65%", "targets": -1 },
-    {% endif -%}
-    {
-      "targets": -1,
+    { "targets": "fact_value",
+      "width": "65%",
       "data:": null,
       "render": function (data, type, full, meta) {
         data = JSON.parse(data)
 
         url = data[0]
-        json_to_show = data[1]
+        to_show = pretty_print(data[1])
 
-        if (Object.prototype.toString.call(json_to_show) === "[object String]") {
-            // Print plain string as-is to avoid making it surrounded with ""
-            json_to_show = '<span class="string">' + json_to_show + '</span>';
-        } else {
-            // Pretty-print of JSON, with syntax highlight
-            // Based on https://stackoverflow.com/a/7220510/2693875
-
-            json_to_show = JSON.stringify(json_to_show, null, 4); // spacing level = 4
-            json_to_show = json_to_show.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
-            json_to_show = json_to_show.replace(/("(\\u[a-zA-Z0-9]{4}|\\[^u]|[^\\"])*"(\s*:)?|\b(true|false|null)\b|-?\d+(?:\.\d*)?(?:[eE][+\-]?\d+)?)/g, function (match) {
-                var cls = 'number';
-                if (/^"/.test(match)) {
-                    if (/:$/.test(match)) {
-                        cls = 'key';
-                    } else {
-                        cls = 'string';
-                    }
-                } else if (/true|false/.test(match)) {
-                    cls = 'boolean';
-                } else if (/null/.test(match)) {
-                    cls = 'null';
-                }
-                return '<span class="' + cls + '">' + String(match) + '</span>';
-            });
-
-            // Add pre tag for indentation to be visible
-            json_to_show = '<pre>' + json_to_show + '</pre>'
-        }
-
-        return '<a href="' + url + '">' + json_to_show + '</a>'
+        return '<a href="' + url + '">' + to_show + '</a>'
       }
-    }],
+    },
+    {% else -%}
+    {
+      "targets": -1,
+      "data:": null,
+      "render": function (data, type, full, meta) {
+        shorta = data.toString().replace(/[{},]/g, "<br />");
+        shortb = shorta.replace(/u'/g, " ");
+        shortc = shortb.replace(/'/g, " ");
+        return shortc;
+      }
+    },
+    {% endif %}
+    ],
     // Custom options
     {% if extra_options %}{% call extra_options() %}Callback to parent defined options{% endcall %}{% endif %}
   });

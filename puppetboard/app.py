@@ -701,15 +701,17 @@ def fact(env, fact, value):
     if fact in graph_facts and not value:
         render_graph = True
 
-    value_safe = value
+    value_json = value
     if value is not None:
-        value_safe = unquote_plus(value)
+        value_json = parse_python(value_json)
+        if type(value_json) is not str:
+            value_json = dumps(value_json)
 
     return render_template(
         'fact.html',
         fact=fact,
         value=value,
-        value_safe=value_safe,
+        value_json=value_json,
         render_graph=render_graph,
         envs=envs,
         current_env=env)
@@ -759,10 +761,10 @@ def fact_ajax(env, node, fact, value):
         query.add(EqualsOperator("environment", env))
 
     if value is not None:
-        value = unquote_plus(value)
         # interpret the value as a proper type...
         value = parse_python(value)
-        # ...to know if it should be quoted or not in the result query
+        # ...to know if it should be quoted or not in the query to PuppetDB
+        # (f.e. a string should, while a number should not)
         query.add(EqualsOperator('value', value))
 
     facts = [f for f in get_or_abort(
@@ -784,14 +786,9 @@ def fact_ajax(env, node, fact, value):
         if fact is None:
             line.append(fact_h.name)
         if node is None:
-            if value is not None:
-                line.append('["{0}", "{1}"]'.format(
-                    url_for('node', env=env, node_name=fact_h.node),
-                    fact_h.node))
-            else:
-                line.append('<a href="{0}">{1}</a>'.format(
-                    url_for('node', env=env, node_name=fact_h.node),
-                    fact_h.node))
+            line.append('<a href="{0}">{1}</a>'.format(
+                url_for('node', env=env, node_name=fact_h.node),
+                fact_h.node))
         if value is None:
             if isinstance(fact_h.value, str):
                 value_for_url = quote_plus(fact_h.value)

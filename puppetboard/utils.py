@@ -64,6 +64,8 @@ def parse_python(value: str):
         return ast.literal_eval(value)
     except ValueError:
         return str(value)
+    except SyntaxError:
+        return str(value)
 
 
 def formatvalue(value):
