@@ -767,6 +767,11 @@ def fact_ajax(env, node, fact, value):
         # (f.e. a string should, while a number should not)
         query.add(EqualsOperator('value', value))
 
+    # if we have not added any operations to the query,
+    # then make it explicitly empty
+    if len(query.operations) == 0:
+        query = None
+
     facts = [f for f in get_or_abort(
         puppetdb.facts,
         name=fact,
