@@ -1,7 +1,7 @@
+import ast
 import json
 import logging
 import os.path
-from distutils.util import strtobool
 
 from flask import abort, request, url_for
 from jinja2.utils import contextfunction
@@ -52,6 +52,18 @@ def get_db_version(puppetdb):
     except EmptyResponseError as e:
         log.error(str(e))
     return ver
+
+
+def parse_python(value: str):
+    """
+    :param value: any string, number, bool, list or a dict
+                  casted to a string (f.e. "{'up': ['eth0'], (...)}")
+    :return: the same value but with a proper type
+    """
+    try:
+        return ast.literal_eval(value)
+    except ValueError:
+        return str(value)
 
 
 def formatvalue(value):
@@ -121,15 +133,3 @@ def yield_or_stop(generator):
             yield next(generator)
         except (EmptyResponseError, ConnectionError, HTTPError, StopIteration):
             return
-
-
-def is_bool(b):
-    try:
-        bool(strtobool(b))
-        return True
-    except ValueError:
-        return False
-    except TypeError:
-        return False
-    except AttributeError:
-        return False

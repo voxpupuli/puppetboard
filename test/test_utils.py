@@ -228,30 +228,3 @@ def test_stop_http_error():
     gen = utils.yield_or_stop(my_generator())
     for val in gen:
         assert 1 == val
-
-
-def test_is_bool_false():
-    test_values = [
-        "Test",
-        "SomeWrongData",
-        2,
-        2.0,
-        -5
-    ]
-
-    for test_value in test_values:
-        assert utils.is_bool(test_value) is False
-
-
-def test_is_bool_true():
-    test_values = [
-        "True",
-        "true",
-        "False",
-        "false",
-        "1",
-        "0"
-    ]
-
-    for test_value in test_values:
-        assert utils.is_bool(test_value) is True
