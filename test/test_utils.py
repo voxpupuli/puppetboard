@@ -16,8 +16,32 @@ from puppetboard import utils
 def test_json_format():
     demo = [{'foo': 'bar'}, {'bar': 'foo'}]
     sample = json.dumps(demo, indent=2, separators=(',', ': '))
-
     assert sample == utils.jsonprint(demo), "Json formatting has changed"
+
+
+def test_parse_python_array():
+    python_array = [{'foo': 'bar'}, {'bar': 'foo'}]
+    python_array_as_string = str(python_array)
+    assert python_array == utils.parse_python(python_array_as_string)
+
+
+def test_parse_python_not_really_array():
+    # the downside of simplifying showing plain strings without quotes is that it's hard
+    # to distinguish things that LOOK LIKE non-string but in fact are strings.
+    python_not_really_array = '"["foo", "bar"]"'
+    python_not_really_array_as_string = '"["foo", "bar"]"'
+    assert python_not_really_array == utils.parse_python(python_not_really_array_as_string)
+
+
+def test_parse_python_dict():
+    python_dict = {'foo': 'bar'}
+    python_dict_as_string = str(python_dict)
+    assert python_dict == utils.parse_python(python_dict_as_string)
+
+
+def test_parse_python_string():
+    a_string = "foobar"
+    assert a_string == utils.parse_python(a_string)
 
 
 def test_format_val_str():
@@ -228,30 +252,3 @@ def test_stop_http_error():
     gen = utils.yield_or_stop(my_generator())
     for val in gen:
         assert 1 == val
-
-
-def test_is_bool_false():
-    test_values = [
-        "Test",
-        "SomeWrongData",
-        2,
-        2.0,
-        -5
-    ]
-
-    for test_value in test_values:
-        assert utils.is_bool(test_value) is False
-
-
-def test_is_bool_true():
-    test_values = [
-        "True",
-        "true",
-        "False",
-        "false",
-        "1",
-        "0"
-    ]
-
-    for test_value in test_values:
-        assert utils.is_bool(test_value) is True
