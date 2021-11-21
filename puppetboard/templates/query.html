@@ -21,7 +21,7 @@
         API Endpoint: {{ form.endpoints() }}
       </div>
       <div class="field">
-        {{ form.rawjson(active=True) }} Raw JSON
+        {{ form.rawjson(active=True) }} Raw (but pretty and colored) JSON
       </div>
       <input type=submit class="ui submit button" value='Submit'>
       <input type=reset class="ui red submit button" value='Cancel'>
@@ -34,7 +34,14 @@
   <div class="span12">
     <h2>Result</h2>
       {% if form.rawjson.data %}
-      <pre><code>{{ result|jsonprint }}</code></pre>
+      <span id="result"></span>
+      <script>
+          try {
+              $("#result").html(pretty_print(JSON.parse('{{ result | tojson }}')));
+          } catch (e) {
+              $("#result").html(pretty_print({{ result | tojson }}));
+          }
+      </script>
       {% else %}
       {% autoescape false %}
       {{ result|prettyprint}}

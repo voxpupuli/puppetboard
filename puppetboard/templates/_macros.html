@@ -61,17 +61,35 @@
     // Default sort
     "order": [[ 0, "desc" ]],
     {% endif -%}
-   // Rendering - add rendering options for columns
-    "columnDefs": [ {
+    // Rendering - add rendering options for columns
+    "columnDefs": [
+    {% if table_html_id == 'facts_table' -%}
+    { "targets": "fact_value",
+      "width": "65%",
+      "data:": null,
+      "render": function (data, type, full, meta) {
+        data = JSON.parse(data)
+
+        url = data[0]
+        to_show = pretty_print(data[1])
+
+        return '<a href="' + url + '">' + to_show + '</a>'
+      }
+    },
+    {% else -%}
+    {
       "targets": -1,
       "data:": null,
       "render": function (data, type, full, meta) {
-       shorta = data.toString().replace(/[{},]/g, "<br />");
-       shortb = shorta.replace(/u'/g, " "); 
-       shortc = shortb.replace(/'/g, " "); 
-       return shortc;
-       }}],
-      // Custom options
+        shorta = data.toString().replace(/[{},]/g, "<br />");
+        shortb = shorta.replace(/u'/g, " ");
+        shortc = shortb.replace(/'/g, " ");
+        return shortc;
+      }
+    },
+    {% endif %}
+    ],
+    // Custom options
     {% if extra_options %}{% call extra_options() %}Callback to parent defined options{% endcall %}{% endif %}
   });
 

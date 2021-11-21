@@ -823,6 +823,43 @@ def test_fact_value_view(client, mocker,
     assert len(vals) == 0
 
 
+def test_fact_value_view_complex(client, mocker,
+                                 mock_puppetdb_environments,
+                                 mock_puppetdb_default_nodes):
+    values = {
+        'trusted': {
+            'domain': '',
+            'cername': 'node-changed',
+            'hostname': 'node-changed',
+            'extensions': {},
+            'authenticated': 'remote',
+        }
+    }
+    query_data = {'facts': []}
+    query_data['facts'].append({
+        'certname': 'node-changed',
+        'name': 'trusted',
+        'value': values,
+        'environment': 'production'
+    })
+
+    dbquery = MockDbQuery(query_data)
+
+    mocker.patch.object(app.puppetdb, '_query', side_effect=dbquery.get)
+
+    rv = client.get('/fact/trusted/'
+                    + "{'domain': ''%2C 'certname': 'node-changed'%2C"
+                      " 'hostname': 'node-changed'%2C "
+                      "'extensions': {}%2C 'authenticated': 'remote'}")
+    assert rv.status_code == 200
+
+    soup = BeautifulSoup(rv.data, 'html.parser')
+    assert soup.title.contents[0] == 'Puppetboard'
+
+    vals = soup.find_all('table', {"id": "facts_table"})
+    assert len(vals) == 1
+
+
 def test_node_view(client, mocker,
                    mock_puppetdb_environments,
                    mock_puppetdb_default_nodes):
