@@ -12,6 +12,7 @@ from flask import (
 
 import logging
 import json
+from json import dumps
 
 from pypuppetdb.QueryBuilder import (ExtractOperator, AndOperator,
                                      EqualsOperator, FunctionOperator,
@@ -792,18 +793,23 @@ def fact_ajax(env, node, fact, value):
         if not fact:
             line.append(fact_h.name)
         if not node:
-            line.append('<a href="{0}">{1}</a>'.format(
-                url_for('node', env=env, node_name=fact_h.node),
-                fact_h.node))
+            if value:
+                line.append('["{0}", "{1}"]'.format(
+                    url_for('node', env=env, node_name=fact_h.node),
+                    fact_h.node))
+            else:
+                line.append('<a href="{0}">{1}</a>'.format(
+                    url_for('node', env=env, node_name=fact_h.node),
+                    fact_h.node))
         if not value:
             fact_value = fact_h.value
             if isinstance(fact_value, str):
                 fact_value = quote_plus(fact_h.value)
 
-            line.append('<a href="{0}">{1}</a>'.format(
+            line.append('["{0}", {1}]'.format(
                 url_for(
                     'fact', env=env, fact=fact_h.name, value=fact_value),
-                fact_h.value))
+                dumps(fact_h.value)))
 
         json['data'].append(line)
 
