@@ -6,6 +6,14 @@ This is the changelog for Puppetboard.
 Development
 -----------
 
+3.3.0
+-----
+
+* **Show structured facts as pretty-formatted, syntax-highlighted JSON.** Works on Node view and Facts view. Colors meaning are as follows: orange - number, blue - boolean, green - dict's key name. Implements [#83](https://github.com/voxpupuli/puppetboard/issues/83).
+* Fix getting nodes with non-string fact values ([#612](https://github.com/voxpupuli/puppetboard/issues/612)).
+* Fix missing trailing 'u' character in facts with hashes ([#567](https://github.com/voxpupuli/puppetboard/issues/567)).
+* Add favicon ([#650](https://github.com/voxpupuli/puppetboard/pull/650))
+
 3.2.0
 -----
 
