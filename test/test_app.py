@@ -671,6 +671,10 @@ def test_catalogs_view(client, mocker,
                        mock_puppetdb_environments,
                        mock_puppetdb_default_nodes):
     app.app.config['ENABLE_CATALOG'] = True
+
+    # below code checks last_total, which should be set after _query
+    # so we need to simulate that. the value doesn't matter.
+    app.puppetdb.last_total = 0
     rv = client.get('/catalogs')
     assert rv.status_code == 200
     soup = BeautifulSoup(rv.data, 'html.parser')
@@ -681,6 +685,10 @@ def test_catalogs_json(client, mocker,
                        mock_puppetdb_environments,
                        mock_puppetdb_default_nodes):
     app.app.config['ENABLE_CATALOG'] = True
+
+    # below code checks last_total, which should be set after _query
+    # so we need to simulate that. the value doesn't matter.
+    app.puppetdb.last_total = 0
     rv = client.get('/catalogs/json')
     assert rv.status_code == 200
 
