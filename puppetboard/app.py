@@ -1,7 +1,7 @@
 from __future__ import absolute_import
 from __future__ import unicode_literals
 
-from urllib.parse import unquote, unquote_plus, quote_plus
+from urllib.parse import unquote, quote_plus
 from datetime import datetime, timedelta
 from itertools import tee
 from flask import (
