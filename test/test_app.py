@@ -671,6 +671,10 @@ def test_catalogs_view(client, mocker,
                        mock_puppetdb_environments,
                        mock_puppetdb_default_nodes):
     app.app.config['ENABLE_CATALOG'] = True
+
+    # below code checks last_total, which should be set after _query
+    # so we need to simulate that. the value doesn't matter.
+    app.puppetdb.last_total = 0
     rv = client.get('/catalogs')
     assert rv.status_code == 200
     soup = BeautifulSoup(rv.data, 'html.parser')
@@ -681,6 +685,10 @@ def test_catalogs_json(client, mocker,
                        mock_puppetdb_environments,
                        mock_puppetdb_default_nodes):
     app.app.config['ENABLE_CATALOG'] = True
+
+    # below code checks last_total, which should be set after _query
+    # so we need to simulate that. the value doesn't matter.
+    app.puppetdb.last_total = 0
     rv = client.get('/catalogs/json')
     assert rv.status_code == 200
 
@@ -708,6 +716,10 @@ def test_catalogs_json_compare(client, mocker,
                                mock_puppetdb_environments,
                                mock_puppetdb_default_nodes):
     app.app.config['ENABLE_CATALOG'] = True
+
+    # below code checks last_total, which should be set after _query
+    # so we need to simulate that. the value doesn't matter.
+    app.puppetdb.last_total = 0
     rv = client.get('/catalogs/compare/node-unreported/json')
     assert rv.status_code == 200
 
@@ -1178,11 +1190,12 @@ def test_metric_v1_api(client, mocker,
     assert rv.status_code == 200
 
 
-# Running this test at the end because it changes the global state of the app
-# throwing off other tests if this one fails
 def test_custom_title(client, mocker,
                       mock_puppetdb_environments,
                       mock_puppetdb_default_nodes):
+
+    default_title = app.app.config['PAGE_TITLE']
+
     custom_title = 'Dev - Puppetboard'
     app.app.config['PAGE_TITLE'] = custom_title
 
@@ -1197,3 +1210,6 @@ def test_custom_title(client, mocker,
     rv = client.get('/')
     soup = BeautifulSoup(rv.data, 'html.parser')
     assert soup.title.contents[0] == custom_title
+
+    # restore the global state
+    app.app.config['PAGE_TITLE'] = default_title
