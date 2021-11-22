@@ -569,7 +569,7 @@ def test_radiator_view_bad_env(client, mocker,
 
     assert rv.status_code == 404
     soup = BeautifulSoup(rv.data, 'html.parser')
-    assert soup.title.contents[0] == '404 Not Found'
+    assert soup.title.contents[0] == 'Puppetboard'
     assert soup.h1.text == 'Not Found'
 
 
