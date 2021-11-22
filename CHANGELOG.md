@@ -6,6 +6,12 @@ This is the changelog for Puppetboard.
 Development
 -----------
 
+3.3.0
+-----
+
+* Show complex facts as pretty-formatter, syntax highlighted JSON. Works on Node view and Facts view. Colors meaning are as follows: orange - number, blue - boolean, green - dict's key name. Implements [#83](https://github.com/voxpupuli/puppetboard/issues/83).
+* Fix getting nodes with non-string fact values. Fixes [#612](https://github.com/voxpupuli/puppetboard/issues/612).
+
 3.2.0
 -----
 
