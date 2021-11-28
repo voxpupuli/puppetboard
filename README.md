@@ -200,7 +200,7 @@ pytest --cov=. --cov-report=xml --flake8 --strict-markers --mypy puppetboard tes
 You can run the app it in development mode by simply executing:
 
 ```bash
-python dev.py
+./dev.py
 ```
 
 Use `PUPPETBOARD_SETTINGS` to change the different settings or patch `default_settings.py` directly.
