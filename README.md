@@ -68,6 +68,7 @@ docker build -t puppetboard .
 Actively maintained packages:
 
 * [FreeBSD](https://www.freshports.org/www/py-puppetboard/)
+  maintained by [Romain Tartière](https://github.com/smortex)
 * [OpenBSD](https://cvsweb.openbsd.org/cgi-bin/cvsweb/ports/www/puppetboard/)
   maintained by [Sebastian Reitenbach](https://github.com/buzzdeee)
 
@@ -173,8 +174,6 @@ Other settings that might be interesting in no particular order:
 
 For questions or bug reports you can file an [issue](https://github.com/voxpupuli/puppetboard/issues).
 
-(Previously mentioned here methods of contacting the app maintainers are not used as of now anymore, sorry.)
-
 ## Contributing
 
 ### Development
@@ -257,5 +256,3 @@ Older ones, may be a bit outdated:
 ![Single metric](https://raw.githubusercontent.com/voxpupuli/puppetboard/master/screenshots/metric.png)
 
 ![Query view](https://raw.githubusercontent.com/voxpupuli/puppetboard/master/screenshots/query.png)
-
-![Error page](https://raw.githubusercontent.com/voxpupuli/puppetboard/master/screenshots/broken.png)
