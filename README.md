@@ -13,7 +13,7 @@ for the open source Puppet.
 
 ![View of a node](https://raw.githubusercontent.com/voxpupuli/puppetboard/master/screenshots/overview.png)
 
-(See [more screenshots here](#more-screenshots).)
+See [more screenshots here](#more-screenshots).
 
 ## Table of Contents
 
@@ -234,11 +234,7 @@ by Tim Pope](https://tbaggery.com/2008/04/19/a-note-about-git-commit-messages.ht
 
 ## More Screenshots
 
-Up to date ones:
-
 ![Overview / Index / Homepage](https://raw.githubusercontent.com/voxpupuli/puppetboard/master/screenshots/overview.png)
-
-Older ones, may be a bit outdated:
 
 ![Nodes view, all active nodes](https://raw.githubusercontent.com/voxpupuli/puppetboard/master/screenshots/nodes.png)
 
@@ -252,11 +248,11 @@ Older ones, may be a bit outdated:
 
 ![All nodes that have this fact with that value](https://raw.githubusercontent.com/voxpupuli/puppetboard/master/screenshots/fact_value.png)
 
+![Query view](https://raw.githubusercontent.com/voxpupuli/puppetboard/master/screenshots/query.png)
+
 ![Metrics view](https://raw.githubusercontent.com/voxpupuli/puppetboard/master/screenshots/metrics.png)
 
 ![Single metric](https://raw.githubusercontent.com/voxpupuli/puppetboard/master/screenshots/metric.png)
-
-![Query view](https://raw.githubusercontent.com/voxpupuli/puppetboard/master/screenshots/query.png)
 
 # Legal
 
