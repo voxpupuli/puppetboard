@@ -22,6 +22,7 @@ for the open source Puppet.
 * [Configuration](#configuration)
 * [Getting Help](#getting-help)
 * [Contributing](#contributing)
+* [Legal](#legal)
 
 ## Requirements
 
@@ -256,3 +257,11 @@ Older ones, may be a bit outdated:
 ![Single metric](https://raw.githubusercontent.com/voxpupuli/puppetboard/master/screenshots/metric.png)
 
 ![Query view](https://raw.githubusercontent.com/voxpupuli/puppetboard/master/screenshots/query.png)
+
+# Legal
+
+The app code is licensed under the [Apache License, Version 2.0](./LICENSE).
+
+The favicon has been created based on the icon created by [Jonathan Coutiño](https://thenounproject.com/ralts01/)
+under the [Attribution 3.0 Unported (CC BY 3.0) license](https://creativecommons.org/licenses/by/3.0/),
+downloaded from the [Noun Project](https://thenounproject.com).
