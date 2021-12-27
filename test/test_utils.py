@@ -82,6 +82,18 @@ def test_pretty_print():
     assert soup.th.text == 'hello'
 
 
+def test_pretty_print_href():
+    test_data = [{'certname': 'host.example.com'}]
+
+    _app = app.app.test_request_context()
+    _app.push()
+
+    html = utils.prettyprint(test_data)
+    soup = BeautifulSoup(html, 'html.parser')
+
+    assert soup.a['href'] == '/node/host.example.com'
+
+
 @pytest.fixture
 def mock_log(mocker):
     return mocker.patch('logging.log')
