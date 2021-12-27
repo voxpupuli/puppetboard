@@ -94,7 +94,12 @@ def prettyprint(value):
     for e in value:
         html += "<tr>"
         for k in e:
-            html += "<td>" + formatvalue(e[k]) + "</td>"
+            if k == "certname":
+                html += "<td> <a href = '" + \
+                        url_for("node", node_name=formatvalue(e[k])) + "' >" + \
+                        formatvalue(e[k]) + "</a></td> "
+            else:
+                html += "<td>" + formatvalue(e[k]) + "</td>"
         html += "</tr>"
 
     html += "</tbody></table>"
