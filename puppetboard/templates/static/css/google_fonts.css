@@ -22,3 +22,8 @@
   font-weight: 700;
   src: local('Lato Bold Italic'), local('Lato-BoldItalic'), url({{ url_for('static', filename='fonts/lato-italic-700.ttf') }}) format('truetype');
 }
+@font-face {
+  font-family: 'Cousine';
+  font-style: normal;
+  src: local('Cousine Regular'), local('Cousine-Regular'), url({{ url_for('static', filename='fonts/Cousine-Regular.ttf') }}) format('truetype');
+}

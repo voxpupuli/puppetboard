@@ -1,33 +1,30 @@
 from __future__ import absolute_import
 from __future__ import unicode_literals
 
-from urllib.parse import unquote, quote_plus
+import json
+import logging
 from datetime import datetime, timedelta
 from itertools import tee
+from json import dumps
+from urllib.parse import unquote, quote_plus
+
+import commonmark
 from flask import (
     render_template, abort, url_for,
     Response, stream_with_context, request, session, jsonify
 )
-
-import logging
-import json
-from json import dumps
-
 from pypuppetdb.QueryBuilder import (ExtractOperator, AndOperator,
                                      EqualsOperator, FunctionOperator,
                                      NullOperator, OrOperator,
                                      LessEqualOperator, RegexOperator,
                                      GreaterEqualOperator)
-
-from puppetboard.forms import ENABLED_QUERY_ENDPOINTS, QueryForm
-from puppetboard.utils import (get_or_abort, yield_or_stop,
-                               get_db_version, parse_python)
-from puppetboard.dailychart import get_daily_reports_chart
-
-import commonmark
+from requests.exceptions import HTTPError
 
 from puppetboard.core import get_app, get_puppetdb, environments
-
+from puppetboard.dailychart import get_daily_reports_chart
+from puppetboard.forms import ENABLED_QUERY_ENDPOINTS, QueryForm
+from puppetboard.utils import (get_or_abort, get_or_abort_except_client_errors, yield_or_stop,
+                               get_db_version, parse_python)
 from puppetboard.version import __version__
 
 REPORTS_COLUMNS = [
@@ -823,22 +820,18 @@ def fact_ajax(env, node, fact, value):
     return jsonify(json)
 
 
-@app.route('/query', methods=('GET', 'POST'),
-           defaults={'env': app.config['DEFAULT_ENVIRONMENT']})
+@app.route('/query', methods=('GET', 'POST'), defaults={'env': app.config['DEFAULT_ENVIRONMENT']})
 @app.route('/<env>/query', methods=('GET', 'POST'))
 def query(env):
-    """Allows to execute raw, user created querries against PuppetDB. This is
-    currently highly experimental and explodes in interesting ways since none
-    of the possible exceptions are being handled just yet. This will return
-    the JSON of the response or a message telling you what whent wrong /
-    why nothing was returned.
+    """Allows to execute raw, user created queries against PuppetDB. This will return
+    the JSON of the response or a message telling you what went wrong why nothing was returned.
 
-    :param env: Serves no purpose for the query data but is required for the
-        select field in the environment block
+    :param env: Serves no purpose for the query data but is required for the select field in
+     the environment block
     :type env: :obj:`string`
     """
     if not app.config['ENABLE_QUERY']:
-        log.warn('Access to query interface disabled by administrator.')
+        log.warning('Access to query interface disabled by administrator.')
         abort(403)
 
     envs = environments()
@@ -846,29 +839,45 @@ def query(env):
 
     form = QueryForm(meta={
         'csrf_secret': app.config['SECRET_KEY'],
-        'csrf_context': session})
+        'csrf_context': session}
+    )
+
     if form.validate_on_submit():
         if form.endpoints.data not in ENABLED_QUERY_ENDPOINTS:
-            log.warn('Access to query endpoint %s disabled by administrator.',
-                     form.endpoints.data)
+            log.warning('Access to query endpoint %s disabled by administrator.',
+                        form.endpoints.data)
             abort(403)
 
-        if form.endpoints.data == 'pql':
-            query = form.query.data
-        elif form.query.data[0] == '[':
-            query = form.query.data
-        else:
-            query = '[{0}]'.format(form.query.data)
+        query = form.query.data.strip()
 
-        result = get_or_abort(
-            puppetdb._query,
-            form.endpoints.data,
-            query=query)
-        return render_template('query.html',
-                               form=form,
-                               result=result,
-                               envs=envs,
-                               current_env=env)
+        # automatically wrap AST queries with [], if needed
+        if form.endpoints.data != 'pql' and not query.startswith('['):
+            query = f"[{query}]"
+
+        try:
+            result = get_or_abort_except_client_errors(
+                puppetdb._query,
+                form.endpoints.data,
+                query=query)
+
+            zero_results = (len(result) == 0)
+            result = result if not zero_results else None
+
+            return render_template('query.html',
+                                   form=form,
+                                   zero_results=zero_results,
+                                   result=result,
+                                   envs=envs,
+                                   current_env=env)
+
+        except HTTPError as e:
+            error_text = e.response.text
+            return render_template('query.html',
+                                   form=form,
+                                   error_text=error_text,
+                                   envs=envs,
+                                   current_env=env)
+
     return render_template('query.html',
                            form=form,
                            envs=envs,

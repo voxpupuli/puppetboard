@@ -33,7 +33,7 @@ function pretty_print(to_show) {
 
         if (is_complex) {
             // Add pre tag for indentation to be visible
-            to_show = '<pre>' + to_show + '</pre>'
+            to_show = '<pre class="json">' + to_show + '</pre>'
         }
 
     }
