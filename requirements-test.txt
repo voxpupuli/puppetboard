@@ -3,7 +3,8 @@ pep8
 coverage
 mock
 pytest<7
-pytest-flake8
+flake8<4
+pytest-flake8<4
 pytest-cov
 pytest-mock
 pytest-mypy
