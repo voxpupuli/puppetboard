@@ -107,16 +107,37 @@ def prettyprint(value):
 
 
 def get_or_abort(func, *args, **kwargs):
+    """Perform a backend request and handle all the errors,
+    """
+    return _do_get_or_abort(False, func, *args, **kwargs)
+
+
+def get_or_abort_except_client_errors(func, *args, **kwargs):
+    """Perform a backend request and handle the errors,
+    but with a chance to react to client errors (HTTP 400-499).
+    """
+    return _do_get_or_abort(True, func, *args, **kwargs)
+
+
+def _do_get_or_abort(reraise_client_error: bool, func, *args, **kwargs):
     """Execute the function with its arguments and handle the possible
     errors that might occur.
 
-    In this case, if we get an exception we simply abort the request.
+    If reraise_client_error is True then if the HTTP response status code
+    indicates that it was a client side error - then re-raise it.
+
+    In all other cases if we get an exception we simply abort the request.
     """
     try:
         return func(*args, **kwargs)
     except HTTPError as e:
-        log.error(str(e))
-        abort(e.response.status_code)
+        if reraise_client_error and 400 <= e.response.status_code <= 499:
+            # it's a client side error, so reraise it to show the user
+            log.warning(str(e))
+            raise
+        else:
+            log.error(str(e))
+            abort(e.response.status_code)
     except ConnectionError as e:
         log.error(str(e))
         abort(500)

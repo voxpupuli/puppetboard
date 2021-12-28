@@ -22,7 +22,7 @@
     <tr>
       <td>{{key}}</td>
       {% if value is mapping %}
-        <td><pre>{{value|jsonprint}}</pre></td>
+        <td><pre class="json">{{value|jsonprint}}</pre></td>
       {% else %}
         <td>{{value}}</td>
       {% endif %}
