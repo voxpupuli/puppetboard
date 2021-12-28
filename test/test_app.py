@@ -169,10 +169,9 @@ def test_index_all(client, mocker,
     vals = soup.find_all('h1',
                          {"class": "ui header darkblue no-margin-bottom"})
 
-    assert len(vals) == 3
-    assert vals[0].string == '10'
-    assert vals[1].string == '63'
-    assert vals[2].string == '         6'
+    assert len(vals) == 2
+    assert vals[0].string == '63'
+    assert vals[1].string == '         6'
 
     assert rv.status_code == 200
 
@@ -219,10 +218,9 @@ def test_index_all_puppetdb_v4(client, mocker,
     vals = soup.find_all('h1',
                          {"class": "ui header darkblue no-margin-bottom"})
 
-    assert len(vals) == 3
-    assert vals[0].string == '10'
-    assert vals[1].string == '63'
-    assert vals[2].string == '         6'
+    assert len(vals) == 2
+    assert vals[0].string == '63'
+    assert vals[1].string == '         6'
 
     assert rv.status_code == 200
 
@@ -269,10 +267,9 @@ def test_index_all_puppetdb_v3(client, mocker,
     vals = soup.find_all('h1',
                          {"class": "ui header darkblue no-margin-bottom"})
 
-    assert len(vals) == 3
-    assert vals[0].string == '10'
-    assert vals[1].string == '60'
-    assert vals[2].string == '         6'
+    assert len(vals) == 2
+    assert vals[0].string == '60'
+    assert vals[1].string == '         6'
 
     assert rv.status_code == 200
 
@@ -298,8 +295,8 @@ def test_index_division_by_zero(client, mocker,
 
     vals = soup.find_all('h1',
                          {"class": "ui header darkblue no-margin-bottom"})
-    assert len(vals) == 3
-    assert vals[2].string == '0'
+    assert len(vals) == 2
+    assert vals[1].string == '0'
 
 
 def test_offline_mode(client, mocker,
@@ -781,7 +778,7 @@ def test_facts_view_empty_when_no_facts(client,
 
     searchable = soup.find('div', {'class': 'searchable'})
     vals = searchable.find_all('div', {'class': 'column'})
-    assert len(vals) == 0
+    assert len(vals) == 1
 
 
 def test_fact_view_with_graph(client, mocker,

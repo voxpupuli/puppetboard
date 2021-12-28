@@ -57,6 +57,10 @@ h1.ui.header.no-margin-bottom {
   background-color: #4572A7;
 }
 
+.ui.header.population {
+  color: #2C3E50;
+}
+
 .ui.header.unreported {
   color: #3D96AE;
 }

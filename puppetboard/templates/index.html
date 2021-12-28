@@ -13,7 +13,7 @@
 <meta http-equiv="refresh" content="{{config.REFRESH_RATE}}">
 {% endif %}
 <div class="ui vertical grid">
-  <div class="four column row">
+  <div class="five column row">
     <div class="column">
       <a href="{{url_for('nodes', env=current_env, status='failed')}}">
         <h1 class="ui failed header no-margin-bottom">
@@ -50,13 +50,24 @@
       </a>
       <span>unreported in the last {{ config.UNRESPONSIVE_HOURS }} hours</span>
     </div>
-  </div>
-  <div class="four column row">
     <div class="column">
+      <h1 class="ui header population no-margin-bottom">
+          {{ metrics['num_nodes'] }}
+          <small>{% if metrics['num_nodes'] == 1 %} node {% else %} nodes {% endif %}</small>
+      </h1>
+      <span>total population</span>
+    </div>
+  </div>
+  {% if config.RESOURCES_STATS_ENABLED %}
+  <div class="five column row">
+    <div class="column">
+
     </div>
     <div class="column">
-      <h1 class="ui header darkblue no-margin-bottom">{{metrics['num_nodes']}}</h1>
-      <span>Population</span>
+
+    </div>
+    <div class="column">
+
     </div>
     <div class="column">
       <h1 class="ui header darkblue no-margin-bottom">{{metrics['num_resources']}}</h1>
@@ -67,11 +78,13 @@
       <span>Avg. resources/node</span>
     </div>
   </div>
+  {% endif %}
   {% if config.DAILY_REPORTS_CHART_ENABLED %}
   <div id="dailyReportsChartContainer" class="one column row">
     <div id="dailyReportsChart"></div>
   </div>
   {% endif %}
+  {% if config.NODES_STATUS_DETAIL_ENABLED %}
   <div class="ui divider"></div>
   <div class="one column row">
     <div class="column">
@@ -125,5 +138,6 @@
       {% endif %}
     </div>
   </div>
+  {% endif %}
 </div>
 {% endblock content %}
