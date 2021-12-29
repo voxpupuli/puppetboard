@@ -17,5 +17,5 @@
 {% macro extra_options(caller) %}
   'serverSide': false,
 {% endmacro %}
-{{ macros.datatable_init(table_html_id="inventory_table", ajax_url=url_for('inventory_ajax', env=current_env), default_length=config.NORMAL_TABLE_COUNT, length_selector=config.TABLE_COUNT_SELECTOR, extra_options=extra_options) }}
+{{ macros.datatable_init(table_html_id="inventory_table", ajax_url=url_for('inventory_ajax', env=current_env), data=None, default_length=config.NORMAL_TABLE_COUNT, length_selector=config.TABLE_COUNT_SELECTOR, extra_options=extra_options) }}
 {% endblock onload_script %}

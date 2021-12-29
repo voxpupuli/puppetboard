@@ -33,11 +33,37 @@
   {% endif %}
 {%- endmacro %}
 
-{% macro datatable_init(table_html_id, ajax_url, default_length, length_selector, extra_options=None) -%}
+{% macro datatable_init(table_html_id, ajax_url, data, default_length, length_selector, extra_options=None) -%}
   // Init datatable
   $.fn.dataTable.ext.errMode = 'throw';
 
+  {% if data %}
+  var data = {{ data }};
+  {% endif %}
+
   var table = $('#{{ table_html_id }}').DataTable({
+    {% if table_html_id == 'query_table' -%}
+    "buttons": [
+      {
+        extend: 'csv',
+        filename: 'Puppetboard_query',
+        text: 'Download as CSV',
+      },
+      {
+        extend: 'excel',
+        filename: 'Puppetboard_query',
+        text: 'Download as XSLX',
+      },
+    ],
+    {% endif %}
+    {% if data -%}
+    // Data provided directly
+    "data": data,
+    "columns": [
+    ],
+    {% else %}
+    // Data loading URL
+    "ajax": "{{ ajax_url }}",
     // Permit flow auto-readjust (responsive)
     "autoWidth": false,
     // Activate "processing" message
@@ -48,8 +74,6 @@
     "responsive": true,
     // Defer rendering out of screen lines (JIT)
     "deferRender": true,
-    // Data loading URL
-    "ajax": "{{ ajax_url }}",
     // Paging options
     "lengthMenu": {{ length_selector }},
     "pageLength": {{ default_length }},
@@ -89,9 +113,14 @@
     },
     {% endif %}
     ],
+    {% endif %}
     // Custom options
     {% if extra_options %}{% call extra_options() %}Callback to parent defined options{% endcall %}{% endif %}
   });
+
+  {% if table_html_id == 'query_table' -%}
+  table.buttons().container().appendTo( $('div.dataTables_length', table.table().container()) );
+  {% endif %}
 
   table.on('error', function ( e, settings, json ) {
     table.clear().draw();

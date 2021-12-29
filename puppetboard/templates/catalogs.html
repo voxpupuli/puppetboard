@@ -17,5 +17,5 @@
 {% macro extra_options(caller) %}
   "order": [[ 0, "asc" ]],
 {% endmacro %}
-{{ macros.datatable_init(table_html_id="catalogs_table", ajax_url=url_for('catalogs_ajax', env=current_env, compare=compare), default_length=config.NORMAL_TABLE_COUNT, length_selector=config.TABLE_COUNT_SELECTOR, extra_options=extra_options) }}
+{{ macros.datatable_init(table_html_id="catalogs_table", ajax_url=url_for('catalogs_ajax', env=current_env, compare=compare), data=None, default_length=config.NORMAL_TABLE_COUNT, length_selector=config.TABLE_COUNT_SELECTOR, extra_options=extra_options) }}
 {% endblock onload_script %}

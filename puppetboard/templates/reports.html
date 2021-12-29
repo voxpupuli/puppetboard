@@ -44,7 +44,7 @@
   // No initial loading
   "deferLoading": true,
 {% endmacro %}
-  {{ macros.datatable_init(table_html_id="reports_table", ajax_url=url_for('reports_ajax', env=current_env, node_name=node_name), default_length=config.NORMAL_TABLE_COUNT, length_selector=config.TABLE_COUNT_SELECTOR, extra_options=extra_options) }}
+  {{ macros.datatable_init(table_html_id="reports_table", ajax_url=url_for('reports_ajax', env=current_env, node_name=node_name), data=None, default_length=config.NORMAL_TABLE_COUNT, length_selector=config.TABLE_COUNT_SELECTOR, extra_options=extra_options) }}
   function date_filter_change(){
     var minDate = $('#min').prop('value');
     var maxDate = $('#max').prop('value');

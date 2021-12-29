@@ -6,7 +6,7 @@
   // No per page AJAX
   'serverSide': false,
 {% endmacro %}
-{{ macros.datatable_init(table_html_id="facts_table", ajax_url=url_for('fact_ajax', env=current_env, fact=fact, value=value), default_length=config.NORMAL_TABLE_COUNT, length_selector=config.TABLE_COUNT_SELECTOR, extra_options=extra_options) }}
+{{ macros.datatable_init(table_html_id="facts_table", ajax_url=url_for('fact_ajax', env=current_env, fact=fact, value=value), data=None, default_length=config.NORMAL_TABLE_COUNT, length_selector=config.TABLE_COUNT_SELECTOR, extra_options=extra_options) }}
 
 {% if render_graph %}
 table.on('xhr', function(e, settings, json){

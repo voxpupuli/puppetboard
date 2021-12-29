@@ -863,10 +863,16 @@ def query(env):
             zero_results = (len(result) == 0)
             result = result if not zero_results else None
 
+            if not zero_results:
+                columns = result[0].keys()
+            else:
+                columns = []
+
             return render_template('query.html',
                                    form=form,
                                    zero_results=zero_results,
                                    result=result,
+                                   columns=columns,
                                    envs=envs,
                                    current_env=env)
 
