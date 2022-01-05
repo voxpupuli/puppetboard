@@ -6,6 +6,60 @@ This is the changelog for Puppetboard.
 Development
 -----------
 
+3.3.0
+-----
+
+* **Show structured facts as pretty-formatted, syntax-highlighted JSON.** Works on Node view and Facts view. Colors meaning are as follows: orange - number, blue - boolean, green - dict's key name. Implements [#83](https://github.com/voxpupuli/puppetboard/issues/83).
+* Fix getting nodes with non-string fact values ([#612](https://github.com/voxpupuli/puppetboard/issues/612)).
+* Fix missing trailing 'u' character in facts with hashes ([#567](https://github.com/voxpupuli/puppetboard/issues/567)).
+* Add favicon ([#650](https://github.com/voxpupuli/puppetboard/pull/650))
+
+3.2.0
+-----
+
+* Add from/till filter for reports (issue [#625](https://github.com/voxpupuli/puppetboard/issues/625), PR [#625](https://github.com/voxpupuli/puppetboard/pull/638))
+* Remove tabs for disabled features (issue [#627](https://github.com/voxpupuli/puppetboard/issues/627), PR [#636](https://github.com/voxpupuli/puppetboard/pull/636))
+* Add support for FreeBSD ([#628](https://github.com/voxpupuli/puppetboard/pull/628))
+* Add support for Python 3.10 ([#637](https://github.com/voxpupuli/puppetboard/pull/637))
+
+Thanks to [@smortex](https://github.com/smortex) and [@sebastianrakel](https://github.com/sebastianrakel) for their contributions!
+
+3.1.0
+-----
+
+* Improve facts columns balancing (#618)
+* Allow to toggle checkboxes by clicking their label (#617)
+* Add support for Python 3.9 (#619)
+* pypuppetdb: raise version requirement `>=2.4.0.rc1` because
+  we need it for Python 3.9 support
+
+3.0.0
+-----
+
+This is a bugfix and maintenance release. The major version is bumped 
+because of the Python 3.5 support drop.
+ 
+Features:
+
+* Change the default sort order of facts table to a-z,
+  instead of z-a (#572)
+* Revamp the README (#601)
+
+Bugfixes:
+
+* Fix noop class in _macros.html (#588)
+* Fix listing nodes with boolean fact values (#583)
+* Fix auto-resize in radiator view (#605)
+* Fix issue with no render when facts are empty (#607)
+
+Other:
+
+* Drop Python 3.5 support (#593)
+* Update jQuery to 3.5.1 (#592)
+* Manage any other exception for get_or_abort (#606)
+* Improve getting resources from CDN (#609)  
+* Migrate from Travis to GitHub Actions (#604)
+
 2.2.0
 -----
 

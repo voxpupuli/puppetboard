@@ -1,6 +1,4 @@
-from __future__ import absolute_import
-from __future__ import unicode_literals
-
+import ast
 import json
 import logging
 import os.path
@@ -34,18 +32,18 @@ def jsonprint(value):
 
 
 def get_db_version(puppetdb):
-    '''
+    """
     Get the version of puppetdb.  Version form 3.2 query
     interface is slightly different on mbeans
-    '''
+    """
     ver = ()
     try:
         version = puppetdb.current_version()
         (major, minor, build) = [int(x) for x in version.split('.')]
         ver = (major, minor, build)
         log.info("PuppetDB Version %d.%d.%d" % (major, minor, build))
-    except ValueError as e:
-        log.error("Unable to determine version from string: '%s'" % version)
+    except ValueError:
+        log.error("Unable to determine version from string: '%s'" % puppetdb.current_version())
         ver = (4, 2, 0)
     except HTTPError as e:
         log.error(str(e))
@@ -54,6 +52,20 @@ def get_db_version(puppetdb):
     except EmptyResponseError as e:
         log.error(str(e))
     return ver
+
+
+def parse_python(value: str):
+    """
+    :param value: any string, number, bool, list or a dict
+                  casted to a string (f.e. "{'up': ['eth0'], (...)}")
+    :return: the same value but with a proper type
+    """
+    try:
+        return ast.literal_eval(value)
+    except ValueError:
+        return str(value)
+    except SyntaxError:
+        return str(value)
 
 
 def formatvalue(value):
@@ -82,11 +94,16 @@ def prettyprint(value):
     for e in value:
         html += "<tr>"
         for k in e:
-            html += "<td>" + formatvalue(e[k]) + "</td>"
+            if k == "certname":
+                html += "<td> <a href = '" + \
+                        url_for("node", node_name=formatvalue(e[k])) + "' >" + \
+                        formatvalue(e[k]) + "</a></td> "
+            else:
+                html += "<td>" + formatvalue(e[k]) + "</td>"
         html += "</tr>"
 
     html += "</tbody></table>"
-    return (html)
+    return html
 
 
 def get_or_abort(func, *args, **kwargs):
@@ -106,6 +123,9 @@ def get_or_abort(func, *args, **kwargs):
     except EmptyResponseError as e:
         log.error(str(e))
         abort(204)
+    except Exception as e:
+        log.error(str(e))
+        abort(500)
 
 
 def yield_or_stop(generator):

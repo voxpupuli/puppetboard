@@ -16,8 +16,32 @@ from puppetboard import utils
 def test_json_format():
     demo = [{'foo': 'bar'}, {'bar': 'foo'}]
     sample = json.dumps(demo, indent=2, separators=(',', ': '))
-
     assert sample == utils.jsonprint(demo), "Json formatting has changed"
+
+
+def test_parse_python_array():
+    python_array = [{'foo': 'bar'}, {'bar': 'foo'}]
+    python_array_as_string = str(python_array)
+    assert python_array == utils.parse_python(python_array_as_string)
+
+
+def test_parse_python_not_really_array():
+    # the downside of simplifying showing plain strings without quotes is that it's hard
+    # to distinguish things that LOOK LIKE non-string but in fact are strings.
+    python_not_really_array = '"["foo", "bar"]"'
+    python_not_really_array_as_string = '"["foo", "bar"]"'
+    assert python_not_really_array == utils.parse_python(python_not_really_array_as_string)
+
+
+def test_parse_python_dict():
+    python_dict = {'foo': 'bar'}
+    python_dict_as_string = str(python_dict)
+    assert python_dict == utils.parse_python(python_dict_as_string)
+
+
+def test_parse_python_string():
+    a_string = "foobar"
+    assert a_string == utils.parse_python(a_string)
 
 
 def test_format_val_str():
@@ -56,6 +80,18 @@ def test_pretty_print():
     soup = BeautifulSoup(html, 'html.parser')
 
     assert soup.th.text == 'hello'
+
+
+def test_pretty_print_href():
+    test_data = [{'certname': 'host.example.com'}]
+
+    _app = app.app.test_request_context()
+    _app.push()
+
+    html = utils.prettyprint(test_data)
+    soup = BeautifulSoup(html, 'html.parser')
+
+    assert soup.a['href'] == '/node/host.example.com'
 
 
 @pytest.fixture
@@ -103,6 +139,20 @@ def test_http_connection_error(mock_log):
         mock_log.error.assert_called_with(err)
 
 
+def test_basic_exception(mock_log):
+    err = "Exception"
+
+    def exception_error():
+        x = Response()
+        x.reason = err
+        raise Exception(err)
+
+    with pytest.raises(Exception) as exception:
+        utils.get_or_abort(exception_error())
+        mock_log.error.assert_called_with(err)
+        assert exception.status_code == 500
+
+
 def test_db_version_good(mocker, mock_info_log):
     mocker.patch.object(app.puppetdb, 'current_version', return_value='4.2.0')
     err = 'PuppetDB Version %d.%d.%d' % (4, 2, 0)
@@ -118,7 +168,7 @@ def test_db_version_good(mocker, mock_info_log):
 
 def test_db_invalid_version(mocker, mock_err_log):
     mocker.patch.object(app.puppetdb, 'current_version', return_value='4')
-    err = u"Unable to determine version from string: '%s'" % (4)
+    err = u"Unable to determine version from string: '%s'" % 4
     result = utils.get_db_version(app.puppetdb)
     mock_err_log.assert_called_with(err)
     assert (4, 0, 0) < result
@@ -174,8 +224,8 @@ def test_iter():
     test_list = (0, 1, 2, 3)
 
     def my_generator():
-        for i in test_list:
-            yield i
+        for element in test_list:
+            yield element
 
     gen = utils.yield_or_stop(my_generator())
     assert isinstance(gen, GeneratorType)
@@ -190,7 +240,6 @@ def test_stop_empty():
     def my_generator():
         yield 1
         raise EmptyResponseError
-        yield 2
 
     gen = utils.yield_or_stop(my_generator())
     for val in gen:
@@ -201,7 +250,6 @@ def test_stop_conn_error():
     def my_generator():
         yield 1
         raise ConnectionError
-        yield 2
 
     gen = utils.yield_or_stop(my_generator())
     for val in gen:
@@ -212,7 +260,6 @@ def test_stop_http_error():
     def my_generator():
         yield 1
         raise HTTPError
-        yield 2
 
     gen = utils.yield_or_stop(my_generator())
     for val in gen:

@@ -1,40 +1,34 @@
 from __future__ import absolute_import
 from __future__ import unicode_literals
 
-
-# load python 3, fallback to python 2 if it fails
-try:
-    from urllib.parse import unquote, unquote_plus, quote_plus
-except ImportError:
-    from urllib import unquote, unquote_plus, quote_plus  # type: ignore
+from urllib.parse import unquote, quote_plus
 from datetime import datetime, timedelta
 from itertools import tee
-import sys
 from flask import (
     render_template, abort, url_for,
     Response, stream_with_context, request, session, jsonify
 )
 
 import logging
+import json
+from json import dumps
 
 from pypuppetdb.QueryBuilder import (ExtractOperator, AndOperator,
                                      EqualsOperator, FunctionOperator,
                                      NullOperator, OrOperator,
-                                     LessEqualOperator, RegexOperator)
+                                     LessEqualOperator, RegexOperator,
+                                     GreaterEqualOperator)
 
 from puppetboard.forms import ENABLED_QUERY_ENDPOINTS, QueryForm
 from puppetboard.utils import (get_or_abort, yield_or_stop,
-                               get_db_version)
+                               get_db_version, parse_python)
 from puppetboard.dailychart import get_daily_reports_chart
 
-try:
-    import CommonMark as commonmark
-except ImportError:
-    import commonmark
+import commonmark
 
 from puppetboard.core import get_app, get_puppetdb, environments
 
-from . import __version__
+from puppetboard.version import __version__
 
 REPORTS_COLUMNS = [
     {'attr': 'end', 'filter': 'end_time',
@@ -61,6 +55,28 @@ logging.basicConfig(level=numeric_level)
 log = logging.getLogger(__name__)
 
 puppetdb = get_puppetdb()
+
+
+menu_entries = [
+    ('index', 'Overview'),
+    ('nodes', 'Nodes'),
+    ('facts', 'Facts'),
+    ('reports', 'Reports'),
+    ('metrics', 'Metrics'),
+    ('inventory', 'Inventory'),
+    ('catalogs', 'Catalogs'),
+    ('radiator', 'Radiator'),
+    ('query', 'Query')
+]
+
+if not app.config.get('ENABLE_QUERY'):
+    menu_entries.remove(('query', 'Query'))
+
+if not app.config.get('ENABLE_CATALOG'):
+    menu_entries.remove(('catalogs', 'Catalogs'))
+
+
+app.jinja_env.globals.update(menu_entries=menu_entries)
 
 
 @app.template_global()
@@ -141,11 +157,7 @@ def index(env):
             puppetdb.metric,
             "{0}{1}".format(prefix, ':%sname=num-resources' % query_type),
             version=metric_version)
-        avg_resources_node = get_or_abort(
-            puppetdb.metric,
-            "{0}{1}".format(prefix,
-                            ':%sname=avg-resources-per-node' % query_type),
-            version=metric_version)
+
         metrics['num_nodes'] = num_nodes['Value']
         metrics['num_resources'] = num_resources['Value']
         try:
@@ -447,6 +459,7 @@ def reports_ajax(env, node_name):
     order_dir = request.args.get('order[0][dir]', 'desc')
     order_args = '[{"field": "%s", "order": "%s"}]' % (order_filter, order_dir)
     status_args = request.args.get('columns[1][search][value]', '').split('|')
+    date_args = request.args.get('columns[0][search][value]', '')
     max_col = len(REPORTS_COLUMNS)
     for i in range(len(REPORTS_COLUMNS)):
         if request.args.get("columns[%s][data]" % i, None):
@@ -469,6 +482,20 @@ def reports_ajax(env, node_name):
         search_query.add(RegexOperator(
             "configuration_version", r"%s" % search_arg))
         reports_query.add(search_query)
+
+    if date_args:
+        dates = json.loads(date_args)
+
+        if len(dates) > 0:
+            date_query = AndOperator()
+
+            if 'min' in dates:
+                date_query.add(GreaterEqualOperator('end_time', dates['min']))
+
+            if 'max' in dates:
+                date_query.add(LessEqualOperator('end_time', dates['max']))
+
+            reports_query.add(date_query)
 
     status_query = OrOperator()
     for status_arg in status_args:
@@ -599,32 +626,50 @@ def facts(env):
     """
     envs = environments()
     check_env(env, envs)
-    facts = []
-    order_by = '[{"field": "name", "order": "asc"}]'
     facts = get_or_abort(puppetdb.fact_names)
 
-    facts_columns = [[]]
-    letter = None
-    letter_list = None
-    break_size = (len(facts) / 4) + 1
+    # we consider a column label to count for ~5 lines
+    column_label_height = 5
+
+    # 1 label per different letter and up to 3 more labels for letters spanning
+    # multiple columns.
+    column_label_count = 3 + len(set(map(lambda fact: fact[0].upper(), facts)))
+
+    break_size = (len(facts) + column_label_count * column_label_height) / 4.0
     next_break = break_size
+
+    facts_columns = []
+    facts_current_column = []
+    facts_current_letter = []
+    letter = None
     count = 0
+
     for fact in facts:
         count += 1
 
-        if letter != fact[0].upper() or not letter:
-            if count > next_break:
-                # Create a new column
-                facts_columns.append([])
-                next_break += break_size
-            if letter_list:
-                facts_columns[-1].append(letter_list)
-            # Reset
-            letter = fact[0].upper()
-            letter_list = []
+        if count > next_break:
+            next_break += break_size
+            if facts_current_letter:
+                facts_current_column.append(facts_current_letter)
+            if facts_current_column:
+                facts_columns.append(facts_current_column)
+            facts_current_column = []
+            facts_current_letter = []
+            letter = None
 
-        letter_list.append(fact)
-    facts_columns[-1].append(letter_list)
+        if letter != fact[0].upper():
+            if facts_current_letter:
+                facts_current_column.append(facts_current_letter)
+                facts_current_letter = []
+            letter = fact[0].upper()
+            count += column_label_height
+
+        facts_current_letter.append(fact)
+
+    if facts_current_letter:
+        facts_current_column.append(facts_current_letter)
+    if facts_current_column:
+        facts_columns.append(facts_current_column)
 
     return render_template('facts.html',
                            facts_columns=facts_columns,
@@ -656,15 +701,19 @@ def fact(env, fact, value):
     if fact in graph_facts and not value:
         render_graph = True
 
-    value_safe = value
+    value_json = value
     if value is not None:
-        value_safe = unquote_plus(value)
+        value_object = parse_python(value)
+        if type(value_object) is str:
+            value_json = value_object
+        else:
+            value_json = dumps(value_object)
 
     return render_template(
         'fact.html',
         fact=fact,
         value=value,
-        value_safe=value_safe,
+        value_json=value_json,
         render_graph=render_graph,
         envs=envs,
         current_env=env)
@@ -703,27 +752,27 @@ def fact_ajax(env, node, fact, value):
     check_env(env, envs)
 
     render_graph = False
-    if fact in graph_facts and not value and not node:
+    if fact in graph_facts and value is None and node is None:
         render_graph = True
 
     query = AndOperator()
-    if node:
+    if node is not None:
         query.add(EqualsOperator("certname", node))
 
     if env != '*':
         query.add(EqualsOperator("environment", env))
 
+    if value is not None:
+        # interpret the value as a proper type...
+        value = parse_python(value)
+        # ...to know if it should be quoted or not in the query to PuppetDB
+        # (f.e. a string should, while a number should not)
+        query.add(EqualsOperator('value', value))
+
+    # if we have not added any operations to the query,
+    # then make it explicitly empty
     if len(query.operations) == 0:
         query = None
-
-    # Generator needs to be converted (graph / total)
-    try:
-        value = int(value)
-    except ValueError:
-        if value is not None and query is not None:
-            query.add(EqualsOperator('value', unquote_plus(value)))
-    except TypeError:
-        pass
 
     facts = [f for f in get_or_abort(
         puppetdb.facts,
@@ -741,21 +790,22 @@ def fact_ajax(env, node, fact, value):
 
     for fact_h in facts:
         line = []
-        if not fact:
+        if fact is None:
             line.append(fact_h.name)
-        if not node:
+        if node is None:
             line.append('<a href="{0}">{1}</a>'.format(
                 url_for('node', env=env, node_name=fact_h.node),
                 fact_h.node))
-        if not value:
-            fact_value = fact_h.value
-            if isinstance(fact_value, str):
-                fact_value = quote_plus(fact_h.value)
+        if value is None:
+            if isinstance(fact_h.value, str):
+                value_for_url = quote_plus(fact_h.value)
+            else:
+                value_for_url = fact_h.value
 
-            line.append('<a href="{0}">{1}</a>'.format(
+            line.append('["{0}", {1}]'.format(
                 url_for(
-                    'fact', env=env, fact=fact_h.name, value=fact_value),
-                fact_h.value))
+                    'fact', env=env, fact=fact_h.name, value=value_for_url),
+                dumps(fact_h.value)))
 
         json['data'].append(line)
 
@@ -873,7 +923,7 @@ def metrics(env):
                 metrics.append(domain + ':' + prop)
     else:
         raise ValueError("Unknown metric version {} for database version {}"
-                         .format(metric_version, database_version))
+                         .format(metric_version, db_version))
 
     return render_template('metrics.html',
                            metrics=sorted(metrics),
