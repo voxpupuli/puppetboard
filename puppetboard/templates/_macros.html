@@ -33,7 +33,7 @@
   {% endif %}
 {%- endmacro %}
 
-{% macro datatable_init(table_html_id, ajax_url, default_length, length_selector, extra_options=None) -%}
+{% macro datatable_init(table_html_id, ajax_url, default_length, length_selector, natural_time_delta_sort=False, extra_options=None) -%}
   // Init datatable
   $.fn.dataTable.ext.errMode = 'throw';
 
@@ -60,7 +60,9 @@
    // Rendering - add rendering options for columns
     "columnDefs": [ {
       "targets": -1,
+      {% if natural_time_delta_sort %}
       "type": "natural-time-delta-pre",
+      {% endif %}
       "data:": null,
       "render": function (data, type, full, meta) {
        shorta = data.toString().replace(/[{},]/g, "<br />");
