@@ -25,18 +25,27 @@ table.on('xhr', function(e, settings, json){
   });
 })
 {% endif %}
+
+{% if value %}
+try {
+    $("#value").html(pretty_print(JSON.parse({{ value_json | tojson }})));
+} catch (e) {
+    $("#value").html(pretty_print('{{ value_json }}'));
+}
+{% endif %}
+
 {% endblock onload_script %}
 
 {% block content %}
 {% if render_graph %}
 <div id="factChart" width="300" height="300"></div>
 {% endif %}
-<h1>{{ fact }}{% if value_safe %} : {{ value_safe }}{% endif %}</h1>
+<h1>{{ fact }}{% if value %} : <span id="value"></span>{% endif %}</h1>
 <table id="facts_table" class='ui fixed very basic compact table stackable'>
   <thead>
     <tr>
       <th>Node</th>
-      {% if not value %}<th>Value</th>{% endif %}
+      {% if not value %}<th class="fact_value">Value</th>{% endif %}
     </tr>
   </thead>
   <tbody>

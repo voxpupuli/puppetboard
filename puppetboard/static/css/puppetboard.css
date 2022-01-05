@@ -189,3 +189,36 @@ h1.ui.header.no-margin-bottom {
 #dailyReportsChartContainer {
   height: 160px;
 }
+
+pre {
+  padding: 0;
+  margin: 0;
+  font-family: "Open Sans", sans-serif;
+}
+.string {
+  color: #2E5D8C;
+}
+a .string:hover {
+  color: #1e70bf;
+}
+.number {
+  color: darkorange;
+}
+a .number:hover {
+  color: #ffab3d;
+}
+.boolean {
+  color: blue;
+}
+a .boolean:hover {
+  color: #7171fc;
+}
+.key {
+  color: rgb(97, 117, 54);
+}
+a .key:hover {
+  color: rgb(158, 185, 101);
+}
+.null {
+  color: magenta;
+}

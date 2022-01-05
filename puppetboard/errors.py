@@ -1,6 +1,3 @@
-from __future__ import absolute_import
-from __future__ import unicode_literals
-
 from flask import render_template
 from werkzeug.exceptions import InternalServerError
 
@@ -40,6 +37,6 @@ def server_error(e):
     envs = []
     try:
         envs = environments()
-    except InternalServerError as e:
+    except InternalServerError:
         pass
     return render_template('500.html', envs=envs), 500

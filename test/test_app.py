@@ -93,7 +93,7 @@ def client():
 
 
 def test_first_test():
-    assert app is not None, ("%s" % reg.app)
+    assert app is not None
 
 
 def test_no_env(client, mock_puppetdb_environments):
@@ -321,7 +321,7 @@ def test_offline_mode(client, mocker,
     for link in soup.find_all('link'):
         assert "//" not in link['href']
         if 'offline' in link['href']:
-            static_rv = client.get(link['href'])
+            rv = client.get(link['href'])
             assert rv.status_code == 200
 
     for script in soup.find_all('script'):
@@ -671,6 +671,10 @@ def test_catalogs_view(client, mocker,
                        mock_puppetdb_environments,
                        mock_puppetdb_default_nodes):
     app.app.config['ENABLE_CATALOG'] = True
+
+    # below code checks last_total, which should be set after _query
+    # so we need to simulate that. the value doesn't matter.
+    app.puppetdb.last_total = 0
     rv = client.get('/catalogs')
     assert rv.status_code == 200
     soup = BeautifulSoup(rv.data, 'html.parser')
@@ -681,6 +685,10 @@ def test_catalogs_json(client, mocker,
                        mock_puppetdb_environments,
                        mock_puppetdb_default_nodes):
     app.app.config['ENABLE_CATALOG'] = True
+
+    # below code checks last_total, which should be set after _query
+    # so we need to simulate that. the value doesn't matter.
+    app.puppetdb.last_total = 0
     rv = client.get('/catalogs/json')
     assert rv.status_code == 200
 
@@ -708,6 +716,10 @@ def test_catalogs_json_compare(client, mocker,
                                mock_puppetdb_environments,
                                mock_puppetdb_default_nodes):
     app.app.config['ENABLE_CATALOG'] = True
+
+    # below code checks last_total, which should be set after _query
+    # so we need to simulate that. the value doesn't matter.
+    app.puppetdb.last_total = 0
     rv = client.get('/catalogs/compare/node-unreported/json')
     assert rv.status_code == 200
 
@@ -751,6 +763,27 @@ def test_facts_view(client, mocker, mock_puppetdb_environments):
     assert len(vals) == 4
 
 
+def test_facts_view_empty_when_no_facts(client,
+                                        mocker,
+                                        mock_puppetdb_environments):
+    query_data = {
+        'fact-names': [[]]
+    }
+
+    dbquery = MockDbQuery(query_data)
+
+    mocker.patch.object(app.puppetdb, '_query', side_effect=dbquery.get)
+
+    rv = client.get('/facts')
+    assert rv.status_code == 200
+    soup = BeautifulSoup(rv.data, 'html.parser')
+    assert soup.title.contents[0] == 'Puppetboard'
+
+    searchable = soup.find('div', {'class': 'searchable'})
+    vals = searchable.find_all('div', {'class': 'column'})
+    assert len(vals) == 0
+
+
 def test_fact_view_with_graph(client, mocker,
                               mock_puppetdb_environments,
                               mock_puppetdb_default_nodes):
@@ -788,6 +821,43 @@ def test_fact_value_view(client, mocker,
 
     vals = soup.find_all('div', {"id": "factChart"})
     assert len(vals) == 0
+
+
+def test_fact_value_view_complex(client, mocker,
+                                 mock_puppetdb_environments,
+                                 mock_puppetdb_default_nodes):
+    values = {
+        'trusted': {
+            'domain': '',
+            'cername': 'node-changed',
+            'hostname': 'node-changed',
+            'extensions': {},
+            'authenticated': 'remote',
+        }
+    }
+    query_data = {'facts': []}
+    query_data['facts'].append({
+        'certname': 'node-changed',
+        'name': 'trusted',
+        'value': values,
+        'environment': 'production'
+    })
+
+    dbquery = MockDbQuery(query_data)
+
+    mocker.patch.object(app.puppetdb, '_query', side_effect=dbquery.get)
+
+    rv = client.get('/fact/trusted/'
+                    + "{'domain': ''%2C 'certname': 'node-changed'%2C"
+                      " 'hostname': 'node-changed'%2C "
+                      "'extensions': {}%2C 'authenticated': 'remote'}")
+    assert rv.status_code == 200
+
+    soup = BeautifulSoup(rv.data, 'html.parser')
+    assert soup.title.contents[0] == 'Puppetboard'
+
+    vals = soup.find_all('table', {"id": "facts_table"})
+    assert len(vals) == 1
 
 
 def test_node_view(client, mocker,
@@ -1157,11 +1227,12 @@ def test_metric_v1_api(client, mocker,
     assert rv.status_code == 200
 
 
-# Running this test at the end because it changes the global state of the app
-# throwing off other tests if this one fails
 def test_custom_title(client, mocker,
                       mock_puppetdb_environments,
                       mock_puppetdb_default_nodes):
+
+    default_title = app.app.config['PAGE_TITLE']
+
     custom_title = 'Dev - Puppetboard'
     app.app.config['PAGE_TITLE'] = custom_title
 
@@ -1176,3 +1247,6 @@ def test_custom_title(client, mocker,
     rv = client.get('/')
     soup = BeautifulSoup(rv.data, 'html.parser')
     assert soup.title.contents[0] == custom_title
+
+    # restore the global state
+    app.app.config['PAGE_TITLE'] = default_title
