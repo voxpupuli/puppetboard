@@ -6,6 +6,14 @@ This is the changelog for Puppetboard.
 Development
 -----------
 
+3.4.0 (RC1)
+-----------
+
+* Make the query result clickable if a certname is in it ([#652](https://github.com/voxpupuli/puppetboard/pull/652))
+* Query UX improvements: show the number of results, show a user-friendly error in case of a PQL syntax error, show a warning on empty result, use fixed-width font for matching the query with the possible error message, remove useless 'Cancel' button. ([#653](https://github.com/voxpupuli/puppetboard/pull/653))
+
+Thanks to the following contributors of this release: [@GermanG](https://github.com/GermanG)
+
 3.3.0
 -----
 
