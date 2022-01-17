@@ -708,7 +708,9 @@ def fact(env, fact, value):
             value_json = value_object
         else:
             value_json = dumps(value_object)
-    natural_time_delta_sort = True
+    natural_time_delta_sort = False
+    if fact in ["uptime"]:
+        natural_time_delta_sort = True
     return render_template(
         'fact.html',
         fact=fact,

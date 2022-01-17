@@ -57,9 +57,15 @@
     "search": {"regex": true},
     {% if table_html_id == 'facts_table' -%}
     "order": [[ 0, "asc" ]],
+    {% if natural_time_delta_sort %}
+    "type": "natural-time-delta-pre",
+    {% endif %}   
     {% else -%}
     // Default sort
     "order": [[ 0, "desc" ]],
+    {% if natural_time_delta_sort %}
+    "type": "natural-time-delta-pre",
+    {% endif %}
     {% endif -%}
     // Rendering - add rendering options for columns
     "columnDefs": [
@@ -79,9 +85,6 @@
     {% else -%}
     {
       "targets": -1,
-      {% if natural_time_delta_sort %}
-      "type": "natural-time-delta-pre",
-      {% endif %}
       "data:": null,
       "render": function (data, type, full, meta) {
         shorta = data.toString().replace(/[{},]/g, "<br />");
