@@ -33,7 +33,7 @@
   {% endif %}
 {%- endmacro %}
 
-{% macro datatable_init(table_html_id, ajax_url, default_length, length_selector, extra_options=None) -%}
+{% macro datatable_init(table_html_id, ajax_url, default_length, length_selector, extra_options=None, natural_time_delta_sort=False) -%}
   // Init datatable
   $.fn.dataTable.ext.errMode = 'throw';
 
@@ -57,15 +57,9 @@
     "search": {"regex": true},
     {% if table_html_id == 'facts_table' -%}
     "order": [[ 0, "asc" ]],
-    {% if natural_time_delta_sort %}
-    "type": "natural-time-delta-pre",
-    {% endif %}   
     {% else -%}
     // Default sort
     "order": [[ 0, "desc" ]],
-    {% if natural_time_delta_sort %}
-    "type": "natural-time-delta-pre",
-    {% endif %}
     {% endif -%}
     // Rendering - add rendering options for columns
     "columnDefs": [
@@ -79,8 +73,11 @@
         url = data[0]
         to_show = pretty_print(data[1])
 
-        return '<a href="' + url + '">' + to_show + '</a>'
-      }
+        return `<a title="${data[1]}" href="${url}">${to_show}</a>`
+      },
+      {% if natural_time_delta_sort %}
+      "type": "natural-time-delta",
+      {% endif %}
     },
     {% else -%}
     {
