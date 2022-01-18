@@ -23,31 +23,53 @@
       <div class="field">
         {{ form.rawjson(active=True) }} Raw (but pretty and colored) JSON
       </div>
-      <input type=submit class="ui submit button" value='Submit'>
-      <input type=reset class="ui red submit button" value='Cancel'>
+      <input type=submit class="ui active submit button" value='Submit'>
     </div>
   </form>
 </div>
 
-{% if result %}
+{% if result or zero_results or error_text %}
+
 <div class="row">
-  <div class="span12">
-    <h2>Result</h2>
-      {% if form.rawjson.data %}
-      <span id="result"></span>
-      <script>
-          try {
-              $("#result").html(pretty_print(JSON.parse('{{ result | tojson }}')));
-          } catch (e) {
-              $("#result").html(pretty_print({{ result | tojson }}));
-          }
-      </script>
-      {% else %}
-      {% autoescape false %}
-      {{ result|prettyprint}}
-      {% endautoescape %}
-      {% endif %}
-  </div>
+ <div class="span12">
+  <h2 id="results_header">Result</h2>
+
+  {% if result %}
+    <p id="number_of_results" class="info_message">Number of results: {{ result | length }}</p>
+    {% if form.rawjson.data %}
+    <pre class="result" id="result"></pre>
+    <script>
+    try {
+        $("#result").html(pretty_print(JSON.parse('{{ result | tojson }}')));
+    } catch (e) {
+        $("#result").html(pretty_print({{ result | tojson }}));
+    }
+    </script>
+    {% else %}
+    {% autoescape false %}
+    {{ result | prettyprint}}
+    {% endautoescape %}
+    {% endif %}
+
+  {% elif zero_results %}
+
+    <div class="ui warning message">
+        <div class="header">Zero results</div>
+        <p id="zero_results" class="warning_message">The query was successful but the response is empty. Please try changing query conditions.</p>
+    </div>
+
+  {% elif error_text %}
+
+    <div class="ui error message">
+        <div class="header">Invalid query</div>
+        <pre id="invalid_query" class="error_message">{{ error_text }}</pre>
+    </div>
+
+  {% endif %}
+
+ </div>
 </div>
+
 {% endif %}
+
 {% endblock content %}

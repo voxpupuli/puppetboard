@@ -190,11 +190,12 @@ h1.ui.header.no-margin-bottom {
   height: 160px;
 }
 
-pre {
+pre.json {
   padding: 0;
   margin: 0;
   font-family: "Open Sans", sans-serif;
 }
+
 .string {
   color: #2E5D8C;
 }
@@ -221,4 +222,16 @@ a .key:hover {
 }
 .null {
   color: magenta;
+}
+
+textarea, /* query */
+pre.result,
+pre.error_message {
+  font-family: "Cousine", monospace;
+  font-size: 1rem;
+}
+
+.warning_message,
+.info_message {
+  font-size: 1rem;
 }

@@ -234,23 +234,43 @@ by Tim Pope](https://tbaggery.com/2008/04/19/a-note-about-git-commit-messages.ht
 
 ## More Screenshots
 
+* Overview / Index / Homepage
+
 ![Overview / Index / Homepage](https://raw.githubusercontent.com/voxpupuli/puppetboard/master/screenshots/overview.png)
+
+* Nodes view, all active nodes
 
 ![Nodes view, all active nodes](https://raw.githubusercontent.com/voxpupuli/puppetboard/master/screenshots/nodes.png)
 
+* Single node page / overview
+
 ![Single node page / overview](https://raw.githubusercontent.com/voxpupuli/puppetboard/master/screenshots/node.png)
+
+* Report view
 
 ![Report view](https://raw.githubusercontent.com/voxpupuli/puppetboard/master/screenshots/report.png)
 
+* Facts view
+
 ![Facts view](https://raw.githubusercontent.com/voxpupuli/puppetboard/master/screenshots/facts.png)
+
+* Single fact, with graphs
 
 ![Single fact, with graphs](https://raw.githubusercontent.com/voxpupuli/puppetboard/master/screenshots/fact.png)
 
+* All nodes that have this fact with that value
+
 ![All nodes that have this fact with that value](https://raw.githubusercontent.com/voxpupuli/puppetboard/master/screenshots/fact_value.png)
+
+* Query view
 
 ![Query view](https://raw.githubusercontent.com/voxpupuli/puppetboard/master/screenshots/query.png)
 
+* Metrics view
+
 ![Metrics view](https://raw.githubusercontent.com/voxpupuli/puppetboard/master/screenshots/metrics.png)
+
+* Single metric
 
 ![Single metric](https://raw.githubusercontent.com/voxpupuli/puppetboard/master/screenshots/metric.png)
 

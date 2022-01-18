@@ -125,6 +125,20 @@ def test_http_error(mock_log):
         mock_log.error.assert_called_once_with(err)
 
 
+def test_http_error_reraised_as_client_side(mock_log):
+    err = "The request is invalid because ..."
+
+    def raise_http_400_error():
+        x = Response()
+        x.status_code = 400
+        x.reason = err
+        raise HTTPError(err, response=x)
+
+    with pytest.raises(HTTPError):
+        utils.get_or_abort_except_client_errors(raise_http_400_error)
+        mock_log.warning.assert_called_once_with(err)
+
+
 def test_http_connection_error(mock_log):
     err = "ConnectionError"
 
