@@ -36,8 +36,29 @@
 {% endfor %}
 {% endif %}
 {% endwith %}
+
+<script type="text/javascript">
+  $(document).ready(function() {
+    if (window.location.href.indexOf("#") > -1) {
+        const pb_query = document.getElementById("query");
+        const hrefArray = window.location.href.split("#");
+        pb_query.value = decodeURI(hrefArray[1]);
+    }
+  });
+</script>
+
+<script language="JavaScript" type="text/JavaScript">
+    function chgAction()
+        {
+        const pb_form = document.getElementById("form");
+        const pb_query = document.getElementById("query");
+        pb_form.action = pb_form.action + "#" + encodeURI(pb_query.value);
+        pb_form.submit();
+        }
+</script>
+
 <div class="ui form">
-  <form method="POST" action="{{ url_for('query', env=current_env) }}">
+  <form method="POST" id="form" action="{{ url_for('query', env=current_env) }}">
     {{ form.csrf_token }}
     <div class="field {% if form.query.errors %} error {% endif %}">
       {{ form.query(autofocus="autofocus", rows=5, placeholder="nodes { certname = \"hostname\" }") }}
@@ -49,7 +70,9 @@
       <div class="field">
         {{ form.rawjson(active=True) }} Raw (but pretty and colored) JSON
       </div>
-      <input type=submit class="ui active submit button" value='Submit'>
+      <div  class="ui active submit button" value='Submit' onclick="chgAction()">
+          Submit
+      </div>
     </div>
   </form>
 </div>
