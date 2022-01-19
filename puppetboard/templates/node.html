@@ -17,8 +17,8 @@
   // No per page AJAX
   'serverSide': false,
 {% endmacro %}
-{{ macros.datatable_init(table_html_id="reports_table", ajax_url=url_for('reports_ajax', env=current_env, node_name=node.name), default_length=config.LITTLE_TABLE_COUNT, length_selector=config.TABLE_COUNT_SELECTOR, extra_options=extra_options) }}
-{{ macros.datatable_init(table_html_id="facts_table", ajax_url=url_for('fact_ajax', env=current_env, node=node.name), default_length=config.LITTLE_TABLE_COUNT, length_selector=config.TABLE_COUNT_SELECTOR, extra_options=facts_extra_options) }}
+{{ macros.datatable_init(table_html_id="reports_table", ajax_url=url_for('reports_ajax', env=current_env, node_name=node.name), data=None, default_length=config.LITTLE_TABLE_COUNT, length_selector=config.TABLE_COUNT_SELECTOR, extra_options=extra_options) }}
+{{ macros.datatable_init(table_html_id="facts_table", ajax_url=url_for('fact_ajax', env=current_env, node=node.name), data=None, default_length=config.LITTLE_TABLE_COUNT, length_selector=config.TABLE_COUNT_SELECTOR, extra_options=facts_extra_options) }}
 {% endblock onload_script %}
 
 {% block content %}
