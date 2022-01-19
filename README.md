@@ -45,18 +45,14 @@ To see how to get it working with RedHat/Centos 7 check out these [docs](https:/
 
 We provide [an official Docker image in the GitHub Container Registry](https://github.com/orgs/voxpupuli/packages/container/package/puppetboard).
 
-You can run the app using it with:
+You can run the app on your PuppetDB host with this command:
 
 ```bash
-docker pull ghcr.io/voxpupuli/puppetboard
-
-docker run -it -p 9080:80 -v /etc/puppetlabs/puppet/ssl:/etc/puppetlabs/puppet/ssl \
--e PUPPETDB_HOST=<hostname> \
--e PUPPETDB_PORT=8081 \
--e PUPPETDB_SSL_VERIFY=/etc/puppetlabs/puppetdb/ssl/ca.pem \
--e PUPPETDB_KEY=/etc/puppetlabs/puppetdb/ssl/private.pem \
--e PUPPETDB_CERT=/etc/puppetlabs/puppetdb/ssl/public.pem \
-ghcr.io/voxpupuli/puppetboard
+docker run -it \
+  -e PUPPETDB_HOST=localhost \
+  -e PUPPETDB_PORT=8080 \
+  --net=host \
+  ghcr.io/voxpupuli/puppetboard
 ```
 
 We also provide the Dockerfile so you can build the image yourself:
