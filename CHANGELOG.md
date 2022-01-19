@@ -6,6 +6,18 @@ This is the changelog for Puppetboard.
 Development
 -----------
 
+3.4.0 (RC2)
+-----------
+
+Like 3.4.0 (RC1) and additionally:
+
+* Add 'Download as CSV' and 'Download as XLSX' to the Query results ([#654](https://github.com/voxpupuli/puppetboard/pull/654)).
+* Make the Query result shareable using URL ([#657](https://github.com/voxpupuli/puppetboard/pull/657)).
+* Sort 'uptime' fact values correctly ([#591](https://github.com/voxpupuli/puppetboard/pull/591)).
+* Minor update to some dependencies.
+
+Thanks to the following contributors of this release: [@GermanG](https://github.com/GermanG), [@jgrammen-agilitypr](https://github.com/jgrammen-agilitypr)
+
 3.4.0 (RC1)
 -----------
 
