@@ -705,7 +705,9 @@ def fact(env, fact, value):
             value_json = value_object
         else:
             value_json = dumps(value_object)
-
+    natural_time_delta_sort = False
+    if fact in ["uptime"]:
+        natural_time_delta_sort = True
     return render_template(
         'fact.html',
         fact=fact,
@@ -713,7 +715,9 @@ def fact(env, fact, value):
         value_json=value_json,
         render_graph=render_graph,
         envs=envs,
-        current_env=env)
+        current_env=env,
+        natural_time_delta_sort=natural_time_delta_sort
+        )
 
 
 @app.route('/fact/<fact>/json',

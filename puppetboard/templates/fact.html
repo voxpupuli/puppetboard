@@ -1,12 +1,16 @@
 {% extends 'layout.html' %}
 {% import '_macros.html' as macros %}
+{% block head %}
+    <script src="{{ url_for('static', filename='custom-natural-time-delta/natural-time-delta.js') }}"></script>
+{% endblock head %}
 
 {% block onload_script %}
 {% macro extra_options(caller) %}
   // No per page AJAX
   'serverSide': false,
 {% endmacro %}
-{{ macros.datatable_init(table_html_id="facts_table", ajax_url=url_for('fact_ajax', env=current_env, fact=fact, value=value), data=None, default_length=config.NORMAL_TABLE_COUNT, length_selector=config.TABLE_COUNT_SELECTOR, extra_options=extra_options) }}
+
+{{ macros.datatable_init(table_html_id="facts_table", ajax_url=url_for('fact_ajax', env=current_env, fact=fact, value=value), data=None, default_length=config.NORMAL_TABLE_COUNT, length_selector=config.TABLE_COUNT_SELECTOR, extra_options=extra_options, natural_time_delta_sort=natural_time_delta_sort) }}
 
 {% if render_graph %}
 table.on('xhr', function(e, settings, json){
