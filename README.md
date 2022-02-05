@@ -55,6 +55,8 @@ docker run -it \
   ghcr.io/voxpupuli/puppetboard
 ```
 
+Optionally you can set `PUPPETBOARD_URL_PREFIX` env variable to a value like `/puppetboard` to run the app under a URL prefix.
+
 We also provide the Dockerfile so you can build the image yourself:
 ```bash
 docker build -t puppetboard .
