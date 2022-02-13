@@ -82,30 +82,6 @@ def formatvalue(value):
         return str(value)
 
 
-def prettyprint(value):
-    html = '<table class="ui basic fixed sortable table"><thead><tr>'
-
-    # Get keys
-    for k in value[0]:
-        html += "<th>" + k + "</th>"
-
-    html += "</tr></thead><tbody>"
-
-    for e in value:
-        html += "<tr>"
-        for k in e:
-            if k == "certname":
-                html += "<td> <a href = '" + \
-                        url_for("node", node_name=formatvalue(e[k])) + "' >" + \
-                        formatvalue(e[k]) + "</a></td> "
-            else:
-                html += "<td>" + formatvalue(e[k]) + "</td>"
-        html += "</tr>"
-
-    html += "</tbody></table>"
-    return html
-
-
 def get_or_abort(func, *args, **kwargs):
     """Perform a backend request and handle all the errors,
     """

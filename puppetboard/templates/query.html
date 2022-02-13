@@ -47,7 +47,7 @@
   });
 </script>
 
-<script language="JavaScript" type="text/JavaScript">
+<script type="text/javascript">
     function chgAction()
         {
         const pb_form = document.getElementById("form");
@@ -70,7 +70,7 @@
       <div class="field">
         {{ form.rawjson(active=True) }} Raw (but pretty and colored) JSON
       </div>
-      <div  class="ui active submit button" value='Submit' onclick="chgAction()">
+      <div class="ui active submit button" onclick="chgAction()">
           Submit
       </div>
     </div>

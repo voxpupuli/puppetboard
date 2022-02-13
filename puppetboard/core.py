@@ -3,7 +3,7 @@ import logging
 from flask import Flask
 from pypuppetdb import connect
 
-from puppetboard.utils import (get_or_abort, jsonprint, prettyprint,
+from puppetboard.utils import (get_or_abort, jsonprint,
                                url_for_field, url_static_offline)
 
 APP = None
@@ -24,7 +24,6 @@ def get_app():
             raise ValueError('Invalid log level: %s' % app.config['LOGLEVEL'])
 
         app.jinja_env.filters['jsonprint'] = jsonprint
-        app.jinja_env.filters['prettyprint'] = prettyprint
         app.jinja_env.globals['url_for_field'] = url_for_field
         app.jinja_env.globals['url_static_offline'] = url_static_offline
         APP = app
