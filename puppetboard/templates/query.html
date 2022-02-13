@@ -133,7 +133,14 @@
 {% macro extra_options(caller) %}
 'columns': [
     {% for column in columns %}
-    { "data": "{{ column }}" },
+    {
+        "data": "{{ column }}",
+{% if column in ['node', 'certname'] %}
+        "render": function (data, type, full, meta) {
+            return `<a href='{{ url_for("node", node_name="") }}${data}'>${data}</a>`
+        },
+{% endif %}
+    },
     {% endfor %}
 ],
 'serverSide': false,
