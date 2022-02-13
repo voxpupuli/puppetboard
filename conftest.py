@@ -1,2 +1,0 @@
-import puppetboard
-import test
