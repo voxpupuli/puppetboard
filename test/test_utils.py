@@ -3,7 +3,6 @@ import logging
 from types import GeneratorType
 
 import pytest
-from bs4 import BeautifulSoup
 from pypuppetdb.errors import EmptyResponseError
 from requests import Response
 from requests.exceptions import ConnectionError, HTTPError
@@ -71,27 +70,6 @@ def test_get():
         return x
 
     assert x == utils.get_or_abort(test_get_or_abort)
-
-
-def test_pretty_print():
-    test_data = [{'hello': 'world'}]
-
-    html = utils.prettyprint(test_data)
-    soup = BeautifulSoup(html, 'html.parser')
-
-    assert soup.th.text == 'hello'
-
-
-def test_pretty_print_href():
-    test_data = [{'certname': 'host.example.com'}]
-
-    _app = app.app.test_request_context()
-    _app.push()
-
-    html = utils.prettyprint(test_data)
-    soup = BeautifulSoup(html, 'html.parser')
-
-    assert soup.a['href'] == '/node/host.example.com'
 
 
 @pytest.fixture
