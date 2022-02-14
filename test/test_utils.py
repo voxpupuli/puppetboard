@@ -256,3 +256,8 @@ def test_stop_http_error():
     gen = utils.yield_or_stop(my_generator())
     for val in gen:
         assert 1 == val
+
+
+def test_quote_columns_data():
+    quoted_with_dot = utils.quote_columns_data('foo.bar')
+    assert quoted_with_dot == 'foo\\.bar'
