@@ -137,3 +137,12 @@ def yield_or_stop(generator):
             yield next(generator)
         except (EmptyResponseError, ConnectionError, HTTPError, StopIteration):
             return
+
+
+def quote_columns_data(data: str) -> str:
+    """When projecting Queries using dot notation (f.e. inventory [ facts.osfamily ])
+    we need to quote the dot in such column name for the DataTables library or it will
+    interpret the dot a way to get into a nested results object.
+
+    See https://datatables.net/reference/option/columns.data#Types."""
+    return data.replace('.', '\\.')
