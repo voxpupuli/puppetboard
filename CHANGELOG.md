@@ -6,6 +6,16 @@ This is the changelog for Puppetboard.
 Development
 -----------
 
+3.4.0 (RC3)
+-----------
+
+Like 3.4.0 (RC2) and additionally:
+
+* Fix some regressions in RC2 ([#661](https://github.com/voxpupuli/puppetboard/pull/661)).
+* Configurable binding host in Dockerfile ([#660](https://github.com/voxpupuli/puppetboard/pull/660)).
+
+Thanks to the following contributors of this release: [@GermanG](https://github.com/GermanG), [@jgrammen-agilitypr](https://github.com/jgrammen-agilitypr), [@qhess34](https://github.com/qhess34)
+
 3.4.0 (RC2)
 -----------
 
