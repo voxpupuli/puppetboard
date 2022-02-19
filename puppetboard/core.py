@@ -6,6 +6,19 @@ from pypuppetdb import connect
 from puppetboard.utils import (get_or_abort, jsonprint,
                                url_for_field, url_static_offline, quote_columns_data)
 
+
+REPORTS_COLUMNS = [
+    {'attr': 'end', 'filter': 'end_time',
+     'name': 'End time', 'type': 'datetime'},
+    {'attr': 'status', 'name': 'Status', 'type': 'status'},
+    {'attr': 'certname', 'name': 'Certname', 'type': 'node'},
+    {'attr': 'version', 'filter': 'configuration_version',
+     'name': 'Configuration version'},
+    {'attr': 'agent_version', 'filter': 'puppet_version',
+     'name': 'Agent version'},
+]
+
+
 APP = None
 PUPPETDB = None
 

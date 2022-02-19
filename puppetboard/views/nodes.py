@@ -1,14 +1,14 @@
 from datetime import datetime, timedelta
 
 from flask import (
-    Response, stream_with_context, request
+    Response, stream_with_context, request, render_template
 )
 from pypuppetdb.QueryBuilder import (AndOperator,
                                      EqualsOperator, NullOperator, OrOperator,
                                      LessEqualOperator)
 
-from puppetboard.core import get_app, get_puppetdb, environments, stream_template
-from puppetboard.utils import (yield_or_stop, check_env)
+from puppetboard.core import get_app, get_puppetdb, environments, stream_template, REPORTS_COLUMNS
+from puppetboard.utils import (yield_or_stop, check_env, get_or_abort)
 
 app = get_app()
 puppetdb = get_puppetdb()
@@ -73,3 +73,31 @@ def nodes(env):
                         envs=envs,
                         current_env=env)))
 
+
+@app.route('/node/<node_name>', defaults={'env': app.config['DEFAULT_ENVIRONMENT']})
+@app.route('/<env>/node/<node_name>')
+def node(env, node_name):
+    """Display a dashboard for a node showing as much data as we have on that
+    node. This includes facts and reports but not Resources as that is too
+    heavy to do within a single request.
+
+    :param env: Ensure that the node, facts and reports are in this environment
+    :type env: :obj:`string`
+    """
+    envs = environments()
+    check_env(env, envs)
+    query = AndOperator()
+
+    if env != '*':
+        query.add(EqualsOperator("environment", env))
+
+    query.add(EqualsOperator("certname", node_name))
+
+    node = get_or_abort(puppetdb.node, node_name)
+
+    return render_template(
+        'node.html',
+        node=node,
+        envs=envs,
+        current_env=env,
+        columns=REPORTS_COLUMNS[:2])
