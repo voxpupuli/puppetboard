@@ -20,7 +20,6 @@ from pypuppetdb.QueryBuilder import (ExtractOperator, AndOperator,
 from requests.exceptions import HTTPError
 
 from puppetboard.core import get_app, get_puppetdb, environments, CATALOGS_COLUMNS
-from puppetboard.dailychart import get_daily_reports_chart
 from puppetboard.forms import ENABLED_QUERY_ENDPOINTS, QueryForm
 from puppetboard.utils import (get_or_abort, get_or_abort_except_client_errors, yield_or_stop,
                                get_db_version, parse_python, check_env, metric_params)
