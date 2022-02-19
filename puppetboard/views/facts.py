@@ -1,16 +1,14 @@
-from datetime import datetime, timedelta
 from json import dumps
 from urllib.parse import quote_plus
 
 from flask import (
-    Response, stream_with_context, request, render_template, url_for, jsonify
+    request, render_template, url_for, jsonify
 )
 from pypuppetdb.QueryBuilder import (AndOperator,
-                                     EqualsOperator, NullOperator, OrOperator,
-                                     LessEqualOperator)
+                                     EqualsOperator)
 
-from puppetboard.core import get_app, get_puppetdb, environments, stream_template, REPORTS_COLUMNS
-from puppetboard.utils import (yield_or_stop, check_env, get_or_abort, parse_python)
+from puppetboard.core import get_app, get_puppetdb, environments
+from puppetboard.utils import (check_env, get_or_abort, parse_python)
 
 app = get_app()
 puppetdb = get_puppetdb()

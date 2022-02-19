@@ -1,16 +1,15 @@
 import json
-from datetime import datetime, timedelta
 from itertools import tee
 
 import commonmark
 from flask import (
-    Response, stream_with_context, request, render_template, abort
+    request, render_template, abort
 )
 from pypuppetdb.QueryBuilder import (AndOperator,
-                                     EqualsOperator, NullOperator, OrOperator,
+                                     EqualsOperator, OrOperator,
                                      LessEqualOperator, RegexOperator, GreaterEqualOperator)
 
-from puppetboard.core import get_app, get_puppetdb, environments, stream_template, REPORTS_COLUMNS
+from puppetboard.core import get_app, get_puppetdb, environments, REPORTS_COLUMNS
 from puppetboard.utils import (yield_or_stop, check_env, get_or_abort)
 
 app = get_app()
