@@ -2,12 +2,13 @@ import ast
 import json
 import logging
 import os.path
+import sys
 
 from flask import abort, request, url_for
 from jinja2.utils import contextfunction
 from pypuppetdb.errors import EmptyResponseError
 from requests.exceptions import ConnectionError, HTTPError
-
+from packaging.version import parse
 
 log = logging.getLogger(__name__)
 
@@ -31,27 +32,41 @@ def jsonprint(value):
     return json.dumps(value, indent=2, separators=(',', ': '))
 
 
-def get_db_version(puppetdb):
+def check_db_version(puppetdb):
     """
-    Get the version of puppetdb.  Version form 3.2 query
-    interface is slightly different on mbeans
+    Gets the version of puppetdb and exits if it is not an accepted one.
     """
-    ver = ()
+    version_supported = True
     try:
         version = puppetdb.current_version()
-        (major, minor, build) = [int(x) for x in version.split('.')]
-        ver = (major, minor, build)
-        log.info("PuppetDB Version %d.%d.%d" % (major, minor, build))
-    except ValueError:
-        log.error("Unable to determine version from string: '%s'" % puppetdb.current_version())
-        ver = (4, 2, 0)
+
+        log.info(f"PuppetDB version: {version}")
+
+        # Puppet Server is enforcing new metrics API (v2)
+        # starting with versions 6.9.1, 5.3.12, and 5.2.13
+        if parse('5.2.0') <= parse(version) < parse('5.2.13'):
+            log.error("For PuppetDB 5.2.x version >= 5.2.13 is required (with v2 metrics API)")
+            sys.exit(1)
+        if parse('5.3.0') <= parse(version) < parse('5.3.13'):
+            log.error("For PuppetDB 5.3.x version >= 5.3.13 is required (with v2 metrics API)")
+            sys.exit(1)
+        if parse('6.0.0') <= parse(version) < parse('6.9.1'):
+            log.error("For PuppetDB 6.0.x version >= 6.9.1 is required (with v2 metrics API)")
+            sys.exit(1)
+
+        if parse(version) < parse('5.2.13'):
+            log.error("The minimum supported version of PuppetDB is 5.2.13 (with v2 metrics API)")
+            sys.exit(1)
+
     except HTTPError as e:
         log.error(str(e))
+        sys.exit(2)
     except ConnectionError as e:
         log.error(str(e))
+        sys.exit(2)
     except EmptyResponseError as e:
         log.error(str(e))
-    return ver
+        sys.exit(2)
 
 
 def parse_python(value: str):
