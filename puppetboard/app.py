@@ -57,18 +57,16 @@ if not app.config.get('ENABLE_CATALOG'):
 app.jinja_env.globals.update(menu_entries=menu_entries)
 
 
-@app.template_global()
-def version():
-    return __version__
-
-
 @app.context_processor
 def utility_processor():
     def now(format='%m/%d/%Y %H:%M:%S'):
         """returns the formated datetime"""
         return datetime.now().strftime(format)
 
-    return dict(now=now)
+    def version():
+        return __version__
+
+    return dict(now=now, version=version)
 
 
 @app.route('/offline/<path:filename>')
