@@ -18,6 +18,11 @@ REPORTS_COLUMNS = [
      'name': 'Agent version'},
 ]
 
+CATALOGS_COLUMNS = [
+    {'attr': 'certname', 'name': 'Certname', 'type': 'node'},
+    {'attr': 'catalog_timestamp', 'name': 'Compile Time'},
+    {'attr': 'form', 'name': 'Compare'},
+]
 
 APP = None
 PUPPETDB = None
