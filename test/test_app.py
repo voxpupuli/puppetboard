@@ -1029,46 +1029,6 @@ def test_health_status(client):
     assert rv.data.decode('utf-8') == 'OK'
 
 
-def test_metric_params_5213():
-    query_type, metric_version = app.metric_params((5, 2, 13))
-    assert query_type == ''
-    assert metric_version == 'v2'
-
-    query_type, metric_version = app.metric_params((5, 2, 12))
-    assert query_type == ''
-    assert metric_version == 'v1'
-
-
-def test_metric_params_5312():
-    query_type, metric_version = app.metric_params((5, 3, 12))
-    assert query_type == ''
-    assert metric_version == 'v2'
-
-    query_type, metric_version = app.metric_params((5, 3, 11))
-    assert query_type == ''
-    assert metric_version == 'v1'
-
-
-def test_metric_params_691():
-    query_type, metric_version = app.metric_params((6, 9, 1))
-    assert query_type == ''
-    assert metric_version == 'v2'
-
-    query_type, metric_version = app.metric_params((6, 9, 0))
-    assert query_type == ''
-    assert metric_version == 'v1'
-
-
-def test_metric_params_320():
-    query_type, metric_version = app.metric_params((3, 2, 0))
-    assert query_type == 'type=default,'
-    assert metric_version == 'v1'
-
-    query_type, metric_version = app.metric_params((4, 0, 0))
-    assert query_type == ''
-    assert metric_version == 'v1'
-
-
 def test_metrics_v2_api(client, mocker,
                         mock_puppetdb_environments,
                         mock_puppetdb_default_nodes):

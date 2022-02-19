@@ -47,7 +47,8 @@ def index(env):
             # Compute our own average because avg_resources_node['Value']
             # returns a string of the format "num_resources/num_nodes"
             # example: "1234/9" instead of doing the division itself.
-            metrics['avg_resources_node'] = "{0:10.0f}".format((num_resources['Value'] / num_nodes['Value']))
+            metrics['avg_resources_node'] = "{0:10.0f}".format(
+                (num_resources['Value'] / num_nodes['Value']))
         except ZeroDivisionError:
             metrics['avg_resources_node'] = 0
     else:
@@ -76,7 +77,8 @@ def index(env):
         metrics['num_nodes'] = num_nodes[0]['count']
         metrics['num_resources'] = num_resources[0]['count']
         try:
-            metrics['avg_resources_node'] = "{0:10.0f}".format((num_resources[0]['count'] / num_nodes[0]['count']))
+            metrics['avg_resources_node'] = "{0:10.0f}".format(
+                (num_resources[0]['count'] / num_nodes[0]['count']))
         except ZeroDivisionError:
             metrics['avg_resources_node'] = 0
 

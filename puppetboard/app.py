@@ -28,10 +28,11 @@ import puppetboard.views.radiator
 import puppetboard.views.reports
 
 
-from puppetboard.core import get_app
+from puppetboard.core import get_app, get_puppetdb
 from puppetboard.version import __version__
 
 app = get_app()
+puppetdb = get_puppetdb()
 
 
 menu_entries = [
