@@ -23,6 +23,8 @@ import puppetboard.views.nodes
 # noinspection PyUnresolvedReferences
 import puppetboard.views.query
 # noinspection PyUnresolvedReferences
+import puppetboard.views.radiator
+# noinspection PyUnresolvedReferences
 import puppetboard.views.reports
 
 
