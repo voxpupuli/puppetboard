@@ -11,8 +11,7 @@ from puppetboard.utils import (get_or_abort, get_db_version, check_env, metric_p
 app = get_app()
 puppetdb = get_puppetdb()
 
-numeric_level = getattr(logging, app.config['LOGLEVEL'].upper(), None)
-logging.basicConfig(level=numeric_level)
+logging.basicConfig(level=app.config['LOGLEVEL'].upper())
 log = logging.getLogger(__name__)
 
 

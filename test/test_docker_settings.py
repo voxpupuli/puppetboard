@@ -2,7 +2,6 @@ import os
 
 import pytest
 
-import puppetboard.core
 from puppetboard import docker_settings
 
 from importlib import reload as reload
@@ -98,16 +97,6 @@ def test_graph_facts_custom(cleanup_env):
     assert 'puppetversion' in facts
     assert 'architecture' in facts
     assert 'extra' in facts
-
-
-def test_bad_log_value(cleanup_env, mocker):
-    os.environ['LOGLEVEL'] = 'g'
-    os.environ['PUPPETBOARD_SETTINGS'] = '../puppetboard/docker_settings.py'
-    reload(docker_settings)
-
-    puppetboard.core.APP = None
-    with pytest.raises(ValueError):
-        puppetboard.core.get_app()
 
 
 def test_default_table_selctor(cleanup_env):

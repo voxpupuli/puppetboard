@@ -1,6 +1,7 @@
 from __future__ import absolute_import
 from __future__ import unicode_literals
 
+import logging
 from datetime import datetime
 
 from flask import render_template, Response
@@ -33,6 +34,9 @@ from puppetboard.version import __version__
 
 app = get_app()
 puppetdb = get_puppetdb()
+
+logging.basicConfig(level=app.config['LOGLEVEL'].upper())
+log = logging.getLogger(__name__)
 
 
 menu_entries = [

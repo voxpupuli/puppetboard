@@ -37,9 +37,7 @@ def get_app():
         app.config.from_envvar('PUPPETBOARD_SETTINGS', silent=True)
         app.secret_key = app.config['SECRET_KEY']
 
-        numeric_level = getattr(logging, app.config['LOGLEVEL'].upper(), None)
-        if not isinstance(numeric_level, int):
-            raise ValueError('Invalid log level: %s' % app.config['LOGLEVEL'])
+        logging.basicConfig(level=app.config['LOGLEVEL'].upper())
 
         app.jinja_env.filters['jsonprint'] = jsonprint
         app.jinja_env.globals['url_for_field'] = url_for_field
