@@ -7,25 +7,25 @@ from flask import render_template, Response
 
 # these imports are required by Flask - DO NOT remove them although they look unused
 # noinspection PyUnresolvedReferences
-import puppetboard.views.catalogs
+import puppetboard.views.catalogs  # noqa: F401
 # noinspection PyUnresolvedReferences
-import puppetboard.views.dailychart
+import puppetboard.views.dailychart  # noqa: F401
 # noinspection PyUnresolvedReferences
-import puppetboard.views.facts
+import puppetboard.views.facts  # noqa: F401
 # noinspection PyUnresolvedReferences
-import puppetboard.views.index
+import puppetboard.views.index  # noqa: F401
 # noinspection PyUnresolvedReferences
-import puppetboard.views.inventory
+import puppetboard.views.inventory  # noqa: F401
 # noinspection PyUnresolvedReferences
-import puppetboard.views.metrics
+import puppetboard.views.metrics  # noqa: F401
 # noinspection PyUnresolvedReferences
-import puppetboard.views.nodes
+import puppetboard.views.nodes  # noqa: F401
 # noinspection PyUnresolvedReferences
-import puppetboard.views.query
+import puppetboard.views.query  # noqa: F401
 # noinspection PyUnresolvedReferences
-import puppetboard.views.radiator
+import puppetboard.views.radiator  # noqa: F401
 # noinspection PyUnresolvedReferences
-import puppetboard.views.reports
+import puppetboard.views.reports  # noqa: F401
 
 
 from puppetboard.core import get_app, get_puppetdb
