@@ -31,6 +31,8 @@ from puppetboard.version import __version__
 # these imports are required by Flask - DO NOT remove them although they look unused
 # noinspection PyUnresolvedReferences
 import puppetboard.views.index
+# noinspection PyUnresolvedReferences
+import puppetboard.views.nodes
 
 
 REPORTS_COLUMNS = [
@@ -87,39 +89,6 @@ def version():
     return __version__
 
 
-def stream_template(template_name, **context):
-    app.update_template_context(context)
-    t = app.jinja_env.get_template(template_name)
-    rv = t.stream(context)
-    rv.enable_buffering(5)
-    return rv
-
-
-def check_env(env, envs):
-    if env != '*' and env not in envs:
-        abort(404)
-
-
-def metric_params(db_version):
-    query_type = ''
-
-    # Puppet Server is enforcing new metrics API (v2)
-    # starting with versions 6.9.1, 5.3.12, and 5.2.13
-    if (db_version > (6, 9, 0) or
-            (db_version > (5, 3, 11) and db_version < (6, 0, 0)) or
-            (db_version > (5, 2, 12) and db_version < (5, 3, 10))):
-        metric_version = 'v2'
-    else:
-        metric_version = 'v1'
-
-    # Puppet DB version changed the query format from 3.2.0
-    # to 4.0 when querying mbeans
-    if db_version < (4, 0, 0):
-        query_type = 'type=default,'
-
-    return query_type, metric_version
-
-
 @app.context_processor
 def utility_processor():
     def now(format='%m/%d/%Y %H:%M:%S'):
@@ -127,66 +96,6 @@ def utility_processor():
         return datetime.now().strftime(format)
 
     return dict(now=now)
-
-
-@app.route('/nodes', defaults={'env': app.config['DEFAULT_ENVIRONMENT']})
-@app.route('/<env>/nodes')
-def nodes(env):
-    """Fetch all (active) nodes from PuppetDB and stream a table displaying
-    those nodes.
-
-    Downside of the streaming aproach is that since we've already sent our
-    headers we can't abort the request if we detect an error. Because of this
-    we'll end up with an empty table instead because of how yield_or_stop
-    works. Once pagination is in place we can change this but we'll need to
-    provide a search feature instead.
-
-    :param env: Search for nodes in this (Catalog and Fact) environment
-    :type env: :obj:`string`
-    """
-    envs = environments()
-    status_arg = request.args.get('status', '')
-    check_env(env, envs)
-
-    query = AndOperator()
-
-    if env != '*':
-        query.add(EqualsOperator("catalog_environment", env))
-
-    if status_arg in ['failed', 'changed', 'unchanged']:
-        query.add(EqualsOperator('latest_report_status', status_arg))
-    elif status_arg == 'unreported':
-        unreported = datetime.utcnow()
-        unreported = (unreported -
-                      timedelta(hours=app.config['UNRESPONSIVE_HOURS']))
-        unreported = unreported.replace(microsecond=0).isoformat()
-
-        unrep_query = OrOperator()
-        unrep_query.add(NullOperator('report_timestamp', True))
-        unrep_query.add(LessEqualOperator('report_timestamp', unreported))
-
-        query.add(unrep_query)
-
-    if len(query.operations) == 0:
-        query = None
-
-    nodelist = puppetdb.nodes(
-        query=query,
-        unreported=app.config['UNRESPONSIVE_HOURS'],
-        with_status=True,
-        with_event_numbers=app.config['WITH_EVENT_NUMBERS'])
-    nodes = []
-    for node in yield_or_stop(nodelist):
-        if status_arg:
-            if node.status == status_arg:
-                nodes.append(node)
-        else:
-            nodes.append(node)
-    return Response(stream_with_context(
-        stream_template('nodes.html',
-                        nodes=nodes,
-                        envs=envs,
-                        current_env=env)))
 
 
 def inventory_facts():

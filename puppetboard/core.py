@@ -58,3 +58,12 @@ def environments():
         x.append(env['name'])
 
     return x
+
+
+def stream_template(template_name, **context):
+    app = get_app()
+    app.update_template_context(context)
+    t = app.jinja_env.get_template(template_name)
+    rv = t.stream(context)
+    rv.enable_buffering(5)
+    return rv
