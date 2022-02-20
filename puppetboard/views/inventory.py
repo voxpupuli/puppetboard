@@ -18,14 +18,7 @@ def inventory_facts():
     fact_names = []
 
     # load the list of items/facts we want in our inventory
-    try:
-        inv_facts = app.config['INVENTORY_FACTS']
-    except KeyError:
-        inv_facts = [('Hostname', 'fqdn'),
-                     ('IP Address', 'ipaddress'),
-                     ('OS', 'lsbdistdescription'),
-                     ('Architecture', 'hardwaremodel'),
-                     ('Kernel Version', 'kernelrelease')]
+    inv_facts = app.config['INVENTORY_FACTS']
 
     # generate a list of descriptions and a list of fact names
     # from the list of tuples inv_facts.
