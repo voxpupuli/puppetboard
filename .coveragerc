@@ -10,5 +10,7 @@ omit =
     # don't check the test themselves, obviously
     test/*
 
-    # no point in checking this
+    # no point in checking these
     setup.py
+    dev.py
+    wsgi.py
