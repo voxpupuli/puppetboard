@@ -6,6 +6,24 @@ from pypuppetdb import connect
 from puppetboard.utils import (get_or_abort, jsonprint,
                                url_for_field, url_static_offline, quote_columns_data)
 
+
+REPORTS_COLUMNS = [
+    {'attr': 'end', 'filter': 'end_time',
+     'name': 'End time', 'type': 'datetime'},
+    {'attr': 'status', 'name': 'Status', 'type': 'status'},
+    {'attr': 'certname', 'name': 'Certname', 'type': 'node'},
+    {'attr': 'version', 'filter': 'configuration_version',
+     'name': 'Configuration version'},
+    {'attr': 'agent_version', 'filter': 'puppet_version',
+     'name': 'Agent version'},
+]
+
+CATALOGS_COLUMNS = [
+    {'attr': 'certname', 'name': 'Certname', 'type': 'node'},
+    {'attr': 'catalog_timestamp', 'name': 'Compile Time'},
+    {'attr': 'form', 'name': 'Compare'},
+]
+
 APP = None
 PUPPETDB = None
 
@@ -19,9 +37,7 @@ def get_app():
         app.config.from_envvar('PUPPETBOARD_SETTINGS', silent=True)
         app.secret_key = app.config['SECRET_KEY']
 
-        numeric_level = getattr(logging, app.config['LOGLEVEL'].upper(), None)
-        if not isinstance(numeric_level, int):
-            raise ValueError('Invalid log level: %s' % app.config['LOGLEVEL'])
+        logging.basicConfig(level=app.config['LOGLEVEL'].upper())
 
         app.jinja_env.filters['jsonprint'] = jsonprint
         app.jinja_env.globals['url_for_field'] = url_for_field
@@ -58,3 +74,12 @@ def environments():
         x.append(env['name'])
 
     return x
+
+
+def stream_template(template_name, **context):
+    app = get_app()
+    app.update_template_context(context)
+    t = app.jinja_env.get_template(template_name)
+    rv = t.stream(context)
+    rv.enable_buffering(5)
+    return rv

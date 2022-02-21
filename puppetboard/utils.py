@@ -146,3 +146,28 @@ def quote_columns_data(data: str) -> str:
 
     See https://datatables.net/reference/option/columns.data#Types."""
     return data.replace('.', '\\.')
+
+
+def check_env(env, envs):
+    if env != '*' and env not in envs:
+        abort(404)
+
+
+def metric_params(db_version):
+    query_type = ''
+
+    # Puppet Server is enforcing new metrics API (v2)
+    # starting with versions 6.9.1, 5.3.12, and 5.2.13
+    if (db_version > (6, 9, 0) or
+            ((5, 3, 11) < db_version < (6, 0, 0)) or
+            ((5, 2, 12) < db_version < (5, 3, 10))):
+        metric_version = 'v2'
+    else:
+        metric_version = 'v1'
+
+    # Puppet DB version changed the query format from 3.2.0
+    # to 4.0 when querying mbeans
+    if db_version < (4, 0, 0):
+        query_type = 'type=default,'
+
+    return query_type, metric_version

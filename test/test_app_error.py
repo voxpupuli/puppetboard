@@ -8,23 +8,12 @@ from puppetboard.errors import (bad_request, forbidden, not_found,
 
 
 @pytest.fixture
-def mock_puppetdb_environments(mocker):
-    environemnts = [
-        {'name': 'production'},
-        {'name': 'staging'}
-    ]
-
-    return mocker.patch.object(app.puppetdb, 'environments',
-                               return_value=environemnts)
-
-
-@pytest.fixture
 def mock_server_error(mocker):
-    def raiseInternalServerError():
+    def raise_error():
         raise InternalServerError('Hello world')
 
     return mocker.patch('puppetboard.core.environments',
-                        side_effect=raiseInternalServerError)
+                        side_effect=raise_error)
 
 
 def test_error_bad_request(mock_puppetdb_environments):

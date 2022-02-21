@@ -261,3 +261,43 @@ def test_stop_http_error():
 def test_quote_columns_data():
     quoted_with_dot = utils.quote_columns_data('foo.bar')
     assert quoted_with_dot == 'foo\\.bar'
+
+
+def test_metric_params_5213():
+    query_type, metric_version = utils.metric_params((5, 2, 13))
+    assert query_type == ''
+    assert metric_version == 'v2'
+
+    query_type, metric_version = utils.metric_params((5, 2, 12))
+    assert query_type == ''
+    assert metric_version == 'v1'
+
+
+def test_metric_params_5312():
+    query_type, metric_version = utils.metric_params((5, 3, 12))
+    assert query_type == ''
+    assert metric_version == 'v2'
+
+    query_type, metric_version = utils.metric_params((5, 3, 11))
+    assert query_type == ''
+    assert metric_version == 'v1'
+
+
+def test_metric_params_691():
+    query_type, metric_version = utils.metric_params((6, 9, 1))
+    assert query_type == ''
+    assert metric_version == 'v2'
+
+    query_type, metric_version = utils.metric_params((6, 9, 0))
+    assert query_type == ''
+    assert metric_version == 'v1'
+
+
+def test_metric_params_320():
+    query_type, metric_version = utils.metric_params((3, 2, 0))
+    assert query_type == 'type=default,'
+    assert metric_version == 'v1'
+
+    query_type, metric_version = utils.metric_params((4, 0, 0))
+    assert query_type == ''
+    assert metric_version == 'v1'
