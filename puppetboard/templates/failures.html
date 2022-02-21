@@ -1,0 +1,33 @@
+{% extends 'layout.html' %}
+{% import '_macros.html' as macros %}
+{% block content %}
+<div class="ui fluid icon input hide" style="margin-bottom:20px">
+  <input autofocus="autofocus" class="filter-table" placeholder="Type here to filter...">
+</div>
+<table class='ui basic compact sortable fixed wrapped table'>
+  <thead>
+    <tr>
+      <th class="default default-sort">Certname</th>
+      <th class="date">Report time</th>
+      <th>Source</th>
+      <th >Error</th>
+    </tr>
+  </thead>
+  <tbody class="searchable">
+    {% for failure in failures %}
+    <tr>
+      <td><a href="{{url_for('node', env=current_env, node_name=failure.certname)}}">{{failure.certname}}</a></td>
+      <td rel="utctimestamp">{{failure.timestamp}}</td>
+      <td>{{failure.source}}</td>
+      <td>
+      {% if '\n' in failure.message %}
+          <pre>{{failure.message}}</pre>
+      {% else %}
+          {{failure.message}}
+      {% endif %}
+      </td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% endblock content %}
