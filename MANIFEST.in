@@ -1,6 +1,6 @@
 include README.md
 include CHANGELOG.md
 include LICENSE
-recursive-include puppetboard/static *.css *.js *icons.* Open_Sans.woff
+recursive-include puppetboard/static *.css *.js *icons.* Open_Sans.woff *.ttf *.ico *.svg
 recursive-include puppetboard/templates *
 include requirements*.txt
