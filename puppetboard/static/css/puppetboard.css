@@ -226,7 +226,8 @@ a .key:hover {
 
 textarea, /* query */
 pre.result,
-pre.error_message {
+pre.error_message,
+td.error_message {
   font-family: "Cousine", monospace;
   font-size: 1rem;
 }

@@ -53,3 +53,6 @@ REFRESH_RATE = 30
 DAILY_REPORTS_CHART_ENABLED = True
 DAILY_REPORTS_CHART_DAYS = 8
 WITH_EVENT_NUMBERS = True
+
+SHOW_ERROR_AS = 'friendly'  # or 'raw'
+CODE_PREFIX_TO_REMOVE = '/etc/puppetlabs/code/environments'

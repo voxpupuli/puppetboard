@@ -76,6 +76,7 @@ def environments():
     return x
 
 
+# as documented in https://flask.palletsprojects.com/en/2.0.x/patterns/streaming/#streaming-from-templates
 def stream_template(template_name, **context):
     app = get_app()
     app.update_template_context(context)

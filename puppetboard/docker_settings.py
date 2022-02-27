@@ -125,3 +125,6 @@ DAILY_REPORTS_CHART_ENABLED = coerce_bool(os.getenv('DAILY_REPORTS_CHART_ENABLED
 DAILY_REPORTS_CHART_DAYS = int(os.getenv('DAILY_REPORTS_CHART_DAYS', '8'))
 
 WITH_EVENT_NUMBERS = coerce_bool(os.getenv('WITH_EVENT_NUMBERS'), True)
+
+SHOW_ERROR_AS = os.getenv('SHOW_ERROR_AS', 'friendly')
+CODE_PREFIX_TO_REMOVE = os.getenv('CODE_PREFIX_TO_REMOVE', '/etc/puppetlabs/code/environments')
