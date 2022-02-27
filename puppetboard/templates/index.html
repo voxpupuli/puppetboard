@@ -76,7 +76,7 @@
   <div class="one column row">
     <div class="column">
       {% if nodes %}
-      <h2>Nodes status detail ({{nodes|length}})</h2>
+      <h2>Nodes, except with status unchanged ({{nodes|length}})</h2>
       <table class='ui sortable very compact very basic table'>
         <thead>
           <tr>
@@ -118,7 +118,7 @@
         </tbody>
       </table>
       {% else %}
-      <h2>Nodes status detail</h2>
+      <h2>Nodes, except with status unchanged</h2>
       <div class="ui info message">
         Nothing seems to be changing.
       </div>
