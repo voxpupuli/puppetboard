@@ -1,4 +1,22 @@
 import os
+import tempfile
+
+
+def cert_to_file(cert_file_or_string):
+    """
+    cert_to_file takes in a string, if it looks like a certificate save the contents to a temporary
+    file and return the path to that temporary file
+
+    Note: NamedTemporaryFile does not work great with Windows, but since this is for Docker
+    hopefully we'll be fine.
+    """
+    if isinstance(cert_file_or_string, str) and '-----BEGIN' in cert_file_or_string:
+        with tempfile.NamedTemporaryFile(delete=False, suffix='puppetboard_cert') as tmpfile:
+            tmpfile.write(cert_file_or_string.encode())
+            tmpfile.close()
+        return tmpfile.name
+    else:
+        return cert_file_or_string
 
 
 def coerce_bool(v, default):
@@ -20,11 +38,11 @@ PUPPETDB_PORT = int(os.getenv('PUPPETDB_PORT', '8080'))
 # but if it is other string, then it's a path
 PUPPETDB_SSL_VERIFY = coerce_bool(
     os.getenv('PUPPETDB_SSL_VERIFY', True),
-    os.getenv('PUPPETDB_SSL_VERIFY')
+    cert_to_file(os.getenv('PUPPETDB_SSL_VERIFY'))
 )
 
-PUPPETDB_KEY = os.getenv('PUPPETDB_KEY', None)
-PUPPETDB_CERT = os.getenv('PUPPETDB_CERT', None)
+PUPPETDB_KEY = cert_to_file(os.getenv('PUPPETDB_KEY', None))
+PUPPETDB_CERT = cert_to_file(os.getenv('PUPPETDB_CERT', None))
 PUPPETDB_PROTO = os.getenv('PUPPETDB_PROTO', None)
 PUPPETDB_TIMEOUT = int(os.getenv('PUPPETDB_TIMEOUT', '20'))
 DEFAULT_ENVIRONMENT = os.getenv('DEFAULT_ENVIRONMENT', 'production')

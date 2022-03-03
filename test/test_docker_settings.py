@@ -64,6 +64,18 @@ def test_cert_path(cleanup_env):
     assert docker_settings.PUPPETDB_SSL_VERIFY == ca_file
 
 
+def test_cert_to_file(cleanup_env):
+    import tempfile
+    cert_string = '-----BEGIN CERTIFICATE-----\nMIIFkjCCA3qgAwIB'
+
+    os.environ['PUPPETDB_KEY'] = cert_string
+    reload(docker_settings)
+    assert docker_settings.PUPPETDB_KEY.startswith(tempfile.gettempdir())
+
+    # Clean up the generated file
+    os.unlink(docker_settings.PUPPETDB_KEY)
+
+
 def validate_facts(facts):
     assert isinstance(facts, list)
     assert len(facts) > 0
