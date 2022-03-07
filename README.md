@@ -57,6 +57,25 @@ docker run -it \
 
 Optionally you can set `PUPPETBOARD_URL_PREFIX` env variable to a value like `/puppetboard` to run the app under a URL prefix.
 
+You can use the following Puppet Code to have Puppetboard managed by Puppet:
+
+```puppet
+include docker
+
+docker::image { 'ghcr.io/voxpupuli/puppetboard': }
+
+docker::run { 'puppetboard':
+  image => 'ghcr.io/voxpupuli/puppetboard',
+  env   => [
+    'PUPPETDB_HOST=127.0.0.1',
+    'PUPPETDB_PORT=8080',
+    'PUPPETBOARD_PORT=8088',
+  ],
+  net   => 'host',
+}
+```
+
+
 We also provide the Dockerfile so you can build the image yourself:
 ```bash
 docker build -t puppetboard .
