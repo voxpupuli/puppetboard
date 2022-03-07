@@ -59,7 +59,7 @@ Optionally you can set `PUPPETBOARD_URL_PREFIX` env variable to a value like `/p
 
 You can use the following Puppet Code to have Puppetboard managed by Puppet:
 
-```
+```puppet
 include docker
 
 docker::image { 'ghcr.io/voxpupuli/puppetboard': }
