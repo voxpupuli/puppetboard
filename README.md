@@ -138,6 +138,20 @@ supply the following settings:
 -   `PUPPETDB_KEY = /path/to/private/keyfile.pem`
 -   `PUPPETDB_CERT = /path/to/public/keyfile.crt`
 
+When using the Puppetboard Docker image, you may also pass Puppetboard it's certificate contents via these environment
+variables, either as a multiline string or pre-base64 encoded. This can be useful where the certificate is stored in a
+secrets store i.e. AWS SSM Parameter Store.
+
+```
+PUPPETDB_CERT="-----BEGIN CERTIFICATE-----
+...
+-----END CERTIFICATE-----"
+```
+
+```
+PUPPETDB_CERT=LS0tLS1CRUdJTiBSU0EgUFJJVkFURSBLRVktLS0tLQouLi4KLS0tLS1FTkQgQ0VSVElGSUNBVEUtLS0tLQ==
+```
+
 For information about how to generate the correct keys please refer to the 
 [pypuppetdb documentation](https://pypuppetdb.readthedocs.io/en/latest/connecting.html#ssl). Alternatively it is possible
 to explicitly specify the protocol to be used setting the `PUPPETDB_PROTO` variable.
