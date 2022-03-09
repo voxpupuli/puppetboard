@@ -1,20 +1,32 @@
 import os
 import tempfile
+import base64
+import binascii
 
 
 def cert_to_file(cert_file_or_string):
     """
-    cert_to_file takes in a string, if it looks like a certificate save the contents to a temporary
+    cert_to_file takes in a string, if it looks like a certificate, save the contents to a temporary
     file and return the path to that temporary file
+
+    cert_to_file also supports base64 encoded certificates, in cases where newlines cause problems
 
     Note: NamedTemporaryFile does not work great with Windows, but since this is for Docker
     hopefully we'll be fine.
     """
-    if isinstance(cert_file_or_string, str) and '-----BEGIN' in cert_file_or_string:
-        with tempfile.NamedTemporaryFile(delete=False, suffix='puppetboard_cert') as tmpfile:
-            tmpfile.write(cert_file_or_string.encode())
-            tmpfile.close()
-        return tmpfile.name
+    if isinstance(cert_file_or_string, str):
+        try:
+            cert_str = base64.b64decode(cert_file_or_string).decode()
+        except (UnicodeDecodeError, binascii.Error):
+            cert_str = cert_file_or_string
+
+        if '-----BEGIN' in cert_str:
+            with tempfile.NamedTemporaryFile(delete=False, suffix='puppetboard_cert') as tmpfile:
+                tmpfile.write(cert_str.encode())
+                tmpfile.close()
+            return tmpfile.name
+        else:
+            return cert_file_or_string
     else:
         return cert_file_or_string
 

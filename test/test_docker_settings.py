@@ -66,11 +66,29 @@ def test_cert_path(cleanup_env):
 
 def test_cert_to_file(cleanup_env):
     import tempfile
-    cert_string = '-----BEGIN CERTIFICATE-----\nMIIFkjCCA3qgAwIB'
+    cert_string = '-----BEGIN CERTIFICATE-----\nMIIFkjCCA3qgAwf'
 
     os.environ['PUPPETDB_KEY'] = cert_string
     reload(docker_settings)
     assert docker_settings.PUPPETDB_KEY.startswith(tempfile.gettempdir())
+
+    with open(docker_settings.PUPPETDB_KEY) as test_cert_file:
+        assert test_cert_file.read() == '-----BEGIN CERTIFICATE-----\nMIIFkjCCA3qgAwf'
+
+    # Clean up the generated file
+    os.unlink(docker_settings.PUPPETDB_KEY)
+
+
+def test_cert_to_file_base64(cleanup_env):
+    import tempfile
+    cert_string = 'LS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0tCk1JSUZrakNDQTNxZ0F3SUI='
+
+    os.environ['PUPPETDB_KEY'] = cert_string
+    reload(docker_settings)
+    assert docker_settings.PUPPETDB_KEY.startswith(tempfile.gettempdir())
+
+    with open(docker_settings.PUPPETDB_KEY) as test_cert_file:
+        assert test_cert_file.read() == '-----BEGIN CERTIFICATE-----\nMIIFkjCCA3qgAwIB'
 
     # Clean up the generated file
     os.unlink(docker_settings.PUPPETDB_KEY)
