@@ -33,7 +33,9 @@ def get_friendly_error(source: str, message: str, certname: str) -> str:
     message = re.sub(f'file: {code_prefix_to_remove}', 'file: …', message)
 
     # remove some unuseful parts
-    too_long_prefix = "Could not retrieve catalog from remote server: Error 500 on SERVER: Server Error: "
+    too_long_prefix = "Could not retrieve catalog from remote server: " \
+                      "Error 500 on SERVER: " \
+                      "Server Error: "
     message = re.sub(f'^{too_long_prefix}', '', message)
 
     message = re.sub(r"(Evaluation Error: Error while evaluating a )",
@@ -54,7 +56,8 @@ def get_friendly_error(source: str, message: str, certname: str) -> str:
                      r"\1\n\n", message)
 
     # reformat and rephrase ending expression that says where in the code is the error
-    # NOTE: this has to be done AFTER removing " on node ..." but BEFORE replacing spaces with &nbsp;
+    # NOTE: this has to be done AFTER removing " on node ..."
+    # but BEFORE replacing spaces with &nbsp;
     message = re.sub(r"(\S)\s+\(file: ([0-9a-zA-Z/_\-.…]+, line: \d+, column: \d+)\)\s*$",
                      r"\1\n\n…in \2.", message)
 
@@ -65,7 +68,6 @@ def get_friendly_error(source: str, message: str, certname: str) -> str:
 
 
 def to_html(message: str) -> str:
-
     # replace \n with <br/> to not have to use <pre> which breaks wrapping
     message = re.sub(r"\n", "<br/>", message)
 
@@ -78,7 +80,8 @@ def to_html(message: str) -> str:
     return message
 
 
-@app.route('/failures', defaults={'env': app.config['DEFAULT_ENVIRONMENT'], 'show_error_as': app.config['SHOW_ERROR_AS']})
+@app.route('/failures', defaults={'env': app.config['DEFAULT_ENVIRONMENT'],
+                                  'show_error_as': app.config['SHOW_ERROR_AS']})
 @app.route('/failures/<show_error_as>', defaults={'env': app.config['DEFAULT_ENVIRONMENT']})
 @app.route('/<env>/failures', defaults={'show_error_as': app.config['SHOW_ERROR_AS']})
 @app.route('/<env>/failures/<show_error_as>')
