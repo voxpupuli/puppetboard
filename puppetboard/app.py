@@ -27,6 +27,8 @@ import puppetboard.views.query  # noqa: F401
 import puppetboard.views.radiator  # noqa: F401
 # noinspection PyUnresolvedReferences
 import puppetboard.views.reports  # noqa: F401
+# noinspection PyUnresolvedReferences
+import puppetboard.views.failures  # noqa: F401
 
 
 from puppetboard.core import get_app, get_puppetdb
@@ -41,6 +43,7 @@ log = logging.getLogger(__name__)
 
 menu_entries = [
     ('index', 'Overview'),
+    ('failures', 'Failures'),
     ('nodes', 'Nodes'),
     ('facts', 'Facts'),
     ('reports', 'Reports'),
@@ -48,7 +51,7 @@ menu_entries = [
     ('inventory', 'Inventory'),
     ('catalogs', 'Catalogs'),
     ('radiator', 'Radiator'),
-    ('query', 'Query')
+    ('query', 'Query'),
 ]
 
 if not app.config.get('ENABLE_QUERY'):

@@ -60,7 +60,7 @@ PUPPETDB_TIMEOUT = int(os.getenv('PUPPETDB_TIMEOUT', '20'))
 DEFAULT_ENVIRONMENT = os.getenv('DEFAULT_ENVIRONMENT', 'production')
 SECRET_KEY = os.getenv('SECRET_KEY', os.urandom(24))
 DEV_LISTEN_HOST = os.getenv('DEV_LISTEN_HOST', '127.0.0.1')
-DEV_LISTEN_PORT = int(os.getenv('DEV_LISTEN_PORT', '5000'))
+DEV_LISTEN_PORT = int(os.getenv('DEV_LISTEN_PORT', '5555'))
 DEV_COFFEE_LOCATION = os.getenv('DEV_COFFEE_LOCATION', 'coffee')
 UNRESPONSIVE_HOURS = int(os.getenv('UNRESPONSIVE_HOURS', '2'))
 ENABLE_QUERY = os.getenv('ENABLE_QUERY', 'True')
@@ -125,3 +125,6 @@ DAILY_REPORTS_CHART_ENABLED = coerce_bool(os.getenv('DAILY_REPORTS_CHART_ENABLED
 DAILY_REPORTS_CHART_DAYS = int(os.getenv('DAILY_REPORTS_CHART_DAYS', '8'))
 
 WITH_EVENT_NUMBERS = coerce_bool(os.getenv('WITH_EVENT_NUMBERS'), True)
+
+SHOW_ERROR_AS = os.getenv('SHOW_ERROR_AS', 'friendly')
+CODE_PREFIX_TO_REMOVE = os.getenv('CODE_PREFIX_TO_REMOVE', '/etc/puppetlabs/code/environments')

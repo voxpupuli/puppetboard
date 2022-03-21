@@ -1,0 +1,56 @@
+{% extends 'layout.html' %}
+{% import '_macros.html' as macros %}
+{% block content %}
+<div class="ui fluid icon input hide" style="margin-bottom:20px">
+  <input autofocus="autofocus" class="filter-table" placeholder="Type here to filter...">
+</div>
+<div id="checkbox_div" class="ui toggle {% if (current_show_error_as == 'friendly') %}checked{% endif %} checkbox">
+    <input type="checkbox" {% if (current_show_error_as == 'friendly') %}checked=""{% endif %}">
+    <label>Friendly error messages</label>
+</div>
+<table id="failures_table" class='ui basic vertically padded sortable fixed wrapped table'>
+  <thead>
+    <tr>
+      <th class="default default-sort four wide">Certname</th>
+      <th class="date two wide">Report time</th>
+      <th class="date ten wide">Error</th>
+    </tr>
+  </thead>
+  <tbody class="searchable">
+    {% for failure in failures %}
+    <tr>
+      <td>
+        <a href="{{url_for('node', env=current_env, node_name=failure.certname)}}">
+          {{failure.certname}}
+        </a>
+      </td>
+      <td>
+        <a href="{{url_for('report', env=current_env, node_name=failure.certname, report_id=failure.report_hash)}}" rel="utctimestamp">
+            {{failure.timestamp}}
+        </a>
+      </td>
+      <td class="negative error_message">
+          {{failure.error | safe}}
+      </td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+
+<script>
+$('#checkbox_div').checkbox(
+    'setting', 'onChange', function() {
+        let url = window.location.href;
+        if (url.endsWith("/raw")) {
+            url = url.replaceAll(/\/raw$/ig, '/friendly')
+        } else if (url.endsWith("/friendly")) {
+            url = url.replaceAll(/\/friendly$/ig, '/raw')
+        } else {
+            url += '/raw'
+        }
+        window.location.href = url
+    }
+);
+</script>
+
+{% endblock content %}
