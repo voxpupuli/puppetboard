@@ -6,6 +6,20 @@ This is the changelog for Puppetboard.
 Development
 -----------
 
+3.4.0 (RC5)
+-----------
+
+Like 3.4.0 (RC4) and additionally:
+
+* Add new 'Failure' view for showing the first error/failed resource for all nodes with a failed puppet run. It can show both "friendly" and raw error messages ([#662](https://github.com/voxpupuli/puppetboard/pull/662)).
+* Allow passing PuppetDB certificates via environment variables when using Docker, in base64 encoding or not ([#671](https://github.com/voxpupuli/puppetboard/pull/671)).
+* Add Puppet code for running Puppetboard using Docker into the README ([#672](https://github.com/voxpupuli/puppetboard/pull/672)).
+* Add missing fonts and icons to the PyPI package ([#666](https://github.com/voxpupuli/puppetboard/pull/666)).
+* Visual tweaks ([#667](https://github.com/voxpupuli/puppetboard/pull/667)).
+* Refactoring: splitted views into separate files ([#665](https://github.com/voxpupuli/puppetboard/pull/665)).
+
+Thanks to the following contributors of this release: [@SeanHood](https://github.com/SeanHood), [@tuxmea](https://github.com/tuxmea), [@djluo](https://github.com/djluo).
+
 3.4.0 (RC4)
 -----------
 
