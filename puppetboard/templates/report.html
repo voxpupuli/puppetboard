@@ -8,6 +8,7 @@
       <th>Configuration version</th>
       <th>Start time</th>
       <th>End time</th>
+      <th>Duration</th>
     </tr>
   </thead>
   <tbody>
@@ -21,6 +22,9 @@
       </td>
       <td rel="utctimestamp">
         {{report.end}}
+      </td>
+      <td>
+        {{report.end - report.start}}
       </td>
     </tr>
   </tbody>
