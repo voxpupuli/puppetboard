@@ -6,6 +6,15 @@ This is the changelog for Puppetboard.
 Development
 -----------
 
+3.4.0 (RC6)
+-----------
+
+Like 3.4.0 (RC5) and additionally:
+
+* Fix: handling facts in queries ([#675](https://github.com/voxpupuli/puppetboard/pull/675)).
+
+Thanks to the following contributors of this release: [@GermanG](https://github.com/GermanG)
+
 3.4.0 (RC5)
 -----------
 
