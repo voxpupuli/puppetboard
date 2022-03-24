@@ -62,13 +62,16 @@ def query(env):
 
             if not zero_results:
                 columns = result[0].keys()
+                output = []
+                for items in result:
+                    output.append(list(items.values()))
             else:
                 columns = []
 
             return render_template('query.html',
                                    form=form,
                                    zero_results=zero_results,
-                                   result=result,
+                                   result=output,
                                    columns=columns,
                                    envs=envs,
                                    current_env=env)
