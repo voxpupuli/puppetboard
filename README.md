@@ -1,7 +1,7 @@
 # Puppetboard
 
-[![PyPi Version](https://img.shields.io/pypi/v/puppetboard)](https://pypi.org/project/puppetboard/)
-[![PyPi Downloads](https://img.shields.io/pypi/dm/puppetboard)](https://pypi.org/project/puppetboard/)
+[![PyPI Version](https://img.shields.io/pypi/v/puppetboard)](https://pypi.org/project/puppetboard/)
+[![PyPI Downloads](https://img.shields.io/pypi/dm/puppetboard)](https://pypi.org/project/puppetboard/)
 ![Tests Status](https://github.com/voxpupuli/puppetboard/workflows/tests%20(unit)/badge.svg)
 [![codecov](https://codecov.io/gh/voxpupuli/puppetboard/branch/master/graph/badge.svg?token=uez5RoiU6I)](https://codecov.io/gh/voxpupuli/puppetboard)
 [![By Voxpupuli](https://img.shields.io/badge/by-Vox%20Pupuli%20%F0%9F%A6%8A-ef902f.svg)](http://voxpupuli.org)
@@ -31,7 +31,7 @@ See [more screenshots here](#more-screenshots).
 
 ## Installation
 
-Puppetboard is packaged and available on PyPi.
+Puppetboard is packaged and available on PyPI.
 
 ### With Puppet module
 

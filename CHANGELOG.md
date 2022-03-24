@@ -290,11 +290,11 @@ Other changes:
 * A new setting called `UNRESPONSIVE_HOURS` has been added which denotes the amount of hours after which Puppetboard will display the node as unreported if it hasn't checked in. We default to `2` hours.
 * The event message can now be viewed by clicking on the event.
 
-Puppetboard is now neatly packaged up and available on PyPi. This should
+Puppetboard is now neatly packaged up and available on PyPI. This should
 significantly help reduce the convoluted installation instructions people had
 to follow.
 
-Updated installation instructions have been added on how to install from PyPi
+Updated installation instructions have been added on how to install from PyPI
 and how to configure your HTTPD.
 
 0.0.2
