@@ -11,7 +11,7 @@ Puppetboard is a web interface to [PuppetDB](https://puppet.com/docs/puppetdb/la
 the reporting functionality of [Puppet Enterprise console (previously: Puppet Dashboard)](https://puppet.com/docs/pe/latest/console_accessing.html)
 for the open source Puppet.
 
-![View of a node](https://raw.githubusercontent.com/voxpupuli/puppetboard/master/screenshots/overview.png)
+![Overview](https://raw.githubusercontent.com/voxpupuli/puppetboard/master/screenshots/overview.png)
 
 See [more screenshots here](#more-screenshots).
 
@@ -292,9 +292,13 @@ by Tim Pope](https://tbaggery.com/2008/04/19/a-note-about-git-commit-messages.ht
 
 ![All nodes that have this fact with that value](https://raw.githubusercontent.com/voxpupuli/puppetboard/master/screenshots/fact_value.png)
 
-* Query view
+* Query view - results as table
 
-![Query view](https://raw.githubusercontent.com/voxpupuli/puppetboard/master/screenshots/query.png)
+![Query view](https://raw.githubusercontent.com/voxpupuli/puppetboard/master/screenshots/query_result_table.png)
+
+* Query view - results as JSON
+
+![Query view](https://raw.githubusercontent.com/voxpupuli/puppetboard/master/screenshots/query_result_json.png)
 
 * Metrics view
 
