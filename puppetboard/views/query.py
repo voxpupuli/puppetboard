@@ -60,9 +60,9 @@ def query(env):
             zero_results = (len(result) == 0)
             result = result if not zero_results else None
 
+            output = []
             if not zero_results:
                 columns = result[0].keys()
-                output = []
                 for items in result:
                     output.append(list(items.values()))
             else:
