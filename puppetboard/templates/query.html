@@ -134,7 +134,7 @@
 'columns': [
     {% for column in columns %}
     {
-        "data": "{{ quote_columns_data(column) }}",
+        "title": "{{ quote_columns_data(column) }}",
 {% if column in ['node', 'certname'] %}
         "render": function (data, type, full, meta) {
             return `<a href='{{ url_for("node", node_name="") }}${data}'>${data}</a>`
