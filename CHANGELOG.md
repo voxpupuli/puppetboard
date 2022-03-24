@@ -3,66 +3,26 @@ Changelog
 
 This is the changelog for Puppetboard.
 
-Development
------------
+3.4.0
+-----
 
-3.4.0 (RC6)
------------
-
-Like 3.4.0 (RC5) and additionally:
-
-* Fix: handling facts in queries ([#675](https://github.com/voxpupuli/puppetboard/pull/675)).
-
-Thanks to the following contributors of this release: [@GermanG](https://github.com/GermanG)
-
-3.4.0 (RC5)
------------
-
-Like 3.4.0 (RC4) and additionally:
-
-* Add new 'Failure' view for showing the first error/failed resource for all nodes with a failed puppet run. It can show both "friendly" and raw error messages ([#662](https://github.com/voxpupuli/puppetboard/pull/662)).
-* Allow passing PuppetDB certificates via environment variables when using Docker, in base64 encoding or not ([#671](https://github.com/voxpupuli/puppetboard/pull/671)).
-* Add Puppet code for running Puppetboard using Docker into the README ([#672](https://github.com/voxpupuli/puppetboard/pull/672)).
-* Add missing fonts and icons to the PyPI package ([#666](https://github.com/voxpupuli/puppetboard/pull/666)).
-* Visual tweaks ([#667](https://github.com/voxpupuli/puppetboard/pull/667)).
-* Refactoring: splitted views into separate files ([#665](https://github.com/voxpupuli/puppetboard/pull/665)).
-
-Thanks to the following contributors of this release: [@SeanHood](https://github.com/SeanHood), [@tuxmea](https://github.com/tuxmea), [@djluo](https://github.com/djluo).
-
-3.4.0 (RC4)
------------
-
-Like 3.4.0 (RC2) and additionally:
-
-* Fix some regressions in RC2 ([#661](https://github.com/voxpupuli/puppetboard/pull/661)).
-* Configurable binding host in Dockerfile ([#660](https://github.com/voxpupuli/puppetboard/pull/660)).
-
-Thanks to the following contributors of this release: [@GermanG](https://github.com/GermanG), [@jgrammen-agilitypr](https://github.com/jgrammen-agilitypr), [@qhess34](https://github.com/qhess34)
-
-3.4.0 (RC3)
------------
-
-Yanked, broken release.
-
-3.4.0 (RC2)
------------
-
-Like 3.4.0 (RC1) and additionally:
-
-* Add 'Download as CSV' and 'Download as XLSX' to the Query results ([#654](https://github.com/voxpupuli/puppetboard/pull/654)).
-* Make the Query result shareable using URL ([#657](https://github.com/voxpupuli/puppetboard/pull/657)).
+* **Query** view improvements:
+  * Make the result clickable if a certname is in it ([#652](https://github.com/voxpupuli/puppetboard/pull/652)).
+  * UX improvements: show the number of results, show a user-friendly error in case of a PQL syntax error, show a warning on empty result, use fixed-width font for matching the query with the possible error message, remove useless 'Cancel' button. ([#653](https://github.com/voxpupuli/puppetboard/pull/653)).
+  * Add 'Download as CSV' and 'Download as XLSX' to the results ([#654](https://github.com/voxpupuli/puppetboard/pull/654)).
+  * Make the result shareable using URL ([#657](https://github.com/voxpupuli/puppetboard/pull/657)).
+* New **Failures** view for showing the first error/failed resource for all nodes with a failed puppet run. It can show both "friendly" and raw error messages ([#662](https://github.com/voxpupuli/puppetboard/pull/662)).
 * Sort 'uptime' fact values correctly ([#591](https://github.com/voxpupuli/puppetboard/pull/591)).
-* Minor update to some dependencies.
+* Visual tweaks ([#667](https://github.com/voxpupuli/puppetboard/pull/667)).
+* Improvements for running with Docker:
+  * Configurable binding host in Dockerfile ([#660](https://github.com/voxpupuli/puppetboard/pull/660)).
+  * Allow passing PuppetDB certificates via environment variables when using Docker, in base64 encoding or not ([#671](https://github.com/voxpupuli/puppetboard/pull/671)).
+  * Add Puppet code for running Puppetboard using Docker into the README ([#672](https://github.com/voxpupuli/puppetboard/pull/672)).
+* Add missing fonts and icons to the PyPI package ([#666](https://github.com/voxpupuli/puppetboard/pull/666)).
+* Refactoring: split views into separate files ([#665](https://github.com/voxpupuli/puppetboard/pull/665)).
+* Update many dependencies.
 
-Thanks to the following contributors of this release: [@GermanG](https://github.com/GermanG), [@jgrammen-agilitypr](https://github.com/jgrammen-agilitypr)
-
-3.4.0 (RC1)
------------
-
-* Make the query result clickable if a certname is in it ([#652](https://github.com/voxpupuli/puppetboard/pull/652))
-* Query UX improvements: show the number of results, show a user-friendly error in case of a PQL syntax error, show a warning on empty result, use fixed-width font for matching the query with the possible error message, remove useless 'Cancel' button. ([#653](https://github.com/voxpupuli/puppetboard/pull/653))
-
-Thanks to the following contributors of this release: [@GermanG](https://github.com/GermanG)
+✨ Thanks to the following contributors of this release: [@djluo](https://github.com/djluo), [@GermanG](https://github.com/GermanG), [@jgrammen-agilitypr](https://github.com/jgrammen-agilitypr), [@SeanHood](https://github.com/SeanHood), [@tuxmea](https://github.com/tuxmea), [@qhess34](https://github.com/qhess34)! 🌟
 
 3.3.0
 -----
