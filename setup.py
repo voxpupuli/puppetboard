@@ -43,7 +43,7 @@ setup(
     version=__version__,
     author='Vox Pupuli',
     author_email='voxpupuli@groups.io',
-    packages=find_packages(),
+    packages=["puppetboard", "puppetboard.views"],
     url='https://github.com/voxpupuli/puppetboard',
     license='Apache License 2.0',
     description='Web frontend for PuppetDB',
