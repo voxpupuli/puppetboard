@@ -24,12 +24,12 @@ See [more screenshots here](#more-screenshots).
 * [Contributing](#contributing)
 * [Legal](#legal)
 
-## Requirements
+## Requirements<a id="requirements"></a>
 
 * PuppetDB v. 3.0-7.5 (will most probably work with newer, but this has not been tested yet)
-* Python 3.6 / 3.7 / 3.8 / 3.9 / 3.10
+* Python 3.6-3.10
 
-## Installation
+## Installation<a id="installation"></a>
 
 Puppetboard is packaged and available on PyPI.
 
@@ -103,7 +103,7 @@ pip install puppetboard
 
 Please see [an article about more deployment setups here](https://github.com/voxpupuli/puppetboard/blob/master/docs/Deployment-setups.md).
 
-## Configuration
+## Configuration<a id="configuration"></a>
 
 ### PuppetDB
 
@@ -201,11 +201,11 @@ Other settings that might be interesting in no particular order:
 -   `DEV_LISTEN_HOST`: For use with dev.py for development. Default is localhost
 -   `DEV_LISTEN_PORT`: For use with dev.py for development. Default is 5555
 
-## Getting Help
+## Getting Help<a id="getting-help"></a>
 
 For questions or bug reports you can file an [issue](https://github.com/voxpupuli/puppetboard/issues).
 
-## Contributing
+## Contributing<a id="contributing"></a>
 
 ### Development
 
@@ -262,7 +262,7 @@ The preferred format of a commit message:
 If you'd like a more elaborate guide on how to write and format your commit messages have a look at [this post
 by Tim Pope](https://tbaggery.com/2008/04/19/a-note-about-git-commit-messages.html).
 
-## More Screenshots
+## More Screenshots<a id="more-screenshots"></a>
 
 * Overview / Index / Homepage
 
@@ -308,7 +308,7 @@ by Tim Pope](https://tbaggery.com/2008/04/19/a-note-about-git-commit-messages.ht
 
 ![Single metric](https://raw.githubusercontent.com/voxpupuli/puppetboard/master/screenshots/metric.png)
 
-# Legal
+# Legal<a id="legal"></a>
 
 The app code is licensed under the [Apache License, Version 2.0](./LICENSE).
 
