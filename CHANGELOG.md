@@ -3,6 +3,14 @@ Changelog
 
 This is the changelog for Puppetboard.
 
+3.4.1
+-----
+
+* Fixed broken PyPI package ([#677](https://github.com/voxpupuli/puppetboard/issues/677)).
+* Made the ToC links work when the README is displayed as the description in PyPI.
+
+Thanks to the following contributors of this release: [@Rewerson](https://github.com/Rewerson), [@vchepkov](https://github.com/vchepkov).
+
 3.4.0
 -----
 
