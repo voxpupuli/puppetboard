@@ -63,7 +63,7 @@ DEV_LISTEN_HOST = os.getenv('DEV_LISTEN_HOST', '127.0.0.1')
 DEV_LISTEN_PORT = int(os.getenv('DEV_LISTEN_PORT', '5555'))
 DEV_COFFEE_LOCATION = os.getenv('DEV_COFFEE_LOCATION', 'coffee')
 UNRESPONSIVE_HOURS = int(os.getenv('UNRESPONSIVE_HOURS', '2'))
-ENABLE_QUERY = os.getenv('ENABLE_QUERY', 'True')
+ENABLE_QUERY = coerce_bool(os.getenv('ENABLE_QUERY'), True)
 # Uncomment to restrict the enabled PuppetDB endpoints in the query page.
 # ENABLED_QUERY_ENDPOINTS = ['facts', 'nodes']
 
