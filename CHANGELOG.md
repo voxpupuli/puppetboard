@@ -3,6 +3,15 @@ Changelog
 
 This is the changelog for Puppetboard.
 
+3.4.2
+-----
+
+* Fix auto-resize in radiator view,
+* Fix Query tab cannot be disabled on Docker
+* Removed unused import in setup.py,
+
+Thanks to the following contributors of this release: [@vilhelmprytz](https://github.com/vilhelmprytz), [@ldumont](https://github.com/ldumont), [@allan-reynolds](https://github.com/allan-reynolds).
+
 3.4.1
 -----
 
