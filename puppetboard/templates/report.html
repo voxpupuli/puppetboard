@@ -1,7 +1,7 @@
 {% extends 'layout.html' %}
 {% block content %}
 
-<p>Scroll to: <a href="#events">Events</a> , <a href="#logs">Logs</a> , <a href="#metrics">Metrics</a></p>
+<p>Scroll to: <a href="#logs">Logs</a>, <a href="#events">Events</a>, <a href="#metrics">Metrics</a></p>.
 
 <h1>Summary</h1>
 <table class='ui basic table'>
@@ -33,6 +33,21 @@
   </tbody>
 </table>
 
+<h1 id="logs">Logs</h1>
+<table id="logs_table" class='ui basic compact fixed wrapped table'>
+  <thead>
+    <tr>
+      <th>Timestamp</th>
+      <th>Source</th>
+      <th>Tags</th>
+      <th>Message</th>
+      <th>Location</th>
+    </tr>
+  </thead>
+  <tbody>
+  </tbody>
+</table>
+
 <h1 id="events">Events</h1>
 <table id="events_table" class='ui basic compact fixed wrapped table'>
   <thead>
@@ -44,44 +59,6 @@
     </tr>
   </thead>
   <tbody>
-  </tbody>
-</table>
-
-<h1 id="logs">Logs</h1>
-<table id="logs_table" class='ui basic compact fixed wrapped table'>
-  <thead>
-    <tr>
-      <th>Timestamp</th>
-      <th>Source</th>
-      <th>Tags</th>
-      <th>Message</th>
-      <th>Location</th>
-    <tr>
-  </thead>
-  <tbody>
-    {% for log in logs %}
-      {% if log.level == 'info' or log.level == 'notice' %}
-        <tr class='positive'>
-      {% elif log.level == 'warning' %}
-        <tr class='warning'>
-      {% else %}
-        <tr class='error'>
-      {% endif %}
-        <td rel="utctimestamp">{{log.time}}</td>
-        <td>{{log.source}}</td>
-        <td>{{log.tags|join(', ')}}</td>
-        {% if '\n' in log.message %}
-          <td class="error_message"><pre>{{log.message}}</pre></td>
-        {% else %}
-          <td class="error_message">{{log.message}}</td>
-        {% endif %}
-        {% if log.file != None and log.line != None %}
-          <td>{{log.file}}:{{log.line}}</td>
-        {% else %}
-          <td></td>
-        {% endif %}
-      </tr>
-    {% endfor %}
   </tbody>
 </table>
 
@@ -109,14 +86,39 @@
 
 {% block onload_script %}
 
-// Init datatable
 $.fn.dataTable.ext.errMode = 'throw';
 
-var data = {{ events|tojson }}
+// Init datatable for Logs
+var logs = {{ logs|tojson }}
+var logs_table = $('#logs_table').DataTable({
 
-var table = $('#events_table').DataTable({
+    "data": logs,
+    'columns': [
+        { data: 'timestamp' },
+        { data: 'source' },
+        { data: 'tags' },
+        { data: 'message' },
+        { data: 'location' },
+    ],
 
-    "data": data,
+    "paging": false,
+
+    'createdRow': function (row, data, index) {
+        if (data['level'] == 'info' || data['level'] == 'notice') {
+            $(row).addClass('positive');
+        } else if (data['level'] == 'warning') {
+            $(row).addClass('warning');
+        } else {
+            $(row).addClass('error');
+        }
+    },
+});
+
+// Init datatable for Events
+var events = {{ events|tojson }}
+var events_table = $('#events_table').DataTable({
+
+    "data": events,
     'columns': [
         { data: 'resource' },
         { data: 'status' },
