@@ -1,5 +1,8 @@
 {% extends 'layout.html' %}
 {% block content %}
+
+<p>Scroll to: <a href="#events">Events</a> , <a href="#logs">Logs</a> , <a href="#metrics">Metrics</a></p>
+
 <h1>Summary</h1>
 <table class='ui basic table'>
   <thead>
@@ -30,8 +33,8 @@
   </tbody>
 </table>
 
-<h1>Events</h1>
-<table class='ui basic compact fixed wrapped table'>
+<h1 id="events">Events</h1>
+<table id="events_table" class='ui basic compact fixed wrapped table'>
   <thead>
     <tr>
       <th class="four wide">Resource</th>
@@ -41,25 +44,11 @@
     </tr>
   </thead>
   <tbody>
-    {% for event in events %}
-    {% if not event.failed and event.item['old'] != event.item['new'] %}
-      <tr id='event-{{loop.index}}' class='ui line changed'>
-    {% elif event.failed %}
-      <tr id='event-{{loop.index}}' class='ui line failed'>
-    {% else %}
-      <tr id='event-{{loop.index}}' class='ui line {{event.status}}'>
-    {% endif %}
-      <td>{{event.item['type']}}[{{event.item['title']}}]</td>
-      <td>{{event.status}}</td>
-      <td>{{event.item['old']}}</td>
-      <td>{{event.item['new']}}</td>
-    </tr>
-    {% endfor %}
   </tbody>
 </table>
 
-<h1>Logs</h1>
-<table class='ui basic compact fixed wrapped table'>
+<h1 id="logs">Logs</h1>
+<table id="logs_table" class='ui basic compact fixed wrapped table'>
   <thead>
     <tr>
       <th>Timestamp</th>
@@ -82,9 +71,9 @@
         <td>{{log.source}}</td>
         <td>{{log.tags|join(', ')}}</td>
         {% if '\n' in log.message %}
-          <td><pre>{{log.message}}</pre></td>
+          <td class="error_message"><pre>{{log.message}}</pre></td>
         {% else %}
-          <td>{{log.message}}</td>
+          <td class="error_message">{{log.message}}</td>
         {% endif %}
         {% if log.file != None and log.line != None %}
           <td>{{log.file}}:{{log.line}}</td>
@@ -96,7 +85,7 @@
   </tbody>
 </table>
 
-<h1>Metrics</h1>
+<h1 id="metrics">Metrics</h1>
 <table class="ui basic table compact">
   <thead>
     <tr>
@@ -117,3 +106,36 @@
 </table>
 
 {% endblock content %}
+
+{% block onload_script %}
+
+// Init datatable
+$.fn.dataTable.ext.errMode = 'throw';
+
+var data = {{ events|tojson }}
+
+var table = $('#events_table').DataTable({
+
+    "data": data,
+    'columns': [
+        { data: 'resource' },
+        { data: 'status' },
+        { data: 'old' },
+        { data: 'new' },
+    ],
+
+    "ordering": false,
+    "paging": false,
+
+    createdRow: function (row, data, index) {
+        if (!data['failed'] && data['old'] != data['new']) {
+            $(row).addClass('ui line changed');
+        } else if (data['failed']) {
+            $(row).addClass('ui line failed');
+        } else {
+            $(row).addClass('ui line ' + data['status']);
+        }
+    },
+});
+
+{% endblock onload_script %}

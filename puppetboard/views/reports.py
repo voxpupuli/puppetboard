@@ -208,10 +208,19 @@ def report(env, node_name, report_id):
 
     report.version = commonmark.commonmark(report.version)
 
+    events = [{
+        #'timestamp': event.timestamp,
+        'resource': f"{event.item['type']}[{event.item['title']}]",
+        'status': event.status,
+        'old': event.item['old'],
+        'new': event.item['new'],
+        'failed': event.failed,
+    } for event in report.events()]
+
     return render_template(
         'report.html',
         report=report,
-        events=yield_or_stop(report.events()),
+        events=events,
         logs=report.logs,
         metrics=report.metrics,
         envs=envs,
