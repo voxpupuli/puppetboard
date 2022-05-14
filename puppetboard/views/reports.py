@@ -10,7 +10,7 @@ from pypuppetdb.QueryBuilder import (AndOperator,
                                      LessEqualOperator, RegexOperator, GreaterEqualOperator)
 
 from puppetboard.core import get_app, get_puppetdb, environments, REPORTS_COLUMNS
-from puppetboard.utils import (yield_or_stop, check_env, get_or_abort)
+from puppetboard.utils import (check_env, get_or_abort)
 
 app = get_app()
 puppetdb = get_puppetdb()
@@ -209,7 +209,6 @@ def report(env, node_name, report_id):
     report.version = commonmark.commonmark(report.version)
 
     events = [{
-        #'timestamp': event.timestamp,
         'resource': f"{event.item['type']}[{event.item['title']}]",
         'status': event.status,
         'old': event.item['old'],
@@ -217,11 +216,20 @@ def report(env, node_name, report_id):
         'failed': event.failed,
     } for event in report.events()]
 
+    logs = [{
+        'timestamp': log['time'],
+        'source': log['source'],
+        'tags': ', '.join(log['tags']),
+        'message': log['message'],
+        'location': f"{log['file']}:{log['line']}" if (log['file'] and log['line']) else '',
+        'level': log["level"],
+    } for log in report.logs]
+
     return render_template(
         'report.html',
         report=report,
         events=events,
-        logs=report.logs,
+        logs=logs,
         metrics=report.metrics,
         envs=envs,
         current_env=env)
