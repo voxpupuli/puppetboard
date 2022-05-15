@@ -3,25 +3,23 @@
 
 {% block head %}
     {% if config.OFFLINE_MODE %}
-        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/datatables.net-buttons-se/2.2.1/buttons.semanticui.min.css" integrity="sha512-hl3VMm68d4X+QrotTnQNhYnc3zkDumRs7DzR+alVMCbtYB7yAcEB1KCnZNNbtV8pyt/jsL/fB59ZsOXnBFJSvw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link href='{{ url_for('static', filename='datatables-buttons-2.2.1/buttons.semanticui.min.css') }}' rel='stylesheet' type='text/css'>
 
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/datatables-buttons/2.2.1/js/dataTables.buttons.min.js" integrity="sha512-jkZdPkP9WyF6ZI8552JPp6HutV7Pb7Hhn++DCKkuToPPlTvB8Y7N3u+HoITJn/LQP9dEXarrfzqPlAmCA++BQw==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/datatables.net-buttons-se/2.2.1/buttons.semanticui.min.js" integrity="sha512-b2Tf8aCqx6EZY5mJBmHlKfpwk2Zq8K1bRrsO4pogAUiZYTmHsIU+kxcjrU5wwHQRvdhHxTUQg7/sUe1JHrTt9g==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script src="{{ url_for('static', filename='datatables-buttons-2.2.1/dataTables.buttons.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='datatables-buttons-2.2.1/buttons.semanticui.min.js') }}"></script>
 
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/datatables-buttons/2.2.1/js/buttons.colVis.min.js" integrity="sha512-TDM0Ek51cJSpP8Btld1ahY8LpMImyQ1k+Ve81qGMdjBLKhADu99JQrUWDuRnT8M0qfkJb+Mt+ZwMaMi46UXA8g==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script src="{{ url_for('static', filename='datatables-buttons-2.2.1/buttons.colVis.min.js') }}"></script>
 
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.3/moment.min.js" integrity="sha512-x/vqovXY/Q4b+rNjgiheBsA/vbWA3IVvsS8lkQSX1gQ4ggSJx38oI2vREZXpTzhAv6tNUaX81E7QBBzkpDQayA==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-        <script src="https://cdn.datatables.net/plug-ins/1.12.0/dataRender/datetime.js"></script>
+    <script src="{{ url_for('static', filename='luxon.min.js') }}"></script>
     {% else %}
-        <link href='{{ url_for('static', filename='datatables-buttons-2.2.1/buttons.semanticui.min.css') }}' rel='stylesheet' type='text/css'>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/datatables.net-buttons-se/2.2.1/buttons.semanticui.min.css" integrity="sha512-hl3VMm68d4X+QrotTnQNhYnc3zkDumRs7DzR+alVMCbtYB7yAcEB1KCnZNNbtV8pyt/jsL/fB59ZsOXnBFJSvw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
 
-        <script src="{{ url_for('static', filename='datatables-buttons-2.2.1/dataTables.buttons.min.js') }}"></script>
-        <script src="{{ url_for('static', filename='datatables-buttons-2.2.1/buttons.semanticui.min.js') }}"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/datatables-buttons/2.2.1/js/dataTables.buttons.min.js" integrity="sha512-jkZdPkP9WyF6ZI8552JPp6HutV7Pb7Hhn++DCKkuToPPlTvB8Y7N3u+HoITJn/LQP9dEXarrfzqPlAmCA++BQw==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/datatables.net-buttons-se/2.2.1/buttons.semanticui.min.js" integrity="sha512-b2Tf8aCqx6EZY5mJBmHlKfpwk2Zq8K1bRrsO4pogAUiZYTmHsIU+kxcjrU5wwHQRvdhHxTUQg7/sUe1JHrTt9g==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 
-        <script src="{{ url_for('static', filename='datatables-buttons-2.2.1/buttons.colVis.min.js') }}"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/datatables-buttons/2.2.1/js/buttons.colVis.min.js" integrity="sha512-TDM0Ek51cJSpP8Btld1ahY8LpMImyQ1k+Ve81qGMdjBLKhADu99JQrUWDuRnT8M0qfkJb+Mt+ZwMaMi46UXA8g==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 
-        <script src="{{ url_for('static', filename='moment.min.js') }}"></script>
-        <script src="{{ url_for('static', filename='datetime.js') }}"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/luxon/2.4.0/luxon.min.js" integrity="sha512-v1zUTZ9zv9Wb2scL/ANxXM6m7yegm/W5SN8SRHNFADdZIuSFFkrEBjNxO803DdFkjoCcJ88g1WHRVlLN6K/O1A==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
     {% endif %}
 
 {% endblock head %}
@@ -62,7 +60,7 @@
 
 <h1 id="logs">Logs</h1>
 {{ macros.checkbox_toggle("friendly", current_show_error_as, "friendly", "raw", "Friendly error messages") }}
-<table id="logs_table" class='ui basic compact wrapped table'>
+<table id="logs_table" class='ui basic compact table'>
   <thead>
     <tr>
       <th>Timestamp</th>
@@ -79,7 +77,7 @@
 </table>
 
 <h1 id="events">Events</h1>
-<table id="events_table" class='ui basic compact wrapped table'>
+<table id="events_table" class='ui basic compact table'>
   <thead>
     <tr>
       <th>Resource</th>
@@ -127,7 +125,10 @@ var logs_table = $('#logs_table').DataTable({
         { data: 'timestamp', name: 'timestamp',
           // don't show the date as puppet runs (almost never) span across multiple days
           // and we already show the full date in the "Summary" section
-          render: $.fn.dataTable.render.moment( 'YYYY-MM-DDTHH:mm:ss.SSSZ', 'HH:mm:ss' ),
+          render: function ( data, type, row, meta ) {
+              parsed_date = luxon.DateTime.fromISO(data);
+              return parsed_date.toFormat('HH:mm:ss');
+          }
         },
         { data: 'level', name: 'level' },
         { data: 'source', name: 'source', visible: false },
