@@ -3,19 +3,19 @@
 
 {% block head %}
     {% if config.OFFLINE_MODE %}
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/datatables.net-buttons-se/2.2.1/buttons.semanticui.min.css" integrity="sha512-hl3VMm68d4X+QrotTnQNhYnc3zkDumRs7DzR+alVMCbtYB7yAcEB1KCnZNNbtV8pyt/jsL/fB59ZsOXnBFJSvw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
-
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/datatables-buttons/2.2.1/js/dataTables.buttons.min.js" integrity="sha512-jkZdPkP9WyF6ZI8552JPp6HutV7Pb7Hhn++DCKkuToPPlTvB8Y7N3u+HoITJn/LQP9dEXarrfzqPlAmCA++BQw==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/datatables.net-buttons-se/2.2.1/buttons.semanticui.min.js" integrity="sha512-b2Tf8aCqx6EZY5mJBmHlKfpwk2Zq8K1bRrsO4pogAUiZYTmHsIU+kxcjrU5wwHQRvdhHxTUQg7/sUe1JHrTt9g==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.7.1/jszip.min.js" integrity="sha512-xQBQYt9UcgblF6aCMrwU1NkVA7HCXaSN2oq0so80KO+y68M+n64FOcqgav4igHe6D5ObBLIf68DWv+gfBowczg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/datatables-buttons/2.2.1/js/buttons.html5.min.js" integrity="sha512-LqvN9oWRj2YUmy7ZDYHOjWKc52n5zvDfYSmSEr07eOTFfmWXIfAmRD2ecj4jS+npR41A2xEZaWFf38SWfJIqig==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-    {% else %}
     <link href='{{ url_for('static', filename='datatables-buttons-2.2.1/buttons.semanticui.min.css') }}' rel='stylesheet' type='text/css'>
 
     <script src="{{ url_for('static', filename='datatables-buttons-2.2.1/dataTables.buttons.min.js') }}"></script>
     <script src="{{ url_for('static', filename='datatables-buttons-2.2.1/buttons.semanticui.min.js') }}"></script>
     <script src="{{ url_for('static', filename='jszip-3.7.1/jszip.min.js') }}"></script>
     <script src="{{ url_for('static', filename='datatables-buttons-2.2.1/buttons.html5.min.js') }}"></script>
+    {% else %}
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/datatables.net-buttons-se/2.2.1/buttons.semanticui.min.css" integrity="sha512-hl3VMm68d4X+QrotTnQNhYnc3zkDumRs7DzR+alVMCbtYB7yAcEB1KCnZNNbtV8pyt/jsL/fB59ZsOXnBFJSvw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/datatables-buttons/2.2.1/js/dataTables.buttons.min.js" integrity="sha512-jkZdPkP9WyF6ZI8552JPp6HutV7Pb7Hhn++DCKkuToPPlTvB8Y7N3u+HoITJn/LQP9dEXarrfzqPlAmCA++BQw==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/datatables.net-buttons-se/2.2.1/buttons.semanticui.min.js" integrity="sha512-b2Tf8aCqx6EZY5mJBmHlKfpwk2Zq8K1bRrsO4pogAUiZYTmHsIU+kxcjrU5wwHQRvdhHxTUQg7/sUe1JHrTt9g==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.7.1/jszip.min.js" integrity="sha512-xQBQYt9UcgblF6aCMrwU1NkVA7HCXaSN2oq0so80KO+y68M+n64FOcqgav4igHe6D5ObBLIf68DWv+gfBowczg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/datatables-buttons/2.2.1/js/buttons.html5.min.js" integrity="sha512-LqvN9oWRj2YUmy7ZDYHOjWKc52n5zvDfYSmSEr07eOTFfmWXIfAmRD2ecj4jS+npR41A2xEZaWFf38SWfJIqig==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
     {% endif %}
 
     <style>
