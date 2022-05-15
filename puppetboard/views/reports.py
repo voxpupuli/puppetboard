@@ -208,6 +208,10 @@ def report(env, node_name, report_id, show_error_as):
     :param report_id: The hash or the configuration_version of the desired
         report
     :type report_id: :obj:`string`
+    :param show_error_as: 'friendly' or 'raw', the former means that messages
+        will be show in a mode transformed for human-readability, the latter
+        that the messages will be unchanged
+    :param show_error_as: :obj:`string`
     """
     envs = environments()
     check_env(env, envs)
@@ -250,6 +254,8 @@ def report(env, node_name, report_id, show_error_as):
         'tags': ', '.join(log['tags']),
         'message': get_message(node_name, log, show_error_as),
         'location': get_location(log),
+        # this could be also done with a different rendered in DataTables,
+        # - feel free to refactor it into that if you know how
         'short_location': get_short_location(get_location(log)),
     } for log in report.logs]
 
