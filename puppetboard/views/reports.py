@@ -1,4 +1,5 @@
 import json
+import re
 from itertools import tee
 
 import commonmark
@@ -9,7 +10,8 @@ from pypuppetdb.QueryBuilder import (AndOperator,
                                      EqualsOperator, OrOperator,
                                      LessEqualOperator, RegexOperator, GreaterEqualOperator)
 
-from puppetboard.core import get_app, get_puppetdb, environments, REPORTS_COLUMNS
+from puppetboard.core import get_app, get_puppetdb, environments, REPORTS_COLUMNS, to_html, \
+    get_raw_error, get_friendly_error
 from puppetboard.utils import (check_env, get_or_abort)
 
 app = get_app()
@@ -166,10 +168,32 @@ def reports(env, node_name):
         columns=REPORTS_COLUMNS)
 
 
+def get_location(log) -> str:
+    return f"{log['file']}:{log['line']}" if (log['file'] and log['line']) else ''
+
+
+def get_short_location(location: str) -> str:
+    # shorten the file paths
+    code_prefix_to_remove = app.config['CODE_PREFIX_TO_REMOVE']
+    location = re.sub(f'^{code_prefix_to_remove}', '…', location)
+    return location
+
+
+def get_message(node_name, log, show_error_as):
+    if show_error_as == 'friendly':
+        error = to_html(get_friendly_error(log['source'], log['message'], node_name))
+    else:
+        error = get_raw_error(log['source'], log['message'])
+    return error
+
+
 @app.route('/report/<node_name>/<report_id>',
-           defaults={'env': app.config['DEFAULT_ENVIRONMENT']})
-@app.route('/<env>/report/<node_name>/<report_id>')
-def report(env, node_name, report_id):
+           defaults={'env': app.config['DEFAULT_ENVIRONMENT'],
+                     'show_error_as': app.config['SHOW_ERROR_AS']})
+@app.route('/<env>/report/<node_name>/<report_id>',
+           defaults={'show_error_as': app.config['SHOW_ERROR_AS']})
+@app.route('/<env>/report/<node_name>/<report_id>/<show_error_as>')
+def report(env, node_name, report_id, show_error_as):
     """Displays a single report including all the events associated with that
     report and their status.
 
@@ -206,6 +230,9 @@ def report(env, node_name, report_id):
     except StopIteration:
         abort(404)
 
+    if show_error_as not in ['friendly', 'raw']:
+        abort(404)
+
     report.version = commonmark.commonmark(report.version)
 
     events = [{
@@ -218,11 +245,12 @@ def report(env, node_name, report_id):
 
     logs = [{
         'timestamp': log['time'],
+        'level': log["level"],
         'source': log['source'],
         'tags': ', '.join(log['tags']),
-        'message': log['message'],
-        'location': f"{log['file']}:{log['line']}" if (log['file'] and log['line']) else '',
-        'level': log["level"],
+        'message': get_message(node_name, log, show_error_as),
+        'location': get_location(log),
+        'short_location': get_short_location(get_location(log)),
     } for log in report.logs]
 
     return render_template(
@@ -232,4 +260,5 @@ def report(env, node_name, report_id):
         logs=logs,
         metrics=report.metrics,
         envs=envs,
-        current_env=env)
+        current_env=env,
+        current_show_error_as=show_error_as)

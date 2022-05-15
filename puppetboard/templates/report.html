@@ -1,4 +1,35 @@
 {% extends 'layout.html' %}
+
+{% block head %}
+    {% if config.OFFLINE_MODE %}
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/datatables.net-buttons-se/2.2.1/buttons.semanticui.min.css" integrity="sha512-hl3VMm68d4X+QrotTnQNhYnc3zkDumRs7DzR+alVMCbtYB7yAcEB1KCnZNNbtV8pyt/jsL/fB59ZsOXnBFJSvw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/datatables-buttons/2.2.1/js/dataTables.buttons.min.js" integrity="sha512-jkZdPkP9WyF6ZI8552JPp6HutV7Pb7Hhn++DCKkuToPPlTvB8Y7N3u+HoITJn/LQP9dEXarrfzqPlAmCA++BQw==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/datatables.net-buttons-se/2.2.1/buttons.semanticui.min.js" integrity="sha512-b2Tf8aCqx6EZY5mJBmHlKfpwk2Zq8K1bRrsO4pogAUiZYTmHsIU+kxcjrU5wwHQRvdhHxTUQg7/sUe1JHrTt9g==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/datatables-buttons/2.2.1/js/buttons.colVis.min.js" integrity="sha512-TDM0Ek51cJSpP8Btld1ahY8LpMImyQ1k+Ve81qGMdjBLKhADu99JQrUWDuRnT8M0qfkJb+Mt+ZwMaMi46UXA8g==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.3/moment.min.js" integrity="sha512-x/vqovXY/Q4b+rNjgiheBsA/vbWA3IVvsS8lkQSX1gQ4ggSJx38oI2vREZXpTzhAv6tNUaX81E7QBBzkpDQayA==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+        <script src="https://cdn.datatables.net/plug-ins/1.12.0/dataRender/datetime.js"></script>
+    {% else %}
+        <link href='{{ url_for('static', filename='datatables-buttons-2.2.1/buttons.semanticui.min.css') }}' rel='stylesheet' type='text/css'>
+
+        <script src="{{ url_for('static', filename='datatables-buttons-2.2.1/dataTables.buttons.min.js') }}"></script>
+        <script src="{{ url_for('static', filename='datatables-buttons-2.2.1/buttons.semanticui.min.js') }}"></script>
+
+        <script src="{{ url_for('static', filename='datatables-buttons-2.2.1/buttons.colVis.min.js') }}"></script>
+
+        <script src="{{ url_for('static', filename='moment.min.js') }}"></script>
+        <script src="{{ url_for('static', filename='datetime.js') }}"></script>
+    {% endif %}
+
+{#    <style>#}
+{#        .ui.buttons {#}
+{#            margin-left: 2rem;#}
+{#        }#}
+{#    </style>#}
+{% endblock head %}
+
 {% block content %}
 
 <p>Scroll to: <a href="#logs">Logs</a>, <a href="#events">Events</a>, <a href="#metrics">Metrics</a>.</p>
@@ -34,22 +65,44 @@
 </table>
 
 <h1 id="logs">Logs</h1>
-<table id="logs_table" class='ui basic compact fixed wrapped table'>
+<div id="checkbox_div" class="ui toggle {% if (current_show_error_as == 'friendly') %}checked{% endif %} checkbox">
+    <input type="checkbox" {% if (current_show_error_as == 'friendly') %}checked=""{% endif %}">
+    <label>Friendly error messages</label>
+</div>
+<table id="logs_table" class='ui basic compact wrapped table'>
   <thead>
     <tr>
       <th>Timestamp</th>
+      <th>Level</th>
       <th>Source</th>
       <th>Tags</th>
       <th>Message</th>
       <th>Location</th>
+      <th>Location (short)</th>
     </tr>
   </thead>
   <tbody>
   </tbody>
 </table>
 
+<script>
+$('#checkbox_div').checkbox(
+    'setting', 'onChange', function() {
+        let url = window.location.href;
+        if (url.endsWith("/raw")) {
+            url = url.replaceAll(/\/raw$/ig, '/friendly')
+        } else if (url.endsWith("/friendly")) {
+            url = url.replaceAll(/\/friendly$/ig, '/raw')
+        } else {
+            url += '/raw'
+        }
+        window.location.href = url
+    }
+);
+</script>
+
 <h1 id="events">Events</h1>
-<table id="events_table" class='ui basic compact fixed wrapped table'>
+<table id="events_table" class='ui basic compact wrapped table'>
   <thead>
     <tr>
       <th class="four wide">Resource</th>
@@ -94,11 +147,15 @@ var logs_table = $('#logs_table').DataTable({
 
     "data": logs,
     'columns': [
-        { data: 'timestamp' },
-        { data: 'source' },
-        { data: 'tags' },
-        { data: 'message' },
-        { data: 'location' },
+        { data: 'timestamp', name: 'timestamp',
+          render: $.fn.dataTable.render.moment( 'YYYY-MM-DDThh:mm:ss.SSSZ', 'hh:mm:ss.SSS' ),
+        },
+        { data: 'level', name: 'level' },
+        { data: 'source', name: 'source', visible: false },
+        { data: 'tags', name: 'tags', visible: false },
+        { data: 'message', name: 'message' },
+        { data: 'location', name: 'location', visible: false },
+        { data: 'short_location', name: 'short_location' },
     ],
 
     "paging": false,
@@ -111,8 +168,29 @@ var logs_table = $('#logs_table').DataTable({
         } else {
             $(row).addClass('error');
         }
+        $('td', row).eq(2).addClass('code');
+        $('td', row).eq(3).addClass('code');
     },
+
+    buttons: [
+        {
+            extend: 'colvisGroup',
+            text: 'Show level, message, short location (new)',
+            show: ['timestamp:name', 'level:name', 'message:name', 'short_location:name'],
+            hide: ['source:name', 'tags:name', 'location:name'],
+        },
+        {
+            extend: 'colvisGroup',
+            text: 'Show source, tags, message, long location (classic)',
+            show: ['timestamp:name', 'source:name', 'tags:name', 'message:name', 'location:name'],
+            hide: ['level:name', 'short_location:name'],
+        },
+    ],
+
+    dom: 'Bfrtip',
 });
+
+logs_table.buttons().container().appendTo( $('div.logs_table_length', logs_table.table().container()) );
 
 // Init datatable for Events
 var events = {{ events|tojson }}
