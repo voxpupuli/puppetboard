@@ -65,7 +65,7 @@
 </table>
 
 <h1 id="logs">Logs</h1>
-<div id="checkbox_div" class="ui toggle {% if (current_show_error_as == 'friendly') %}checked{% endif %} checkbox">
+<div id="friendly_div" class="ui toggle {% if (current_show_error_as == 'friendly') %}checked{% endif %} checkbox">
     <input type="checkbox" {% if (current_show_error_as == 'friendly') %}checked=""{% endif %}">
     <label>Friendly error messages</label>
 </div>
@@ -197,14 +197,9 @@ var logs_table = $('#logs_table').DataTable({
             "<'row dt-table'"+
                 "<'sixteen wide column'tr>"+
             ">"+
-            "<'row'"+
-                "<'seven wide column'i>"+
-                "<'right aligned nine wide column'p>"+
-            ">"+
+            "<'row'>"+
         ">",
 });
-
-logs_table.buttons().container().appendTo( $('div.logs_table_length', logs_table.table().container()) );
 
 logs_table.on( 'buttons-action', function ( e, button, dataTable, node, config ) {
     dataTable.buttons().active(false);
@@ -236,6 +231,17 @@ var events_table = $('#events_table').DataTable({
             $(row).addClass('ui line ' + data['status']);
         }
     },
+
+    dom: "<'ui stackable grid'"+
+            "<'row'"+
+                "<'eight wide column'B>"+
+                "<'right aligned eight wide column'f>"+
+            ">"+
+            "<'row dt-table'"+
+                "<'sixteen wide column'tr>"+
+            ">"+
+            "<'row'>"+
+        ">",
 });
 
 {% endblock onload_script %}

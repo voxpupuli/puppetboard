@@ -241,3 +241,7 @@ td.code {
 .info_message {
   font-size: 1rem;
 }
+
+#friendly_div {
+  margin-bottom: 1em;
+}
