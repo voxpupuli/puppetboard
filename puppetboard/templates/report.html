@@ -1,4 +1,5 @@
 {% extends 'layout.html' %}
+{% import '_macros.html' as macros %}
 
 {% block head %}
     {% if config.OFFLINE_MODE %}
@@ -23,11 +24,6 @@
         <script src="{{ url_for('static', filename='datetime.js') }}"></script>
     {% endif %}
 
-{#    <style>#}
-{#        .ui.buttons {#}
-{#            margin-left: 2rem;#}
-{#        }#}
-{#    </style>#}
 {% endblock head %}
 
 {% block content %}
@@ -65,10 +61,7 @@
 </table>
 
 <h1 id="logs">Logs</h1>
-<div id="friendly_div" class="ui toggle {% if (current_show_error_as == 'friendly') %}checked{% endif %} checkbox">
-    <input type="checkbox" {% if (current_show_error_as == 'friendly') %}checked=""{% endif %}">
-    <label>Friendly error messages</label>
-</div>
+{{ macros.checkbox_toggle("friendly", current_show_error_as, "friendly", "raw", "Friendly error messages") }}
 <table id="logs_table" class='ui basic compact wrapped table'>
   <thead>
     <tr>
@@ -84,22 +77,6 @@
   <tbody>
   </tbody>
 </table>
-
-<script>
-$('#checkbox_div').checkbox(
-    'setting', 'onChange', function() {
-        let url = window.location.href;
-        if (url.endsWith("/raw")) {
-            url = url.replaceAll(/\/raw$/ig, '/friendly')
-        } else if (url.endsWith("/friendly")) {
-            url = url.replaceAll(/\/friendly$/ig, '/raw')
-        } else {
-            url += '/raw'
-        }
-        window.location.href = url
-    }
-);
-</script>
 
 <h1 id="events">Events</h1>
 <table id="events_table" class='ui basic compact wrapped table'>
@@ -141,19 +118,22 @@ $('#checkbox_div').checkbox(
 
 $.fn.dataTable.ext.errMode = 'throw';
 
-// Init datatable for Logs
+// Init the DataTable for Logs
 var logs = {{ logs|tojson }}
 var logs_table = $('#logs_table').DataTable({
 
     "data": logs,
     'columns': [
         { data: 'timestamp', name: 'timestamp',
-          render: $.fn.dataTable.render.moment( 'YYYY-MM-DDThh:mm:ss.SSSZ', 'hh:mm:ss.SSS' ),
+          // don't show the date as puppet runs (almost never) span across multiple days
+          // and we already show the full date in the "Summary" section
+          render: $.fn.dataTable.render.moment( 'YYYY-MM-DDTHH:mm:ss.SSSZ', 'HH:mm:ss' ),
         },
         { data: 'level', name: 'level' },
         { data: 'source', name: 'source', visible: false },
         { data: 'tags', name: 'tags', visible: false },
         { data: 'message', name: 'message' },
+        // see also the comment about these columns in reports.py
         { data: 'location', name: 'location', visible: false },
         { data: 'short_location', name: 'short_location' },
     ],
@@ -161,6 +141,7 @@ var logs_table = $('#logs_table').DataTable({
     "paging": false,
 
     'createdRow': function (row, data, index) {
+        // color the row based on log level
         if (data['level'] == 'info' || data['level'] == 'notice') {
             $(row).addClass('positive');
         } else if (data['level'] == 'warning') {
@@ -168,6 +149,8 @@ var logs_table = $('#logs_table').DataTable({
         } else {
             $(row).addClass('error');
         }
+
+        // fixed-width font for message and location columns
         $('td', row).eq(2).addClass('code');
         $('td', row).eq(3).addClass('code');
     },
@@ -176,14 +159,14 @@ var logs_table = $('#logs_table').DataTable({
         {
             extend: 'colvisGroup',
             name: 'columns_new',
-            text: 'Show level, message, short location (new)',
+            text: 'Minimal columns',
             show: ['timestamp:name', 'level:name', 'message:name', 'short_location:name'],
             hide: ['source:name', 'tags:name', 'location:name'],
         },
         {
             extend: 'colvisGroup',
             name: 'columns_old',
-            text: 'Show source, tags, message, long location (classic)',
+            text: 'More columns (classic)',
             show: ['timestamp:name', 'source:name', 'tags:name', 'message:name', 'location:name'],
             hide: ['level:name', 'short_location:name'],
         },
@@ -201,13 +184,15 @@ var logs_table = $('#logs_table').DataTable({
         ">",
 });
 
+// on any button click show the clicked button as active and all other button(s) as inactive
 logs_table.on( 'buttons-action', function ( e, button, dataTable, node, config ) {
     dataTable.buttons().active(false);
     button.active(true);
 } );
 logs_table.button("columns_new:name").active( true );
 
-// Init datatable for Events
+
+// Init the DataTable for Events
 var events = {{ events|tojson }}
 var events_table = $('#events_table').DataTable({
 

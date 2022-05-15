@@ -158,3 +158,27 @@
     },80);
   });
 {%- endmacro %}
+
+{% macro checkbox_toggle(name, value_current, value_checked, value_unchecked, label) -%}
+
+<div id="{{ name }}_div" class="ui toggle {% if (value_current == value_checked) %}checked{% endif %} checkbox">
+    <input type="checkbox" {% if (value_current == value_checked) %}checked=""{% endif %}>
+    <label>{{ label }}</label>
+</div>
+<script>
+$('#{{ name }}_div').checkbox(
+    'setting', 'onChange', function() {
+        const url = new URL(window.location.href);
+        if (url.pathname.endsWith("/{{ value_unchecked }}")) {
+            url.pathname = url.pathname.replaceAll(/\/{{ value_unchecked }}$/ig, '/{{ value_checked }}')
+        } else if (url.pathname.endsWith("/{{ value_checked }}")) {
+            url.pathname = url.pathname.replaceAll(/\/{{ value_checked }}$/ig, '/{{ value_unchecked }}')
+        } else {
+            url.pathname += '/{{ value_unchecked }}'
+        }
+        window.location.href = url.href
+    }
+);
+</script>
+
+{%- endmacro %}
