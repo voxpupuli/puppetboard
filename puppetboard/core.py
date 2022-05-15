@@ -1,4 +1,5 @@
 import logging
+import re
 
 from flask import Flask
 from pypuppetdb import connect
@@ -85,3 +86,73 @@ def stream_template(template_name, **context):
     rv = t.stream(context)
     rv.enable_buffering(5)
     return rv
+
+
+def get_raw_error(source: str, message: str) -> str:
+    # prefix with source, if it's not trivial
+    if source != 'Puppet':
+        message = source + "\n\n" + message
+
+    if '\n' in message:
+        message = f"<pre>{message}</pre>"
+
+    return message
+
+
+def get_friendly_error(source: str, message: str, certname: str) -> str:
+    # NOTE: the order of the below operations matters in some cases!
+
+    # prefix with source, if it's not trivial
+    if source != 'Puppet':
+        message = source + "\n\n" + message
+
+    # shorten the file paths
+    code_prefix_to_remove = get_app().config['CODE_PREFIX_TO_REMOVE']
+    message = re.sub(f'file: {code_prefix_to_remove}', 'file: …', message)
+
+    # remove some unuseful parts
+    too_long_prefix = "Could not retrieve catalog from remote server: " \
+                      "Error 500 on SERVER: " \
+                      "Server Error: "
+    message = re.sub(f'^{too_long_prefix}', '', message)
+
+    message = re.sub(r"(Evaluation Error: Error while evaluating a )",
+                     r"Error while evaluating a ", message)
+
+    # remove redundant certnames
+    redundant_certname = f" on node {certname}"
+    message = re.sub(f'{redundant_certname}$', '', message)
+
+    redundant_certname = f" for {certname}"
+    message = re.sub(f'{redundant_certname} ', ' ', message)
+
+    # add extra line breaks for readability
+    message = re.sub(r"(Error while evaluating a .*?),",
+                     r"\1:\n\n", message)
+
+    message = re.sub(r"( returned \d+:) ",
+                     r"\1\n\n", message)
+
+    # reformat and rephrase ending expression that says where in the code is the error
+    # NOTE: this has to be done AFTER removing " on node ..."
+    # but BEFORE replacing spaces with &nbsp;
+    message = re.sub(r"(\S)\s+\(file: ([0-9a-zA-Z/_\-.…]+, line: \d+, column: \d+)\)\s*$",
+                     r"\1\n\n…in \2.", message)
+
+    message = re.sub(r"(\S)\s+\(file: ([0-9a-zA-Z/_\-.…]+, line: \d+)\)\s*$",
+                     r"\1\n\n…in \2.", message)
+
+    return message
+
+
+def to_html(message: str) -> str:
+    # replace \n with <br/> to not have to use <pre> which breaks wrapping
+    message = re.sub(r"\n", "<br/>", message)
+
+    # prevent line breaking inside expressions that provide code location
+    message = re.sub(r"\(file: (.*?), line: (.*?), column: (.*?)\)",
+                     r"(file:&nbsp;\1,&nbsp;line:&nbsp;\2,&nbsp;column:&nbsp;\3)", message)
+    message = re.sub(r"\(file: (.*?), line: (.*?)\)",
+                     r"(file:&nbsp;\1,&nbsp;line:&nbsp;\2)", message)
+
+    return message
