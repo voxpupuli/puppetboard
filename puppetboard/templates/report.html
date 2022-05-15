@@ -105,10 +105,10 @@ $('#checkbox_div').checkbox(
 <table id="events_table" class='ui basic compact wrapped table'>
   <thead>
     <tr>
-      <th class="four wide">Resource</th>
-      <th class="two wide">Status</th>
-      <th class="two wide">Changed From</th>
-      <th class="eight wide">Changed To</th>
+      <th>Resource</th>
+      <th>Status</th>
+      <th>Changed From</th>
+      <th>Changed To</th>
     </tr>
   </thead>
   <tbody>
@@ -175,22 +175,42 @@ var logs_table = $('#logs_table').DataTable({
     buttons: [
         {
             extend: 'colvisGroup',
+            name: 'columns_new',
             text: 'Show level, message, short location (new)',
             show: ['timestamp:name', 'level:name', 'message:name', 'short_location:name'],
             hide: ['source:name', 'tags:name', 'location:name'],
         },
         {
             extend: 'colvisGroup',
+            name: 'columns_old',
             text: 'Show source, tags, message, long location (classic)',
             show: ['timestamp:name', 'source:name', 'tags:name', 'message:name', 'location:name'],
             hide: ['level:name', 'short_location:name'],
         },
     ],
 
-    dom: 'Bfrtip',
+    dom: "<'ui stackable grid'"+
+            "<'row'"+
+                "<'eight wide column'B>"+
+                "<'right aligned eight wide column'f>"+
+            ">"+
+            "<'row dt-table'"+
+                "<'sixteen wide column'tr>"+
+            ">"+
+            "<'row'"+
+                "<'seven wide column'i>"+
+                "<'right aligned nine wide column'p>"+
+            ">"+
+        ">",
 });
 
 logs_table.buttons().container().appendTo( $('div.logs_table_length', logs_table.table().container()) );
+
+logs_table.on( 'buttons-action', function ( e, button, dataTable, node, config ) {
+    dataTable.buttons().active(false);
+    button.active(true);
+} );
+logs_table.button("columns_new:name").active( true );
 
 // Init datatable for Events
 var events = {{ events|tojson }}
