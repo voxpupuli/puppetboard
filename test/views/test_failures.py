@@ -19,9 +19,9 @@ from puppetboard.views.failures import get_friendly_error
 
       Error while evaluating a Function Call:
 
-      This envs has Consul ACLs enabled. Please add the app 'statsproxy' to the 'profiles::consul::server::policies' hiera key. (file: …/patch/modules/consul_wrapper/functions/service/get_acl_token.pp, line: 22, column: 7)
+      This envs has Consul ACLs enabled. Please add the app 'statsproxy' to the 'profiles::consul::server::policies' hiera key. (file: …/consul_wrapper/functions/service/get_acl_token.pp, line: 22, column: 7)
 
-     …in …/patch/modules/roles/manifests/tomcat/stats.pp, line: 39.
+     …in …/roles/manifests/tomcat/stats.pp, line: 39.
      """),
 
     ("Could not retrieve catalog from remote server: Error 500 on SERVER: Server Error: "
