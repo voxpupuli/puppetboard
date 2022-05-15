@@ -55,4 +55,4 @@ DAILY_REPORTS_CHART_DAYS = 8
 WITH_EVENT_NUMBERS = True
 
 SHOW_ERROR_AS = 'friendly'  # or 'raw'
-CODE_PREFIX_TO_REMOVE = '/etc/puppetlabs/code/environments/.*?/modules'
+CODE_PREFIX_TO_REMOVE = '/etc/puppetlabs/code/environments(/.*?/modules)?'
