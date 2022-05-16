@@ -2,7 +2,7 @@ from textwrap import dedent
 
 import pytest
 
-from puppetboard.views.failures import get_friendly_error
+from puppetboard.core import get_friendly_error
 
 
 # flake8: noqa
