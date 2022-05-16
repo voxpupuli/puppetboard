@@ -3,6 +3,18 @@ Changelog
 
 This is the changelog for Puppetboard.
 
+3.5.0
+-----
+
+* **Report** view improvements:
+  * show Logs before Events as they are more useful,
+  * show different, arguably more useful columns in Logs by default,
+  * allow showing messages in a "friendly" mode (like in Failures view),
+  * make Logs and Events filterable,
+  * don't force column sizes for a better, automatic content layout,
+  * use fixed-width font where it makes more sense,
+* Fix mixed up normal and OFFLINE_MODE for Query view.
+
 3.4.2
 -----
 
