@@ -190,6 +190,8 @@ def get_message(node_name, log, show_error_as):
 @app.route('/report/<node_name>/<report_id>',
            defaults={'env': app.config['DEFAULT_ENVIRONMENT'],
                      'show_error_as': app.config['SHOW_ERROR_AS']})
+@app.route('/report/<node_name>/<report_id>/<show_error_as>',
+           defaults={'env': app.config['DEFAULT_ENVIRONMENT']})
 @app.route('/<env>/report/<node_name>/<report_id>',
            defaults={'show_error_as': app.config['SHOW_ERROR_AS']})
 @app.route('/<env>/report/<node_name>/<report_id>/<show_error_as>')
