@@ -3,6 +3,10 @@ Changelog
 
 This is the changelog for Puppetboard.
 
+3.5.1
+-----
+* Fixed friendly error message toggle (when there is no env in the URL) ([#688](https://github.com/voxpupuli/puppetboard/issues/688)).
+
 3.5.0
 -----
 
