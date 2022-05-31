@@ -2,8 +2,11 @@ FROM python:3.9-alpine
 
 ENV PUPPETBOARD_PORT 80
 ENV PUPPETBOARD_HOST 0.0.0.0
+ENV PUPPETBOARD_STATUS_ENDPOINT /status
 
 EXPOSE 80
+
+HEALTHCHECK --interval=5m --timeout=5s --start-period=10s CMD python3 "import requests; import sys; sys.exit(not requests.get('http://localhost:${PUPPETBOARD_PORT}${PUPPETBOARD_URL_PREFIX:-}${PUPPETBOARD_STATUS_ENDPOINT}').ok)"
 
 ENV PUPPETBOARD_SETTINGS docker_settings.py
 RUN mkdir -p /usr/src/app/
