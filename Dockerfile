@@ -6,7 +6,7 @@ ENV PUPPETBOARD_STATUS_ENDPOINT /status
 
 EXPOSE 80
 
-HEALTHCHECK --interval=5m --timeout=5s --start-period=10s CMD python3 "import requests; import sys; sys.exit(not requests.get('http://localhost:${PUPPETBOARD_PORT}${PUPPETBOARD_URL_PREFIX:-}${PUPPETBOARD_STATUS_ENDPOINT}').ok)"
+HEALTHCHECK --interval=1m --timeout=5s --start-period=10s CMD python3 -c "import requests; import sys; rc = 0 if requests.get('http://localhost:${PUPPETBOARD_PORT}${PUPPETBOARD_URL_PREFIX:-}${PUPPETBOARD_STATUS_ENDPOINT}').ok else 255; sys.exit(rc)"
 
 ENV PUPPETBOARD_SETTINGS docker_settings.py
 RUN mkdir -p /usr/src/app/
