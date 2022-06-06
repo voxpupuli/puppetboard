@@ -76,18 +76,20 @@ def environments():
 
     return x
 
+
 def environments_for_index():
     puppetdb = get_puppetdb()
     envs = get_or_puppetdb_connection_error(puppetdb.environments)
     x = []
-    
+
     for env in envs:
         if('ERROR' in env):
             return [env['ERROR']]
-        
+
         x.append(env['name'])
-        
+
     return x
+
 
 # as documented in
 # https://flask.palletsprojects.com/en/2.0.x/patterns/streaming/#streaming-from-templates
