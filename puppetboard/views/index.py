@@ -2,7 +2,7 @@ from flask import render_template
 from pypuppetdb.QueryBuilder import AndOperator, EqualsOperator, FunctionOperator, ExtractOperator
 
 from puppetboard.core import environments_for_index, get_app, get_puppetdb
-from puppetboard.utils import get_db_version, get_or_abort, check_env, metric_params
+from puppetboard.utils import get_db_version, get_or_abort, metric_params
 
 app = get_app()
 
@@ -30,7 +30,7 @@ def index(env):
         'num_resources': 0,
         'avg_resources_node': 0,
     }
-    
+
     if envs.__contains__('PUPPETDB_CONNECTION_ERROR'):
         return render_template(
             'index.html',
@@ -41,7 +41,7 @@ def index(env):
             current_env='',
             puppetdb_connection_error=True,
         )
-    
+
     puppetdb = get_puppetdb()
 
     if env == '*':
