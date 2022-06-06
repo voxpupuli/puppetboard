@@ -12,125 +12,134 @@
 {% if config.REFRESH_RATE > 0 %}
 <meta http-equiv="refresh" content="{{config.REFRESH_RATE}}">
 {% endif %}
-<div class="ui vertical grid">
-  <div class="four column row">
-    <div class="column">
-      <a href="{{url_for('nodes', env=current_env, status='failed')}}">
-        <h1 class="ui failed header no-margin-bottom">
-          {{stats['failed']}}
-          <small>{% if stats['failed']== 1 %} node {% else %} nodes {% endif %}</small>
-        </h1>
-      </a>
-      <span>with status failed</span>
+{% if puppetdb_connection_error %}
+  <div class="ui negative message">
+    <div class="header">
+      PuppetDB access error
     </div>
-    <div class="column">
-      <a href="{{url_for('nodes', env=current_env, status='noop')}}">
-        <h1 class="ui header noop no-margin-bottom">
-          {{stats['noop']}}
-          <small>{% if stats['noop']== 1 %} node {% else %} nodes {% endif %}</small>
-        </h1>
-      </a>
-      <span>with status pending</span>
-    </div>
-    <div class="column">
-      <a href="{{url_for('nodes', env=current_env, status='changed')}}">
-        <h1 class="ui header changed no-margin-bottom">
-          {{stats['changed']}}
-          <small>{% if stats['changed']== 1 %} node {% else %} nodes {% endif %}</small>
-        </h1>
-      </a>
-      <span>with status changed</span>
-    </div>
-    <div class="column">
-      <a href="{{url_for('nodes', env=current_env, status='unchanged')}}">
-        <h1 class="ui header unchanged no-margin-bottom">
-          {{stats['unchanged']}}
-          <small>{% if stats['unchanged'] == 1 %} node {% else %} nodes {% endif %}</small>
-        </h1>
-      </a>
-      <span>with status unchanged</span>
-    </div>
+    <p>There was an error while trying to connect to PuppetDB: Could not reach PuppetDB</p>
   </div>
-  <div class="four column row">
-    <div class="column">
-      <a href="{{url_for('nodes', env=current_env, status='unreported')}}">
-        <h1 class="ui header unreported no-margin-bottom">
-          {{ stats['unreported'] }}
-          <small>{% if stats['unreported']== 1 %} node {% else %} nodes {% endif %}</small>
-        </h1>
-      </a>
-      <span>unreported in the last {{ config.UNRESPONSIVE_HOURS }} hours</span>
-    </div>
-    <div class="column">
-      <h1 class="ui header darkblue no-margin-bottom">{{metrics['num_nodes']}}</h1>
-      <span>Population</span>
-    </div>
-    <div class="column">
-      <h1 class="ui header darkblue no-margin-bottom">{{metrics['num_resources']}}</h1>
-      <span>Resources managed</span>
-    </div>
-    <div class="column">
-      <h1 class="ui header darkblue no-margin-bottom">{{metrics['avg_resources_node']}}</h1>
-      <span>Avg. resources/node</span>
-    </div>
-  </div>
-  {% if config.DAILY_REPORTS_CHART_ENABLED %}
-  <div id="dailyReportsChartContainer" class="one column row">
-    <div id="dailyReportsChart"></div>
-  </div>
-  {% endif %}
-  <div class="ui divider"></div>
-  <div class="one column row">
-    <div class="column">
-      {% if nodes %}
-      <h2>Nodes, except with status unchanged ({{nodes|length}})</h2>
-      <table class='ui sortable very compact very basic table'>
-        <thead>
-          <tr>
-            <th class="five wide">Status</th>
-            <th class="five wide">Certname</th>
-            <th class="date five wide default-sort">Report</th>
-            <th class="one wide"></th>
-          </tr>
-        </thead>
-        <tbody>
-          {% for node in nodes %}
-          {% if node.status != 'unchanged' %}
-          <tr>
-            <td>
-              {% if node.latest_report_hash %}
-                {{macros.status_counts(status=node.status, node_name=node.name, events=node.events, unreported_time=node.unreported_time, current_env=current_env, report_hash=node.latest_report_hash)}}
-              {% else %}
-                {{macros.status_counts(status=node.status, node_name=node.name, events=node.events, unreported_time=node.unreported_time, current_env=current_env)}}
-              {% endif %}
-            </td>
-            <td>
-              <a href="{{url_for('node', env=current_env, node_name=node.name)}}">{{ node.name }}</a>
-            </td>
-            <td>
-              {% if node.report_timestamp %}
-                <a href="{{url_for('report', env=current_env, node_name=node.name, report_id=node.latest_report_hash)}}" rel='utctimestamp'>{{ node.report_timestamp }}</a>
-              {% else %}
-                <i class="large ban icon"></i>
-              {% endif %}
-            </td>
-            <td>
-              {% if node.report_timestamp %}
-              <a title='Reports' href="{{url_for('reports', env=current_env, node_name=node.name)}}"><i class='large darkblue book icon'></i></a>
-              {% endif %}
-            </td>
-          </tr>
-          {% endif %}
-          {% endfor %}
-        </tbody>
-      </table>
-      {% else %}
-      <h2>Nodes, except with status unchanged</h2>
-      <div class="ui info message">
-        Nothing seems to be changing.
+{% else %}
+  <div class="ui vertical grid">
+    <div class="four column row">
+      <div class="column">
+        <a href="{{url_for('nodes', env=current_env, status='failed')}}">
+          <h1 class="ui failed header no-margin-bottom">
+            {{stats['failed']}}
+            <small>{% if stats['failed']== 1 %} node {% else %} nodes {% endif %}</small>
+          </h1>
+        </a>
+        <span>with status failed</span>
       </div>
-      {% endif %}
+      <div class="column">
+        <a href="{{url_for('nodes', env=current_env, status='noop')}}">
+          <h1 class="ui header noop no-margin-bottom">
+            {{stats['noop']}}
+            <small>{% if stats['noop']== 1 %} node {% else %} nodes {% endif %}</small>
+          </h1>
+        </a>
+        <span>with status pending</span>
+      </div>
+      <div class="column">
+        <a href="{{url_for('nodes', env=current_env, status='changed')}}">
+          <h1 class="ui header changed no-margin-bottom">
+            {{stats['changed']}}
+            <small>{% if stats['changed']== 1 %} node {% else %} nodes {% endif %}</small>
+          </h1>
+        </a>
+        <span>with status changed</span>
+      </div>
+      <div class="column">
+        <a href="{{url_for('nodes', env=current_env, status='unchanged')}}">
+          <h1 class="ui header unchanged no-margin-bottom">
+            {{stats['unchanged']}}
+            <small>{% if stats['unchanged'] == 1 %} node {% else %} nodes {% endif %}</small>
+          </h1>
+        </a>
+        <span>with status unchanged</span>
+      </div>
+    </div>
+    <div class="four column row">
+      <div class="column">
+        <a href="{{url_for('nodes', env=current_env, status='unreported')}}">
+          <h1 class="ui header unreported no-margin-bottom">
+            {{ stats['unreported'] }}
+            <small>{% if stats['unreported']== 1 %} node {% else %} nodes {% endif %}</small>
+          </h1>
+        </a>
+        <span>unreported in the last {{ config.UNRESPONSIVE_HOURS }} hours</span>
+      </div>
+      <div class="column">
+        <h1 class="ui header darkblue no-margin-bottom">{{metrics['num_nodes']}}</h1>
+        <span>Population</span>
+      </div>
+      <div class="column">
+        <h1 class="ui header darkblue no-margin-bottom">{{metrics['num_resources']}}</h1>
+        <span>Resources managed</span>
+      </div>
+      <div class="column">
+        <h1 class="ui header darkblue no-margin-bottom">{{metrics['avg_resources_node']}}</h1>
+        <span>Avg. resources/node</span>
+      </div>
+    </div>
+    {% if config.DAILY_REPORTS_CHART_ENABLED %}
+    <div id="dailyReportsChartContainer" class="one column row">
+      <div id="dailyReportsChart"></div>
+    </div>
+    {% endif %}
+    <div class="ui divider"></div>
+    <div class="one column row">
+      <div class="column">
+        {% if nodes %}
+        <h2>Nodes, except with status unchanged ({{nodes|length}})</h2>
+        <table class='ui sortable very compact very basic table'>
+          <thead>
+            <tr>
+              <th class="five wide">Status</th>
+              <th class="five wide">Certname</th>
+              <th class="date five wide default-sort">Report</th>
+              <th class="one wide"></th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for node in nodes %}
+            {% if node.status != 'unchanged' %}
+            <tr>
+              <td>
+                {% if node.latest_report_hash %}
+                  {{macros.status_counts(status=node.status, node_name=node.name, events=node.events, unreported_time=node.unreported_time, current_env=current_env, report_hash=node.latest_report_hash)}}
+                {% else %}
+                  {{macros.status_counts(status=node.status, node_name=node.name, events=node.events, unreported_time=node.unreported_time, current_env=current_env)}}
+                {% endif %}
+              </td>
+              <td>
+                <a href="{{url_for('node', env=current_env, node_name=node.name)}}">{{ node.name }}</a>
+              </td>
+              <td>
+                {% if node.report_timestamp %}
+                  <a href="{{url_for('report', env=current_env, node_name=node.name, report_id=node.latest_report_hash)}}" rel='utctimestamp'>{{ node.report_timestamp }}</a>
+                {% else %}
+                  <i class="large ban icon"></i>
+                {% endif %}
+              </td>
+              <td>
+                {% if node.report_timestamp %}
+                <a title='Reports' href="{{url_for('reports', env=current_env, node_name=node.name)}}"><i class='large darkblue book icon'></i></a>
+                {% endif %}
+              </td>
+            </tr>
+            {% endif %}
+            {% endfor %}
+          </tbody>
+        </table>
+        {% else %}
+        <h2>Nodes, except with status unchanged</h2>
+        <div class="ui info message">
+          Nothing seems to be changing.
+        </div>
+        {% endif %}
+      </div>
     </div>
   </div>
-</div>
+{% endif %}
 {% endblock content %}

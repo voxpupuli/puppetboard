@@ -4,7 +4,7 @@ import re
 from flask import Flask
 from pypuppetdb import connect
 
-from puppetboard.utils import (get_or_abort, jsonprint,
+from puppetboard.utils import (get_or_abort, get_or_puppetdb_connection_error, jsonprint,
                                url_for_field, url_static_offline, quote_columns_data)
 
 
@@ -76,6 +76,18 @@ def environments():
 
     return x
 
+def environments_for_index():
+    puppetdb = get_puppetdb()
+    envs = get_or_puppetdb_connection_error(puppetdb.environments)
+    x = []
+    
+    for env in envs:
+        if('ERROR' in env):
+            return [env['ERROR']]
+        
+        x.append(env['name'])
+        
+    return x
 
 # as documented in
 # https://flask.palletsprojects.com/en/2.0.x/patterns/streaming/#streaming-from-templates
