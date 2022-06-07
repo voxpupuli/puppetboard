@@ -87,12 +87,6 @@ def get_or_abort(func, *args, **kwargs):
     """
     return _do_get_or_abort(False, func, *args, **kwargs)
 
-def get_or_puppetdb_connection_error(func, *args, **kwargs):
-    try:
-        return func(*args, **kwargs)
-    except:
-        return [{'ERROR': 'PUPPETDB_CONNECTION_ERROR'}]
-
 
 def get_or_abort_except_client_errors(func, *args, **kwargs):
     """Perform a backend request and handle the errors,

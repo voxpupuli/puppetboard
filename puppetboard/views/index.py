@@ -1,10 +1,11 @@
 from flask import render_template
 from pypuppetdb.QueryBuilder import AndOperator, EqualsOperator, FunctionOperator, ExtractOperator
 
-from puppetboard.core import environments_for_index, get_app, get_puppetdb
+from puppetboard.core import get_app, get_puppetdb, environments
 from puppetboard.utils import get_db_version, get_or_abort, check_env, metric_params
 
 app = get_app()
+puppetdb = get_puppetdb()
 
 
 @app.route('/', defaults={'env': app.config['DEFAULT_ENVIRONMENT']})
@@ -16,33 +17,13 @@ def index(env):
     :param env: Search for nodes in this (Catalog and Fact) environment
     :type env: :obj:`string`
     """
-    envs = environments_for_index()
-    nodes_overview = []
-    stats = {
-        'changed': 0,
-        'unchanged': 0,
-        'failed': 0,
-        'unreported': 0,
-        'noop': 0,
-    }
+    envs = environments()
     metrics = {
         'num_nodes': 0,
         'num_resources': 0,
         'avg_resources_node': 0,
     }
-    
-    if envs.__contains__('PUPPETDB_CONNECTION_ERROR'):
-        return render_template(
-            'index.html',
-            metrics=metrics,
-            nodes=nodes_overview,
-            stats=stats,
-            envs=[],
-            current_env='',
-            puppetdb_connection_error=True,
-        )
-    
-    puppetdb = get_puppetdb()
+    check_env(env, envs)
 
     if env == '*':
         query = app.config['OVERVIEW_FILTER']
@@ -106,6 +87,15 @@ def index(env):
                          unreported=app.config['UNRESPONSIVE_HOURS'],
                          with_status=True,
                          with_event_numbers=app.config['WITH_EVENT_NUMBERS'])
+
+    nodes_overview = []
+    stats = {
+        'changed': 0,
+        'unchanged': 0,
+        'failed': 0,
+        'unreported': 0,
+        'noop': 0,
+    }
 
     for node in nodes:
         if node.status == 'unreported':
