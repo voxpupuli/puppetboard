@@ -60,7 +60,7 @@ def failures(env: str, show_error_as: str):
             else:
                 error = get_raw_error(source, message)
         else:
-            error = to_html(f'Node {node.name} is failing but we could not find the errors' )
+            error = to_html(f'Node {node.name} is failing but we could not find the errors')
 
         failure = {
             'certname': node.name,
