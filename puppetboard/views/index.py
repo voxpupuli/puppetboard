@@ -23,7 +23,9 @@ def index(env):
         'num_resources': 0,
         'avg_resources_node': 0,
     }
-    check_env(env, envs)
+
+    if(env != app.config['DEFAULT_ENVIRONMENT']):
+        check_env(env, envs)
 
     if env == '*':
         query = app.config['OVERVIEW_FILTER']
