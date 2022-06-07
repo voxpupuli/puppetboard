@@ -2,7 +2,7 @@ from flask import render_template
 from pypuppetdb.QueryBuilder import AndOperator, EqualsOperator, FunctionOperator, ExtractOperator
 
 from puppetboard.core import environments_for_index, get_app, get_puppetdb
-from puppetboard.utils import get_db_version, get_or_abort, metric_params, check_env
+from puppetboard.utils import get_db_version, get_or_abort, metric_params
 
 app = get_app()
 
@@ -43,9 +43,6 @@ def index(env):
         )
 
     puppetdb = get_puppetdb()
-
-    if(env != app.config['DEFAULT_ENVIRONMENT']):
-        check_env(env, envs)
 
     if env == '*':
         query = app.config['OVERVIEW_FILTER']
