@@ -32,7 +32,8 @@ def query(env):
         abort(403)
 
     envs = environments()
-    check_env(env, envs)
+    if(env != app.config['DEFAULT_ENVIRONMENT']):
+        check_env(env, envs)
 
     form = QueryForm(meta={
         'csrf_secret': app.config['SECRET_KEY'],
