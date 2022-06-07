@@ -45,6 +45,8 @@ def failures(env: str, show_error_as: str):
 
         latest_failed_report = next(reports)
 
+        source = None
+        message = None
         for log in latest_failed_report.logs:
             if log['level'] not in ['info', 'notice', 'warning']:
                 if log['source'] != 'Facter':
@@ -52,10 +54,13 @@ def failures(env: str, show_error_as: str):
                     message = log['message']
                     break
 
-        if show_error_as == 'friendly':
-            error = to_html(get_friendly_error(source, message, node.name))
+        if source and message:
+            if show_error_as == 'friendly':
+                error = to_html(get_friendly_error(source, message, node.name))
+            else:
+                error = get_raw_error(source, message)
         else:
-            error = get_raw_error(source, message)
+            error = to_html(f'Node {node.name} is failing but we could not find the errors' )
 
         failure = {
             'certname': node.name,
