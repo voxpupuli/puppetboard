@@ -3,8 +3,18 @@ Changelog
 
 This is the changelog for Puppetboard.
 
+3.6.0
+-----
+
+* Show user-friendly error message when there's a problem with connecting to the PuppetDB and just zeros instead of HTTP 404 when the PuppetDB is just yet empty ([PR #692](https://github.com/voxpupuli/puppetboard/pull/692), 
+* Add a healthcheck to the Docker image ([PR #690](https://github.com/voxpupuli/puppetboard/pull/690)),
+* Fix Failures view when there are no logs ([PR #693](https://github.com/voxpupuli/puppetboard/pull/693)).
+
+Thanks to the following contributors of this release: [@ArthurWuTW](https://github.com/ArthurWuTW), [@jcpunk](https://github.com/jcpunk), [@carlosduelo](https://github.com/carlosduelo).
+
 3.5.1
 -----
+
 * Fixed friendly error message toggle (when there is no env in the URL) ([#688](https://github.com/voxpupuli/puppetboard/issues/688)).
 
 3.5.0
