@@ -130,24 +130,26 @@
 {% endblock content %}
 
 {% block onload_script %}
-{% macro extra_options(caller) %}
-'columns': [
-    {% for column in columns %}
-    {
-        "title": "{{ quote_columns_data(column) }}",
-{% if column in ['node', 'certname'] %}
-        "render": function (data, type, full, meta) {
-            return `<a href='{{ url_for("node", node_name="") }}${data}'>${data}</a>`
+{% if not form.rawjson.data %}
+    {% macro extra_options(caller) %}
+    'columns': [
+        {% for column in columns %}
+        {
+            "title": "{{ quote_columns_data(column) }}",
+    {% if column in ['node', 'certname'] %}
+            "render": function (data, type, full, meta) {
+                return `<a href='{{ url_for("node", node_name="") }}${data}'>${data}</a>`
+            },
+    {% endif %}
         },
-{% endif %}
-    },
-    {% endfor %}
-],
-'serverSide': false,
-{% endmacro %}
+        {% endfor %}
+    ],
+    'serverSide': false,
+    {% endmacro %}
 
-{% if not result %}
-    {% set result = [] %}
+    {% if not result %}
+        {% set result = [] %}
+    {% endif %}
+    {{ macros.datatable_init(table_html_id="query_table", ajax_url=None, data=result|tojson, default_length=config.NORMAL_TABLE_COUNT, length_selector=config.TABLE_COUNT_SELECTOR, extra_options=extra_options) }}
 {% endif %}
-{{ macros.datatable_init(table_html_id="query_table", ajax_url=None, data=result|tojson, default_length=config.NORMAL_TABLE_COUNT, length_selector=config.TABLE_COUNT_SELECTOR, extra_options=extra_options) }}
 {% endblock onload_script %}
