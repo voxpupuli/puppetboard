@@ -3,6 +3,11 @@ Changelog
 
 This is the changelog for Puppetboard.
 
+3.6.1
+-----
+
+* Stop modifying the query response for showing as JSON (fixes [#695](https://github.com/voxpupuli/puppetboard/issues/695), PR [#696](https://github.com/voxpupuli/puppetboard/pull/696)).
+
 3.6.0
 -----
 
