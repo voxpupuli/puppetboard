@@ -61,21 +61,32 @@ def query(env):
             zero_results = (len(result) == 0)
             result = result if not zero_results else None
 
-            output = []
-            if not zero_results:
-                columns = result[0].keys()
-                for items in result:
-                    output.append(list(items.values()))
+            if form.rawjson.data:
+                # for JSON view pass the response from PuppetDB as-is
+                return render_template('query.html',
+                                       form=form,
+                                       zero_results=zero_results,
+                                       result=result,
+                                       columns=None,
+                                       envs=envs,
+                                       current_env=env)
             else:
-                columns = []
+                # for table view separate the columns and the rows
+                rows = []
+                if not zero_results:
+                    columns = result[0].keys()
+                    for items in result:
+                        rows.append(list(items.values()))
+                else:
+                    columns = []
 
-            return render_template('query.html',
-                                   form=form,
-                                   zero_results=zero_results,
-                                   result=output,
-                                   columns=columns,
-                                   envs=envs,
-                                   current_env=env)
+                return render_template('query.html',
+                                       form=form,
+                                       zero_results=zero_results,
+                                       result=rows,
+                                       columns=columns,
+                                       envs=envs,
+                                       current_env=env)
 
         except HTTPError as e:
             error_text = e.response.text
