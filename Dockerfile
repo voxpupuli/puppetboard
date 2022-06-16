@@ -12,9 +12,6 @@ ENV PUPPETBOARD_SETTINGS docker_settings.py
 RUN mkdir -p /usr/src/app/
 WORKDIR /usr/src/app/
 
-# Workaround for https://github.com/benoitc/gunicorn/issues/2160
-RUN apk --update --no-cache add libc-dev binutils
-
 COPY requirements*.txt /usr/src/app/
 RUN pip install --no-cache-dir -r requirements-docker.txt
 
