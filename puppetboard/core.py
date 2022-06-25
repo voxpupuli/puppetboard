@@ -1,6 +1,7 @@
 import logging
 import re
 
+import pkg_resources
 from flask import Flask
 from pypuppetdb import connect
 
@@ -61,6 +62,14 @@ def get_puppetdb():
                            ssl_cert=app.config['PUPPETDB_CERT'],
                            timeout=app.config['PUPPETDB_TIMEOUT'],
                            protocol=app.config['PUPPETDB_PROTO'], )
+
+        own_version = pkg_resources.get_distribution("puppetboard").version
+        requests_version = pkg_resources.get_distribution("requests").version
+        user_agent_header = {
+            "user-agent": f"puppetboard/{own_version} (r/{requests_version})",
+        }
+        puppetdb.session.headers = {**puppetdb.session.headers, **user_agent_header}
+
         PUPPETDB = puppetdb
 
     return PUPPETDB
