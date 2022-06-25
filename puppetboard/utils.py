@@ -5,7 +5,7 @@ import os.path
 import sys
 
 from flask import abort, request, url_for
-from jinja2.utils import contextfunction
+from jinja2.utils import pass_context
 from pypuppetdb.errors import EmptyResponseError
 from requests.exceptions import ConnectionError, HTTPError
 from packaging.version import parse
@@ -13,7 +13,7 @@ from packaging.version import parse
 log = logging.getLogger(__name__)
 
 
-@contextfunction
+@pass_context
 def url_static_offline(context, value):
     request_parts = os.path.split(os.path.dirname(context.name))
     static_path = '/'.join(request_parts[1:])
