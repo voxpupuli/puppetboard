@@ -6,6 +6,12 @@ from pypuppetdb.types import Node
 from puppetboard import app
 
 
+@pytest.fixture(autouse=True)
+def mock_puppetdb_version(mocker):
+    return mocker.patch.object(app.puppetdb, 'current_version',
+                               return_value='5.9.999')
+
+
 @pytest.fixture
 def mock_puppetdb_environments(mocker):
     environments = [

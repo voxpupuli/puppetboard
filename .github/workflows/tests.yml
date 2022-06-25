@@ -29,6 +29,7 @@ jobs:
       - name: Install dependencies
         run: |
           pip install --upgrade wheel setuptools
+          python setup.py develop
           pip install -r requirements-test.txt
           mypy --install-types --non-interactive puppetboard/ test/
       - name: Test

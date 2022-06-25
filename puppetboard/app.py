@@ -33,11 +33,10 @@ import puppetboard.errors  # noqa: F401
 
 from puppetboard.core import get_app, get_puppetdb
 from puppetboard.version import __version__
-from utils import check_db_version
+from puppetboard.utils import check_db_version
 
 app = get_app()
 puppetdb = get_puppetdb()
-check_db_version(puppetdb)
 
 logging.basicConfig(level=app.config['LOGLEVEL'].upper())
 log = logging.getLogger(__name__)
@@ -91,3 +90,8 @@ def offline_static(filename):
 @app.route('/status')
 def health_status():
     return 'OK'
+
+
+@app.before_first_request
+def before_first_request():
+    check_db_version(puppetdb)

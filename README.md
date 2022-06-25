@@ -221,6 +221,7 @@ If you wish to hack on Puppetboard you should fork/clone the Github repository a
 
 ```bash
 pip install --upgrade wheel setuptools
+python setup.py develop
 pip install --upgrade -r requirements-test.txt
 mypy --install-types --non-interactive puppetboard/ test/
 ```
