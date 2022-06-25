@@ -5,7 +5,7 @@ from pypuppetdb.QueryBuilder import (ExtractOperator, AndOperator,
                                      EqualsOperator, FunctionOperator)
 
 from puppetboard.core import get_app, get_puppetdb, environments
-from puppetboard.utils import (get_or_abort, check_env)
+from puppetboard.utils import get_or_abort, check_env
 
 app = get_app()
 puppetdb = get_puppetdb()

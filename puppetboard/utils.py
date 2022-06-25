@@ -6,9 +6,9 @@ import sys
 
 from flask import abort, request, url_for
 from jinja2.utils import pass_context
+from packaging.version import parse
 from pypuppetdb.errors import EmptyResponseError
 from requests.exceptions import ConnectionError, HTTPError
-from packaging.version import parse
 
 log = logging.getLogger(__name__)
 

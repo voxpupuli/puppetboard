@@ -31,10 +31,9 @@ import puppetboard.views.reports  # noqa: F401
 import puppetboard.views.failures  # noqa: F401
 import puppetboard.errors  # noqa: F401
 
-
-from puppetboard.core import get_app, get_puppetdb, environments
+from puppetboard.core import get_app, get_puppetdb
 from puppetboard.version import __version__
-from utils import check_db_version, check_env, get_or_abort
+from utils import check_db_version
 
 app = get_app()
 puppetdb = get_puppetdb()
@@ -61,7 +60,6 @@ if not app.config.get('ENABLE_QUERY'):
 
 if not app.config.get('ENABLE_CATALOG'):
     menu_entries.remove(('catalogs', 'Catalogs'))
-
 
 app.jinja_env.globals.update(menu_entries=menu_entries)
 
