@@ -26,7 +26,7 @@ See [more screenshots here](#more-screenshots).
 
 ## Requirements<a id="requirements"></a>
 
-* PuppetDB v. 3.0-7.5 (will most probably work with newer, but this has not been tested yet)
+* PuppetDB v. 5.2-7.5 (will most probably work with newer, but this has not been tested yet)
 * Python 3.7-3.10 or Docker
 
 ## Installation<a id="installation"></a>
@@ -75,7 +75,7 @@ docker::run { 'puppetboard':
 }
 ```
 
-We also provide the Dockerfile so you can build the image yourself:
+We also provide the Dockerfile, so you can build the image yourself:
 ```bash
 docker build -t puppetboard .
 ```

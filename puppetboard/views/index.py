@@ -2,7 +2,7 @@ from flask import render_template
 from pypuppetdb.QueryBuilder import AndOperator, EqualsOperator, FunctionOperator, ExtractOperator
 
 from puppetboard.core import get_app, get_puppetdb, environments
-from puppetboard.utils import get_db_version, get_or_abort, check_env, metric_params
+from puppetboard.utils import get_or_abort, check_env
 
 app = get_app()
 puppetdb = get_puppetdb()
@@ -31,17 +31,8 @@ def index(env):
         query = app.config['OVERVIEW_FILTER']
 
         prefix = 'puppetlabs.puppetdb.population'
-        db_version = get_db_version(puppetdb)
-        query_type, metric_version = metric_params(db_version)
-
-        num_nodes = get_or_abort(
-            puppetdb.metric,
-            "{0}{1}".format(prefix, ':%sname=num-nodes' % query_type),
-            version=metric_version)
-        num_resources = get_or_abort(
-            puppetdb.metric,
-            "{0}{1}".format(prefix, ':%sname=num-resources' % query_type),
-            version=metric_version)
+        num_nodes = get_or_abort(puppetdb.metric, f"{prefix}:name=num-nodes")
+        num_resources = get_or_abort(puppetdb.metric, f"{prefix}:name=num-resources")
 
         metrics['num_nodes'] = num_nodes['Value']
         metrics['num_resources'] = num_resources['Value']

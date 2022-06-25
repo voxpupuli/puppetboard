@@ -6,7 +6,7 @@ from flask import (
 )
 
 from puppetboard.core import get_app, get_puppetdb, environments
-from puppetboard.utils import (get_or_abort, get_db_version, check_env, metric_params)
+from puppetboard.utils import (get_or_abort, check_env)
 
 app = get_app()
 puppetdb = get_puppetdb()
@@ -27,43 +27,34 @@ def metrics(env):
     envs = environments()
     check_env(env, envs)
 
-    db_version = get_db_version(puppetdb)
-    query_type, metric_version = metric_params(db_version)
-    if metric_version == 'v1':
-        mbeans = get_or_abort(puppetdb._query, 'mbean')
-        metrics = list(mbeans.keys())
-    elif metric_version == 'v2':
-        # the list response is a dict in the format:
-        # {
-        #   "domain1": {
-        #     "property1": {
-        #      ...
-        #     }
-        #   },
-        #   "domain2": {
-        #     "property2": {
-        #      ...
-        #     }
-        #   }
-        # }
-        # The MBean names are the combination of the domain and the properties
-        # with a ":" in between, example:
-        #   domain1:property1
-        #   domain2:property2
-        # reference: https://jolokia.org/reference/html/protocol.html#list
-        metrics_domains = get_or_abort(puppetdb.metric)
-        metrics = []
-        # get all of the domains
-        for domain in list(metrics_domains.keys()):
-            # iterate over all of the properties in this domain
-            properties = list(metrics_domains[domain].keys())
-            for prop in properties:
-                # combine the current domain and each property with
-                # a ":" in between
-                metrics.append(domain + ':' + prop)
-    else:
-        raise ValueError("Unknown metric version {} for database version {}"
-                         .format(metric_version, db_version))
+    # the list response is a dict in the format:
+    # {
+    #   "domain1": {
+    #     "property1": {
+    #      ...
+    #     }
+    #   },
+    #   "domain2": {
+    #     "property2": {
+    #      ...
+    #     }
+    #   }
+    # }
+    # The MBean names are the combination of the domain and the properties
+    # with a ":" in between, example:
+    #   domain1:property1
+    #   domain2:property2
+    # reference: https://jolokia.org/reference/html/protocol.html#list
+    metrics_domains = get_or_abort(puppetdb.metric)
+    metrics = []
+    # get all of the domains
+    for domain in list(metrics_domains.keys()):
+        # iterate over all of the properties in this domain
+        properties = list(metrics_domains[domain].keys())
+        for prop in properties:
+            # combine the current domain and each property with
+            # a ":" in between
+            metrics.append(domain + ':' + prop)
 
     return render_template('metrics.html',
                            metrics=sorted(metrics),
@@ -84,11 +75,8 @@ def metric(env, metric):
     envs = environments()
     check_env(env, envs)
 
-    db_version = get_db_version(puppetdb)
-    query_type, metric_version = metric_params(db_version)
-
     name = unquote(metric)
-    metric = get_or_abort(puppetdb.metric, metric, version=metric_version)
+    metric = get_or_abort(puppetdb.metric, metric)
     return render_template(
         'metric.html',
         name=name,

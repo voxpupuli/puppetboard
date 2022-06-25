@@ -32,15 +32,16 @@ import puppetboard.views.failures  # noqa: F401
 import puppetboard.errors  # noqa: F401
 
 
-from puppetboard.core import get_app, get_puppetdb
+from puppetboard.core import get_app, get_puppetdb, environments
 from puppetboard.version import __version__
+from utils import check_db_version, check_env, get_or_abort
 
 app = get_app()
 puppetdb = get_puppetdb()
+check_db_version(puppetdb)
 
 logging.basicConfig(level=app.config['LOGLEVEL'].upper())
 log = logging.getLogger(__name__)
-
 
 menu_entries = [
     ('index', 'Overview'),
