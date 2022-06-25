@@ -6,7 +6,7 @@ This is the changelog for Puppetboard.
 4.0.0
 -----
 
-This is mostly a maintenance release. The major version is bumped because of the Python 3.6 (which had its EOL in December 2021) support drop.
+This is a maintenance release. The major version is bumped because of dropped support for PuppetDBs < 5.2.13 (because of lack of Metrics v2) and Python 3.6 (which had its EOL in December 2021).
 
 * Set custom user-agent header that will make troubleshooting easier.
 
