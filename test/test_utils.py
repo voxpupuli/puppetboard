@@ -145,16 +145,28 @@ def test_basic_exception(mock_log):
         assert exception.status_code == 500
 
 
-def test_db_version_ok(mocker, mock_info_log):
-    mocker.patch.object(app.puppetdb, 'current_version', return_value='5.2.13')
-    utils.check_db_version(app.puppetdb)
-
-
-def test_db_version_too_old(mocker, mock_info_log):
-    mocker.patch.object(app.puppetdb, 'current_version', return_value='4.2.0')
-    with pytest.raises(SystemExit) as e:
+@pytest.mark.parametrize(
+    "version,is_ok",
+    [
+        ("4.2.0", False),
+        ("5.2.12", False),
+        ("5.2.13", True),
+        ("5.3.12", False),
+        ("5.3.13", True),
+        ("6.9.0", False),
+        ("6.9.1", True),
+        ("7.0.0", True),
+        ("8.0.0", True),
+    ],
+)
+def test_db_version(mocker, version, is_ok):
+    mocker.patch.object(app.puppetdb, "current_version", return_value=version)
+    if is_ok:
         utils.check_db_version(app.puppetdb)
-        assert e.code == 1
+    else:
+        with pytest.raises(SystemExit) as e:
+            utils.check_db_version(app.puppetdb)
+            assert e.code == 1
 
 
 def test_db_invalid_version(mocker, mock_err_log):
