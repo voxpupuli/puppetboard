@@ -112,6 +112,7 @@ h1.ui.header.no-margin-bottom {
 
 .ui.menu.darkblue {
   background-color: #2C3E50;
+  border-radius: 0px !important;
 }
 
 .ui.darkblue.header, i.darkblue {
