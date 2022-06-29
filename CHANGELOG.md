@@ -6,8 +6,15 @@ This is the changelog for Puppetboard.
 4.0.0
 -----
 
-This is a maintenance release. The major version is bumped because of dropped support for PuppetDBs < 5.2.13 (because of lack of Metrics v2) and Python 3.6 (which had its EOL in December 2021).
+This is mostly a maintenance release.
 
+The major version is bumped because of:
+* dropped support for PuppetDBs < 5.2.0,
+* dropped support for Python 3.6 (which had its EOL in December 2021).
+
+There might be some performance improvements thanks to the upgrade of the core dependencies - Flask, Jinja2, Werkzeug etc.
+
+Additional improvements:
 * Set custom user-agent header that will make troubleshooting easier.
 
 3.6.1
