@@ -9,8 +9,8 @@ This is the changelog for Puppetboard.
 This is mostly a maintenance release.
 
 The major version is bumped because of:
-* dropped support for PuppetDBs < 5.2.0,
-* dropped support for Python 3.6 (which had its EOL in December 2021).
+* dropped support for PuppetDBs < 5.2.0 (Puppet 4 has reached its end-of-life in October 2018),
+* dropped support for Python 3.6 (end-of-life in December 2021).
 
 There might be some performance improvements thanks to the upgrade of the core dependencies - Flask, Jinja2, Werkzeug etc.
 
