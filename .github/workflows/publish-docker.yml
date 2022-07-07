@@ -1,9 +1,10 @@
 name: publish 🐳 Docker image
 
-on:
-  push:
-    tags:
-      - "v*"
+on: push
+#on:
+#  push:
+#    tags:
+#      - "v*"
 
 env:
   TEST_TAG: voxpupuli/puppetboard:test
@@ -78,10 +79,10 @@ jobs:
         run: |
           docker run --rm ${{ env.TEST_TAG }}
 
-      - name: Build image with final tags and push
-        uses: docker/build-push-action@v3
-        with:
-          context: .
-          platforms: linux/amd64
-          push: true
-          tags: ${{ steps.tags.outputs.tags }}
+#      - name: Build image with final tags and push
+#        uses: docker/build-push-action@v3
+#        with:
+#          context: .
+#          platforms: linux/amd64
+#          push: true
+#          tags: ${{ steps.tags.outputs.tags }}
