@@ -145,26 +145,34 @@ def test_basic_exception(mock_log):
         assert exception.status_code == 500
 
 
-def test_db_version_good(mocker, mock_info_log):
-    mocker.patch.object(app.puppetdb, 'current_version', return_value='4.2.0')
-    err = 'PuppetDB Version %d.%d.%d' % (4, 2, 0)
-    result = utils.get_db_version(app.puppetdb)
-    mock_info_log.assert_called_with(err)
-    assert (4, 0, 0) < result
-    assert (4, 2, 0) == result
-    assert (3, 2, 0) < result
-    assert (4, 3, 0) > result
-    assert (5, 0, 0) > result
-    assert (4, 2, 1) > result
+@pytest.mark.parametrize(
+    "version,is_ok",
+    [
+        ("4.2.0", False),
+        ("5.1.0", False),
+        ("5.2.0", True),
+        ("5.2.19", True),
+        ("6.4.0", True),
+        ("6.9.1", True),
+        ("7.0.0", True),
+        ("8.0.0", True),
+    ],
+)
+def test_db_version(mocker, version, is_ok):
+    mocker.patch.object(app.puppetdb, "current_version", return_value=version)
+    if is_ok:
+        utils.check_db_version(app.puppetdb)
+    else:
+        with pytest.raises(SystemExit) as e:
+            utils.check_db_version(app.puppetdb)
+            assert e.code == 1
 
 
 def test_db_invalid_version(mocker, mock_err_log):
     mocker.patch.object(app.puppetdb, 'current_version', return_value='4')
-    err = u"Unable to determine version from string: '%s'" % 4
-    result = utils.get_db_version(app.puppetdb)
-    mock_err_log.assert_called_with(err)
-    assert (4, 0, 0) < result
-    assert (4, 2, 0) == result
+    with pytest.raises(SystemExit) as e:
+        utils.check_db_version(app.puppetdb)
+        assert e.code == 2
 
 
 def test_db_http_error(mocker, mock_err_log):
@@ -178,9 +186,9 @@ def test_db_http_error(mocker, mock_err_log):
 
     mocker.patch.object(app.puppetdb, 'current_version',
                         side_effect=raise_http_error)
-    result = utils.get_db_version(app.puppetdb)
-    mock_err_log.assert_called_with(err)
-    assert result == ()
+    with pytest.raises(SystemExit) as e:
+        utils.check_db_version(app.puppetdb)
+        assert e.code == 2
 
 
 def test_db_connection_error(mocker, mock_err_log):
@@ -194,9 +202,9 @@ def test_db_connection_error(mocker, mock_err_log):
 
     mocker.patch.object(app.puppetdb, 'current_version',
                         side_effect=connection_error)
-    result = utils.get_db_version(app.puppetdb)
-    mock_err_log.assert_called_with(err)
-    assert result == ()
+    with pytest.raises(SystemExit) as e:
+        utils.check_db_version(app.puppetdb)
+        assert e.code == 2
 
 
 def test_db_empty_response(mocker, mock_err_log):
@@ -207,9 +215,9 @@ def test_db_empty_response(mocker, mock_err_log):
 
     mocker.patch.object(app.puppetdb, 'current_version',
                         side_effect=connection_error)
-    result = utils.get_db_version(app.puppetdb)
-    mock_err_log.assert_called_with(err)
-    assert result == ()
+    with pytest.raises(SystemExit) as e:
+        utils.check_db_version(app.puppetdb)
+        assert e.code == 2
 
 
 def test_iter():
@@ -261,43 +269,3 @@ def test_stop_http_error():
 def test_quote_columns_data():
     quoted_with_dot = utils.quote_columns_data('foo.bar')
     assert quoted_with_dot == 'foo\\.bar'
-
-
-def test_metric_params_5213():
-    query_type, metric_version = utils.metric_params((5, 2, 13))
-    assert query_type == ''
-    assert metric_version == 'v2'
-
-    query_type, metric_version = utils.metric_params((5, 2, 12))
-    assert query_type == ''
-    assert metric_version == 'v1'
-
-
-def test_metric_params_5312():
-    query_type, metric_version = utils.metric_params((5, 3, 12))
-    assert query_type == ''
-    assert metric_version == 'v2'
-
-    query_type, metric_version = utils.metric_params((5, 3, 11))
-    assert query_type == ''
-    assert metric_version == 'v1'
-
-
-def test_metric_params_691():
-    query_type, metric_version = utils.metric_params((6, 9, 1))
-    assert query_type == ''
-    assert metric_version == 'v2'
-
-    query_type, metric_version = utils.metric_params((6, 9, 0))
-    assert query_type == ''
-    assert metric_version == 'v1'
-
-
-def test_metric_params_320():
-    query_type, metric_version = utils.metric_params((3, 2, 0))
-    assert query_type == 'type=default,'
-    assert metric_version == 'v1'
-
-    query_type, metric_version = utils.metric_params((4, 0, 0))
-    assert query_type == ''
-    assert metric_version == 'v1'

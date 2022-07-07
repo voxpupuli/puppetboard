@@ -26,8 +26,8 @@ See [more screenshots here](#more-screenshots).
 
 ## Requirements<a id="requirements"></a>
 
-* PuppetDB v. 3.0-7.5 (will most probably work with newer, but this has not been tested yet)
-* Python 3.6-3.10 or Docker
+* PuppetDB v. 5.2-7.10 (will most probably work with newer, but this has not been tested yet)
+* Python 3.7-3.10 or Docker
 
 ## Installation<a id="installation"></a>
 
@@ -75,7 +75,7 @@ docker::run { 'puppetboard':
 }
 ```
 
-We also provide the Dockerfile so you can build the image yourself:
+We also provide the Dockerfile, so you can build the image yourself:
 ```bash
 docker build -t puppetboard .
 ```
@@ -221,6 +221,7 @@ If you wish to hack on Puppetboard you should fork/clone the Github repository a
 
 ```bash
 pip install --upgrade wheel setuptools
+python setup.py develop
 pip install --upgrade -r requirements-test.txt
 mypy --install-types --non-interactive puppetboard/ test/
 ```

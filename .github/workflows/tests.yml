@@ -18,7 +18,7 @@ jobs:
     strategy:
       max-parallel: 5
       matrix:
-        python-version: [3.6, 3.7, 3.8, 3.9, '3.10']
+        python-version: [3.7, 3.8, 3.9, '3.10', 3.11-dev]
 
     steps:
       - uses: actions/checkout@v2
@@ -29,6 +29,7 @@ jobs:
       - name: Install dependencies
         run: |
           pip install --upgrade wheel setuptools
+          python setup.py develop
           pip install -r requirements-test.txt
           mypy --install-types --non-interactive puppetboard/ test/
       - name: Test

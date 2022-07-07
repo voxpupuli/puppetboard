@@ -31,16 +31,15 @@ import puppetboard.views.reports  # noqa: F401
 import puppetboard.views.failures  # noqa: F401
 import puppetboard.errors  # noqa: F401
 
-
 from puppetboard.core import get_app, get_puppetdb
 from puppetboard.version import __version__
+from puppetboard.utils import check_db_version
 
 app = get_app()
 puppetdb = get_puppetdb()
 
 logging.basicConfig(level=app.config['LOGLEVEL'].upper())
 log = logging.getLogger(__name__)
-
 
 menu_entries = [
     ('index', 'Overview'),
@@ -60,7 +59,6 @@ if not app.config.get('ENABLE_QUERY'):
 
 if not app.config.get('ENABLE_CATALOG'):
     menu_entries.remove(('catalogs', 'Catalogs'))
-
 
 app.jinja_env.globals.update(menu_entries=menu_entries)
 
@@ -92,3 +90,8 @@ def offline_static(filename):
 @app.route('/status')
 def health_status():
     return 'OK'
+
+
+@app.before_first_request
+def before_first_request():
+    check_db_version(puppetdb)

@@ -5,7 +5,7 @@ from pypuppetdb.QueryBuilder import (ExtractOperator, AndOperator,
                                      EqualsOperator, FunctionOperator)
 
 from puppetboard.core import get_app, get_puppetdb, environments
-from puppetboard.utils import (get_or_abort, get_db_version, check_env, metric_params)
+from puppetboard.utils import get_or_abort, check_env
 
 app = get_app()
 puppetdb = get_puppetdb()
@@ -20,15 +20,13 @@ def radiator(env):
     envs = environments()
     check_env(env, envs)
 
+    # TODO: deduplicate. this already implemented in index().
     if env == '*':
-        db_version = get_db_version(puppetdb)
-        query_type, metric_version = metric_params(db_version)
-
         query = None
         metrics = get_or_abort(
             puppetdb.metric,
-            'puppetlabs.puppetdb.population:%sname=num-nodes' % query_type,
-            version=metric_version)
+            'puppetlabs.puppetdb.population:name=num-nodes',
+        )
         num_nodes = metrics['Value']
     else:
         query = AndOperator()

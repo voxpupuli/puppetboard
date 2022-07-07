@@ -2,17 +2,18 @@ import ast
 import json
 import logging
 import os.path
+import sys
 
 from flask import abort, request, url_for
-from jinja2.utils import contextfunction
+from jinja2.utils import pass_context
+from packaging.version import parse
 from pypuppetdb.errors import EmptyResponseError
 from requests.exceptions import ConnectionError, HTTPError
-
 
 log = logging.getLogger(__name__)
 
 
-@contextfunction
+@pass_context
 def url_static_offline(context, value):
     request_parts = os.path.split(os.path.dirname(context.name))
     static_path = '/'.join(request_parts[1:])
@@ -31,27 +32,29 @@ def jsonprint(value):
     return json.dumps(value, indent=2, separators=(',', ': '))
 
 
-def get_db_version(puppetdb):
+def check_db_version(puppetdb):
     """
-    Get the version of puppetdb.  Version form 3.2 query
-    interface is slightly different on mbeans
+    Gets the version of puppetdb and exits if it is not an accepted one.
     """
-    ver = ()
     try:
         version = puppetdb.current_version()
-        (major, minor, build) = [int(x) for x in version.split('.')]
-        ver = (major, minor, build)
-        log.info("PuppetDB Version %d.%d.%d" % (major, minor, build))
-    except ValueError:
-        log.error("Unable to determine version from string: '%s'" % puppetdb.current_version())
-        ver = (4, 2, 0)
+        log.info(f"PuppetDB version: {version}")
+
+        minimum_version = '5.2.0'
+
+        if parse(version) < parse(minimum_version):
+            log.error(f"The minimum supported version of PuppetDB is {minimum_version}")
+            sys.exit(1)
+
     except HTTPError as e:
         log.error(str(e))
+        sys.exit(2)
     except ConnectionError as e:
         log.error(str(e))
+        sys.exit(2)
     except EmptyResponseError as e:
         log.error(str(e))
-    return ver
+        sys.exit(2)
 
 
 def parse_python(value: str):
@@ -151,23 +154,3 @@ def quote_columns_data(data: str) -> str:
 def check_env(env, envs):
     if env != '*' and env not in envs:
         abort(404)
-
-
-def metric_params(db_version):
-    query_type = ''
-
-    # Puppet Server is enforcing new metrics API (v2)
-    # starting with versions 6.9.1, 5.3.12, and 5.2.13
-    if (db_version > (6, 9, 0) or
-            ((5, 3, 11) < db_version < (6, 0, 0)) or
-            ((5, 2, 12) < db_version < (5, 3, 10))):
-        metric_version = 'v2'
-    else:
-        metric_version = 'v1'
-
-    # Puppet DB version changed the query format from 3.2.0
-    # to 4.0 when querying mbeans
-    if db_version < (4, 0, 0):
-        query_type = 'type=default,'
-
-    return query_type, metric_version
