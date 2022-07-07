@@ -1,0 +1,16 @@
+# roughly the same as in .gitignore
+.idea
+.mypy_cache
+.pytest_cache
+build
+dist
+puppetboard.egg-info
+venv
+
+# git-related files
+.git
+
+# we don't need these in the release too
+docs
+screenshots
+test
