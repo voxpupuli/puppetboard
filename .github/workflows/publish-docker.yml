@@ -47,19 +47,19 @@ jobs:
           # full version
           tags.add(f"{image}:{version}")
 
-          if not parse(version).is_prerelease:
-              # only final and post-releases should get the tags
-              # used for automatic use of latest *stable* version
-
-              # major_version
-              major_version = re.search(r'(\d+?)\.', version).group(1)
-              tags.add(f"{image}:{major_version}")
-
-              # major_version.minor_version
-              major_and_minor_version = re.search(r'(\d+?\.\d+?)\.', version).group(1)
-              tags.add(f"{image}:{major_and_minor_version}")
-
-              tags.add(f"{image}:latest")
+#          if not parse(version).is_prerelease:
+#              # only final and post-releases should get the tags
+#              # used for automatic use of latest *stable* version
+#
+#              # major_version
+#              major_version = re.search(r'(\d+?)\.', version).group(1)
+#              tags.add(f"{image}:{major_version}")
+#
+#              # major_version.minor_version
+#              major_and_minor_version = re.search(r'(\d+?\.\d+?)\.', version).group(1)
+#              tags.add(f"{image}:{major_and_minor_version}")
+#
+#              tags.add(f"{image}:latest")
 
           tags = ",".join(sorted(list(tags)))
 
