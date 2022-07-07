@@ -3,6 +3,11 @@ Changelog
 
 This is the changelog for Puppetboard.
 
+4.0.1
+-----
+
+* Fix the Docker image - make the app start again. ([#701](https://github.com/voxpupuli/puppetboard/issues/701)).
+
 4.0.0
 -----
 
