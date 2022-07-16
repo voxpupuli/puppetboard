@@ -7,7 +7,7 @@ from pypuppetdb import connect
 
 from puppetboard.utils import (get_or_abort, jsonprint,
                                url_for_field, url_static_offline, quote_columns_data)
-
+from puppetboard.version import __version__ as own_version
 
 REPORTS_COLUMNS = [
     {'attr': 'end', 'filter': 'end_time',
@@ -63,7 +63,6 @@ def get_puppetdb():
                            timeout=app.config['PUPPETDB_TIMEOUT'],
                            protocol=app.config['PUPPETDB_PROTO'], )
 
-        own_version = pkg_resources.get_distribution("puppetboard").version
         requests_version = pkg_resources.get_distribution("requests").version
         user_agent_header = {
             "user-agent": f"puppetboard/{own_version} (r/{requests_version})",
