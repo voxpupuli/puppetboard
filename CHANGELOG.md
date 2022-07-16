@@ -3,6 +3,11 @@ Changelog
 
 This is the changelog for Puppetboard.
 
+4.0.2
+-----
+
+* Make the app work when installed from the git repo, f.e. using the [puppet-puppetboard module](https://github.com/voxpupuli/puppet-puppetboard). ([#704](https://github.com/voxpupuli/puppetboard/issues/704)).
+
 4.0.1
 -----
 
