@@ -5,72 +5,32 @@
     <title>{{config.PAGE_TITLE}}</title>
     <link rel="icon" href="{{ url_for('static', filename='favicon.ico')}}" sizes="any"/>
     <link rel="icon" href="{{ url_for('static', filename='favicon.svg')}}" type="image/svg+xml"/>
-    {% if config.OFFLINE_MODE %}
-      <style>
-        @font-face {
-          font-family: 'Open Sans';
-          font-style: normal;
-          font-weight: 400;
-          src: local('Open Sans'), local('OpenSans'), url({{ url_for('static', filename='fonts/Open_Sans.woff') }}) format('woff');
-        }
-      </style>
-      <link href='{{ url_for('static', filename='jquery-datatables-1.11.3/dataTables.semanticui.min.css') }}' rel='stylesheet' type='text/css'>
-      <link href="{{ url_for('static', filename='Semantic-UI-2.4.1/semantic.min.css') }}" rel="stylesheet" />
-      <link href="{{ url_for('static', filename='css/c3.min.css') }}" rel="stylesheet" />
-    {% else %}
-      <link href='https://fonts.googleapis.com/css?family=Open+Sans' rel='stylesheet' type='text/css' />
-      <link href='https://fonts.googleapis.com/css?family=Cousine' rel='stylesheet' type='text/css' />
-      <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/datatables.net-se/1.11.3/dataTables.semanticui.min.css" integrity="sha512-UPcDeMbrdWHvKrA6SZjHSeWRV6UPH4NbIyUFDGowqNZgr8TlKaEOt6IS+/0h6TY4UXr0HNXeTY373XV2Kpp64g==" crossorigin="anonymous" referrerpolicy="no-referrer" />
-      <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.4.1/semantic.min.css" integrity="sha512-8bHTC73gkZ7rZ7vpqUQThUDhqcNFyYi2xgDgPDHc+GXVGHXq+xPjynxIopALmOPqzo9JZj0k6OqqewdGO3EsrQ==" crossorigin="anonymous" referrerpolicy="no-referrer" />
-      <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/c3/0.4.22/c3.min.css" integrity="sha512-i6an+SVy8Q0HXieEwQFTzbnrE3xgfVly99YatczufZCQB0RI6wD+wb5fX3k3Co2KshtsMra/5OTdjCbpdJb/VQ==" crossorigin="anonymous" />
-    {% endif %}
+
+    {%- filter indent(width=4) %}
+    {%- if config.OFFLINE_MODE %}
+    {%- include "_static_offline.html" %}
+    {%- else %}
+    {%- include "_static_online.html" %}
+    {%- endif %}
+    {%- endfilter %}
+
+    {#- CSS LOCAL #}
     <link href="{{ url_for('static', filename='css/puppetboard.css') }}" rel="stylesheet" />
 
-    {% if config.OFFLINE_MODE %}
-      <script src="{{ url_for('static', filename='jquery-3.6.0/jquery.min.js') }}"></script>
-      <script src="{{ url_for('static', filename='jquery-datatables-1.11.3/jquery.dataTables.min.js') }}"></script>
-      <script src="{{ url_for('static', filename='jquery-datatables-1.11.3/dataTables.semanticui.min.js') }}"></script>
-      {% if config.LOCALISE_TIMESTAMP %}
-        <script src="{{ url_for('static', filename='moment.js-2.7.0/moment.min.js') }}"></script>
-      {% endif %}
-    {% else %}
-      <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" integrity="sha512-894YE6QWD5I59HgZOGReFYm4dnWc1Qt5NtvYSaNcOP+u1T9qYdvdihz0PPSiiqn/+/3e7Jo4EaG7TubfWGUrMQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-      <script src="https://cdnjs.cloudflare.com/ajax/libs/datatables.net/1.11.3/jquery.dataTables.min.js" integrity="sha512-v06MTH6dVBNBxtfuoTGYC0/UegZpDD/yWP7qJTdO7ysX619MpBZl+2hxg3n6tWKqAlsoKlhxQlVL9furav17vg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-      <script src="https://cdnjs.cloudflare.com/ajax/libs/datatables.net-se/1.11.3/dataTables.semanticui.min.js" integrity="sha512-bhjwBvv8tKytSAgGnPmRpJq47qjFD0BOr6zuTlbq5a318FPQFu/D/go6+s4YWWitCr4DGbc2GEhqZtALJr4Cvw==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-      {% if config.LOCALISE_TIMESTAMP %}
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.7.0/moment.min.js" integrity="sha512-aY1i9Nq6hY6NeQCAZRzyR5v0c5Sh8nLr6odaEZUHr5MTr35rQ2shu+ZGwPHfXRjXjVTYUF8pRVRKNRoSrsvOiQ==" crossorigin="anonymous"></script>
-      {% endif %}
-    {% endif %}
-    {% if config.LOCALISE_TIMESTAMP %}
-      <script src="{{ url_for('static', filename='js/timestamps.js')}}"></script>
-    {% endif %}
-
-    {% if config.OFFLINE_MODE %}
-      <script src="{{ url_for('static', filename='Semantic-UI-2.4.1/semantic.min.js') }}"></script>
-      <script src="{{url_for('static', filename='js/d3.min.js')}}"></script>
-      <script src="{{url_for('static', filename='js/c3.min.js')}}"></script>
-    {% else %}
-      <script src="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.4.1/semantic.min.js" integrity="sha512-dqw6X88iGgZlTsONxZK9ePmJEFrmHwpuMrsUChjAw1mRUhUITE5QU9pkcSox+ynfLhL15Sv2al5A0LVyDCmtUw==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-      <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.4.9/d3.min.js" integrity="sha512-RPIlDnLubawr6Fz9XbviqhMcj28VVf2daawCv6ZU26Ik6tp9mrBgdQHbmSYJLjpppXJtjBBsp0TUJZJmReUmYw==" crossorigin="anonymous"></script>
-      <script src="https://cdnjs.cloudflare.com/ajax/libs/c3/0.4.22/c3.min.js" integrity="sha512-y+qMlwO+SzpIAf1t754evnKZKBr+VVaTi0vFE29jaXAEuE37ez2McMianiaenQSPaubhzxVu6cWIl5KNlbGzPA==" crossorigin="anonymous"></script>
-    {% endif %}
-    <script src="{{url_for('static',
-                  filename='jquery-tablesort-v.0.0.11/jquery.tablesort.min.js')}}"></script>
+    {#- JS LOCAL #}
     <script src="{{ url_for('static', filename='js/lists.js') }}"></script>
     <script src="{{ url_for('static', filename='js/scroll.top.js') }}"></script>
     <script src="{{ url_for('static', filename='js/pretty.js') }}"></script>
 
-    {% block script %} {% endblock script %}
+    {%- block script %}{% endblock script %}
     <script type="text/javascript">
-    {% block javascript %} {% endblock javascript %}
+      {%- block javascript %}{% endblock javascript %}
       $(document).ready(function(){
           $(".ui.dropdown").dropdown();
-          $.getScript('{{url_for('static', filename='js/lists.js')}}')
-          $.getScript('{{url_for('static', filename='js/tables.js')}}')
           {% block onload_script %} {% endblock onload_script %}
         })
     </script>
-    {% block head %} {% endblock head %}
+    {%- block head %}{% endblock head %}
   </head>
 
   <body>

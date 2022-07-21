@@ -13,6 +13,15 @@ h1.ui.header.no-margin-bottom {
   margin-bottom: 0;
 }
 
+.ui.select-environment > i.dropdown.icon {
+  margin: 0.4em 0 0 1em !important;
+}
+
+.ui.select-environment.loading.selection.dropdown > i.dropdown.icon {
+  padding: 1em 0.5em !important;
+  margin: 0 !important;
+}
+
 .ui.grid.padding-bottom {
   padding-bottom: 4em !important;
 }
@@ -245,4 +254,14 @@ td.code {
 
 #friendly_div {
   margin-bottom: 1em;
+}
+
+.ui.inverted.menu .active.item {
+  background:rgba(255,255,255,.15);
+  color:#fff!important
+}
+
+.ui.inverted.menu .active.item:hover {
+  background:rgba(255,255,255,.15);
+  color:#fff!important
 }
