@@ -132,10 +132,7 @@
 
 
   table.on('draw.dt', function(){
-    $('#{{ table_html_id }} [rel=utctimestamp]').each(
-      function(index, timestamp){
-        $(this).localise_timestamp();
-    });
+    $('#{{ table_html_id }} [data-localise]').transformDatetime();
   });
 
   // Override Datatables search box events to delay Ajax call while writing

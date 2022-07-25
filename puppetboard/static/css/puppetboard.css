@@ -32,9 +32,15 @@ h1.ui.header.no-margin-bottom {
   display: block;
 }
 
-.ui.table[class*="very compact"] td {
+.ui[class*="very basic"].table.dataTable > thead > tr:first-child > th {
+  padding-top: 0.8em !important;
+  padding-bottom: 0.7em !important;
+}
+
+.ui[class*="very compact"].table>tbody>tr>td,
+.ui[class*="very compact"].table>tfoot>tr>td,
+.ui[class*="very compact"].table>tr>td {
   padding: 0.15em 0.1em;
-  max-width: 320px;
 }
 
 .factlist li {
@@ -264,4 +270,8 @@ td.code {
 .ui.inverted.menu .active.item:hover {
   background:rgba(255,255,255,.15);
   color:#fff!important
+}
+
+.dataTables_length > label {
+  margin-right: 1em;
 }

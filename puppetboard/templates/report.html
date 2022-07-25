@@ -102,8 +102,9 @@ var logs_table = $('#logs_table').DataTable({
           // don't show the date as puppet runs (almost never) span across multiple days
           // and we already show the full date in the "Summary" section
           render: function ( data, type, row, meta ) {
-              parsed_date = luxon.DateTime.fromISO(data);
-              return parsed_date.toFormat('HH:mm:ss');
+              parsed_date = moment(data);
+              if (!parsed_date.isValid()) return data;
+              return parsed_date.format('HH:mm:ss');
           }
         },
         { data: 'level', name: 'level' },

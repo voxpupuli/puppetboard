@@ -6,6 +6,7 @@
     <link rel="icon" href="{{ url_for('static', filename='favicon.ico')}}" sizes="any"/>
     <link rel="icon" href="{{ url_for('static', filename='favicon.svg')}}" type="image/svg+xml"/>
 
+
     {%- filter indent(width=4) %}
     {%- if config.OFFLINE_MODE %}
     {%- include "_static_offline.html" %}
