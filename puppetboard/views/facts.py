@@ -93,7 +93,11 @@ def fact_ajax(env, node, fact, value):
                 fact_h.node))
         if value is None:
             if isinstance(fact_h.value, str):
-                value_for_url = quote_plus(fact_h.value)
+                # https://github.com/voxpupuli/puppetboard/issues/706
+                # Force quotes around string values
+                # This lets plain int values that are stored as strings in the db
+                # be findable when searched via the facts page
+                value_for_url = '"' + quote_plus(fact_h.value) + '"'
             else:
                 value_for_url = fact_h.value
 
