@@ -3,6 +3,13 @@ Changelog
 
 This is the changelog for Puppetboard.
 
+4.0.3
+-----
+
+* Make facts with integer values which are strings internally findable. ([#706](https://github.com/voxpupuli/puppetboard/issues/706))
+
+Thanks to [Stephen Ryan](https://github.com/ryaner) who contributed to this release!
+
 4.0.2
 -----
 
