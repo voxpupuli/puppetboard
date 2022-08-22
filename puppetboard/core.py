@@ -6,7 +6,7 @@ from flask import Flask
 from pypuppetdb import connect
 
 from puppetboard.utils import (get_or_abort, jsonprint,
-                               url_for_field, url_static_offline, quote_columns_data)
+                               url_for_field, quote_columns_data)
 from puppetboard.version import __version__ as own_version
 
 REPORTS_COLUMNS = [
@@ -45,7 +45,6 @@ def get_app():
         app.jinja_env.lstrip_blocks = True
         app.jinja_env.filters['jsonprint'] = jsonprint
         app.jinja_env.globals['url_for_field'] = url_for_field
-        app.jinja_env.globals['url_static_offline'] = url_static_offline
         app.jinja_env.globals['quote_columns_data'] = quote_columns_data
         APP = app
 
