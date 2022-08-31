@@ -7,11 +7,10 @@
 <table class='ui very compact very basic sortable table'>
   <thead>
     <tr>
-      <th>Status</th>
-      <th class="default">Certname</th>
-      <th class="date default-sort">Catalog</th>
-      <th class="date">Report</th>
-      <th>&nbsp;</th>
+      <th class="four wide">Status</th>
+      <th class="eight wide">Certname</th>
+      <th class="two wide date default-sort">Catalog</th>
+      <th class="two wide date">Report (last / all)</th>
     </tr>
   </thead>
   <tbody class="searchable">
@@ -26,16 +25,12 @@
       </td>
       <td><a href="{{url_for('node', env=current_env, node_name=node.name)}}">{{node.name}}</a></td>
       <td><a rel="utctimestamp" href="{{url_for('catalog_node', env=current_env, node_name=node.name)}}">{{node.catalog_timestamp}}</a></td>
-      <td>
+      <td class="reports_links">
         {% if node.report_timestamp %}
           <a href="{{url_for('report', env=current_env, node_name=node.name, report_id=node.latest_report_hash)}}" rel='utctimestamp'>{{ node.report_timestamp }}</a>
+          <a title='Reports' href="{{url_for('reports', env=current_env, node_name=node.name)}}"><i class='large darkblue book icon'></i></a>
         {% else %}
           <i class="large darkblue ban icon"></i>
-        {% endif %}
-      </td>
-      <td>
-        {% if node.report_timestamp %}
-        <a title='Reports' href="{{url_for('reports', env=current_env, node_name=node.name)}}"><i class='large darkblue book icon'></i></a>
         {% endif %}
       </td>
     </tr>

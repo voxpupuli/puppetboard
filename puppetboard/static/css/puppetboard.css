@@ -23,6 +23,11 @@ h1.ui.header.no-margin-bottom {
   display: block;
 }
 
+td.reports_links {
+  display: flex;
+  justify-content: space-between;
+}
+
 .ui.table[class*="very compact"] td {
   padding: 0.15em 0.1em;
   max-width: 320px;
