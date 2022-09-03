@@ -44,16 +44,44 @@ def test_offline_mode(client, mocker,
 
 
 def test_offline_static(client):
-    rv = client.get('/offline/css/google_fonts.css')
+    offline_statics = [
+        {
+            "content_type": 'text/css',
+            "assets": [
+                "static/libs/fomantic-ui/semantic.min.css",
+                "static/libs/datatables.net-se/dataTables.semanticui.min.css",
+                "static/libs/datatables.net-buttons-se/buttons.semanticui.min.css",
+                "static/libs/billboard.js/billboard.min.css",
+                "static/css/fonts.css",
+            ]
+        },
+        {
+            "content_type": 'application/javascript',
+            "assets": [
+                "static/libs/moment.js/moment-with-locales.min.js",
+                "static/libs/jquery/jquery.min.js",
+                "static/libs/fomantic-ui/semantic.min.js",
+                "static/libs/datatables.net/jquery.dataTables.min.js",
+                "static/libs/datatables.net-buttons/dataTables.buttons.min.js",
+                "static/libs/datatables.net-buttons/buttons.html5.min.js",
+                "static/libs/datatables.net-buttons/buttons.colVis.min.js",
+                "static/libs/datatables.net-buttons-se/buttons.semanticui.min.js",
+                "static/libs/datatables.net-se/dataTables.semanticui.min.js",
+                "static/libs/billboard.js/billboard.pkgd.min.js",
+            ]
 
-    assert 'Content-Type' in rv.headers
-    assert 'text/css' in rv.headers['Content-Type']
-    assert rv.status_code == 200
+        }
+    ]
 
-    rv = client.get('/offline/Semantic-UI-2.1.8/semantic.min.css')
-    assert 'Content-Type' in rv.headers
-    assert 'text/css' in rv.headers['Content-Type']
-    assert rv.status_code == 200
+    for category_statics in offline_statics:
+        content_type = category_statics.get('content_type')
+
+        for asset in category_statics.get('assets'):
+            rv = client.get(asset)
+
+            assert 'Content-Type' in rv.headers
+            assert content_type in rv.headers['Content-Type']
+            assert rv.status_code == 200
 
 
 def test_health_status(client):

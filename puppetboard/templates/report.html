@@ -1,35 +1,12 @@
-{% extends 'layout.html' %}
-{% import '_macros.html' as macros %}
-
-{% block head %}
-    {% if config.OFFLINE_MODE %}
-    <link href='{{ url_for('static', filename='datatables-buttons-2.2.1/buttons.semanticui.min.css') }}' rel='stylesheet' type='text/css'>
-
-    <script src="{{ url_for('static', filename='datatables-buttons-2.2.1/dataTables.buttons.min.js') }}"></script>
-    <script src="{{ url_for('static', filename='datatables-buttons-2.2.1/buttons.semanticui.min.js') }}"></script>
-
-    <script src="{{ url_for('static', filename='datatables-buttons-2.2.1/buttons.colVis.min.js') }}"></script>
-
-    <script src="{{ url_for('static', filename='luxon.min.js') }}"></script>
-    {% else %}
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/datatables.net-buttons-se/2.2.1/buttons.semanticui.min.css" integrity="sha512-hl3VMm68d4X+QrotTnQNhYnc3zkDumRs7DzR+alVMCbtYB7yAcEB1KCnZNNbtV8pyt/jsL/fB59ZsOXnBFJSvw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
-
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/datatables-buttons/2.2.1/js/dataTables.buttons.min.js" integrity="sha512-jkZdPkP9WyF6ZI8552JPp6HutV7Pb7Hhn++DCKkuToPPlTvB8Y7N3u+HoITJn/LQP9dEXarrfzqPlAmCA++BQw==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/datatables.net-buttons-se/2.2.1/buttons.semanticui.min.js" integrity="sha512-b2Tf8aCqx6EZY5mJBmHlKfpwk2Zq8K1bRrsO4pogAUiZYTmHsIU+kxcjrU5wwHQRvdhHxTUQg7/sUe1JHrTt9g==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/datatables-buttons/2.2.1/js/buttons.colVis.min.js" integrity="sha512-TDM0Ek51cJSpP8Btld1ahY8LpMImyQ1k+Ve81qGMdjBLKhADu99JQrUWDuRnT8M0qfkJb+Mt+ZwMaMi46UXA8g==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/luxon/2.4.0/luxon.min.js" integrity="sha512-v1zUTZ9zv9Wb2scL/ANxXM6m7yegm/W5SN8SRHNFADdZIuSFFkrEBjNxO803DdFkjoCcJ88g1WHRVlLN6K/O1A==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-    {% endif %}
-
-{% endblock head %}
+{%- extends 'layout.html' %}
+{%- import '_macros.html' as macros %}
 
 {% block content %}
 
 <p>Scroll to: <a href="#logs">Logs</a>, <a href="#events">Events</a>, <a href="#metrics">Metrics</a>.</p>
 
 <h1>Summary</h1>
-<table class='ui basic table'>
+<table class='ui very basic compact table'>
   <thead>
     <tr>
       <th>Certname</th>
@@ -60,7 +37,7 @@
 
 <h1 id="logs">Logs</h1>
 {{ macros.checkbox_toggle("friendly", current_show_error_as, "friendly", "raw", "Friendly error messages") }}
-<table id="logs_table" class='ui basic compact table'>
+<table id="logs_table" class='ui very basic compact striped table'>
   <thead>
     <tr>
       <th>Timestamp</th>
@@ -77,7 +54,7 @@
 </table>
 
 <h1 id="events">Events</h1>
-<table id="events_table" class='ui basic compact table'>
+<table id="events_table" class='ui very basic compact striped table'>
   <thead>
     <tr>
       <th>Resource</th>
@@ -91,7 +68,7 @@
 </table>
 
 <h1 id="metrics">Metrics</h1>
-<table class="ui basic table compact">
+<table id="metrics_table" class="ui very basic compact striped table">
   <thead>
     <tr>
       <th>Category</th>
@@ -113,7 +90,6 @@
 {% endblock content %}
 
 {% block onload_script %}
-
 $.fn.dataTable.ext.errMode = 'throw';
 
 // Init the DataTable for Logs
@@ -126,8 +102,9 @@ var logs_table = $('#logs_table').DataTable({
           // don't show the date as puppet runs (almost never) span across multiple days
           // and we already show the full date in the "Summary" section
           render: function ( data, type, row, meta ) {
-              parsed_date = luxon.DateTime.fromISO(data);
-              return parsed_date.toFormat('HH:mm:ss');
+              parsed_date = moment(data);
+              if (!parsed_date.isValid()) return data;
+              return parsed_date.format('HH:mm:ss');
           }
         },
         { data: 'level', name: 'level' },
@@ -230,4 +207,8 @@ var events_table = $('#events_table').DataTable({
         ">",
 });
 
+var metrics_table = $('#metrics_table').DataTable({
+  info: false,
+  paging: false
+});
 {% endblock onload_script %}

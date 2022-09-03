@@ -1,8 +1,5 @@
 {% extends 'layout.html' %}
 {% import '_macros.html' as macros %}
-{% block head %}
-    <script src="{{ url_for('static', filename='custom-natural-time-delta/natural-time-delta.js') }}"></script>
-{% endblock head %}
 
 {% block onload_script %}
 {% macro extra_options(caller) %}

@@ -12,7 +12,7 @@
         {%- for column in columns -%}
           {%- if not loop.first %},{%- endif -%}
           {%- if column.type == 'datetime' -%}
-            "<span rel=\"utctimestamp\">{{ report[column.attr] }}</span>"
+            "<span data-localise=\"{{ config.LOCALISE_TIMESTAMP }}\">{{ report[column.attr] }}</span>"
           {%- elif column.type == 'status' -%}
             {% filter jsonprint -%}
               {{ macros.report_status(status=report.status, node_name=report.node, metrics=metrics[report.hash_], report_hash=report.hash_, current_env=current_env) }}

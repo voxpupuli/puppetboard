@@ -1,24 +1,14 @@
 import ast
 import json
 import logging
-import os.path
 import sys
 
 from flask import abort, request, url_for
-from jinja2.utils import pass_context
 from packaging.version import parse
 from pypuppetdb.errors import EmptyResponseError
 from requests.exceptions import ConnectionError, HTTPError
 
 log = logging.getLogger(__name__)
-
-
-@pass_context
-def url_static_offline(context, value):
-    request_parts = os.path.split(os.path.dirname(context.name))
-    static_path = '/'.join(request_parts[1:])
-
-    return url_for('static', filename="%s/%s" % (static_path, value))
 
 
 def url_for_field(field, value):

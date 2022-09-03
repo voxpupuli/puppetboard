@@ -2,13 +2,21 @@
 {% import '_macros.html' as macros %}
 {% block content %}
 <div class="ui fluid icon input hide" style="margin-bottom:20px">
-  <input autofocus="autofocus" class="filter-table" placeholder="Type here to filter...">
+  <input if="main-table-search" autofocus="autofocus" placeholder="Type here to filter...">
 </div>
 {{ macros.checkbox_toggle("friendly", current_show_error_as, "friendly", "raw", "Friendly error messages") }}
-<table id="failures_table" class='ui basic vertically padded sortable fixed wrapped table'>
+<table
+  id="main-table"
+  class='ui basic vertically padded sortable fixed wrapped table'
+  data-auto-width="false"
+  data-paging="false"
+  data-info="false"
+  data-dom="t"
+  data-order='[[ 1, "asc" ]]'
+>
   <thead>
     <tr>
-      <th class="default default-sort four wide">Certname</th>
+      <th class="four wide">Certname</th>
       <th class="date two wide">Report time</th>
       <th class="date ten wide">Error</th>
     </tr>
@@ -21,8 +29,8 @@
           {{failure.certname}}
         </a>
       </td>
-      <td>
-        <a href="{{url_for('report', env=current_env, node_name=failure.certname, report_id=failure.report_hash)}}" rel="utctimestamp">
+      <td data-order="{{ failure.timestamp }}">
+        <a href="{{url_for('report', env=current_env, node_name=failure.certname, report_id=failure.report_hash)}}" data-localise="{{ config.LOCALISE_TIMESTAMP }}">
             {{failure.timestamp}}
         </a>
       </td>
