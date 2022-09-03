@@ -34,7 +34,7 @@ def precond_failed(e):
 
 @app.errorhandler(500)
 def server_error(e):
-    envs = []
+    envs = {}
     try:
         envs = environments()
     except InternalServerError:

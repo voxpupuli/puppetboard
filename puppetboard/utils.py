@@ -141,6 +141,6 @@ def quote_columns_data(data: str) -> str:
     return data.replace('.', '\\.')
 
 
-def check_env(env, envs):
+def check_env(env: str, envs: dict):
     if env != '*' and env not in envs:
         abort(404)

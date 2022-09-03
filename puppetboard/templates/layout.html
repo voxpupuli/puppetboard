@@ -6,7 +6,6 @@
     <link rel="icon" href="{{ url_for('static', filename='favicon.ico')}}" sizes="any"/>
     <link rel="icon" href="{{ url_for('static', filename='favicon.svg')}}" type="image/svg+xml"/>
 
-
     {%- filter indent(width=4) %}
     {%- if config.OFFLINE_MODE %}
     {%- include "_static_offline.html" %}
@@ -27,15 +26,25 @@
     <script type="text/javascript">
       {%- block javascript %}{% endblock javascript %}
       $(document).ready(function(){
-          $(".ui.dropdown").dropdown();
-          {% block onload_script %} {% endblock onload_script %}
-        })
+        $(".ui.select-environment").dropdown({
+          match: 'text',
+          ignoreCase: true,
+          selectOnKeydown: false,
+          hideDividers: 'empty',
+          onChange(value) {
+            $(this).addClass('loading')
+            window.location.href = value;
+          }
+        });
+        $(".ui.dropdown:not(.ui.select-environment)").dropdown();
+        {% block onload_script %} {% endblock onload_script %}
+      })
     </script>
     {%- block head %}{% endblock head %}
   </head>
 
   <body>
-    <div class="ui darkblue doubling stackable inverted large menu">
+    <div class="ui darkblue inverted large menu">
       <div class="title item">
         Puppetboard
       </div>
@@ -43,17 +52,22 @@
       <a {% if endpoint == request.endpoint %} class="active item" {% else %} class="item" {% endif %}
         href="{{ url_for(endpoint, env=current_env) }}">{{ caption }}</a>
       {%- endfor %}
-      <div class="ui dropdown item">
-        {{current_env}}
-        <i class="dropdown icon"></i>
-        <div class="menu">
-            <a class="{% if '*' == current_env %}active {% endif %}item" href="{{url_for_field('env', '*')}}">All environments</a>
-          {% for env in envs %}
-            <a class="{% if env == current_env %}active {% endif %}item" href="{{url_for_field('env', env)}}">{{env}}</a>
-          {% endfor %}
+      <div class="right menu">
+        <div class="ui item search very long dropdown selection select-environment">
+          <input type="hidden" name="environment" value="{{ url_for_field('env', current_env) }}">
+          <i class="dropdown icon"></i>
+          <div class="default text">Select Environment</div>
+          <div class="menu">
+            {%- for env_name, env in envs.items() %}
+            {%- if env.divider %}
+            <div class="divider"></div>
+            {%- endif %}
+            <div class="item" data-value="{{env.url}}"><i class="{{env.icon}} icon"></i>{{ env_name }}</div>
+            {%- endfor %}
+          </div>
         </div>
+        <div class="item"><a href="https://github.com/voxpupuli/puppetboard" target="_blank">{{ version() }}</a></div>
       </div>
-      <div class="item right"><a href="https://github.com/voxpupuli/puppetboard" target="_blank">{{ version() }}</a></div>
     </div>
     <div class="ui grid padding-bottom">
       <div class="one wide column"></div>
