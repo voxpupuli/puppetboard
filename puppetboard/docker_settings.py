@@ -128,3 +128,10 @@ WITH_EVENT_NUMBERS = coerce_bool(os.getenv('WITH_EVENT_NUMBERS'), True)
 
 SHOW_ERROR_AS = os.getenv('SHOW_ERROR_AS', 'friendly')
 CODE_PREFIX_TO_REMOVE = os.getenv('CODE_PREFIX_TO_REMOVE', '/etc/puppetlabs/code/environments')
+FAVORITE_ENVS_DEF = ','.join([
+    'production',
+    'staging',
+    'qa',
+    'dev',
+])
+FAVORITE_ENVS = [x.strip() for x in os.getenv('FAVORITE_ENVS', FAVORITE_ENVS_DEF).split(',')]

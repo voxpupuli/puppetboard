@@ -75,15 +75,53 @@ def get_puppetdb():
     return PUPPETDB
 
 
-def environments():
+def environments() -> dict:
+    envs = {}
     puppetdb = get_puppetdb()
-    envs = get_or_abort(puppetdb.environments)
-    x = []
+    envs_from_db = sorted(
+        env['name']
+        for env in get_or_abort(puppetdb.environments)
+    )
 
-    for env in envs:
-        x.append(env['name'])
+    # Adding all environments
+    envs['All Environments'] = {
+        'url': url_for_field('env', '*'),
+        'icon': 'server',
+        'divider': True
+    }
 
-    return x
+    # Adding favorite envs
+    favorite_envs = [
+        env
+        for env in get_app().config.get('FAVORITE_ENVS')
+        if env in envs_from_db
+    ]
+
+    divider = True
+    for env in favorite_envs:
+        envs[env] = {
+            'url': url_for_field('env', env),
+            'icon': 'star',
+            'divider': divider
+        }
+        # Only the first envs from this group should have a divider
+        divider = False
+
+    # Adding other envs
+    divider = True
+    for env in envs_from_db:
+        if env in favorite_envs:
+            continue
+
+        envs[env] = {
+            'url': url_for_field('env', env),
+            'icon': '',
+            'divider': divider
+        }
+        # Only the first envs from this group should have a divider
+        divider = False
+
+    return envs
 
 
 # as documented in
