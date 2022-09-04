@@ -155,8 +155,11 @@ For information about how to generate the correct keys please refer to the
 [pypuppetdb documentation](https://pypuppetdb.readthedocs.io/en/latest/connecting.html#ssl). Alternatively it is possible
 to explicitly specify the protocol to be used setting the `PUPPETDB_PROTO` variable.
 
-Other settings that might be interesting in no particular order:
+Other settings that might be interesting, in no particular order:
 
+- `FAVORITE_ENVS`: an ordered list of Puppet environment names that will be shown immediately after "All Environments"
+    and before other environments (which are sorted by name) in the dropdown for choosing the environment shown
+    in the top-right of the UI. Environments listed here that do not really exist in your deployment are silently ignored.
 - `SHOW_ERROR_AS`: `friendly` or `raw`. The former makes Puppet run errors in Report and Failures views shown
     in a modified, (arguably) more user-friendly form. The latter shows them as they are.
     Defaults to `friendly`.
