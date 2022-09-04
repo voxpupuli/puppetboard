@@ -3,6 +3,13 @@ Changelog
 
 This is the changelog for Puppetboard.
 
+4.1.0 (unreleased)
+-----
+* Show configurable favorite environments immediately after the "All Environments" in the dropdown. ([#705](https://github.com/voxpupuli/puppetboard/pull/705))
+* Big upgrade of the frontend dependencies, including migration to their maintained forks in a few cases (Semantic UI → Fomantic UI, c3.js → billboard.js). ([#708](https://github.com/voxpupuli/puppetboard/pull/708))
+
+Very big thanks to [Melchior NOGUES](https://github.com/melck) who did most of the development for this release!
+
 4.0.3
 -----
 
@@ -19,6 +26,9 @@ Thanks to [Stephen Ryan](https://github.com/ryaner) who contributed to this rele
 -----
 
 * Fix the Docker image - make the app start again. ([#701](https://github.com/voxpupuli/puppetboard/issues/701)).
+* Remove border-radius from the top menu to make it appear more clearly anchored to the page. ([#699](https://github.com/voxpupuli/puppetboard/pull/699))
+
+Thanks to [Marcel Deglau](https://github.com/promarcel) who contributed to this release!
 
 4.0.0
 -----
