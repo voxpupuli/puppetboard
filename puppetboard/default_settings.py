@@ -59,5 +59,6 @@ FAVORITE_ENVS = [
     'production',
     'staging',
     'qa',
+    'test',
     'dev',
 ]
