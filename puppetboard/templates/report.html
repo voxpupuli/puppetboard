@@ -6,7 +6,7 @@
 <p>Scroll to: <a href="#logs">Logs</a>, <a href="#events">Events</a>, <a href="#metrics">Metrics</a>.</p>
 
 <h1>Summary</h1>
-<table class='ui very basic compact table'>
+<table class='ui basic table'>
   <thead>
     <tr>
       <th>Certname</th>
@@ -37,7 +37,7 @@
 
 <h1 id="logs">Logs</h1>
 {{ macros.checkbox_toggle("friendly", current_show_error_as, "friendly", "raw", "Friendly error messages") }}
-<table id="logs_table" class='ui very basic compact striped table'>
+<table id="logs_table" class='ui basic compact table'>
   <thead>
     <tr>
       <th>Timestamp</th>
@@ -54,7 +54,7 @@
 </table>
 
 <h1 id="events">Events</h1>
-<table id="events_table" class='ui very basic compact striped table'>
+<table id="events_table" class='ui basic compact table'>
   <thead>
     <tr>
       <th>Resource</th>
@@ -68,7 +68,7 @@
 </table>
 
 <h1 id="metrics">Metrics</h1>
-<table id="metrics_table" class="ui very basic compact striped table">
+<table class="ui basic table compact">
   <thead>
     <tr>
       <th>Category</th>
