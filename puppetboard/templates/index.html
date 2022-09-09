@@ -90,7 +90,7 @@
         data-searching="false"
         data-paging="false"
         data-info="false"
-        data-order='[[ 2, "asc" ]]'
+        data-order='[[ 2, "desc" ]]'
       >
         <thead>
           <tr>
@@ -114,7 +114,7 @@
             <td>
               <a href="{{url_for('node', env=current_env, node_name=node.name)}}">{{ node.name }}</a>
             </td>
-            <td data-order="{{ node.report_timestamp }}">
+            <td data-order="{{ node.report_timestamp | default('', true) }}">
               {% if node.report_timestamp %}
                 <a href="{{url_for('report', env=current_env, node_name=node.name, report_id=node.latest_report_hash)}}" data-localise="{{ config.LOCALISE_TIMESTAMP }}">{{ node.report_timestamp }}</a>
               {% else %}
