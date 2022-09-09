@@ -34,15 +34,15 @@
           </tr>
           <tr>
             <th>Facts &nbsp;&nbsp;&nbsp;&nbsp;<i title='uploaded at' class=' upload icon'></i></th>
-            <td rel="utctimestamp">{{node.facts_timestamp}}</td>
+            <td data-localise="{{ config.LOCALISE_TIMESTAMP }}">{{node.facts_timestamp}}</td>
           </tr>
           <tr>
             <th>Catalog <i title='uploaded at' class=' upload icon'></i></th>
-            <td rel="utctimestamp">{{node.catalog_timestamp}}</td>
+            <td data-localise="{{ config.LOCALISE_TIMESTAMP }}">{{node.catalog_timestamp}}</td>
           </tr>
           <tr>
             <th>Report &nbsp;<i title='uploaded at' class=' upload icon'></i></th>
-            <td rel="utctimestamp">{{node.report_timestamp}}</td>
+            <td data-localise="{{ config.LOCALISE_TIMESTAMP }}">{{node.report_timestamp}}</td>
           </tr>
         </tbody>
       </table>
