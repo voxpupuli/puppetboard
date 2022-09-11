@@ -43,12 +43,21 @@ GRAPH_FACTS = ['architecture',
                'osfamily',
                'puppetversion',
                'processorcount']
-INVENTORY_FACTS = [('Hostname', 'fqdn'),
+INVENTORY_FACTS = [('Hostname', 'trusted'),
                    ('IP Address', 'ipaddress'),
-                   ('OS', 'lsbdistdescription'),
+                   ('OS', 'os'),
                    ('Architecture', 'hardwaremodel'),
                    ('Kernel Version', 'kernelrelease'),
                    ('Puppet Version', 'puppetversion'), ]
+
+INVENTORY_FACT_TEMPLATES = {
+    'trusted': (
+        """<a href="{{url_for('node', env=current_env, node_name=value.certname)}}">"""
+        """{{value.hostname}}"""
+        """</a>"""
+    ),
+    'os': "{{ fact_os_detection(value) }}",
+}
 REFRESH_RATE = 30
 DAILY_REPORTS_CHART_ENABLED = True
 DAILY_REPORTS_CHART_DAYS = 8

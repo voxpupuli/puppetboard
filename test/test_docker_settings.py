@@ -112,6 +112,19 @@ def test_invtory_facts_custom(cleanup_env):
     validate_facts(docker_settings.INVENTORY_FACTS)
 
 
+def test_inventory_fact_tempaltes_default(cleanup_env):
+    assert isinstance(docker_settings.INVENTORY_FACT_TEMPLATES, dict)
+    assert len(docker_settings.INVENTORY_FACT_TEMPLATES) == 3
+
+
+def test_inventory_fact_tempaltes_custom(cleanup_env):
+    os.environ['INVENTORY_FACT_TEMPLATES'] = """{"os": "{{ fact_os_detection(value) }}"}"""
+    reload(docker_settings)
+
+    assert isinstance(docker_settings.INVENTORY_FACT_TEMPLATES, dict)
+    assert len(docker_settings.INVENTORY_FACT_TEMPLATES) == 1
+
+
 def test_graph_facts_defautl(cleanup_env):
     facts = docker_settings.GRAPH_FACTS
     assert isinstance(facts, list)

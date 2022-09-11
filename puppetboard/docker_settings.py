@@ -1,3 +1,4 @@
+import json
 import os
 import tempfile
 import base64
@@ -104,9 +105,9 @@ GRAPH_TYPE = os.getenv('GRAPH_TYPE', 'pie')
 # export INVENTORY_FACTS="Hostname, fqdn, IP Address, ipaddress,.. etc"
 # Define default array of of strings, this code is a bit neater than having
 # a large string
-INVENTORY_FACTS_DEFAULT = ','.join(['Hostname', 'fqdn',
-                                    'IP Address', 'ipaddress',
-                                    'OS', 'lsbdistdescription',
+INVENTORY_FACTS_DEFAULT = ','.join(['Hostname', 'trusted',
+                                    'IP Address', 'networking',
+                                    'OS', 'os',
                                     'Architecture', 'hardwaremodel',
                                     'Kernel Version', 'kernelrelease',
                                     'Puppet Version', 'puppetversion'])
@@ -114,6 +115,23 @@ INVENTORY_FACTS_DEFAULT = ','.join(['Hostname', 'fqdn',
 # take either input as a list Key, Value, Key, Value,  and conver it to an
 # array: ['Key', 'Value']
 INV_STR = os.getenv('INVENTORY_FACTS', INVENTORY_FACTS_DEFAULT).split(',')
+
+# To render jinja template we expect env var to be JSON
+INVENTORY_FACT_TEMPLATES = {
+    'trusted': (
+        """<a href="{{url_for('node', env=current_env, node_name=value.certname)}}">"""
+        """{{value.hostname}}"""
+        """</a>"""
+    ),
+    'networking': """{{ value.ip }}""",
+    'os': "{{ fact_os_detection(value) }}",
+}
+
+INV_TPL_STR = os.getenv('INVENTORY_FACT_TEMPLATES')
+
+if INV_TPL_STR:
+    INVENTORY_FACT_TEMPLATES = json.loads(INV_TPL_STR)
+
 
 # Take the Array and convert it to a tuple
 INVENTORY_FACTS = [(INV_STR[i].strip(),
