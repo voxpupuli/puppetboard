@@ -1,5 +1,5 @@
 from flask import (
-    render_template, request
+    render_template, request, render_template_string
 )
 from pypuppetdb.QueryBuilder import (AndOperator,
                                      EqualsOperator, OrOperator)
@@ -58,6 +58,7 @@ def inventory_ajax(env):
     envs = environments()
     check_env(env, envs)
     headers, fact_names = inventory_facts()
+    fact_templates = app.config['INVENTORY_FACT_TEMPLATES']
 
     query = AndOperator()
     fact_query = OrOperator()
@@ -73,7 +74,18 @@ def inventory_ajax(env):
     for fact in facts:
         if fact.node not in fact_data:
             fact_data[fact.node] = {}
-        fact_data[fact.node][fact.name] = fact.value
+
+        fact_value = fact.value
+
+        if fact.name in fact_templates:
+            fact_template = fact_templates[fact.name]
+            fact_value = render_template_string(
+                fact_template,
+                current_env=env,
+                value=fact_value,
+            )
+
+        fact_data[fact.node][fact.name] = fact_value
 
     total = len(fact_data)
 

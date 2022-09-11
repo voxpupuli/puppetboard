@@ -72,7 +72,27 @@ def utility_processor():
     def version():
         return __version__
 
-    return dict(now=now, version=version)
+    def fact_os_detection(os_facts):
+        os_name = ""
+        os_family = os_facts['family']
+
+        try:
+            if os_family == "windows":
+                os_name = os_facts["windows"]["product_name"]
+            elif os_family == "Darwin":
+                os_name = os_facts["macosx"]["product"]
+            else:
+                os_name = os_facts["distro"]["description"]
+        except KeyError:
+            pass
+
+        return os_name
+
+    return dict(
+        now=now,
+        version=version,
+        fact_os_detection=fact_os_detection,
+    )
 
 
 @app.route('/offline/<path:filename>')

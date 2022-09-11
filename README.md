@@ -122,7 +122,7 @@ The file has to be identical to
 [default_settings.py](https://github.com/voxpupuli/puppetboard/blob/master/puppetboard/default_settings.py)
 but should only override the settings you need changed.
 
-If you run PuppetDB and Puppetboard on the same machine the default settings provided will be enough to get you started 
+If you run PuppetDB and Puppetboard on the same machine the default settings provided will be enough to get you started
 and you won't need a custom settings file.
 
 Assuming your webserver and PuppetDB machine are not identical you will at least have to change the following settings:
@@ -151,7 +151,7 @@ PUPPETDB_CERT="-----BEGIN CERTIFICATE-----
 PUPPETDB_CERT=LS0tLS1CRUdJTiBSU0EgUFJJVkFURSBLRVktLS0tLQouLi4KLS0tLS1FTkQgQ0VSVElGSUNBVEUtLS0tLQ==
 ```
 
-For information about how to generate the correct keys please refer to the 
+For information about how to generate the correct keys please refer to the
 [pypuppetdb documentation](https://pypuppetdb.readthedocs.io/en/latest/connecting.html#ssl). Alternatively it is possible
 to explicitly specify the protocol to be used setting the `PUPPETDB_PROTO` variable.
 
@@ -186,6 +186,7 @@ Other settings that might be interesting, in no particular order:
     values being unique per node, like ipaddress, uuid, and serial number, as well as structured facts it was no longer
     feasible to generate a graph for everything.
 - `INVENTORY_FACTS`: A list of tuples that serve as the column header and the fact name to search for to create
+- `INVENTORY_FACT_TEMPLATES`: A mapping between fact name and jinja template to customize display
     the inventory page. If a fact is not found for a node then `undef` is printed.
 - `ENABLE_CATALOG`: If set to `True` allows the user to view a node's latest catalog. This includes all managed
     resources, their file-system locations and their relationships, if available. Defaults to `False`.
