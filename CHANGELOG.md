@@ -10,8 +10,9 @@ This is the changelog for Puppetboard.
 
 Very big thanks to [Melchior NOGUES](https://github.com/melck) who did most of the development for this release!
 
-4.0.4
+4.0.5
 -----
+(4.0.4 was a partially incorrect release. Please use 4.0.5 instead.)
 
 * Fix Puppetboard not starting on PE PuppetDB. ([#711](https://github.com/voxpupuli/puppetboard/issues/711))
 
