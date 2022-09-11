@@ -27,13 +27,14 @@ def check_db_version(puppetdb):
     Gets the version of puppetdb and exits if it is not an accepted one.
     """
     try:
-        version = puppetdb.current_version()
-        log.info(f"PuppetDB version: {version}")
+        current_version = puppetdb.current_version()
+        log.info(f"PuppetDB version: {current_version}")
 
-        minimum_version = '5.2.0'
+        current_semver = current_version.split('-')[0]
+        minimum_semver = '5.2.0'
 
-        if parse(version) < parse(minimum_version):
-            log.error(f"The minimum supported version of PuppetDB is {minimum_version}")
+        if parse(current_semver) < parse(minimum_semver):
+            log.error(f"The minimum supported version of PuppetDB is {minimum_semver}")
             sys.exit(1)
 
     except HTTPError as e:

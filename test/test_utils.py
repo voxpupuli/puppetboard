@@ -155,6 +155,7 @@ def test_basic_exception(mock_log):
         ("6.4.0", True),
         ("6.9.1", True),
         ("7.0.0", True),
+        ("7.11.1-20220809_222149-g0b0b67c", True),
         ("8.0.0", True),
     ],
 )
