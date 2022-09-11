@@ -3,6 +3,11 @@ Changelog
 
 This is the changelog for Puppetboard.
 
+4.0.4
+-----
+
+* Fix Puppetboard not starting on PE PuppetDB. ([#711](https://github.com/voxpupuli/puppetboard/issues/711))
+
 4.0.3
 -----
 
