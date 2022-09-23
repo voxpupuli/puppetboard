@@ -105,6 +105,16 @@ Please see [an article about more deployment setups here](https://github.com/vox
 
 ## Configuration<a id="configuration"></a>
 
+### Puppet agents
+
+The default value of `usecacheonfailure = true` configuration setting for Puppet agents causes Puppet runs to always succeed,
+event if there are catalog compilation failures f.e. because of a syntax error in your code. This is because in such
+cases with this setting Puppet will just use a cached working catalog and report the run to PuppetDB as successful.
+(Although with an error visible in the Puppet run log.)
+
+Therefore, to show the nodes with a catalog compilation as failed in Puppetboard you need to set 
+`usecacheonfailure = false` in your nodes' `puppet.conf`.
+
 ### PuppetDB
 
 Of course you need to configure your Puppet Server to store the Puppet run reports in PuppetDB.
