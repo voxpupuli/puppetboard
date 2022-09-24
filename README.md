@@ -186,8 +186,8 @@ Other settings that might be interesting, in no particular order:
     values being unique per node, like ipaddress, uuid, and serial number, as well as structured facts it was no longer
     feasible to generate a graph for everything.
 - `INVENTORY_FACTS`: A list of tuples that serve as the column header and the fact name to search for to create
-- `INVENTORY_FACT_TEMPLATES`: A mapping between fact name and jinja template to customize display
     the inventory page. If a fact is not found for a node then `undef` is printed.
+- `INVENTORY_FACT_TEMPLATES`: A mapping between fact name and jinja template to customize display
 - `ENABLE_CATALOG`: If set to `True` allows the user to view a node's latest catalog. This includes all managed
     resources, their file-system locations and their relationships, if available. Defaults to `False`.
 - `REFRESH_RATE`: Defaults to `30` the number of seconds to wait until the index page is automatically refreshed.
