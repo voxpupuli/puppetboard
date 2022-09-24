@@ -19,6 +19,7 @@
 
     {#- JS LOCAL #}
     <script src="{{ url_for('static', filename='js/lists.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/utils.js') }}"></script>
     <script src="{{ url_for('static', filename='js/scroll.top.js') }}"></script>
     <script src="{{ url_for('static', filename='js/pretty.js') }}"></script>
 
@@ -37,6 +38,7 @@
           }
         });
         $(".ui.dropdown:not(.ui.select-environment)").dropdown();
+        $.getScript('{{url_for('static', filename='js/lists.js')}}')
         {% block onload_script %} {% endblock onload_script %}
       })
     </script>
