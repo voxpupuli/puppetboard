@@ -12,5 +12,4 @@ omit =
 
     # no point in checking these
     setup.py
-    dev.py
     wsgi.py
