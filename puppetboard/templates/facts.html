@@ -1,24 +1,26 @@
 {% extends 'layout.html' %}
 {% block content %}
-<div class="ui fluid icon input" style="margin-bottom:20px">
-  <input autofocus="autofocus" class="filter-list" placeholder="Type here to filter...">
-</div>
-<div class="ui searchable stackable doubling four column grid factlist">
-  {%- for column in facts_columns %}
-  <div class="column">
-    {%- for letter in column %}
-      {%- if letter is not none  %}
-        <div class="ui list_hide_segment segment">
-          <a class="ui darkblue ribbon label">{{ letter[0][0]|upper }}</a>
-          <ul>
-            {%- for fact in letter %}
-            <li><a href="{{url_for('fact', env=current_env, fact=fact)}}">{{ fact }}</a></li>
-            {%- endfor %}
-          </ul>
-        </div>
-      {%- endif %}
+<div id="fact-list">
+  <div class="ui fluid icon input" style="margin-bottom:20px">
+    <input autofocus="autofocus" name="filter" placeholder="Type here to filter...">
+  </div>
+  <div class="ui searchable stackable doubling four column grid factlist">
+    {%- for column in facts_columns %}
+    <div class="column">
+      {%- for letter in column %}
+        {%- if letter is not none  %}
+          <div class="ui segment">
+            <a class="ui darkblue ribbon label">{{ letter[0][0]|upper }}</a>
+            <ul>
+              {%- for fact in letter %}
+              <li><a href="{{url_for('fact', env=current_env, fact=fact)}}">{{ fact }}</a></li>
+              {%- endfor %}
+            </ul>
+          </div>
+        {%- endif %}
+      {%- endfor %}
+    </div>
     {%- endfor %}
   </div>
-  {%- endfor %}
 </div>
 {% endblock content %}
