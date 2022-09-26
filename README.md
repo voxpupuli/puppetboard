@@ -112,7 +112,7 @@ event if there are catalog compilation failures f.e. because of a syntax error i
 cases with this setting Puppet will just use a cached working catalog and report the run to PuppetDB as successful.
 (Although with an error visible in the Puppet run log.)
 
-Therefore, to show the nodes with a catalog compilation as failed in Puppetboard you need to set 
+Therefore, to show the nodes with a catalog compilation as failed in Puppetboard you need to set
 `usecacheonfailure = false` in your nodes' `puppet.conf`.
 
 ### PuppetDB
@@ -132,7 +132,7 @@ The file has to be identical to
 [default_settings.py](https://github.com/voxpupuli/puppetboard/blob/master/puppetboard/default_settings.py)
 but should only override the settings you need changed.
 
-If you run PuppetDB and Puppetboard on the same machine the default settings provided will be enough to get you started 
+If you run PuppetDB and Puppetboard on the same machine the default settings provided will be enough to get you started
 and you won't need a custom settings file.
 
 Assuming your webserver and PuppetDB machine are not identical you will at least have to change the following settings:
@@ -161,7 +161,7 @@ PUPPETDB_CERT="-----BEGIN CERTIFICATE-----
 PUPPETDB_CERT=LS0tLS1CRUdJTiBSU0EgUFJJVkFURSBLRVktLS0tLQouLi4KLS0tLS1FTkQgQ0VSVElGSUNBVEUtLS0tLQ==
 ```
 
-For information about how to generate the correct keys please refer to the 
+For information about how to generate the correct keys please refer to the
 [pypuppetdb documentation](https://pypuppetdb.readthedocs.io/en/latest/connecting.html#ssl). Alternatively it is possible
 to explicitly specify the protocol to be used setting the `PUPPETDB_PROTO` variable.
 
@@ -216,8 +216,6 @@ Other settings that might be interesting, in no particular order:
     in the last report. Otherwise shows only 'some' string if there are resources with given status. Setting this
     to `False` gives performance benefits, especially in big Puppet environments (more than few hundreds of nodes).
     Defaults to `True`.
-- `DEV_LISTEN_HOST`: For use with dev.py for development. Default is localhost
-- `DEV_LISTEN_PORT`: For use with dev.py for development. Default is 5555
 
 ## Getting Help<a id="getting-help"></a>
 
@@ -249,8 +247,24 @@ pytest --cov=. --cov-report=xml --flake8 --strict-markers --mypy puppetboard tes
 You can run the app it in development mode by simply executing:
 
 ```bash
-./dev.py
+flask run
 ```
+
+You can specify listening host and port with environment variables or command line otions:
+
+```bash
+export FLASK_RUN_HOST=0.0.0.0
+export FLASK_RUN_PORT=8000
+
+flask run
+```
+
+or
+
+```bash
+flask run --host '0.0.0.0' --port '8000'
+```
+
 
 Use `PUPPETBOARD_SETTINGS` to change the different settings or patch `default_settings.py` directly.
 Take care not to include your local changes on that file when submitting patches for Puppetboard.
