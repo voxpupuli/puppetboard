@@ -342,6 +342,10 @@ by Tim Pope](https://tbaggery.com/2008/04/19/a-note-about-git-commit-messages.ht
 
 ![Single metric](https://raw.githubusercontent.com/voxpupuli/puppetboard/master/screenshots/metric.png)
 
+* Inventory view
+
+![Inventory view](https://raw.githubusercontent.com/voxpupuli/puppetboard/master/screenshots/inventory.png)
+
 # Legal<a id="legal"></a>
 
 The app code is licensed under the [Apache License, Version 2.0](./LICENSE).
