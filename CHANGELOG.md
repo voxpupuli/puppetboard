@@ -3,7 +3,7 @@ Changelog
 
 This is the changelog for Puppetboard.
 
-4.1.0 (unreleased)
+4.1.0
 -----
 * Show configurable favorite environments immediately after the "All Environments" in the dropdown. ([#705](https://github.com/voxpupuli/puppetboard/pull/705))
 * Automatic OS values for Linux, macOS and Windows nodes in the Inventory view. Customizable Inventory fact values using Jinja templates. PR [#712](https://github.com/voxpupuli/puppetboard/pull/712), fixes [#485](https://github.com/voxpupuli/puppetboard/issues/485).
