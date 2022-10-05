@@ -5,7 +5,7 @@ This is the changelog for Puppetboard.
 
 4.1.1
 -----
-* Fixed showing facts with graph (regression introduced in 4.1.0). ([#719](https://github.com/voxpupuli/puppetboard/issue/719))
+* Fixed showing facts with graph (regression introduced in 4.1.0). ([#719](https://github.com/voxpupuli/puppetboard/issues/719))
 
 4.1.0
 -----
