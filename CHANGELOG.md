@@ -3,6 +3,10 @@ Changelog
 
 This is the changelog for Puppetboard.
 
+4.1.1
+-----
+* Fixed showing facts with graph (regression introduced in 4.1.0). ([#719](https://github.com/voxpupuli/puppetboard/issue/719))
+
 4.1.0
 -----
 * Show configurable favorite environments immediately after the "All Environments" in the dropdown. ([#705](https://github.com/voxpupuli/puppetboard/pull/705))
