@@ -17,7 +17,7 @@ table.on('xhr', function(e, settings, json){
   if (otherdata.length > 0) {
     realdata.push(["other", otherdata.reduce(function(a,b){return a + b[1];},0)]);
   }
-  c3.generate({
+  bb.generate({
     bindto: '#factChart',
     data: {
         columns: realdata,
