@@ -3,6 +3,10 @@ Changelog
 
 This is the changelog for Puppetboard.
 
+4.1.2
+-----
+* Fixed incompatibility with Python 3.7 that has occurred at least in the tests (regression introduced in 4.1.1). ([#720](https://github.com/voxpupuli/puppetboard/pull/720))
+
 4.1.1
 -----
 * Fixed showing facts with graph (regression introduced in 4.1.0). ([#719](https://github.com/voxpupuli/puppetboard/issues/719))
