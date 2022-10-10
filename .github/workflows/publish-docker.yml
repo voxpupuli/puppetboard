@@ -1,9 +1,13 @@
 name: publish 🐳 Docker image
 
-on:
-  push:
-    tags:
-      - "v*"
+on: push
+#on:
+#  push:
+#    tags:
+#      - "v*"
+
+env:
+  TEST_TAG: voxpupuli/puppetboard:test
 
 jobs:
 
@@ -17,13 +21,13 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
 
       - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v1
+        uses: docker/setup-buildx-action@v2
 
       - name: Login to GitHub Container Registry
-        uses: docker/login-action@v1
+        uses: docker/login-action@v2
         with:
           registry: ghcr.io
           username: ${{ github.repository_owner }}
@@ -43,30 +47,28 @@ jobs:
           # full version
           tags.add(f"{image}:{version}")
 
-          if not parse(version).is_prerelease:
-              # only final and post-releases should get the tags
-              # used for automatic use of latest *stable* version
-
-              # major_version
-              major_version = re.search(r'(\d+?)\.', version).group(1)
-              tags.add(f"{image}:{major_version}")
-
-              # major_version.minor_version
-              major_and_minor_version = re.search(r'(\d+?\.\d+?)\.', version).group(1)
-              tags.add(f"{image}:{major_and_minor_version}")
-
-              tags.add(f"{image}:latest")
-
           tags = ",".join(sorted(list(tags)))
 
           print(f"::set-output name=tags::{tags}")
 
         id: tags
 
-      - name: Build and push
-        uses: docker/build-push-action@v2
+      - name: Build the image with test tag
+        uses: docker/build-push-action@v3
         with:
           context: .
           platforms: linux/amd64
-          push: true
-          tags: ${{ steps.tags.outputs.tags }}
+          load: true
+          tags: ${{ env.TEST_TAG }}
+
+      - name: Test the image
+        run: |
+          docker run --rm ${{ env.TEST_TAG }}
+
+#      - name: Build image with final tags and push
+#        uses: docker/build-push-action@v3
+#        with:
+#          context: .
+#          platforms: linux/amd64
+#          push: true
+#          tags: ${{ steps.tags.outputs.tags }}
