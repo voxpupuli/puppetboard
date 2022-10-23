@@ -32,7 +32,7 @@ def query(env):
         abort(403)
 
     envs = environments()
-    if(env != app.config['DEFAULT_ENVIRONMENT']):
+    if env != app.config['DEFAULT_ENVIRONMENT']:
         check_env(env, envs)
 
     form = QueryForm(meta={

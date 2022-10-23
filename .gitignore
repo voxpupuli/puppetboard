@@ -32,7 +32,6 @@ coverage.xml
 .tox
 .mypy_cache
 .pytest_cache
-nosetests.xml
 
 # Translations
 *.mo

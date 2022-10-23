@@ -1,3 +1,5 @@
 from __future__ import absolute_import
-import os
-from puppetboard.app import app as application
+# noinspection PyUnresolvedReferences
+import os  # noqa: F401
+# noinspection PyUnresolvedReferences
+from puppetboard.app import app as application  # noqa: F401
