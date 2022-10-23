@@ -55,14 +55,14 @@
       <td><a href="{{url_for('node', env=current_env, node_name=node.name)}}">{{node.name}}</a></td>
       <td data-order="{{ node.catalog_timestamp | default('', true) }}">
         {% if node.catalog_timestamp %}
-          <a href="{{url_for('catalog_node', env=current_env, node_name=node.name)}}" data-localise="{{ config.LOCALISE_TIMESTAMP }}">{{node.catalog_timestamp}}</a>
+          <a href="{{url_for('catalog_node', env=current_env, node_name=node.name)}}" data-localise="{{ config.LOCALISE_TIMESTAMP|lower }}">{{node.catalog_timestamp}}</a>
         {% else %}
           <i class="large darkblue ban icon"></i>
         {% endif %}
       </td>
       <td data-order="{{ node.report_timestamp | default('', true) }}">
         {% if node.report_timestamp %}
-          <a href="{{url_for('report', env=current_env, node_name=node.name, report_id=node.latest_report_hash)}}"  data-localise="{{ config.LOCALISE_TIMESTAMP }}">{{ node.report_timestamp }}</a>
+          <a href="{{url_for('report', env=current_env, node_name=node.name, report_id=node.latest_report_hash)}}"  data-localise="{{ config.LOCALISE_TIMESTAMP|lower }}">{{ node.report_timestamp }}</a>
         {% else %}
           <i class="large darkblue ban icon"></i>
         {% endif %}
