@@ -212,7 +212,7 @@ Other settings that might be interesting, in no particular order:
 - `TABLE_COUNT_SELECTOR`: Configure the dropdown to limit number of hosts to show per page.
 - `LITTLE_TABLE_COUNT`: Default number of reports to show when when looking at a node.
 - `NORMAL_TABLE_COUNT`: Default number of nodes to show when displaying reports and catalog nodes.
-- `LOCALISE_TIMESTAMP`: Normalize time based on localserver time.
+- `LOCALISE_TIMESTAMP`: If set to `True` then timestamps are shown using your browser's timezone. Otherwise UTC is used. Defaults to `True`.
 - `WITH_EVENT_NUMBERS`: If set to `True` then Overview and Nodes list shows exact number of changed resources
     in the last report. Otherwise shows only 'some' string if there are resources with given status. Setting this
     to `False` gives performance benefits, especially in big Puppet environments (more than few hundreds of nodes).

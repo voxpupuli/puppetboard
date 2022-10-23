@@ -30,7 +30,7 @@
         </a>
       </td>
       <td data-order="{{ failure.timestamp }}">
-        <a href="{{url_for('report', env=current_env, node_name=failure.certname, report_id=failure.report_hash)}}" data-localise="{{ config.LOCALISE_TIMESTAMP }}">
+        <a href="{{url_for('report', env=current_env, node_name=failure.certname, report_id=failure.report_hash)}}" data-localise="{{ config.LOCALISE_TIMESTAMP|lower }}">
             {{failure.timestamp}}
         </a>
       </td>
