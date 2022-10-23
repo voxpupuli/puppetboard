@@ -2,6 +2,8 @@ from __future__ import absolute_import
 from __future__ import unicode_literals
 
 import logging
+import os
+import sys
 from datetime import datetime
 
 from flask import render_template, Response
@@ -37,6 +39,9 @@ from puppetboard.utils import check_db_version
 
 app = get_app()
 puppetdb = get_puppetdb()
+running_as = os.path.basename(sys.argv[0])
+if running_as not in ['pytest', 'py.test']:
+    check_db_version(puppetdb)
 
 logging.basicConfig(level=app.config['LOGLEVEL'].upper())
 log = logging.getLogger(__name__)
@@ -110,8 +115,3 @@ def offline_static(filename):
 @app.route('/status')
 def health_status():
     return 'OK'
-
-
-@app.before_first_request
-def before_first_request():
-    check_db_version(puppetdb)
