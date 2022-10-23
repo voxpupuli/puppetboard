@@ -34,7 +34,8 @@ jobs:
           mypy --install-types --non-interactive puppetboard/ test/
       - name: Test
         run: |
-          pytest --cov=. --cov-report=xml --flake8 --strict-markers --mypy -v puppetboard test
+          pytest --cov=. --cov-report=xml --strict-markers --mypy -v puppetboard test
+          flake8 -v .
       - name: Upload coverage to Codecov
         uses: codecov/codecov-action@v2
         with:

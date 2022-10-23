@@ -242,7 +242,8 @@ You're advised to do this inside a virtualenv specifically created to work on Pu
 
 You can run the tests with:
 ```bash
-pytest --cov=. --cov-report=xml --flake8 --strict-markers --mypy puppetboard test
+pytest --cov=. --cov-report=xml --strict-markers --mypy puppetboard test
+flake8 -v .
 ```
 
 You can run the app it in development mode by simply executing:

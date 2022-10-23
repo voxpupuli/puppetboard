@@ -24,7 +24,7 @@ def index(env):
         'avg_resources_node': 0,
     }
 
-    if(env != app.config['DEFAULT_ENVIRONMENT']):
+    if env != app.config['DEFAULT_ENVIRONMENT']:
         check_env(env, envs)
 
     if env == '*':
