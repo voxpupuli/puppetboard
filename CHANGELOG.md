@@ -3,6 +3,10 @@ Changelog
 
 This is the changelog for Puppetboard.
 
+unreleased
+----------
+* Confirm support for Python 3.11 (final), switch the Docker image to use that version of Python.
+
 4.1.2
 -----
 * Fixed incompatibility with Python 3.7 that has occurred at least in the tests (regression introduced in 4.1.1). ([#720](https://github.com/voxpupuli/puppetboard/pull/720))
