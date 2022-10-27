@@ -3,7 +3,7 @@ Changelog
 
 This is the changelog for Puppetboard.
 
-unreleased
+4.2.0
 ----------
 * Confirm support for Python 3.11 (final), switch the Docker image to use that version of Python.
 
