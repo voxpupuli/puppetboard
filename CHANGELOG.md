@@ -3,8 +3,12 @@ Changelog
 
 This is the changelog for Puppetboard.
 
+4.2.1
+-----
+* Fix `LOCALISE_TIMESTAMP = False` and document how it works. ([#461](https://github.com/voxpupuli/puppetboard/issues/461))
+
 4.2.0
-----------
+-----
 * Confirm support for Python 3.11 (final), switch the Docker image to use that version of Python.
 
 4.1.2
