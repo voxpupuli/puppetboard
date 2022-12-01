@@ -124,7 +124,7 @@ var logs_table = $('#logs_table').DataTable({
             $(row).addClass('positive');
         } else if (data['level'] == 'warning') {
             $(row).addClass('warning');
-        } else {
+        } else if (data['level'] != 'debug') {
             $(row).addClass('error');
         }
 
