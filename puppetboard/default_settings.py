@@ -8,7 +8,7 @@ PUPPETDB_KEY = None
 PUPPETDB_CERT = None
 PUPPETDB_TIMEOUT = 20
 DEFAULT_ENVIRONMENT = 'production'
-SECRET_KEY = os.urandom(24)
+SECRET_KEY = f"default-{os.urandom(24)}"
 UNRESPONSIVE_HOURS = 2
 ENABLE_QUERY = True
 # Uncomment to restrict the enabled PuppetDB endpoints in the query page.
