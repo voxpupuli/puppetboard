@@ -1,4 +1,4 @@
-import os
+import secrets
 
 PUPPETDB_HOST = 'localhost'
 PUPPETDB_PORT = 8080
@@ -8,7 +8,7 @@ PUPPETDB_KEY = None
 PUPPETDB_CERT = None
 PUPPETDB_TIMEOUT = 20
 DEFAULT_ENVIRONMENT = 'production'
-SECRET_KEY = f"default-{os.urandom(24)}"
+SECRET_KEY = f"default-{secrets.token_hex(32)}"
 UNRESPONSIVE_HOURS = 2
 ENABLE_QUERY = True
 # Uncomment to restrict the enabled PuppetDB endpoints in the query page.
