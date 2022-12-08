@@ -48,6 +48,27 @@ def check_db_version(puppetdb):
         sys.exit(2)
 
 
+def check_secret_key(secret_key_value):
+    """
+    Check if the secret key value is set to a default value, that will stop
+    being accepted in v5.x of the app.
+    """
+    if secret_key_value.startswith("default-"):
+        log.warning(
+            "Leaving SECRET_KEY set to a default value WILL cause issues"
+            " when the app is restarted or has more than 1 replica"
+            " (f.e. uWSGI workers, k8s replicas etc.) and some features"
+            " (in particular: queries) are used.\n"
+            "Please set SECRET_KEY to your own value, the same for all app"
+            " replicas.\n"
+            "This will be REQUIRED starting with Puppetboard 5.x which"
+            " will NOT contain the default value anymore.\n"
+            "Please see"
+            " https://github.com/voxpupuli/puppetboard/issues/721"
+            " for more info."
+            )
+
+
 def parse_python(value: str):
     """
     :param value: any string, number, bool, list or a dict
