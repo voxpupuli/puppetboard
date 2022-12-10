@@ -3,6 +3,11 @@ Changelog
 
 This is the changelog for Puppetboard.
 
+4.2.3
+-----
+
+* Sort 'uptime' fact values correctly again - it was fixed in v3.4.0 but got broken in v4.1.0 ([#469](https://github.com/voxpupuli/puppetboard/issues/469)).
+
 4.2.2
 -----
 * Showing debug messages using a different color than the error messages in the Logs of the Report view. (PR [#725](https://github.com/voxpupuli/puppetboard/pull/725))   
