@@ -3,6 +3,13 @@ Changelog
 
 This is the changelog for Puppetboard.
 
+4.2.2
+-----
+* Showing debug messages using a different color than the error messages in the Logs of the Report view. (PR [#725](https://github.com/voxpupuli/puppetboard/pull/725))   
+* Start warning that the default SECRET_KET will not be provided starting with Puppetboard 5.x - see issue [#721](https://github.com/voxpupuli/puppetboard/issues/721) for more info. (PR [#726](https://github.com/voxpupuli/puppetboard/pull/726)) 
+
+Thanks to the contributor of this release, [Shawn Toffel](https://github.com/shawntoffel)!
+
 4.2.1
 -----
 * Fix `LOCALISE_TIMESTAMP = False` and document how it works. ([#461](https://github.com/voxpupuli/puppetboard/issues/461))
