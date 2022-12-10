@@ -35,12 +35,12 @@ import puppetboard.errors  # noqa: F401
 
 from puppetboard.core import get_app, get_puppetdb
 from puppetboard.version import __version__
-from puppetboard.utils import check_db_version, check_secret_key
+from puppetboard.utils import is_a_test, check_db_version, check_secret_key
 
 app = get_app()
 puppetdb = get_puppetdb()
 running_as = os.path.basename(sys.argv[0])
-if running_as not in ['pytest', 'py.test']:
+if not is_a_test():
     check_db_version(puppetdb)
 check_secret_key(app.config.get('SECRET_KEY'))
 

@@ -166,3 +166,13 @@ def quote_columns_data(data: str) -> str:
 def check_env(env: str, envs: dict):
     if env != '*' and env not in envs:
         abort(404)
+
+
+def is_a_test():
+    running_in_shell = any(
+        pytest_binary in sys.argv[0] for pytest_binary in ['pytest', 'py.test']
+    )
+    running_in_intellij = any(
+        '_jb_pytest_runner.py' in arg for arg in sys.argv
+    )
+    return running_in_shell or running_in_intellij
