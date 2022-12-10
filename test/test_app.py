@@ -46,7 +46,7 @@ def test_offline_mode(client, mocker,
 def test_offline_static(client):
     offline_statics = [
         {
-            "content_type": 'text/css',
+            "content_type": 'css',
             "assets": [
                 "static/libs/fomantic-ui/semantic.min.css",
                 "static/libs/datatables.net-se/dataTables.semanticui.min.css",
@@ -56,7 +56,7 @@ def test_offline_static(client):
             ]
         },
         {
-            "content_type": 'application/javascript',
+            "content_type": 'javascript',
             "assets": [
                 "static/libs/moment.js/moment-with-locales.min.js",
                 "static/libs/jquery/jquery.min.js",
