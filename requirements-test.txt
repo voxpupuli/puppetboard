@@ -13,7 +13,6 @@ cov-core
 beautifulsoup4
 bandit
 mypy
-tox
 types-requests
 types-setuptools
 types-toml
