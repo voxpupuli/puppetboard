@@ -11,6 +11,7 @@ venv
 .git
 
 # we don't need these in the release too
+.github
 docs
 screenshots
 test
