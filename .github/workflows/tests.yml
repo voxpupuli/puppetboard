@@ -35,7 +35,7 @@ jobs:
       - name: Test
         run: |
           pytest --cov=. --cov-report=xml --strict-markers --mypy -v puppetboard test
-          flake8 -v .
+          pylint --errors-only puppetboard test
       - name: Upload coverage to Codecov
         uses: codecov/codecov-action@v2
         with:

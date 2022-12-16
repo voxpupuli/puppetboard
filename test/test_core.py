@@ -5,7 +5,6 @@ import pytest
 from puppetboard.core import get_friendly_error
 
 
-# flake8: noqa
 @pytest.mark.parametrize("raw_message,friendly_message", [
     ("Could not retrieve catalog from remote server: Error 500 on SERVER: Server Error: Evaluation "
      "Error: Error while evaluating a Resource Statement, Evaluation Error: Error while evaluating "
@@ -32,8 +31,8 @@ from puppetboard.core import get_friendly_error
      Error while evaluating a Method call:
 
       Could not find class ::profiles::snapshot_restore
-    
-     …in …/qa/manifests/site.pp, line: 31, column: 7. 
+
+     …in …/qa/manifests/site.pp, line: 31, column: 7.
      """),
 ])
 def test_get_friendly_error(raw_message, friendly_message):
