@@ -5,7 +5,6 @@ commonmark==0.9.1
 Flask==2.2.2
 Flask-WTF==1.0.1
 idna==3.4
-importlib-metadata==4.13.0
 itsdangerous==2.1.2
 Jinja2==3.1.2
 MarkupSafe==2.1.1
