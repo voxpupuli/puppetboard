@@ -53,6 +53,12 @@ def check_secret_key(secret_key_value):
     Check if the secret key value is set to a default value, that will stop
     being accepted in v5.x of the app.
     """
+
+    # Flask's SECRET_KEY can be bytes or string, but for the check below
+    # we need it to be a string
+    if type(secret_key_value) is bytes:
+        secret_key_value = secret_key_value.decode("utf-8")
+
     if secret_key_value.startswith("default-"):
         log.warning(
             "Leaving SECRET_KEY set to a default value WILL cause issues"
