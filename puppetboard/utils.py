@@ -19,7 +19,7 @@ def url_for_field(field, value):
 
 
 def jsonprint(value):
-    return json.dumps(value, indent=2, separators=(',', ': '))
+    return json.dumps(value, indent=2, separators=(",", ": "))
 
 
 def check_db_version(puppetdb):
@@ -30,8 +30,8 @@ def check_db_version(puppetdb):
         current_version = puppetdb.current_version()
         log.info(f"PuppetDB version: {current_version}")
 
-        current_semver = current_version.split('-')[0]
-        minimum_semver = '5.2.0'
+        current_semver = current_version.split("-")[0]
+        minimum_semver = "5.2.0"
 
         if parse(current_semver) < parse(minimum_semver):
             log.error(f"The minimum supported version of PuppetDB is {minimum_semver}")
@@ -54,12 +54,7 @@ def check_secret_key(secret_key_value):
     being accepted in v5.x of the app.
     """
 
-    # Flask's SECRET_KEY can be bytes or string, but for the check below
-    # we need it to be a string
-    if type(secret_key_value) is bytes:
-        secret_key_value = secret_key_value.decode("utf-8")
-
-    if secret_key_value.startswith("default-"):
+    if type(secret_key_value) is str and secret_key_value.startswith("default-"):
         log.warning(
             "Leaving SECRET_KEY set to a default value WILL cause issues"
             " when the app is restarted or has more than 1 replica"
@@ -72,7 +67,7 @@ def check_secret_key(secret_key_value):
             "Please see"
             " https://github.com/voxpupuli/puppetboard/issues/721"
             " for more info."
-            )
+        )
 
 
 def parse_python(value: str):
@@ -104,8 +99,7 @@ def formatvalue(value):
 
 
 def get_or_abort(func, *args, **kwargs):
-    """Perform a backend request and handle all the errors,
-    """
+    """Perform a backend request and handle all the errors,"""
     return _do_get_or_abort(False, func, *args, **kwargs)
 
 
@@ -166,19 +160,17 @@ def quote_columns_data(data: str) -> str:
     interpret the dot a way to get into a nested results object.
 
     See https://datatables.net/reference/option/columns.data#Types."""
-    return data.replace('.', '\\.')
+    return data.replace(".", "\\.")
 
 
 def check_env(env: str, envs: dict):
-    if env != '*' and env not in envs:
+    if env != "*" and env not in envs:
         abort(404)
 
 
 def is_a_test():
     running_in_shell = any(
-        pytest_binary in sys.argv[0] for pytest_binary in ['pytest', 'py.test']
+        pytest_binary in sys.argv[0] for pytest_binary in ["pytest", "py.test"]
     )
-    running_in_intellij = any(
-        '_jb_pytest_runner.py' in arg for arg in sys.argv
-    )
+    running_in_intellij = any("_jb_pytest_runner.py" in arg for arg in sys.argv)
     return running_in_shell or running_in_intellij
