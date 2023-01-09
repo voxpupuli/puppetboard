@@ -3,6 +3,11 @@ Changelog
 
 This is the changelog for Puppetboard.
 
+4.2.5
+-----
+
+* **Really** fix starting the app when the SECRET_KEY is set to `bytes` instead of `str`. ([#741](https://github.com/voxpupuli/puppetboard/issues/741)).
+
 4.2.4
 -----
 
