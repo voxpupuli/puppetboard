@@ -7,7 +7,7 @@
     {% endif %}
     <link href="{{ url_for('static', filename='css/radiator.css')}}" media="screen" rel="stylesheet" type="text/css" />
     {% if config.OFFLINE_MODE %}
-        <script src="{{ url_for('static', filename='jquery-3.6.0/jquery.min.js') }}"></script>
+        <script src="{{ url_for('static', filename='libs/jquery/jquery.min.js') }}"></script>
     {% else %}
         <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
     {% endif %}
