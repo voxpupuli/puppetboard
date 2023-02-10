@@ -3,6 +3,13 @@ Changelog
 
 This is the changelog for Puppetboard.
 
+4.2.6
+-----
+
+* Fix auto-resize in the Radiator view in offline mode  ([#718](https://github.com/voxpupuli/puppetboard/issues/718)).
+
+Thanks to [René Hernandez 2nd](https://github.com/REHICode) who contributed to this release!
+
 4.2.5
 -----
 
