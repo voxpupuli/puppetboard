@@ -10,6 +10,20 @@
   {% endif %}
 {%- endmacro %}
 
+{% macro event_status_counts(caller, status, count) -%}
+  {% if count == 0 %}
+    <span class="ui small count label">0</span>
+  {% elif status == 'failure' %}
+    <span class="ui small count label failed" title="events failure">{{count}}</span>
+  {% elif status == 'success' %}
+    <span class="ui small count label changed" title="events success">{{count}}</span>
+  {% elif status == 'skipped' %}
+    <span class="ui small count label skipped" title="events skipped">{{count}}</span>
+  {% elif status == 'noop' %}
+    <span class="ui small count label noop" title="events noop">{{count}}</span>
+  {% endif %}
+{%- endmacro %}
+
 {% macro report_status(caller, status, node_name, metrics, current_env, unreported_time=False, report_hash=False) -%}
   <a class="ui {{status}} label status" href="{{url_for('report', env=current_env, node_name=node_name, report_id=report_hash)}}">{{ status|upper }}</a>
   {% if status == 'unreported' %}
