@@ -151,3 +151,49 @@ FAVORITE_ENVS_DEF = ','.join([
     'dev',
 ])
 FAVORITE_ENVS = [x.strip() for x in os.getenv('FAVORITE_ENVS', FAVORITE_ENVS_DEF).split(',')]
+
+
+# Enable classes view (displays the number of changed resources
+# by status and class)
+ENABLE_CLASS = coerce_bool(os.getenv('ENABLE_CLASS'), False)
+
+# Use caching if classes view is enabled
+CACHE_DEFAULT_TIMEOUT = int(os.getenv('CACHE_DEFAULT_TIMEOUT', '3600'))
+CACHE_TYPE = os.getenv('CACHE_TYPE', 'SimpleCache')
+CACHE_MEMCACHED_SERVERS_DEFAULT = ','.join(['memcached:11211'])
+if CACHE_TYPE == 'MemcachedCache':
+    CACHE_MEMCACHED_SERVERS = os.getenv('CACHE_MEMCACHED_SERVERS', CACHE_MEMCACHED_SERVERS_DEFAULT).split(',')
+
+# A mapping between the status of the resource events
+# and the name of the columns of the table to display.
+CLASS_EVENTS_STATUS_COLUMNS_DEFAULT = ','.join(['failure', 'Failure',
+                                                # 'skipped', 'Skipped',
+                                                'success', 'Success',
+                                                'noop', 'Noop'])
+
+CLASS_EVENTS_STATUS_COLUMNS_STR = os.getenv('CLASS_EVENTS_STATUS_COLUMNS', CLASS_EVENTS_STATUS_COLUMNS_DEFAULT).split(',')
+
+# Take the Array and convert it to a tuple
+CLASS_EVENTS_STATUS_COLUMNS = [(CLASS_EVENTS_STATUS_COLUMNS_STR[i].strip(),
+                                CLASS_EVENTS_STATUS_COLUMNS_STR[i + 1].strip()) for i in range(0, len(CLASS_EVENTS_STATUS_COLUMNS_STR), 2)]
+
+# Enabled a scheduler instance to trigger jobs in background. 
+SCHEDULER_ENABLED = coerce_bool(os.getenv('SCHEDULER_ENABLED'), False)
+
+# Tuples are hard to express as an environment variable, so here
+# the tuple can be listed as a list of items
+# Examples:
+#   export SCHEDULER_JOBS="id, <id>, func, <func>, trigger, <trigger>, seconds, <seconds>"
+# The scheduled jobs are separated by the character ";".
+SCHEDULER_JOBS_DEFAULT = ';'.join([','.join(['id', 'do_build_async_cache_1',
+                                   'func', 'puppetboard.schedulers.classes:build_async_cache',
+                                   'trigger', 'interval',
+                                   'seconds', '300'])])
+
+SCHEDULER_JOBS_STR = os.getenv('SCHEDULER_JOBS', SCHEDULER_JOBS_DEFAULT).split(';')
+
+# Take the Array and convert it to a tuple
+SCHEDULER_JOBS = []
+for job in SCHEDULER_JOBS_STR:
+    SCHEDULER_JOBS.append({job.split(',')[i]: (int(job.split(',')[i + 1]) if job.split(',')[i] == 'seconds' else job.split(',')[i + 1])
+                           for i in range(0, len(job.split(',')), 2)})
