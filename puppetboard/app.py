@@ -12,6 +12,8 @@ from flask import render_template, Response
 # noinspection PyUnresolvedReferences
 import puppetboard.views.catalogs  # noqa: F401
 # noinspection PyUnresolvedReferences
+import puppetboard.views.classes  # noqa: F401
+# noinspection PyUnresolvedReferences
 import puppetboard.views.dailychart  # noqa: F401
 # noinspection PyUnresolvedReferences
 import puppetboard.views.facts  # noqa: F401
@@ -33,12 +35,13 @@ import puppetboard.views.reports  # noqa: F401
 import puppetboard.views.failures  # noqa: F401
 import puppetboard.errors  # noqa: F401
 
-from puppetboard.core import get_app, get_puppetdb
+from puppetboard.core import get_app, get_puppetdb, get_scheduler
 from puppetboard.version import __version__
 from puppetboard.utils import is_a_test, check_db_version, check_secret_key
 
 app = get_app()
 puppetdb = get_puppetdb()
+get_scheduler()
 running_as = os.path.basename(sys.argv[0])
 if not is_a_test():
     check_db_version(puppetdb)
@@ -56,6 +59,7 @@ menu_entries = [
     ('metrics', 'Metrics'),
     ('inventory', 'Inventory'),
     ('catalogs', 'Catalogs'),
+    ('classes', 'Classes'),
     ('radiator', 'Radiator'),
     ('query', 'Query'),
 ]
@@ -65,6 +69,9 @@ if not app.config.get('ENABLE_QUERY'):
 
 if not app.config.get('ENABLE_CATALOG'):
     menu_entries.remove(('catalogs', 'Catalogs'))
+
+if not app.config.get('ENABLE_CLASS'):
+    menu_entries.remove(('classes', 'Classes'))
 
 app.jinja_env.globals.update(menu_entries=menu_entries)
 
