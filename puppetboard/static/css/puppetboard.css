@@ -60,7 +60,7 @@ h1.ui.header.no-margin-bottom {
   color: #AA4643;
 }
 
-.ui.label.failed, .ui.label.events.failure {
+.ui.label.failed, .ui.label.failure, .ui.label.events.failure {
   background-color: #AA4643;
 }
 
@@ -68,7 +68,7 @@ h1.ui.header.no-margin-bottom {
   color: #4572A7;
 }
 
-.ui.label.changed, .ui.label.events.success {
+.ui.label.changed, .ui.label.success, .ui.label.events.success {
   background-color: #4572A7;
 }
 
@@ -88,7 +88,7 @@ h1.ui.header.no-margin-bottom {
   background-color: #DB843D;
 }
 
-.ui.label.resources.total {
+.ui.label.resources.total, .ui.label.nodes.total {
   background-color: #989898;
 }
 
