@@ -68,3 +68,32 @@ FAVORITE_ENVS = [
     'test',
     'dev',
 ]
+
+ENABLE_CLASS = False
+# mapping between the status of the events (from PuppetDB) and the columns of the table to display
+CLASS_EVENTS_STATUS_COLUMNS = [
+    # ('skipped', 'Skipped'),
+    ('failure', 'Failure'),
+    ('success', 'Success'),
+    ('noop', 'Noop'),
+]
+# Type of caching object to use when `SCHEDULER_ENABLED` is set to `True`.
+# If more than one worker, use a shared backend (e.g. `MemcachedCache`) 
+# to allow the sharing of the cache between the processes.
+CACHE_TYPE = 'SimpleCache'
+# Cache litefime in second
+CACHE_DEFAULT_TIMEOUT = 3600
+
+# List of scheduled jobs to trigger
+#   * `id`: job's ID
+#   * `func`: full path of the function to execute
+#   * `trigger`: should be 'interval' if you want to run the job at regular intervals
+#   * `seconds`: number of seconds between 2 triggered jobs
+SCHEDULER_JOBS = [{
+    'id': 'do_build_async_cache_1',
+    'func': 'puppetboard.schedulers.classes:build_async_cache',
+    'trigger': 'interval',
+    'seconds': 300,
+}]
+SCHEDULER_ENABLED = False
+SCHEDULER_LOCK_BIND_PORT = 49100
