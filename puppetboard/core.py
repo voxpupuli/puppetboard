@@ -1,8 +1,11 @@
 import logging
 import re
+import socket
 
 import pkg_resources
 from flask import Flask
+from flask_caching import Cache
+from flask_apscheduler import APScheduler
 from pypuppetdb import connect
 
 from puppetboard.utils import (get_or_abort, jsonprint,
@@ -28,6 +31,8 @@ CATALOGS_COLUMNS = [
 
 APP = None
 PUPPETDB = None
+CACHE = None
+SCHEDULER = None
 
 
 def get_app():
@@ -46,6 +51,7 @@ def get_app():
         app.jinja_env.filters['jsonprint'] = jsonprint
         app.jinja_env.globals['url_for_field'] = url_for_field
         app.jinja_env.globals['quote_columns_data'] = quote_columns_data
+        app.jinja_env.add_extension('jinja2.ext.do')
         APP = app
 
     return APP
@@ -73,6 +79,44 @@ def get_puppetdb():
         PUPPETDB = puppetdb
 
     return PUPPETDB
+
+
+def get_cache():
+    global CACHE
+
+    if CACHE is None:
+        app = get_app()
+        cache = Cache()
+        cache.init_app(app)
+
+        CACHE = cache
+
+    return CACHE
+
+
+def get_scheduler():
+    global SCHEDULER
+
+    if SCHEDULER is None:
+        app = get_app()
+        if not app.config['SCHEDULER_ENABLED']:
+            return SCHEDULER
+
+        try:
+            sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+            sock.bind(('127.0.0.1', app.config['SCHEDULER_LOCK_BIND_PORT']))
+        except socket.error:
+            print('scheduler already running: socket.error')
+            return SCHEDULER
+        else:
+            print('scheduler enabled')
+            scheduler = APScheduler()
+            scheduler.init_app(app)
+            scheduler.start()
+
+            SCHEDULER = scheduler
+
+    return SCHEDULER
 
 
 def environments() -> dict:
