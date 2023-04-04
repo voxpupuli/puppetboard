@@ -158,3 +158,87 @@ def test_env_column_options(cleanup_env):
     reload(docker_settings)
     assert ['resources.total',
             'events.failure'] == docker_settings.DISPLAYED_METRICS
+
+
+def test_enable_class_default(cleanup_env):
+    assert False == docker_settings.ENABLE_CLASS
+
+    
+def test_enable_class_true(cleanup_env):
+    os.environ['ENABLE_CLASS'] = 'True'
+    reload(docker_settings)
+    assert docker_settings.ENABLE_CLASS is True
+    os.environ['ENABLE_CLASS'] = 'true'
+    reload(docker_settings)
+    assert docker_settings.ENABLE_CLASS is True
+
+
+def test_enable_class_false(cleanup_env):
+    os.environ['ENABLE_CLASS'] = 'False'
+    reload(docker_settings)
+    assert docker_settings.ENABLE_CLASS is False
+    os.environ['ENABLE_CLASS'] = 'false'
+    reload(docker_settings)
+    assert docker_settings.ENABLE_CLASS is False
+
+    
+def test_cache_timeout_default(cleanup_env):
+    assert 3600 == docker_settings.CACHE_DEFAULT_TIMEOUT
+
+
+def test_cache_type_default(cleanup_env):
+    assert 'SimpleCache' == docker_settings.CACHE_TYPE
+
+
+def test_cache_memcached_servers(cleanup_env):
+    os.environ['CACHE_TYPE'] = 'MemcachedCache'
+
+    reload(docker_settings)
+    assert ['memcached:11211'] == docker_settings.CACHE_MEMCACHED_SERVERS
+
+
+def test_class_events_status_columns_default(cleanup_env):
+    assert [('failure', 'Failure'),
+            ('success', 'Success'),
+            ('noop', 'Noop')] == docker_settings.CLASS_EVENTS_STATUS_COLUMNS
+
+
+def test_scheduler_enabled_true(cleanup_env):
+    os.environ['SCHEDULER_ENABLED'] = 'True'
+    reload(docker_settings)
+    assert docker_settings.SCHEDULER_ENABLED is True
+    os.environ['SCHEDULER_ENABLED'] = 'true'
+    reload(docker_settings)
+    assert docker_settings.SCHEDULER_ENABLED is True
+
+
+def test_scheduler_enabled_false(cleanup_env):
+    os.environ['SCHEDULER_ENABLED'] = 'False'
+    reload(docker_settings)
+    assert docker_settings.SCHEDULER_ENABLED is False
+    os.environ['SCHEDULER_ENABLED'] = 'false'
+    reload(docker_settings)
+    assert docker_settings.SCHEDULER_ENABLED is False
+
+
+def test_scheduler_jobs_default(cleanup_env):   
+    assert [{'func': 'puppetboard.schedulers.classes:build_async_cache',
+             'id': 'do_build_async_cache_1',
+             'seconds': 300,
+             'trigger': 'interval'}] == docker_settings.SCHEDULER_JOBS
+
+    
+def test_scheduler_jobs_custom(cleanup_env):   
+    os.environ['SCHEDULER_JOBS'] = "id,do_build_async_cache_1,func,puppetboard.schedulers.classes:build_async_cache,trigger,interval,seconds,600"
+    reload(docker_settings)
+    jobs = docker_settings.SCHEDULER_JOBS
+    assert isinstance(jobs, list)
+    assert len(jobs) == 1
+    for job in jobs:
+        assert isinstance(job, dict)
+        assert len(job) == 4
+        assert 'id' in job
+        assert 'func' in job
+        assert 'trigger' in job
+        assert 'seconds' in job
+        assert 600 == job['seconds']

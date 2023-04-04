@@ -216,6 +216,22 @@ Other settings that might be interesting, in no particular order:
     in the last report. Otherwise shows only 'some' string if there are resources with given status. Setting this
     to `False` gives performance benefits, especially in big Puppet environments (more than few hundreds of nodes).
     Defaults to `True`.
+- `ENABLE_CLASS`: If set to `True` allows the user to view the number of resource events (number of changed resources in the last report) grouped by class.
+    The resource events are grouped by their status ('failure', 'success', 'noop'). 
+- `CLASS_EVENTS_STATUS_COLUMNS`: A mapping between the status of the resource events and the name of the columns of the table to display.
+- `CACHE_TYPE`: Specifies which type of caching object to use when `SCHEDULER_ENABLED` is set to `True`.
+    The cache is used for the classes view (`ENABLE_CLASS` is set to `True`) which requires parsing the events of all the latest reports to group them by Puppet class.
+    If the last report is present in the cache, we do not parse the events, which avoids unnecessary processing.
+    If you configure more than one worker, you must use a shared backend (e.g. `MemcachedCache`) to allow the sharing of the cache between the processes.
+    Indeed, the `SimpleCache` type does not allow sharing the cache between processes, it uses the process memory to store the cache.
+    Defaults to `SimpleCache`.
+- `CACHE_DEFAULT_TIMEOUT`: Cache lifetime in second. Defaults to `3600`.
+- `SCHEDULER_ENABLED`: If set to `True` then a scheduler instance is created in order to execute scheduled jobs. Defaults to `False`.
+- `SCHEDULER_JOBS`: List of the scheduled jobs to trigger within a worker.
+    A job can for example be used to compute a result to be cached. This is the case for the classes view which uses a job to pre-compute at regular intervals the results to be displayed. 
+    Each scheduled job must contain the following fields: `id`, `func`, `trigger`, `seconds`.
+- `SCHEDULER_LOCK_BIND_PORT`: Specifies an available port that allows a single worker to listen on it.
+    This allows to configure scheduled jobs in a single worker. Defaults to `49100`.
 
 ## Getting Help<a id="getting-help"></a>
 
@@ -345,6 +361,14 @@ by Tim Pope](https://tbaggery.com/2008/04/19/a-note-about-git-commit-messages.ht
 * Inventory view
 
 ![Inventory view](https://raw.githubusercontent.com/voxpupuli/puppetboard/master/screenshots/inventory.png)
+
+* Classes view, group the resource events of the last reports by Puppet class 
+
+![Classes view](https://raw.githubusercontent.com/voxpupuli/puppetboard/master/screenshots/classes.png)
+
+* Class view, list the nodes with almost one resource event for a given class
+
+![Class view](https://raw.githubusercontent.com/voxpupuli/puppetboard/master/screenshots/class.png)
 
 # Legal<a id="legal"></a>
 

@@ -1,0 +1,22 @@
+{% extends 'layout.html' %}
+{% import '_macros.html' as macros %}
+{% block content %}
+<h1 id="class_name">{{ class_name }}</h1>
+<table id="class_table" class='ui fixed compact very basic sortable table'>
+  <thead>
+    <tr>
+      <th>Node</th>
+      <th>Node Status</th>
+      <th>Class Status</th>
+    </tr>
+  </thead>
+  <tbody class="searchable">
+  </tbody>
+</table>
+{% endblock content %}
+{% block onload_script %}
+{% macro extra_options(caller) %}
+  'serverSide': false,
+{% endmacro %}
+{{ macros.datatable_init(table_html_id="class_table", ajax_url=url_for('class_resource_ajax', env=current_env, class_name=class_name), data=None, default_length=config.NORMAL_TABLE_COUNT, length_selector=config.TABLE_COUNT_SELECTOR, extra_options=extra_options) }}
+{% endblock onload_script %}
