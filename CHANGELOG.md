@@ -3,6 +3,13 @@ Changelog
 
 This is the changelog for Puppetboard.
 
+4.3.0
+-----
+
+* Add new **Classes** view. This view lists the Puppet classes that have had at least one of their resources changed (event). ([#799](https://github.com/voxpupuli/puppetboard/pull/799)).
+
+Big thanks to [Louis Charreau](https://github.com/lcharreau) who contributed the above feature!
+
 4.2.6
 -----
 
