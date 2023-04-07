@@ -15,4 +15,4 @@ bandit==1.7.4
 mypy==1.2.0
 types-requests==2.28.11.15
 types-setuptools==67.6.0.7
-types-toml==0.10.8.5
+types-toml==0.10.8.6
