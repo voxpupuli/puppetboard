@@ -26,7 +26,7 @@ See [more screenshots here](#more-screenshots).
 
 ## Requirements<a id="requirements"></a>
 
-* PuppetDB v. 5.2-7.10 (will most probably work with newer, but this has not been tested yet)
+* PuppetDB v. 5.2-7.*
 * Python 3.7-3.11 or Docker
 
 ## Installation<a id="installation"></a>
