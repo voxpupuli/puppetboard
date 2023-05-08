@@ -55,3 +55,12 @@ jobs:
       - name: Run bandit
         run: |
           bandit -r puppetboard
+
+  tests:
+    needs:
+      - test
+      - security-tests
+    runs-on: ubuntu-latest
+    name: Test suite
+    steps:
+      - run: echo Test suite completed
