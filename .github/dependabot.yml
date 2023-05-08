@@ -1,9 +1,11 @@
 version: 2
 updates:
 - package-ecosystem: "pip"
-    directory: "/"
-    schedule:
-      interval: "daily"
+  directory: "/"
+  schedule:
+    interval: daily
+    time: "13:00"
+  open-pull-requests-limit: 10
 
 # Maintain dependencies for GitHub Actions
 - package-ecosystem: github-actions
