@@ -2,6 +2,7 @@ import json
 import re
 from itertools import tee
 
+from markupsafe import escape
 import commonmark
 from flask import (
     request, render_template, abort
@@ -180,10 +181,19 @@ def get_short_location(location: str) -> str:
 
 
 def get_message(node_name, log, show_error_as):
+
+    # sanitize the data from PuppetDB first,
+    # as we will add some HTML tags in the functions below and don't want these
+    # to be escaped
+    safe_source = escape(log['source'])
+    safe_message = escape(log['message'])
+
+    # enrich the message using HTML
     if show_error_as == 'friendly':
-        error = to_html(get_friendly_error(log['source'], log['message'], node_name))
+        error = to_html(get_friendly_error(safe_source, safe_message, node_name))
     else:
-        error = get_raw_error(log['source'], log['message'])
+        error = get_raw_error(safe_source, safe_message)
+
     return error
 
 
