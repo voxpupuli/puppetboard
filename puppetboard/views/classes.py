@@ -53,6 +53,7 @@ def classes(env):
 def classes_ajax(env):
     """Backend endpoint for classes table"""
 
+    env_cache_key = env
     draw = int(request.args.get('draw', 0))
     envs = environments()
     check_env(env, envs)
@@ -60,17 +61,17 @@ def classes_ajax(env):
     columns = [col for col in app.config['CLASS_EVENTS_STATUS_COLUMNS'] if col[0] in events_status_columns]
 
     query = AndOperator()
-    if env != '*':
-        query.add(EqualsOperator("report_environment", env))
+    if env == '*':
+        env_cache_key = 'all'
     else:
-        env = 'all'
+        query.add(EqualsOperator("report_environment", env))
     query.add(NullOperator('deactivated', True))
     nodelist = puppetdb.nodes(query=query, with_status=True)
 
     new_cache = {}
-    cached_classes = cache.get(f'classes_resource_{env}')
+    cached_classes = cache.get(f'classes_resource_{env_cache_key}')
     if cached_classes is None:
-        cached_classes = {} 
+        cached_classes = {}
 
     classes = {}
     for node in yield_or_stop(nodelist):
@@ -81,7 +82,7 @@ def classes_ajax(env):
         for class_name, cached_last_reports in cached_classes.items():
             if class_name in new_cache and last_report in new_cache[class_name]:
                 is_new_report = False
-                continue 
+                continue
             if last_report in cached_last_reports:
                 is_new_report = False
                 new_cache[class_name] = new_cache.get(class_name, {})
@@ -128,12 +129,12 @@ def classes_ajax(env):
                 disable_class = False
                 classes[class_name]['nb_nodes_per_class_status'][class_status] += 1
         if disable_class:
-            class_to_remove.append(class_name) 
+            class_to_remove.append(class_name)
 
     for class_name in class_to_remove:
         del classes[class_name]
 
-    cache.set(f'classes_resource_{env}', new_cache)
+    cache.set(f'classes_resource_{env_cache_key}', new_cache)
 
     total = len(classes)
 
@@ -164,7 +165,7 @@ def get_events(report_hash, env):
            defaults={'env': app.config['DEFAULT_ENVIRONMENT']})
 @app.route('/<env>/class_resource/<class_name>')
 def class_resource(env, class_name):
-    """Fetches the nodes from PuppetDB for which there was 
+    """Fetches the nodes from PuppetDB for which there was
     at least one event on a resource declared in a given Class.
     It streams a table displaying those nodes along with the status
     of the node and the status of the class (aka resource(s)).
@@ -195,6 +196,7 @@ def class_resource(env, class_name):
 def class_resource_ajax(env, class_name):
     """Backend endpoint for class table"""
 
+    env_cache_key = env
     draw = int(request.args.get('draw', 0))
     envs = environments()
     check_env(env, envs)
@@ -209,17 +211,17 @@ def class_resource_ajax(env, class_name):
     query_and = AndOperator()
     query_and.add(EqualsOperator('type', 'Class'))
     query_and.add(EqualsOperator('title', class_name))
-    if env != '*':
-        query_and.add(EqualsOperator("environment", env))
+    if env == '*':
+        env_cache_key = 'all'
     else:
-        env = 'all'
+        query_and.add(EqualsOperator("environment", env))
 
     query_extract.add_query(query_and)
     query_from.add_query(query_extract)
     query.add_query(query_from)
     nodelist = puppetdb.nodes(query=query, with_status=True)
 
-    cached_classes = cache.get(f'classes_resource_{env}')
+    cached_classes = cache.get(f'classes_resource_{env_cache_key}')
     if cached_classes is None:
         cached_classes = {}
 
@@ -234,7 +236,7 @@ def class_resource_ajax(env, class_name):
         if last_report in reports:
             continue
         if last_report in cached_class:
-            reports[last_report] = cached_class[last_report] 
+            reports[last_report] = cached_class[last_report]
             continue
 
         for event in yield_or_stop(get_events(last_report, env)):
@@ -253,7 +255,7 @@ def class_resource_ajax(env, class_name):
             reports[last_report]['class_status'] = get_status_from_events(reports[last_report]['nb_events_per_status'])
 
     cached_classes[class_name] = reports
-    cache.set(f'classes_resource_{env}', cached_classes)
+    cache.set(f'classes_resource_{env_cache_key}', cached_classes)
 
     total = len(reports)
 
