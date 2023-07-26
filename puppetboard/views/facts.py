@@ -47,7 +47,7 @@ def fact_ajax(env, node, fact, value):
     check_env(env, envs)
 
     render_graph = False
-    if fact in app.config['GRAPH_FACTS'] and value is None and node is None:
+    if fact is not None and fact in app.config['GRAPH_FACTS'] and value is None and node is None:
         render_graph = True
 
     query = AndOperator()
