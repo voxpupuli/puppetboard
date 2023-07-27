@@ -60,7 +60,8 @@ PUPPETDB_CERT = cert_to_file(os.getenv('PUPPETDB_CERT', None))
 PUPPETDB_PROTO = os.getenv('PUPPETDB_PROTO', None)
 PUPPETDB_TIMEOUT = int(os.getenv('PUPPETDB_TIMEOUT', '20'))
 DEFAULT_ENVIRONMENT = os.getenv('DEFAULT_ENVIRONMENT', 'production')
-SECRET_KEY = os.getenv('SECRET_KEY', '')
+# this empty string has to be changed, we validate it with check_secret_key()
+SECRET_KEY = os.getenv('SECRET_KEY', '')  # nosec
 UNRESPONSIVE_HOURS = int(os.getenv('UNRESPONSIVE_HOURS', '2'))
 ENABLE_QUERY = coerce_bool(os.getenv('ENABLE_QUERY'), True)
 # Uncomment to restrict the enabled PuppetDB endpoints in the query page.
