@@ -3,6 +3,19 @@ Changelog
 
 This is the changelog for Puppetboard.
 
+5.0.0
+-----
+
+* Stop setting `SECRET_KEY` value to a random string by default. This has caused issues in deployments with more than one app replica or when the app was restarted. Please set this to your own long, random string, **the same for each application replica**. Implements [#721](https://github.com/voxpupuli/puppetboard/issues/721).
+* Drop support for Python 3.7 (end-of-life in June 2023). PR [#899](https://github.com/voxpupuli/puppetboard/pull/899)
+* Fix broken links in Classes view. PR [#868](https://github.com/voxpupuli/puppetboard/pull/868), fixes [#816](https://github.com/voxpupuli/puppetboard/issues/816).
+* Fix if fact is `None` (default for full node view). PR [#908](https://github.com/voxpupuli/puppetboard/pull/908), fixes [#907](https://github.com/voxpupuli/puppetboard/issues/907).
+* Dependencies update.
+
+Thanks to the following contributors of this release:
+* [Louis Charreau](https://github.com/lcharreau)
+* [Yehuda Katz](https://github.com/yakatz)
+
 4.3.0
 -----
 
