@@ -1,8 +1,8 @@
 import logging
 import re
 import socket
+from importlib.metadata import version
 
-import pkg_resources
 from flask import Flask
 from flask_caching import Cache
 from flask_apscheduler import APScheduler
@@ -70,7 +70,7 @@ def get_puppetdb():
                            timeout=app.config['PUPPETDB_TIMEOUT'],
                            protocol=app.config['PUPPETDB_PROTO'], )
 
-        requests_version = pkg_resources.get_distribution("requests").version
+        requests_version = version("requests")
         user_agent_header = {
             "user-agent": f"puppetboard/{own_version} (r/{requests_version})",
         }

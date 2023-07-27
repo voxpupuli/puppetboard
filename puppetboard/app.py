@@ -45,7 +45,7 @@ get_scheduler()
 running_as = os.path.basename(sys.argv[0])
 if not is_a_test():
     check_db_version(puppetdb)
-check_secret_key(app.config.get('SECRET_KEY'))
+    check_secret_key(app.config.get('SECRET_KEY'))
 
 logging.basicConfig(level=app.config['LOGLEVEL'].upper())
 log = logging.getLogger(__name__)
