@@ -8,7 +8,7 @@ PUPPETDB_KEY = None
 PUPPETDB_CERT = None
 PUPPETDB_TIMEOUT = 20
 DEFAULT_ENVIRONMENT = 'production'
-SECRET_KEY = f"default-{secrets.token_hex(32)}"
+SECRET_KEY = ''
 UNRESPONSIVE_HOURS = 2
 ENABLE_QUERY = True
 # Uncomment to restrict the enabled PuppetDB endpoints in the query page.
@@ -78,7 +78,7 @@ CLASS_EVENTS_STATUS_COLUMNS = [
     ('noop', 'Noop'),
 ]
 # Type of caching object to use when `SCHEDULER_ENABLED` is set to `True`.
-# If more than one worker, use a shared backend (e.g. `MemcachedCache`) 
+# If more than one worker, use a shared backend (e.g. `MemcachedCache`)
 # to allow the sharing of the cache between the processes.
 CACHE_TYPE = 'SimpleCache'
 # Cache litefime in second

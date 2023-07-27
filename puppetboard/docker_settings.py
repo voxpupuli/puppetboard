@@ -60,7 +60,7 @@ PUPPETDB_CERT = cert_to_file(os.getenv('PUPPETDB_CERT', None))
 PUPPETDB_PROTO = os.getenv('PUPPETDB_PROTO', None)
 PUPPETDB_TIMEOUT = int(os.getenv('PUPPETDB_TIMEOUT', '20'))
 DEFAULT_ENVIRONMENT = os.getenv('DEFAULT_ENVIRONMENT', 'production')
-SECRET_KEY = os.getenv('SECRET_KEY', f"default-{secrets.token_hex(32)}")
+SECRET_KEY = os.getenv('SECRET_KEY', '')
 UNRESPONSIVE_HOURS = int(os.getenv('UNRESPONSIVE_HOURS', '2'))
 ENABLE_QUERY = coerce_bool(os.getenv('ENABLE_QUERY'), True)
 # Uncomment to restrict the enabled PuppetDB endpoints in the query page.
@@ -177,7 +177,7 @@ CLASS_EVENTS_STATUS_COLUMNS_STR = os.getenv('CLASS_EVENTS_STATUS_COLUMNS', CLASS
 CLASS_EVENTS_STATUS_COLUMNS = [(CLASS_EVENTS_STATUS_COLUMNS_STR[i].strip(),
                                 CLASS_EVENTS_STATUS_COLUMNS_STR[i + 1].strip()) for i in range(0, len(CLASS_EVENTS_STATUS_COLUMNS_STR), 2)]
 
-# Enabled a scheduler instance to trigger jobs in background. 
+# Enabled a scheduler instance to trigger jobs in background.
 SCHEDULER_ENABLED = coerce_bool(os.getenv('SCHEDULER_ENABLED'), False)
 
 # Tuples are hard to express as an environment variable, so here
