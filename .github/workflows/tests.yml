@@ -56,7 +56,6 @@ jobs:
           context: .
           push: false
 
-
   security-tests:
     runs-on: ubuntu-latest
     steps:
