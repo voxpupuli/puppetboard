@@ -3,7 +3,7 @@ charset-normalizer==3.2.0
 click==8.1.7
 commonmark==0.9.1
 Flask==2.3.3
-Flask-APScheduler==1.12.4
+Flask-APScheduler==1.13.0
 Flask-Caching==2.0.2
 Flask-WTF==1.1.1
 idna==3.4
