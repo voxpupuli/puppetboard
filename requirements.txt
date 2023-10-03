@@ -5,7 +5,7 @@ commonmark==0.9.1
 Flask==2.3.3
 Flask-APScheduler==1.13.0
 Flask-Caching==2.0.2
-Flask-WTF==1.1.1
+Flask-WTF==1.2.1
 idna==3.4
 itsdangerous==2.1.2
 Jinja2==3.1.2
