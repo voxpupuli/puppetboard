@@ -1,4 +1,4 @@
-FROM python:3.11-alpine
+FROM python:3.12-alpine
 
 ENV PUPPETBOARD_PORT 80
 ENV PUPPETBOARD_HOST 0.0.0.0
