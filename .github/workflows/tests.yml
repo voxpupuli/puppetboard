@@ -1,12 +1,8 @@
 name: tests (unit)
 
-# trigger on pushes to master OR PRs to master
-# to prevent double tests on PRs within this repo
 on:
+  pull_request: {}
   push:
-    branches:
-      - master
-  pull_request:
     branches:
       - master
 
@@ -74,6 +70,7 @@ jobs:
   tests:
     needs:
       - test
+      - build_docker_image
       - security-tests
     runs-on: ubuntu-latest
     name: Test suite
