@@ -4,7 +4,7 @@ click==8.1.7
 commonmark==0.9.1
 Flask==2.3.3
 Flask-APScheduler==1.13.0
-Flask-Caching==2.0.2
+Flask-Caching==2.1.0
 Flask-WTF==1.2.1
 idna==3.4
 itsdangerous==2.1.2
