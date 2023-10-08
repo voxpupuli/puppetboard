@@ -1,48 +1,3 @@
-# Changelog
-
-All notable changes to this project will be documented in this file.
-
-## [v5.1.0](https://github.com/voxpupuli/puppetboard/tree/v5.1.0) (2023-10-08)
-
-[Full Changelog](https://github.com/voxpupuli/puppetboard/compare/v5.0.0...v5.1.0)
-
-**Merged pull requests:**
-
-- pypuppetdb: Update 3.1.0-\>3.2.0 [\#954](https://github.com/voxpupuli/puppetboard/pull/954) ([bastelfreak](https://github.com/bastelfreak))
-- Bump python from 3.11-alpine to 3.12-alpine [\#953](https://github.com/voxpupuli/puppetboard/pull/953) ([dependabot[bot]](https://github.com/apps/dependabot))
-- Bump flask-caching from 2.0.2 to 2.1.0 [\#952](https://github.com/voxpupuli/puppetboard/pull/952) ([dependabot[bot]](https://github.com/apps/dependabot))
-- CI: Run on PRs and merges; Add dependabot for Dockerfile [\#951](https://github.com/voxpupuli/puppetboard/pull/951) ([bastelfreak](https://github.com/bastelfreak))
-- Bump pytest-pylint from 0.19.0 to 0.21.0 [\#950](https://github.com/voxpupuli/puppetboard/pull/950) ([dependabot[bot]](https://github.com/apps/dependabot))
-- Bump pylint from 2.17.7 to 3.0.1 [\#949](https://github.com/voxpupuli/puppetboard/pull/949) ([dependabot[bot]](https://github.com/apps/dependabot))
-- Bump types-requests from 2.31.0.7 to 2.31.0.8 [\#948](https://github.com/voxpupuli/puppetboard/pull/948) ([dependabot[bot]](https://github.com/apps/dependabot))
-- Bump coverage from 7.3.1 to 7.3.2 [\#947](https://github.com/voxpupuli/puppetboard/pull/947) ([dependabot[bot]](https://github.com/apps/dependabot))
-- Bump urllib3 from 2.0.4 to 2.0.6 [\#945](https://github.com/voxpupuli/puppetboard/pull/945) ([dependabot[bot]](https://github.com/apps/dependabot))
-- Bump werkzeug from 2.3.7 to 3.0.0 [\#944](https://github.com/voxpupuli/puppetboard/pull/944) ([dependabot[bot]](https://github.com/apps/dependabot))
-- Bump charset-normalizer from 3.2.0 to 3.3.0 [\#943](https://github.com/voxpupuli/puppetboard/pull/943) ([dependabot[bot]](https://github.com/apps/dependabot))
-- Bump packaging from 23.1 to 23.2 [\#941](https://github.com/voxpupuli/puppetboard/pull/941) ([dependabot[bot]](https://github.com/apps/dependabot))
-- Bump pylint from 2.17.5 to 2.17.7 [\#940](https://github.com/voxpupuli/puppetboard/pull/940) ([dependabot[bot]](https://github.com/apps/dependabot))
-- Bump flask-wtf from 1.1.1 to 1.2.1 [\#939](https://github.com/voxpupuli/puppetboard/pull/939) ([dependabot[bot]](https://github.com/apps/dependabot))
-- Bump types-requests from 2.31.0.2 to 2.31.0.7 [\#938](https://github.com/voxpupuli/puppetboard/pull/938) ([dependabot[bot]](https://github.com/apps/dependabot))
-- Bump zipp from 3.16.2 to 3.17.0 [\#932](https://github.com/voxpupuli/puppetboard/pull/932) ([dependabot[bot]](https://github.com/apps/dependabot))
-- Bump flask-apscheduler from 1.12.4 to 1.13.0 [\#931](https://github.com/voxpupuli/puppetboard/pull/931) ([dependabot[bot]](https://github.com/apps/dependabot))
-- Bump typing-extensions from 4.7.1 to 4.8.0 [\#930](https://github.com/voxpupuli/puppetboard/pull/930) ([dependabot[bot]](https://github.com/apps/dependabot))
-- Bump pytest from 7.4.1 to 7.4.2 [\#928](https://github.com/voxpupuli/puppetboard/pull/928) ([dependabot[bot]](https://github.com/apps/dependabot))
-- Bump types-setuptools from 68.1.0.1 to 68.2.0.0 [\#927](https://github.com/voxpupuli/puppetboard/pull/927) ([dependabot[bot]](https://github.com/apps/dependabot))
-- Bump coverage from 7.3.0 to 7.3.1 [\#926](https://github.com/voxpupuli/puppetboard/pull/926) ([dependabot[bot]](https://github.com/apps/dependabot))
-- Bump pytest from 7.4.0 to 7.4.1 [\#924](https://github.com/voxpupuli/puppetboard/pull/924) ([dependabot[bot]](https://github.com/apps/dependabot))
-- update gha [\#923](https://github.com/voxpupuli/puppetboard/pull/923) ([rwaffen](https://github.com/rwaffen))
-- Bump types-setuptools from 68.1.0.0 to 68.1.0.1 [\#922](https://github.com/voxpupuli/puppetboard/pull/922) ([dependabot[bot]](https://github.com/apps/dependabot))
-- Bump flask from 2.2.5 to 2.3.3 [\#920](https://github.com/voxpupuli/puppetboard/pull/920) ([dependabot[bot]](https://github.com/apps/dependabot))
-- Bump click from 8.1.6 to 8.1.7 [\#919](https://github.com/voxpupuli/puppetboard/pull/919) ([dependabot[bot]](https://github.com/apps/dependabot))
-- Bump mypy from 1.5.0 to 1.5.1 [\#918](https://github.com/voxpupuli/puppetboard/pull/918) ([dependabot[bot]](https://github.com/apps/dependabot))
-- Bump pytest-randomly from 3.14.0 to 3.15.0 [\#917](https://github.com/voxpupuli/puppetboard/pull/917) ([dependabot[bot]](https://github.com/apps/dependabot))
-- Bump types-setuptools from 68.0.0.3 to 68.1.0.0 [\#916](https://github.com/voxpupuli/puppetboard/pull/916) ([dependabot[bot]](https://github.com/apps/dependabot))
-- Bump pytest-randomly from 3.13.0 to 3.14.0 [\#915](https://github.com/voxpupuli/puppetboard/pull/915) ([dependabot[bot]](https://github.com/apps/dependabot))
-- Bump werkzeug from 2.3.6 to 2.3.7 [\#914](https://github.com/voxpupuli/puppetboard/pull/914) ([dependabot[bot]](https://github.com/apps/dependabot))
-- Bump coverage from 7.2.7 to 7.3.0 [\#913](https://github.com/voxpupuli/puppetboard/pull/913) ([dependabot[bot]](https://github.com/apps/dependabot))
-- Bump mypy from 1.4.1 to 1.5.0 [\#911](https://github.com/voxpupuli/puppetboard/pull/911) ([dependabot[bot]](https://github.com/apps/dependabot))
-- Bump pyparsing from 3.1.0 to 3.1.1 [\#910](https://github.com/voxpupuli/puppetboard/pull/910) ([dependabot[bot]](https://github.com/apps/dependabot))
-
 ## [v5.0.0](https://github.com/voxpupuli/puppetboard/tree/v5.0.0) (2023-07-27)
 
 * Stop setting `SECRET_KEY` value to a random string by default. This has caused issues in deployments with more than one app replica or when the app was restarted. Please set this to your own long, random string, **the same for each application replica**. Implements [#721](https://github.com/voxpupuli/puppetboard/issues/721).
@@ -525,6 +480,3 @@ We've also added a few new features:
 
 Initial release.
 
-
-
-\* *This Changelog was automatically generated by [github_changelog_generator](https://github.com/github-changelog-generator/github-changelog-generator)*

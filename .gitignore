@@ -49,3 +49,7 @@ venv
 
 # IDE files
 .idea
+
+Gemfile.lock
+.bundle
+.vendor
