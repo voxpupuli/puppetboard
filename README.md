@@ -192,7 +192,7 @@ Other settings that might be interesting, in no particular order:
     See the `QUERY_ENDPOINTS` constant in the `puppetboard.app` module for a list of the available endpoints.
 - `GRAPH_TYPE`: Specify the type of graph to display.   Default is
     pie, other good option is donut.   Other choices can be found here:
-    \_C3JS\_documentation\`
+    [C3.js documentation](https://c3js.org/examples.html#chart)
 - `GRAPH_FACTS`: A list of fact names to tell PuppetBoard to generate a pie-chart on the fact page. With some fact
     values being unique per node, like ipaddress, uuid, and serial number, as well as structured facts it was no longer
     feasible to generate a graph for everything.
