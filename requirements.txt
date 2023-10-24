@@ -1,5 +1,5 @@
 certifi==2023.7.22
-charset-normalizer==3.3.0
+charset-normalizer==3.3.1
 click==8.1.7
 commonmark==0.9.1
 Flask==2.3.3
