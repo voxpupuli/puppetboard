@@ -168,9 +168,9 @@ to explicitly specify the protocol to be used setting the `PUPPETDB_PROTO` varia
 
 Other settings that might be interesting, in no particular order:
 
-- `SECRET_KEY`: set this to a long string, **the same for each application replica** and keep it secret. Refer to
+- `SECRET_KEY`: set this to a long string, **the same for each application replica**, and keep it secret. Refer to
     [Flask documentation](https://flask.palletsprojects.com/en/2.1.x/quickstart/#sessions), section
-    "How to generate good secret keys" for more info.
+    "How to generate good secret keys" for more info. Cannot be an empty string, which is the default.
 - `FAVORITE_ENVS`: an ordered list of Puppet environment names that will be shown immediately after "All Environments"
     and before other environments (which are sorted by name) in the dropdown for choosing the environment shown
     in the top-right of the UI. Environments listed here that do not really exist in your deployment are silently ignored.
