@@ -46,7 +46,7 @@ To see how to get it working with RedHat/Centos 7 check out these [docs](https:/
 
 We provide [an official Docker image in the GitHub Container Registry](https://github.com/orgs/voxpupuli/packages/container/package/puppetboard).
 
-You must provide a secret key. Generate one by running `ruby -e "require 'securerandom'; puts SecureRandom.hex(32)"`.
+You must provide a secret key! Generate one for example by running `ruby -e "require 'securerandom'; puts SecureRandom.hex(32)"`.
 
 You can run the app on your PuppetDB host with this command:
 
