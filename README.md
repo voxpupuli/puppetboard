@@ -46,12 +46,15 @@ To see how to get it working with RedHat/Centos 7 check out these [docs](https:/
 
 We provide [an official Docker image in the GitHub Container Registry](https://github.com/orgs/voxpupuli/packages/container/package/puppetboard).
 
+You must provide a secret key! Generate one for example by running `ruby -e "require 'securerandom'; puts SecureRandom.hex(32)"`.
+
 You can run the app on your PuppetDB host with this command:
 
 ```bash
 docker run -it \
   -e PUPPETDB_HOST=localhost \
   -e PUPPETDB_PORT=8080 \
+  -e SECRET_KEY=XXXXXXXX \
   --net=host \
   ghcr.io/voxpupuli/puppetboard
 ```
@@ -71,10 +74,53 @@ docker::run { 'puppetboard':
     'PUPPETDB_HOST=127.0.0.1',
     'PUPPETDB_PORT=8080',
     'PUPPETBOARD_PORT=8088',
+    'SECRET_KEY=XXXXXXXX',
   ],
   net   => 'host',
 }
 ```
+
+If you want to have all features enabled, you must use SSL talking to PuppetDB:
+
+```puppet
+file { '/etc/puppetboard':
+  ensure => directory,
+}
+file { '/etc/puppetboard/key.pem':
+  ensure => file,
+  mode   => '0644',
+  source => "/etc/puppetlabs/puppet/ssl/private_keys/${facts['networking']['fqdn']}.pem",
+}
+file { '/etc/puppetboard/cert.pem':
+  ensure => file,
+  mode   => '0644',
+  source => "/etc/puppetlabs/puppet/ssl/certs/${facts['networking']['fqdn']}.pem",
+}
+
+include docker
+
+docker::image { 'ghcr.io/voxpupuli/puppetboard': }
+
+docker::run { 'puppetboard':
+  image   => 'ghcr.io/voxpupuli/puppetboard',
+  volumes => ['/etc/puppetboard:/etc/puppetboard:ro'],
+  env     => [
+    'PUPPETDB_HOST=puppet', # this must be the certname or DNS_ALT_NAME of the PuppetDB host
+    'PUPPETDB_PORT=8081',
+    'PUPPETBOARD_PORT=8080',
+    'ENABLE_CATALOG=true',
+    'PUPPETDB_SSL_VERIFY=false',
+    'PUPPETDB_KEY=/etc/puppetboard/key.pem',
+    'PUPPETDB_CERT=/etc/puppetboard/cert.pem',
+    'SECRET_KEY=XXXXXXXX',
+    'DEFAULT_ENVIRONMENT=*',
+  ],
+  net     => 'host',
+}
+```
+
+Within an air gapped environment you want to load all content from your local puppetboard web service.
+Add: `'OFFLINE_MODE=true',` to the `env` parameter list of the `docker::run` Puppet type.
 
 We also provide the Dockerfile, so you can build the image yourself:
 ```bash
@@ -144,7 +190,7 @@ Assuming your webserver and PuppetDB machine are not identical you will at least
 By default PuppetDB requires SSL to be used when a non-local client wants to connect. Therefore you'll also have to
 supply the following settings:
 
--   `PUPPETDB_SSL_VERIFY = /path/to/ca/keyfile.pem`
+-   `PUPPETDB_SSL_VERIFY = True`
 -   `PUPPETDB_KEY = /path/to/private/keyfile.pem`
 -   `PUPPETDB_CERT = /path/to/public/keyfile.crt`
 
