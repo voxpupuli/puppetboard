@@ -12,7 +12,27 @@ jobs:
       contents: read
       packages: write
     steps:
-      - uses: voxpupuli/gha-build-and-publish-a-container@v1
+
+      - name: cut v from tag
+        env:
+          TAG: ${{ github.ref_name }}
+        id: split
+        run: echo "tag=${TAG:1}" >> $GITHUB_OUTPUT
+
+      - uses: voxpupuli/gha-build-and-publish-a-container@v2
         with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
+          registry_password: ${{ secrets.GITHUB_TOKEN }}
           build_arch: linux/amd64,linux/arm64
+          docker_username: voxpupulibot
+          docker_password: ${{ secrets.DOCKERHUB_BOT_PASSWORD}}
+          tags: |
+            ghcr.io/${{ github.repository }}:${{ steps.split.outputs.tag }}
+            ghcr.io/${{ github.repository }}:latest
+            docker.io/${{ github.repository }}:${{ steps.split.outputs.tag }}
+            docker.io/${{ github.repository }}:latest
+
+      - name: Update Docker Hub Description
+        uses: peter-evans/dockerhub-description@v3
+        with:
+          username: voxpupulibot
+          password: ${{ secrets.DOCKERHUB_BOT_PASSWORD }}
