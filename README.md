@@ -265,7 +265,7 @@ Other settings that might be interesting, in no particular order:
     to `False` gives performance benefits, especially in big Puppet environments (more than few hundreds of nodes).
     Defaults to `True`.
 - `ENABLE_CLASS`: If set to `True` allows the user to view the number of resource events (number of changed resources in the last report) grouped by class.
-    The resource events are grouped by their status ('failure', 'success', 'noop'). 
+    The resource events are grouped by their status ('failure', 'success', 'noop').
 - `CLASS_EVENTS_STATUS_COLUMNS`: A mapping between the status of the resource events and the name of the columns of the table to display.
 - `CACHE_TYPE`: Specifies which type of caching object to use when `SCHEDULER_ENABLED` is set to `True`.
     The cache is used for the classes view (`ENABLE_CLASS` is set to `True`) which requires parsing the events of all the latest reports to group them by Puppet class.
@@ -276,7 +276,7 @@ Other settings that might be interesting, in no particular order:
 - `CACHE_DEFAULT_TIMEOUT`: Cache lifetime in second. Defaults to `3600`.
 - `SCHEDULER_ENABLED`: If set to `True` then a scheduler instance is created in order to execute scheduled jobs. Defaults to `False`.
 - `SCHEDULER_JOBS`: List of the scheduled jobs to trigger within a worker.
-    A job can for example be used to compute a result to be cached. This is the case for the classes view which uses a job to pre-compute at regular intervals the results to be displayed. 
+    A job can for example be used to compute a result to be cached. This is the case for the classes view which uses a job to pre-compute at regular intervals the results to be displayed.
     Each scheduled job must contain the following fields: `id`, `func`, `trigger`, `seconds`.
 - `SCHEDULER_LOCK_BIND_PORT`: Specifies an available port that allows a single worker to listen on it.
     This allows to configure scheduled jobs in a single worker. Defaults to `49100`.
@@ -360,6 +360,10 @@ The preferred format of a commit message:
 If you'd like a more elaborate guide on how to write and format your commit messages have a look at [this post
 by Tim Pope](https://tbaggery.com/2008/04/19/a-note-about-git-commit-messages.html).
 
+### Build a release
+
+please see: [RELEASE.md](RELEASE.md)
+
 ## More Screenshots<a id="more-screenshots"></a>
 
 * Overview / Index / Homepage
@@ -410,7 +414,7 @@ by Tim Pope](https://tbaggery.com/2008/04/19/a-note-about-git-commit-messages.ht
 
 ![Inventory view](https://raw.githubusercontent.com/voxpupuli/puppetboard/master/screenshots/inventory.png)
 
-* Classes view, group the resource events of the last reports by Puppet class 
+* Classes view, group the resource events of the last reports by Puppet class
 
 ![Classes view](https://raw.githubusercontent.com/voxpupuli/puppetboard/master/screenshots/classes.png)
 

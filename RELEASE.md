@@ -1,13 +1,14 @@
-# how to Release
+# How to release
 
-## on a fork do
-
-Edit [version.py](puppetboard/version.py) and set future version.
-
-After that, run:
+## On a fork do
 
 ```shell
 git switch -c release-x.y.z
+```
+
+Edit [version.py](puppetboard/version.py) and set future version.
+
+```shell
 bundle config set --local path .vendor
 bundle config set --local with 'release'
 bundle install
