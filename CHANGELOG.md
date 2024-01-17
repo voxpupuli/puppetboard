@@ -2,6 +2,50 @@
 
 All notable changes to this project will be documented in this file.
 
+## [v5.2.0](https://github.com/voxpupuli/puppetboard/tree/v5.2.0) (2024-01-17)
+
+[Full Changelog](https://github.com/voxpupuli/puppetboard/compare/v5.1.0...v5.2.0)
+
+**Implemented enhancements:**
+
+- Update README for SECRET\_KEY and SSL Setup [\#985](https://github.com/voxpupuli/puppetboard/pull/985) ([tuxmea](https://github.com/tuxmea))
+
+**Fixed bugs:**
+
+- Offline mode tries to load external resources [\#988](https://github.com/voxpupuli/puppetboard/issues/988)
+- Facts only showing RedHat [\#961](https://github.com/voxpupuli/puppetboard/issues/961)
+
+**Closed issues:**
+
+- Make it More Apparent that SECRET\_KEY cannot be blank [\#978](https://github.com/voxpupuli/puppetboard/issues/978)
+
+**Merged pull requests:**
+
+- also push to hub.docker.com [\#1004](https://github.com/voxpupuli/puppetboard/pull/1004) ([rwaffen](https://github.com/rwaffen))
+- Bump coverage from 7.3.2 to 7.3.3 [\#993](https://github.com/voxpupuli/puppetboard/pull/993) ([dependabot[bot]](https://github.com/apps/dependabot))
+- Bump pylint from 3.0.2 to 3.0.3 [\#992](https://github.com/voxpupuli/puppetboard/pull/992) ([dependabot[bot]](https://github.com/apps/dependabot))
+- Bump bandit from 1.7.5 to 1.7.6 [\#991](https://github.com/voxpupuli/puppetboard/pull/991) ([dependabot[bot]](https://github.com/apps/dependabot))
+- Bump typing-extensions from 4.8.0 to 4.9.0 [\#990](https://github.com/voxpupuli/puppetboard/pull/990) ([dependabot[bot]](https://github.com/apps/dependabot))
+- Bump idna from 3.4 to 3.6 [\#987](https://github.com/voxpupuli/puppetboard/pull/987) ([dependabot[bot]](https://github.com/apps/dependabot))
+- Bump certifi from 2023.7.22 to 2023.11.17 [\#986](https://github.com/voxpupuli/puppetboard/pull/986) ([dependabot[bot]](https://github.com/apps/dependabot))
+- Bump types-setuptools from 68.2.0.0 to 69.0.0.0 [\#984](https://github.com/voxpupuli/puppetboard/pull/984) ([dependabot[bot]](https://github.com/apps/dependabot))
+- Bump mypy from 1.6.1 to 1.7.1 [\#981](https://github.com/voxpupuli/puppetboard/pull/981) ([dependabot[bot]](https://github.com/apps/dependabot))
+- README: note that `SECRET_KEY` can't be empty [\#979](https://github.com/voxpupuli/puppetboard/pull/979) ([kenyon](https://github.com/kenyon))
+- Bump urllib3 from 2.0.7 to 2.1.0 [\#977](https://github.com/voxpupuli/puppetboard/pull/977) ([dependabot[bot]](https://github.com/apps/dependabot))
+- Bump flask-apscheduler from 1.13.0 to 1.13.1 [\#974](https://github.com/voxpupuli/puppetboard/pull/974) ([dependabot[bot]](https://github.com/apps/dependabot))
+- Bump wtforms from 3.1.0 to 3.1.1 [\#973](https://github.com/voxpupuli/puppetboard/pull/973) ([dependabot[bot]](https://github.com/apps/dependabot))
+- Bump charset-normalizer from 3.3.1 to 3.3.2 [\#972](https://github.com/voxpupuli/puppetboard/pull/972) ([dependabot[bot]](https://github.com/apps/dependabot))
+- Bump pytest from 7.4.2 to 7.4.3 [\#971](https://github.com/voxpupuli/puppetboard/pull/971) ([dependabot[bot]](https://github.com/apps/dependabot))
+- Bump werkzeug from 3.0.0 to 3.0.1 [\#970](https://github.com/voxpupuli/puppetboard/pull/970) ([dependabot[bot]](https://github.com/apps/dependabot))
+- Bump pylint from 3.0.1 to 3.0.2 [\#968](https://github.com/voxpupuli/puppetboard/pull/968) ([dependabot[bot]](https://github.com/apps/dependabot))
+- Bump charset-normalizer from 3.3.0 to 3.3.1 [\#967](https://github.com/voxpupuli/puppetboard/pull/967) ([dependabot[bot]](https://github.com/apps/dependabot))
+- Bump pytest-mock from 3.11.1 to 3.12.0 [\#966](https://github.com/voxpupuli/puppetboard/pull/966) ([dependabot[bot]](https://github.com/apps/dependabot))
+- Add link to C3.js documentation [\#965](https://github.com/voxpupuli/puppetboard/pull/965) ([mpesari](https://github.com/mpesari))
+- Bump mypy from 1.6.0 to 1.6.1 [\#964](https://github.com/voxpupuli/puppetboard/pull/964) ([dependabot[bot]](https://github.com/apps/dependabot))
+- Bump urllib3 from 2.0.6 to 2.0.7 [\#962](https://github.com/voxpupuli/puppetboard/pull/962) ([dependabot[bot]](https://github.com/apps/dependabot))
+- Bump mypy from 1.5.1 to 1.6.0 [\#958](https://github.com/voxpupuli/puppetboard/pull/958) ([dependabot[bot]](https://github.com/apps/dependabot))
+- Bump wtforms from 3.0.1 to 3.1.0 [\#957](https://github.com/voxpupuli/puppetboard/pull/957) ([dependabot[bot]](https://github.com/apps/dependabot))
+
 ## [v5.1.0](https://github.com/voxpupuli/puppetboard/tree/v5.1.0) (2023-10-08)
 
 [Full Changelog](https://github.com/voxpupuli/puppetboard/compare/v5.0.0...v5.1.0)
