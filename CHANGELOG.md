@@ -2,6 +2,34 @@
 
 All notable changes to this project will be documented in this file.
 
+## [v5.3.0](https://github.com/voxpupuli/puppetboard/tree/v5.3.0) (2024-02-07)
+
+[Full Changelog](https://github.com/voxpupuli/puppetboard/compare/v5.2.0...v5.3.0)
+
+**Implemented enhancements:**
+
+- Add favicon to radiator [\#1023](https://github.com/voxpupuli/puppetboard/pull/1023) ([surdaft](https://github.com/surdaft))
+
+**Merged pull requests:**
+
+- Bump markupsafe from 2.1.3 to 2.1.5 [\#1022](https://github.com/voxpupuli/puppetboard/pull/1022) ([dependabot[bot]](https://github.com/apps/dependabot))
+- Bump flask from 2.3.3 to 3.0.2 [\#1021](https://github.com/voxpupuli/puppetboard/pull/1021) ([dependabot[bot]](https://github.com/apps/dependabot))
+- Bump certifi from 2023.11.17 to 2024.2.2 [\#1019](https://github.com/voxpupuli/puppetboard/pull/1019) ([dependabot[bot]](https://github.com/apps/dependabot))
+- Bump urllib3 from 2.1.0 to 2.2.0 [\#1016](https://github.com/voxpupuli/puppetboard/pull/1016) ([dependabot[bot]](https://github.com/apps/dependabot))
+- Bump pytest from 7.4.4 to 8.0.0 [\#1015](https://github.com/voxpupuli/puppetboard/pull/1015) ([dependabot[bot]](https://github.com/apps/dependabot))
+- Bump coverage from 7.4.0 to 7.4.1 [\#1014](https://github.com/voxpupuli/puppetboard/pull/1014) ([dependabot[bot]](https://github.com/apps/dependabot))
+- Bump types-setuptools from 69.0.0.20240115 to 69.0.0.20240125 [\#1012](https://github.com/voxpupuli/puppetboard/pull/1012) ([dependabot[bot]](https://github.com/apps/dependabot))
+- Bump types-requests from 2.31.0.20240106 to 2.31.0.20240125 [\#1011](https://github.com/voxpupuli/puppetboard/pull/1011) ([dependabot[bot]](https://github.com/apps/dependabot))
+- Bump bandit from 1.7.6 to 1.7.7 [\#1009](https://github.com/voxpupuli/puppetboard/pull/1009) ([dependabot[bot]](https://github.com/apps/dependabot))
+- Bump beautifulsoup4 from 4.12.2 to 4.12.3 [\#1006](https://github.com/voxpupuli/puppetboard/pull/1006) ([dependabot[bot]](https://github.com/apps/dependabot))
+- Bump types-setuptools from 69.0.0.0 to 69.0.0.20240115 [\#1003](https://github.com/voxpupuli/puppetboard/pull/1003) ([dependabot[bot]](https://github.com/apps/dependabot))
+- Bump jinja2 from 3.1.2 to 3.1.3 [\#1002](https://github.com/voxpupuli/puppetboard/pull/1002) ([dependabot[bot]](https://github.com/apps/dependabot))
+- Bump wtforms from 3.1.1 to 3.1.2 [\#1000](https://github.com/voxpupuli/puppetboard/pull/1000) ([dependabot[bot]](https://github.com/apps/dependabot))
+- Bump types-requests from 2.31.0.8 to 2.31.0.20240106 [\#999](https://github.com/voxpupuli/puppetboard/pull/999) ([dependabot[bot]](https://github.com/apps/dependabot))
+- Bump pytest from 7.4.3 to 7.4.4 [\#997](https://github.com/voxpupuli/puppetboard/pull/997) ([dependabot[bot]](https://github.com/apps/dependabot))
+- Bump coverage from 7.3.3 to 7.4.0 [\#996](https://github.com/voxpupuli/puppetboard/pull/996) ([dependabot[bot]](https://github.com/apps/dependabot))
+- Bump mypy from 1.7.1 to 1.8.0 [\#995](https://github.com/voxpupuli/puppetboard/pull/995) ([dependabot[bot]](https://github.com/apps/dependabot))
+
 ## [v5.2.0](https://github.com/voxpupuli/puppetboard/tree/v5.2.0) (2024-01-17)
 
 [Full Changelog](https://github.com/voxpupuli/puppetboard/compare/v5.1.0...v5.2.0)
@@ -12,7 +40,6 @@ All notable changes to this project will be documented in this file.
 
 **Fixed bugs:**
 
-- Offline mode tries to load external resources [\#988](https://github.com/voxpupuli/puppetboard/issues/988)
 - Facts only showing RedHat [\#961](https://github.com/voxpupuli/puppetboard/issues/961)
 
 **Closed issues:**
