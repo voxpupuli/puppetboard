@@ -2,6 +2,8 @@
 <html lang="en">
 <head>
     <title>{{config.PAGE_TITLE}}</title>
+    <link rel="icon" href="{{ url_for('static', filename='favicon.ico')}}" sizes="any"/>
+    <link rel="icon" href="{{ url_for('static', filename='favicon.svg')}}" type="image/svg+xml"/>
     {% if config.REFRESH_RATE > 0 %}
     <meta http-equiv='refresh' content="{{config.REFRESH_RATE}}"/>
     {% endif %}
