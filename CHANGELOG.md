@@ -2,6 +2,20 @@
 
 All notable changes to this project will be documented in this file.
 
+## [v5.4.0](https://github.com/voxpupuli/puppetboard/tree/v5.4.0) (2024-03-01)
+
+[Full Changelog](https://github.com/voxpupuli/puppetboard/compare/v5.3.0...v5.4.0)
+
+**Merged pull requests:**
+
+- Bump types-setuptools from 69.0.0.20240125 to 69.1.0.20240301 [\#1048](https://github.com/voxpupuli/puppetboard/pull/1048) ([dependabot[bot]](https://github.com/apps/dependabot))
+- Bump pylint from 3.0.3 to 3.1.0 [\#1043](https://github.com/voxpupuli/puppetboard/pull/1043) ([dependabot[bot]](https://github.com/apps/dependabot))
+- Bump coverage from 7.4.1 to 7.4.3 [\#1042](https://github.com/voxpupuli/puppetboard/pull/1042) ([dependabot[bot]](https://github.com/apps/dependabot))
+- Bump pytest from 8.0.0 to 8.0.2 [\#1041](https://github.com/voxpupuli/puppetboard/pull/1041) ([dependabot[bot]](https://github.com/apps/dependabot))
+- Bump typing-extensions from 4.9.0 to 4.10.0 [\#1040](https://github.com/voxpupuli/puppetboard/pull/1040) ([dependabot[bot]](https://github.com/apps/dependabot))
+- Bump types-requests from 2.31.0.20240125 to 2.31.0.20240218 [\#1036](https://github.com/voxpupuli/puppetboard/pull/1036) ([dependabot[bot]](https://github.com/apps/dependabot))
+- Bump urllib3 from 2.2.0 to 2.2.1 [\#1033](https://github.com/voxpupuli/puppetboard/pull/1033) ([dependabot[bot]](https://github.com/apps/dependabot))
+
 ## [v5.3.0](https://github.com/voxpupuli/puppetboard/tree/v5.3.0) (2024-02-07)
 
 [Full Changelog](https://github.com/voxpupuli/puppetboard/compare/v5.2.0...v5.3.0)
