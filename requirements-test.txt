@@ -2,7 +2,7 @@
 pep8==1.7.1
 coverage==7.4.3
 mock==5.1.0
-pytest==8.0.2
+pytest==8.1.0
 pylint==3.1.0
 pytest-pylint==0.21.0
 pytest-cov==4.1.0
