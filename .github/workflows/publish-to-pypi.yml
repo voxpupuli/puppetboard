@@ -23,7 +23,7 @@ jobs:
         run: |
           python setup.py build sdist bdist_wheel
       - name: Publish distribution 📦 to PyPI
-        uses: pypa/gh-action-pypi-publish@v1.8.12
+        uses: pypa/gh-action-pypi-publish@v1.8.14
         with:
           password: ${{ secrets.PYPI_API_TOKEN_PUPPETBOARD }}
           # repository_url: https://test.pypi.org/legacy/
