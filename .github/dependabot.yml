@@ -9,6 +9,7 @@ updates:
   groups:
     python:
       update-types:
+        - "major"
         - "patch"
         - "minor"
       patterns:
