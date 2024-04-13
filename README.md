@@ -134,9 +134,6 @@ Actively maintained packages:
 
 * [OpenBSD](https://cvsweb.openbsd.org/cgi-bin/cvsweb/ports/www/puppetboard/)
   maintained by [Sebastian Reitenbach](https://github.com/buzzdeee)
-
-Less actively maintained packages:
-
 * [FreeBSD](https://www.freshports.org/www/py-puppetboard/)
   maintained by [Romain Tartière](https://github.com/smortex)
 
