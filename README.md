@@ -44,9 +44,9 @@ To see how to get it working with RedHat/Centos 7 check out these [docs](https:/
 
 ### Using Docker
 
-We provide [an official Docker image in the GitHub Container Registry](https://github.com/orgs/voxpupuli/packages/container/package/puppetboard).
-
-You must provide a secret key! Generate one for example by running `ruby -e "require 'securerandom'; puts SecureRandom.hex(32)"`.
+We provide an official Docker image in:
+* [GitHub Container Registry](https://github.com/orgs/voxpupuli/packages/container/package/puppetboard),
+* [Dockerhub](https://hub.docker.com/r/voxpupuli/puppetboard).
 
 You can run the app on your PuppetDB host with this command:
 
@@ -58,6 +58,7 @@ docker run -it \
   --net=host \
   ghcr.io/voxpupuli/puppetboard
 ```
+Note: you must provide a secret key! Generate one for example by running `ruby -e "require 'securerandom'; puts SecureRandom.hex(32)"`.
 
 Optionally you can set `PUPPETBOARD_URL_PREFIX` env variable to a value like `/puppetboard` to run the app under a URL prefix.
 
@@ -131,10 +132,13 @@ docker build -t puppetboard .
 
 Actively maintained packages:
 
-* [FreeBSD](https://www.freshports.org/www/py-puppetboard/)
-  maintained by [Romain Tartière](https://github.com/smortex)
 * [OpenBSD](https://cvsweb.openbsd.org/cgi-bin/cvsweb/ports/www/puppetboard/)
   maintained by [Sebastian Reitenbach](https://github.com/buzzdeee)
+
+Less actively maintained packages:
+
+* [FreeBSD](https://www.freshports.org/www/py-puppetboard/)
+  maintained by [Romain Tartière](https://github.com/smortex)
 
 ### Manually
 
