@@ -275,3 +275,7 @@ td.code {
 .dataTables_length > label {
   margin-right: 1em;
 }
+
+#facts_table td {
+  vertical-align: top;
+}
