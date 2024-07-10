@@ -14,5 +14,5 @@ beautifulsoup4==4.12.3
 bandit==1.7.9
 mypy==1.10.1
 types-requests==2.32.0.20240622
-types-setuptools==70.1.0.20240627
+types-setuptools==70.3.0.20240710
 types-toml==0.10.8.20240310
