@@ -1,0 +1,12 @@
+{% macro get_facts_sorter_type(fact) -%}
+
+  {% set sorter_map = {
+    'kernelrelease': 'natural',
+    'uptime': 'natural-time-delta'
+  } %}
+
+  {% set sorter = sorter_map.get(fact, None) %}
+  {% if sorter != None %}
+    "type": "{{ sorter }}",
+  {% endif %}
+{%- endmacro %}
