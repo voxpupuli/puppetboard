@@ -12,7 +12,7 @@ pytest-randomly==3.15.0
 cov-core==1.15.0
 beautifulsoup4==4.12.3
 bandit==1.7.9
-mypy==1.11.0
+mypy==1.11.1
 types-requests==2.32.0.20240712
 types-setuptools==71.1.0.20240726
 types-toml==0.10.8.20240310
