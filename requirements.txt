@@ -1,4 +1,4 @@
-certifi==2024.7.4
+certifi==2024.8.30
 charset-normalizer==3.3.2
 click==8.1.7
 commonmark==0.9.1
@@ -6,16 +6,16 @@ Flask==3.0.3
 Flask-APScheduler==1.13.1
 Flask-Caching==2.3.0
 Flask-WTF==1.2.1
-idna==3.7
+idna==3.8
 itsdangerous==2.2.0
 Jinja2==3.1.4
 MarkupSafe==2.1.5
 packaging==24.1
-pyparsing==3.1.2
+pyparsing==3.1.4
 pypuppetdb==3.2.0
 requests==2.32.3
 typing_extensions==4.12.2
-urllib3==2.2.2
-Werkzeug==3.0.3
+urllib3==2.2.3
+Werkzeug==3.0.4
 WTForms==3.1.2
-zipp==3.19.2
+zipp==3.20.1
