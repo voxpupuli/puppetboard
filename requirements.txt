@@ -16,6 +16,6 @@ pypuppetdb==3.2.0
 requests==2.32.3
 typing_extensions==4.12.2
 urllib3==2.2.2
-Werkzeug==3.0.3
+Werkzeug==3.0.6
 WTForms==3.1.2
 zipp==3.19.2
