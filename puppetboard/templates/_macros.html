@@ -1,3 +1,4 @@
+{% import '_facts_sorter.html' as facts_sorter %}
 {% macro status_counts(caller, status, node_name, events, current_env, unreported_time=False, report_hash=False) -%}
   <a class="ui {{status}} label status" href="{{url_for('report', env=current_env, node_name=node_name, report_id=report_hash)}}">{{ status|upper }}</a>
   {% if status == 'unreported' %}
@@ -47,7 +48,7 @@
   {% endif %}
 {%- endmacro %}
 
-{% macro datatable_init(table_html_id, ajax_url, data, default_length, length_selector, extra_options=None, natural_time_delta_sort=False) -%}
+{% macro datatable_init(table_html_id, ajax_url, data, default_length, length_selector, extra_options=None, fact=None) -%}
 
   // Init datatable
   $.fn.dataTable.ext.errMode = 'throw';
@@ -114,9 +115,7 @@
 
         return `<a title="${data[1]}" href="${url}">${to_show}</a>`
       },
-      {% if natural_time_delta_sort %}
-      "type": "natural-time-delta",
-      {% endif %}
+      {{ facts_sorter.get_facts_sorter_type(fact) }}
     },
     {% else -%}
     {
