@@ -12,7 +12,6 @@ jobs:
     runs-on: ubuntu-latest
 
     strategy:
-      max-parallel: 5
       matrix:
         python-version: [3.9, '3.10', 3.11, 3.12, 3.13]
 
@@ -39,6 +38,23 @@ jobs:
       - name: Build
         run: |
           poetry build -v
+
+  # this uses the same commands as in our release pipeline and ensures that we can still build puppetboard
+  test-build:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: [3.9, '3.10', 3.11, 3.12, 3.13]
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+      - name: Install dependencies
+        run: pip install wheel
+      - name: Build
+        run: python setup.py build sdist bdist_wheel
 
   build_docker_image:
     name: 'Test building a container'
@@ -71,6 +87,7 @@ jobs:
   tests:
     needs:
       - test
+      - test-build
       - build_docker_image
       - security-tests
     runs-on: ubuntu-latest
