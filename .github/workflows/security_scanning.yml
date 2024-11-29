@@ -1,0 +1,45 @@
+---
+name: Security Scanning 🕵️
+
+on:
+  push:
+    branches:
+      - main
+      - master
+  pull_request:
+    branches:
+      - main
+      - master
+
+jobs:
+  scan_ci_container:
+    name: 'Scan CI container'
+    runs-on: ubuntu-latest
+    permissions:
+      actions: read
+      contents: read
+      security-events: write
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Build CI container
+        uses: docker/build-push-action@v6
+        with:
+          tags: 'ci/puppetboard:${{ github.sha }}'
+          push: false
+
+      - name: Scan image with Anchore Grype
+        uses: anchore/scan-action@v5
+        id: scan
+        with:
+          image: 'ci/puppetboard:${{ github.sha }}'
+          fail-build: false
+
+      - name: Inspect action SARIF report
+        run: jq . ${{ steps.scan.outputs.sarif }}
+
+      - name: Upload Anchore scan SARIF report
+        uses: github/codeql-action/upload-sarif@v3
+        with:
+          sarif_file: ${{ steps.scan.outputs.sarif }}
