@@ -1,0 +1,182 @@
+apiVersion: template.openshift.io/v1
+kind: Template
+metadata:
+  name: puppetboard-template
+objects:
+- kind: ImageStream
+  apiVersion: image.openshift.io/v1
+  metadata:
+    annotations:
+    labels:
+      app: ${PUPPETBOARD_SERVICE_NAME}
+    name: ${PUPPETBOARD_SERVICE_NAME}
+  spec:
+    lookupPolicy:
+      local: false
+- kind: "BuildConfig"
+  apiVersion: build.openshift.io/v1
+  metadata:
+    name: "${PUPPETBOARD_SERVICE_NAME}" 
+    generation: 2
+    labels:
+      app: ${PUPPETBOARD_SERVICE_NAME}
+  spec:
+    failedBuildsHistoryLimit: 5
+    nodeSelector: null
+    runPolicy: "Serial" 
+    triggers: 
+      - type: "GitHub"
+        github:
+          secret: "secret101"
+      - type: "Generic"
+        generic:
+          secret: "secret101"
+      - type: "ConfigChange"
+      - type: "ImageChange"
+        imageChange: {}
+    source: 
+      git:
+        uri: ${PUPPETBOARD_SOURCE_REPOSITORY_URL}
+        ref: ${PUPPETBOARD_SOURCE_REPOSITORY_REF}
+      type: Git
+    strategy: 
+      dockerStragegy:
+        from:
+          kind: "ImageStreamTag"
+          name: python:3.12-alpine
+      type: Docker
+    output: 
+      to:
+        kind: "ImageStreamTag"
+        name: "${PUPPETBOARD_SERVICE_NAME}:latest"
+    successfulBuildsHistoryLimit: 5
+- kind: "DeploymentConfig"
+  apiVersion: "v1"
+  metadata:
+    name: "${PUPPETBOARD_SERVICE_NAME}"
+    labels:
+      app: ${PUPPETBOARD_SERVICE_NAME}
+  spec:
+    template: 
+      metadata:
+        labels:
+          name: "${PUPPETBOARD_SERVICE_NAME}"
+          app: ${PUPPETBOARD_SERVICE_NAME}
+      spec:
+        containers:
+          - name: "${PUPPETBOARD_SERVICE_NAME}"
+            imagePullPolicy: Always
+            ports:
+              - containerPort: ${{PUPPETDB_PORT}}
+                protocol: "TCP"
+            env:
+              - name: PUPPETDB_HOST
+                value: ${PUPPETDB_HOST}
+              - name: PUPPETDB_PORT
+                value: "${PUPPETDB_PORT}"
+              - name: SECRET_KEY
+                value: ${PUPPETBOARD_SECRET_KEY}
+              - name: PUPPETBOARD_PORT
+                value: "${PUPPETBOARD_PORT}"
+        restartPolicy: Always
+    replicas: 3 
+    triggers:
+      - type: "ConfigChange" 
+      - type: "ImageChange" 
+        imageChangeParams:
+          automatic: true
+          containerNames:
+            - "${PUPPETBOARD_SERVICE_NAME}"
+          from:
+            kind: "ImageStreamTag"
+            name: "${PUPPETBOARD_SERVICE_NAME}:latest"
+    strategy: 
+      type: "Rolling"
+    paused: false 
+    revisionHistoryLimit: 2 
+    minReadySeconds: 0 
+- kind: Service
+  apiVersion: v1
+  metadata:
+    annotations:
+    name: ${PUPPETBOARD_SERVICE_NAME}
+    labels:
+      app: ${PUPPETBOARD_SERVICE_NAME}
+  spec:
+    ports:
+    # TODO:  This is kinda confusing.
+    - name: "${SERVICE_PORT}-tcp"
+      protocol: TCP
+      port: ${{SERVICE_PORT}}
+      targetPort: ${{PUPPETBOARD_PORT}}
+    selector:
+      app: ${PUPPETBOARD_SERVICE_NAME}
+    type: ClusterIP
+    sessionAffinity: None
+- kind: Route
+  apiVersion: route.openshift.io/v1
+  metadata:
+    name: ${PUPPETBOARD_SERVICE_NAME}
+    labels:
+      app: ${PUPPETBOARD_SERVICE_NAME}
+    annotations:
+  spec:
+    to:
+      kind: Service
+      name: ${PUPPETBOARD_SERVICE_NAME}
+      weight: 100
+    port:
+      targetPort: "${SERVICE_PORT}-tcp"
+    tls:
+      termination: edge
+  wildcardPolicy: None  
+
+parameters:
+- description: The name of the OpenShift Service exposed for Puppetboard.
+  displayName: Puppetboard Service Name
+  name: PUPPETBOARD_SERVICE_NAME
+  required: true
+  value: puppetboard 
+# These values are passed to the Docker container.  They are not
+# used in the building of the OpenShift app.  They are passed via environment
+# variables in the DeploymentConfig section above.
+- description: Remote server where PuppetDB is running.
+  displayName: PuppetDB Remote Server
+  from: '[a-zA-Z0-9]'
+  name: PUPPETDB_HOST
+  required: true
+  value: puppetdb
+- description: The remote port on the PuppetDB server where Postgresql is listening.
+  displayName: PuppetDB port 
+  name: PUPPETDB_PORT
+  required: true
+  type: integer
+  value: "8080"
+- description: Secret Key for the Puppetboard.
+  displayName: Puppetboard Secret Key
+  from: '[a-zA-Z0-9]'
+  name: PUPPETBOARD_SECRET_KEY
+  required: true
+  value: Secr3t_K3y
+- description: The port on which the Puppetboard server offers up the web interface.
+  displayName: Puppetboard Port
+  name: PUPPETBOARD_PORT
+  required: true
+  value: "1024"
+  type: integer
+- description: The port on which OpenShift offers the Puppetboard service.
+  displayName: OpenShift Service Port
+  name: SERVICE_PORT
+  required: true
+  value: "80"
+  type: integer
+- description: The URL of the repository with the Puppetboard application code.
+  displayName: Puppetboard Repository URL
+  name: PUPPETBOARD_SOURCE_REPOSITORY_URL
+  required: true
+  value: https://github.com/voxpupuli/puppetboard.git
+- description: The branch name, tag or other ref of the PUPPETBOARD_SOURCE_REPOSITORY_URL.
+  displayName: Puppetboard Repository Ref
+  name: PUPPETBOARD_SOURCE_REPOSITORY_REF
+  required: true
+  value: "master"
