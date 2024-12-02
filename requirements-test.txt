@@ -2,8 +2,8 @@
 pep8==1.7.1
 coverage==7.6.8
 mock==5.1.0
-pytest==8.3.3
-pylint==3.3.1
+pytest==8.3.4
+pylint==3.3.2
 pytest-pylint==0.21.0
 pytest-cov==6.0.0
 pytest-mock==3.14.0
@@ -11,7 +11,7 @@ pytest-mypy==0.10.3
 pytest-randomly==3.16.0
 cov-core==1.15.0
 beautifulsoup4==4.12.3
-bandit==1.7.10
+bandit==1.8.0
 mypy==1.13.0
 types-requests==2.32.0.20241016
 types-setuptools==75.6.0.20241126
