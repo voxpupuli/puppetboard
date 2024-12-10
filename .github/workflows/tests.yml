@@ -24,14 +24,13 @@ jobs:
           python-version: ${{ matrix.python-version }}
       - name: Install dependencies
         run: |
-          pip install --upgrade wheel setuptools
-          python setup.py develop
-          pip install -r requirements-test.txt
-          mypy --install-types --non-interactive puppetboard/ test/
+          sudo apt install python3-poetry
+          poetry install --with=test
+          poetry run mypy --install-types --non-interactive puppetboard/ test/
       - name: Test
         run: |
-          pytest --cov=. --cov-report=xml --strict-markers --mypy -v puppetboard test
-          pylint --errors-only puppetboard test
+          poetry run pytest --cov=. --cov-report=xml --strict-markers --mypy -v puppetboard test
+          poetry run pylint --errors-only puppetboard test
       - name: Upload coverage to Codecov
         uses: codecov/codecov-action@v5.0.7
         with:
@@ -60,12 +59,9 @@ jobs:
         uses: actions/setup-python@v5
         with:
           python-version: 3.13
-      - name: Install dependencies
-        run: |
-          pip install bandit
       - name: Run bandit
         run: |
-          bandit -r puppetboard
+          poetry run bandit -r puppetboard
 
   tests:
     needs:

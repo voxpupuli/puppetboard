@@ -18,10 +18,11 @@ jobs:
           python-version: 3.12
       - name: Install dependencies
         run: |
-          pip install wheel
+          sudo apt install python3-poetry
       - name: Build
         run: |
-          python setup.py build sdist bdist_wheel
+          poetry install --with=test
+          poetry build
       - name: Publish distribution 📦 to PyPI
         uses: pypa/gh-action-pypi-publish@v1.12.2
         with:
