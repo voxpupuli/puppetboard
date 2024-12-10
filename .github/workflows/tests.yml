@@ -61,6 +61,8 @@ jobs:
           python-version: 3.13
       - name: Run bandit
         run: |
+          sudo apt install python3-poetry
+          poetry install --with=test
           poetry run bandit -r puppetboard
 
   tests:
