@@ -36,6 +36,9 @@ jobs:
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
           fail_ci_if_error: true
+      - name: Build
+        run: |
+          poetry build -v
 
   build_docker_image:
     name: 'Test building a container'
