@@ -6,7 +6,7 @@
 git switch -c release-x.y.z
 ```
 
-Edit [version.py](puppetboard/version.py) and set future version.
+Edit [pyproject.toml](pyproject.toml) and set future version.  With poetry locally, you can also do `poetry version <patch, minor, major, prepatch, preminor, premajor, prerelease>` to automatically update.
 
 ```shell
 bundle config set --local path .vendor
