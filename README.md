@@ -128,6 +128,49 @@ We also provide the Dockerfile, so you can build the image yourself:
 docker build -t puppetboard .
 ```
 
+### Using Red Hat OpenShift
+
+The included OpenShift template file helps in the creation of the Puppetboard web interface by adopting a source-to-image methodology.
+
+You can run the app on your OpenShift environment with these commands:
+
+```bash
+# Import the template into OpenShift
+oc create -f puppetboard-s2i-template.yaml 
+
+# Create the Puppetboard application and supporting Pods.
+oc new-app -p PUPPETDB_HOST=puppetdb.fqdn.com \
+           --template=puppetboard-template
+```
+
+This will build a puppetboard application that queries a PuppetDB database at puppetdb.fqdn.com.
+
+Optionally you can set other environment variables to fit your needs:
+
+```bash
+oc new-app -p PUPPETDB_HOST=puppetdb.fqdn.com \
+           -p PUPPETDB_PORT=3456 \
+           -p PUPPETBOARD_SOURCE_REPOSITORY_REF="v5.4.0" \
+           -p PUPPETBOARD_SERVICE_NAME=prod_puppetboard \
+           --template=puppetboard-template
+```
+
+This will build Puppetboard version v5.4.0 that queries the PuppetDB server on TCP/3456.
+
+The following is a list of OpenShift parameters that you can pass to the ``oc`` command to customize the application:
+
+- `PUPPETBOARD_SERVICE_NAME`: This is the name that will be used for application.  Deployment Configs, Build Configs 
+    Services, Routes and Pods will use this value for their names as well.  You can instantiate multiple applications
+    by using different names in ``oc new-app``.  Defaults to 'puppetboard'.
+- `PUPPETDB_HOST`: This is the name of the PuppetDB host that Puppetboard will query for its reports.  Defaults to 'puppetdb'.
+- `PUPPETDB_PORT`: This is tcp port on the `PUPPETDB_HOST` for queries.  Defaults to '8080'.
+- `PUPPETBOARD_SECRET_KEY`: Identical to `SECRET_KEY` (below).  Defaults to 'Secr3t_K3y'.
+- `PUPPETBOARD_PORT`: The TCP port on which the Puppetboard docker image presents the web interface.  This is not the
+    user-facing web interface.  Rather, it's the port that the OpenShift route forwards **to**.  
+- `SERVICE_PORT`: The TCP port on which the Puppetboard service offers its user-facing web interface on OpenShift.  Defaults to '80'.
+- `PUPPETBOARD_SOURCE_REPOSITORY_URL`: The URL to the Puppetboard repository.  Defaults to 'https://github.com/voxpupuli/puppetboard.git'.
+- `PUPPETBOARD_SOURCE_REPOSITORY_REF`: The branch/tag/ref for Puppetboard.  Defaults to 'master'.
+
 ### From a package
 
 Actively maintained packages:
