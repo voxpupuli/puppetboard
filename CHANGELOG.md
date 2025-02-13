@@ -2,6 +2,27 @@
 
 All notable changes to this project will be documented in this file.
 
+## [v6.0.1](https://github.com/voxpupuli/puppetboard/tree/v6.0.1) (2025-02-13)
+
+[Full Changelog](https://github.com/voxpupuli/puppetboard/compare/v6.0.0...v6.0.1)
+
+There were some pipeline issues for the 6.0.0, so it's not available on pypi. The 6.0.1 release is almost identical, it just updates some dependencies and switches to poetry (which fixed the CI).
+
+**Closed issues:**
+
+- Unable to establish SSL connection to PuppetDB [\#1236](https://github.com/voxpupuli/puppetboard/issues/1236)
+
+**Merged pull requests:**
+
+- Bump the python group across 1 directory with 7 updates [\#1241](https://github.com/voxpupuli/puppetboard/pull/1241) ([dependabot[bot]](https://github.com/apps/dependabot))
+- Bump the python group across 1 directory with 12 updates [\#1239](https://github.com/voxpupuli/puppetboard/pull/1239) ([dependabot[bot]](https://github.com/apps/dependabot))
+- Bump jinja2 from 3.1.4 to 3.1.5 in the pip group [\#1224](https://github.com/voxpupuli/puppetboard/pull/1224) ([dependabot[bot]](https://github.com/apps/dependabot))
+- Add a test build to CI [\#1214](https://github.com/voxpupuli/puppetboard/pull/1214) ([jstraw](https://github.com/jstraw))
+- Make pyproject.toml the source of version [\#1213](https://github.com/voxpupuli/puppetboard/pull/1213) ([jstraw](https://github.com/jstraw))
+- Convert to pyproject.toml/poetry [\#1212](https://github.com/voxpupuli/puppetboard/pull/1212) ([jstraw](https://github.com/jstraw))
+- Bump the python group across 1 directory with 4 updates [\#1210](https://github.com/voxpupuli/puppetboard/pull/1210) ([dependabot[bot]](https://github.com/apps/dependabot))
+- Adding OpenShift Template [\#1070](https://github.com/voxpupuli/puppetboard/pull/1070) ([bschonec](https://github.com/bschonec))
+
 ## [v6.0.0](https://github.com/voxpupuli/puppetboard/tree/v6.0.0) (2024-11-26)
 
 [Full Changelog](https://github.com/voxpupuli/puppetboard/compare/v5.4.0...v6.0.0)
