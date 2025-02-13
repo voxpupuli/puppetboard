@@ -2,9 +2,9 @@
 
 All notable changes to this project will be documented in this file.
 
-## [6.0.1](https://github.com/voxpupuli/puppetboard/tree/6.0.1) (2025-02-13)
+## [v6.0.1](https://github.com/voxpupuli/puppetboard/tree/v6.0.1) (2025-02-13)
 
-[Full Changelog](https://github.com/voxpupuli/puppetboard/compare/v6.0.0...6.0.1)
+[Full Changelog](https://github.com/voxpupuli/puppetboard/compare/v6.0.0...v6.0.1)
 
 There were some pipeline issues for the 6.0.0, so it's not available on pypi. The 6.0.1 release is almost identical, it just updates some dependencies and switches to poetry (which fixed the CI).
 
