@@ -32,7 +32,7 @@ jobs:
           poetry run pytest --cov=. --cov-report=xml --strict-markers --mypy -v puppetboard test
           poetry run pylint --errors-only puppetboard test
       - name: Upload coverage to Codecov
-        uses: codecov/codecov-action@v5.3.1
+        uses: codecov/codecov-action@v5.4.0
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
           fail_ci_if_error: true
