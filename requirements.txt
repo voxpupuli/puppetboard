@@ -11,7 +11,7 @@ itsdangerous==2.2.0
 Jinja2==3.1.6
 MarkupSafe==3.0.2
 packaging==24.2
-pyparsing==3.2.1
+pyparsing==3.2.3
 pypuppetdb==3.2.0
 requests==2.32.3
 typing_extensions==4.12.2
