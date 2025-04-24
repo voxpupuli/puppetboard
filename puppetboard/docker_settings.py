@@ -45,6 +45,7 @@ def coerce_bool(v, default):
         return False
     return default
 
+APPLICATION_ROOT = os.getenv('PUPPETBOARD_URL_PREFIX','/')
 
 PUPPETDB_HOST = os.getenv('PUPPETDB_HOST', 'puppetdb')
 PUPPETDB_PORT = int(os.getenv('PUPPETDB_PORT', '8080'))
