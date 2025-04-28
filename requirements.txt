@@ -10,7 +10,7 @@ idna==3.10
 itsdangerous==2.2.0
 Jinja2==3.1.6
 MarkupSafe==3.0.2
-packaging==24.2
+packaging==25.0
 pyparsing==3.2.3
 pypuppetdb==3.2.0
 requests==2.32.3
