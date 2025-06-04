@@ -339,24 +339,21 @@ and is built with the help of the [Flask](https://flask.palletsprojects.com) mic
 If you wish to hack on Puppetboard you should fork/clone the Github repository and then install the requirements through:
 
 ```bash
-pip install --upgrade wheel setuptools
-python setup.py develop
-pip install --upgrade -r requirements-test.txt
-mypy --install-types --non-interactive puppetboard/ test/
+uv sync
 ```
 
 You're advised to do this inside a virtualenv specifically created to work on Puppetboard as to not pollute your global Python installation.
 
 You can run the tests with:
 ```bash
-pytest --cov=. --cov-report=xml --strict-markers --mypy puppetboard test
-pylint --errors-only puppetboard test
+uv run pytest --cov=. --cov-report=xml --strict-markers --mypy puppetboard test
+uv run pylint --errors-only puppetboard test
 ```
 
 You can run the app it in development mode by simply executing:
 
 ```bash
-flask run
+uv run flask run
 ```
 
 You can specify listening host and port with environment variables or command line otions:
