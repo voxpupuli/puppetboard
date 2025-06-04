@@ -106,9 +106,9 @@ GRAPH_TYPE = os.getenv('GRAPH_TYPE', 'pie')
 # Define default array of of strings, this code is a bit neater than having
 # a large string
 INVENTORY_FACTS_DEFAULT = ','.join(['Hostname', 'trusted',
-                                    'IP Address', 'networking',
+                                    'IP Address', 'networking.ip',
                                     'OS', 'os',
-                                    'Architecture', 'hardwaremodel',
+                                    'Architecture', 'os.architecture',
                                     'Kernel Version', 'kernelrelease',
                                     'Puppet Version', 'puppetversion'])
 
@@ -123,7 +123,6 @@ INVENTORY_FACT_TEMPLATES = {
         """{{value.hostname}}"""
         """</a>"""
     ),
-    'networking': """{{ value.ip }}""",
     'os': "{{ fact_os_detection(value) }}",
 }
 

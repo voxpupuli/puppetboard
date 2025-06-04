@@ -252,9 +252,10 @@ def test_inventory_json(
     mock_puppetdb_environments,
     mock_puppetdb_inventory_facts,
 ):
-
     rv = client.get("/inventory/json")
     assert rv.status_code == 200
 
     result_json = json.loads(rv.data.decode("utf-8"))
     assert len(result_json["data"]) == 3
+    assert result_json["data"][0][3] == "amd64"
+    assert result_json["data"][0][1] == "192.168.0.2"
