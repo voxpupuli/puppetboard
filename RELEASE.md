@@ -6,7 +6,7 @@
 git switch -c release-x.y.z
 ```
 
-Edit [pyproject.toml](pyproject.toml) and set future version.  With poetry locally, you can also do `poetry version <patch, minor, major, prepatch, preminor, premajor, prerelease>` to automatically update.
+Edit [pyproject.toml](pyproject.toml) and set future version.  With uv locally, you can also do `uv version --bump <patch, minor, major, prepatch, preminor, premajor, prerelease>` to automatically update.
 
 ```shell
 bundle config set --local path .vendor

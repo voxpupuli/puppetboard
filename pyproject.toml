@@ -1,66 +1,78 @@
-[tool.poetry]
+[project]
 name = "puppetboard"
 version = "6.0.1"
 description = "Web frontend for PuppetDB"
-authors = ["Vox Pupuli <voxpupuli@groups.io>"]
-license = "Apache-2.0"
+authors = [{ name = "Vox Pupuli", email = "voxpupuli@groups.io" }]
+requires-python = "~=3.9"
 readme = "README.md"
-repository = 'https://github.com/voxpupuli/puppetboard'
-keywords = ["puppet", "puppetdb", "puppetboard"]
+license = "Apache-2.0"
+keywords = [
+    "puppet",
+    "puppetdb",
+    "puppetboard",
+]
 classifiers = [
-    'Development Status :: 5 - Production/Stable',
-    'Environment :: Web Environment',
-    'Framework :: Flask',
-    'Intended Audience :: System Administrators',
-    'Natural Language :: English',
-    'License :: OSI Approved :: Apache Software License',
-    'Operating System :: POSIX',
+    "Development Status :: 5 - Production/Stable",
+    "Environment :: Web Environment",
+    "Framework :: Flask",
+    "Intended Audience :: System Administrators",
+    "Natural Language :: English",
+    "License :: OSI Approved :: Apache Software License",
+    "Operating System :: POSIX",
 ]
-packages = [
-    { include = "puppetboard" },
+dependencies = [
+    "click>=8.1.7,<9",
+    "commonmark>=0.9.1,<0.10",
+    "flask-apscheduler>=1.13.1,<2",
+    "flask-caching>=2.3.0,<3",
+    "flask-wtf>=1.2.2,<2",
+    "flask>=3.1.0,<4",
+    "idna~=3.10",
+    "packaging>=24.2,<26.0",
+    "pyparsing>=3.2.0,<4",
+    "pypuppetdb>=3.2.0,<4",
+    "requests>=2.32.3,<3",
+    "typing-extensions>=4.12.2,<5",
+    "zipp>=3.21.0,<4",
 ]
 
+[project.urls]
+Repository = "https://github.com/voxpupuli/puppetboard"
 
+[dependency-groups]
+test = [
+    "bandit>=1.8.0,<2",
+    "beautifulsoup4>=4,<5",
+    "cov-core>=1.15.0,<2",
+    "coverage>=7.6.9,<8",
+    "mock>=5.1.0,<6",
+    "pep8>=1.7.1,<2",
+    "pylint>=3.3.2,<4",
+    "pytest-cov>=6.0.0,<7",
+    "pytest-mock>=3.14.0,<4",
+    "pytest-mypy>=0.10.3,<1.1.0",
+    "pytest-pylint>=0.21.0,<0.22",
+    "pytest-randomly>=3.16.0,<4",
+    "pytest>=8.3.4,<9",
+    "types-redis>=4.6.0.20241004",
+    "types-requests>=2.32.0.20241016,<3",
+    "types-setuptools>=75.6.0.20241126,<81.0.0.0",
+    "types-toml>=0.10.8.20240310,<0.11",
+]
+docker = ["gunicorn>=23.0.0,<24"]
 
-[tool.poetry.dependencies]
-python = "^3.9"
-click = "^8.1.7"
-flask = "^3.1.0"
-commonmark = "^0.9.1"
-flask-apscheduler = "^1.13.1"
-flask-caching = "^2.3.0"
-flask-wtf = "^1.2.2"
-idna = "^3.10"
-requests = "^2.32.3"
-packaging = ">=24.2,<26.0"
-pyparsing = "^3.2.0"
-pypuppetdb = "^3.2.0"
-typing-extensions = "^4.12.2"
-zipp = "^3.21.0"
+[tool.uv]
+default-groups = [
+    "test",
+    "docker",
+]
 
+[tool.hatch.build.targets.sdist]
+include = ["puppetboard"]
 
-[tool.poetry.group.test.dependencies]
-pep8 = "^1.7.1"
-coverage = "^7.6.9"
-mock = "^5.1.0"
-pytest = "^8.3.4"
-pylint = "^3.3.2"
-pytest-cov = "^6.0.0"
-pytest-pylint = "^0.21.0"
-pytest-mock = "^3.14.0"
-pytest-mypy = ">=0.10.3,<1.1.0"
-pytest-randomly = "^3.16.0"
-cov-core = "^1.15.0"
-bandit = "^1.8.0"
-beautifulsoup4 = "^4"
-types-requests = "^2.32.0.20241016"
-types-setuptools = ">=75.6.0.20241126,<81.0.0.0"
-types-toml = "^0.10.8.20240310"
-
-
-[tool.poetry.group.docker.dependencies]
-gunicorn = "^23.0.0"
+[tool.hatch.build.targets.wheel]
+include = ["puppetboard"]
 
 [build-system]
-requires = ["poetry-core"]
-build-backend = "poetry.core.masonry.api"
+requires = ["hatchling"]
+build-backend = "hatchling.build"
