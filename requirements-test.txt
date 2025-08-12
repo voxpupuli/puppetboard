@@ -1,9 +1,9 @@
 -r requirements.txt
 pep8==1.7.1
-coverage==7.10.2
+coverage==7.10.3
 mock==5.2.0
 pytest==8.4.1
-pylint==3.3.7
+pylint==3.3.8
 pytest-pylint==0.21.0
 pytest-cov==6.2.1
 pytest-mock==3.14.1
