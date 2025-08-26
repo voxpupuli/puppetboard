@@ -1,6 +1,6 @@
 -r requirements.txt
 pep8==1.7.1
-coverage==7.10.4
+coverage==7.10.5
 mock==5.2.0
 pytest==8.4.1
 pylint==3.3.8
@@ -10,7 +10,7 @@ pytest-mock==3.14.1
 pytest-mypy==1.0.1
 pytest-randomly==3.16.0
 cov-core==1.15.0
-beautifulsoup4==4.13.4
+beautifulsoup4==4.13.5
 bandit==1.8.6
 mypy==1.17.1
 types-requests==2.32.4.20250809
