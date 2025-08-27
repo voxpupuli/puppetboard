@@ -2,6 +2,7 @@ import ast
 import json
 import logging
 import sys
+from typing import Any
 
 from flask import abort, request, url_for
 from packaging.version import parse
@@ -160,3 +161,16 @@ def is_a_test():
     )
     running_in_intellij = any("_jb_pytest_runner.py" in arg for arg in sys.argv)
     return running_in_shell or running_in_intellij
+
+
+def dot_lookup(_dict: dict[str, Any], lookup: str) -> str | dict | None:
+    """Recursively look up a value in a dictionary using dot notation string"""
+    lookup_parts = lookup.split(".")
+    if not lookup_parts:
+        return None
+
+    key = lookup_parts[0]
+    if len(lookup_parts) == 1:
+        return _dict.get(key, "")
+
+    return dot_lookup(_dict.get(key, {}), ".".join(lookup_parts[1:]))
