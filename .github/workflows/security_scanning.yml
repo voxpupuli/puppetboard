@@ -30,7 +30,7 @@ jobs:
           push: false
 
       - name: Scan image with Anchore Grype
-        uses: anchore/scan-action@v6
+        uses: anchore/scan-action@v7
         id: scan
         with:
           image: 'ci/puppetboard:${{ github.sha }}'
