@@ -32,7 +32,7 @@ jobs:
             docker.io/${{ github.repository }}:latest
 
       - name: Update Docker Hub Description
-        uses: peter-evans/dockerhub-description@v4
+        uses: peter-evans/dockerhub-description@v5
         with:
           username: voxpupulibot
           password: ${{ secrets.DOCKERHUB_BOT_PASSWORD }}
