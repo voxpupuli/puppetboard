@@ -293,7 +293,7 @@ Other settings that might be interesting, in no particular order:
     resources, their file-system locations and their relationships, if available. Defaults to `False`.
 - `REFRESH_RATE`: Defaults to `30` the number of seconds to wait until the index page is automatically refreshed.
 - `DEFAULT_ENVIRONMENT`: Defaults to `'production'`, as the name suggests, load all information filtered by this
-    environment value.
+    environment value, for All Environments use `'*'`.
 - `REPORTS_COUNT`: Defaults to `10` the limit of the number of reports to load on the node or any reports page.
 - `OFFLINE_MODE`: If set to `True` load static assets (jquery, semantic-ui, etc) from the local web server instead
     of a CDN. Defaults to `False`.
