@@ -180,3 +180,9 @@ parameters:
   name: PUPPETBOARD_SOURCE_REPOSITORY_REF
   required: true
   value: "master"
+- description: The amount of hours after which Puppetboard will display the node as unreported if it hasn't checked in.
+  displayName: Puppetboard UNRESPONSIVE_HOURS
+  name: UNRESPONSIVE_HOURS
+  required: true
+  value: "2"
+  type: integer
