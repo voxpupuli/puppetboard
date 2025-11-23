@@ -10,8 +10,8 @@ from pypuppetdb.QueryBuilder import (AndOperator,
                                      EqualsOperator, OrOperator,
                                      LessEqualOperator, RegexOperator, GreaterEqualOperator)
 
-from puppetboard.core import get_app, get_puppetdb, environments, REPORTS_COLUMNS, to_html, \
-    get_raw_error, get_friendly_error
+from puppetboard.core import get_app, get_puppetdb, environments, \
+    REPORTS_COLUMNS, get_error_html
 from puppetboard.utils import (check_env, get_or_abort)
 
 app = get_app()
@@ -179,12 +179,6 @@ def get_short_location(location: str) -> str:
     return location
 
 
-def get_message(node_name, log, show_error_as):
-    if show_error_as == 'friendly':
-        error = to_html(get_friendly_error(log['source'], log['message'], node_name))
-    else:
-        error = get_raw_error(log['source'], log['message'])
-    return error
 
 
 @app.route('/report/<node_name>/<report_id>',
@@ -254,7 +248,7 @@ def report(env, node_name, report_id, show_error_as):
         'level': log["level"],
         'source': log['source'],
         'tags': ', '.join(log['tags']),
-        'message': get_message(node_name, log, show_error_as),
+        'message': get_error_html(node_name, log['source'], log['message'], show_error_as),
         'location': get_location(log),
         # this could be also done with a different rendered in DataTables,
         # - feel free to refactor it into that if you know how
