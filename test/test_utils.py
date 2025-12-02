@@ -270,3 +270,24 @@ def test_stop_http_error():
 def test_quote_columns_data():
     quoted_with_dot = utils.quote_columns_data('foo.bar')
     assert quoted_with_dot == 'foo\\.bar'
+
+
+@pytest.mark.parametrize(
+    "lookup,expected",
+    [
+        ("os", {"distro": {"codename": "bullseye"}}),
+        ("os.distro", {"codename": "bullseye"}),
+        ("os.distro.codename", "bullseye"),
+        ("oz", ""),
+        ("oz.snooze", ""),
+    ],
+)
+def test_dot_lookup(lookup, expected):
+    os_fact = {
+        "os": {
+            "distro": {
+                "codename": "bullseye",
+            },
+        }
+    }
+    assert utils.dot_lookup(os_fact, lookup) == expected
