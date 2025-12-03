@@ -1,4 +1,4 @@
-FROM python:3.13.7-alpine
+FROM python:3.14.1-alpine
 
 LABEL org.label-schema.maintainer="Voxpupuli Team <info@voxpupuli.org>" \
       org.label-schema.vendor="Voxpupuli" \
