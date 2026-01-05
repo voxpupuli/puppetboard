@@ -1,4 +1,4 @@
-certifi==2025.11.12
+certifi==2026.1.4
 charset-normalizer==3.4.4
 click==8.1.8
 commonmark==0.9.1
@@ -11,11 +11,11 @@ itsdangerous==2.2.0
 Jinja2==3.1.6
 MarkupSafe==3.0.3
 packaging==25.0
-pyparsing==3.2.5
+pyparsing==3.3.1
 pypuppetdb==3.2.0
 requests==2.32.5
 typing_extensions==4.15.0
-urllib3==2.5.0
+urllib3==2.6.2
 Werkzeug==3.1.4
 WTForms==3.2.1
 zipp==3.23.0
