@@ -43,7 +43,7 @@ GRAPH_FACTS = ['architecture',
                'processorcount']
 INVENTORY_FACTS = [('Hostname', 'trusted'),
                    ('IP Address', 'networking.ip'),
-                   ('OS', 'os'),
+                   ('OS', 'os.name'),
                    ('Architecture', 'os.architecture'),
                    ('Kernel Version', 'kernelrelease'),
                    ('Puppet Version', 'puppetversion'), ]

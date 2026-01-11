@@ -107,7 +107,7 @@ GRAPH_TYPE = os.getenv('GRAPH_TYPE', 'pie')
 # a large string
 INVENTORY_FACTS_DEFAULT = ','.join(['Hostname', 'trusted',
                                     'IP Address', 'networking.ip',
-                                    'OS', 'os',
+                                    'OS', 'os.name',
                                     'Architecture', 'os.architecture',
                                     'Kernel Version', 'kernelrelease',
                                     'Puppet Version', 'puppetversion'])
