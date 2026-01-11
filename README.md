@@ -340,7 +340,7 @@ If you wish to hack on Puppetboard you should fork/clone the Github repository a
 
 ```bash
 pip install --upgrade wheel setuptools
-python setup.py develop
+pip install -e .
 pip install --upgrade -r requirements-test.txt
 mypy --install-types --non-interactive puppetboard/ test/
 ```
@@ -356,7 +356,7 @@ pylint --errors-only puppetboard test
 You can run the app it in development mode by simply executing:
 
 ```bash
-flask run
+PUPPETBOARD_SETTINGS=$PWD/settings.py flask run
 ```
 
 You can specify listening host and port with environment variables or command line otions:
