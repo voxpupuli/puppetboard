@@ -336,44 +336,48 @@ For questions or bug reports you can file an [issue](https://github.com/voxpupul
 Puppetboard relies on the [pypuppetdb](https://pypi.org/project/pypuppetdb/) library to fetch data from PuppetDB
 and is built with the help of the [Flask](https://flask.palletsprojects.com) microframework.
 
-If you wish to hack on Puppetboard you should fork/clone the Github repository and then install the requirements through:
-
+The recommended way to hack on Puppetboard is to:
+1. fork/clone the Github repository;
+2. create a work virtualenv;
 ```bash
-pip install --upgrade wheel setuptools
-pip install -e .
-pip install --upgrade -r requirements-test.txt
-mypy --install-types --non-interactive puppetboard/ test/
+$ python -m venv venv
+$ . venv/bin/activate # run `deactivate` to exit the virtualenv
+```
+3. install requirements.
+```bash
+$ pip install --upgrade wheel setuptools
+$ pip install -e .
+$ pip install --upgrade -r requirements-test.txt
+$ mypy --install-types --non-interactive puppetboard/ test/
 ```
 
-You're advised to do this inside a virtualenv specifically created to work on Puppetboard as to not pollute your global Python installation.
-
-You can run the tests with:
+You can then run the tests with:
 ```bash
 pytest --cov=. --cov-report=xml --strict-markers --mypy puppetboard test
 pylint --errors-only puppetboard test
 ```
 
-You can run the app it in development mode by simply executing:
+And you can run the app by executing:
 
 ```bash
-PUPPETBOARD_SETTINGS=$PWD/settings.py flask run
+$ export PUPPETBOARD_SETTINGS=$PWD/settings.py # See bellow
+$ flask run
 ```
 
 You can specify listening host and port with environment variables or command line otions:
 
 ```bash
-export FLASK_RUN_HOST=0.0.0.0
-export FLASK_RUN_PORT=8000
+$ export FLASK_RUN_HOST=0.0.0.0
+$ export FLASK_RUN_PORT=8000
 
-flask run
+$ flask run
 ```
 
 or
 
 ```bash
-flask run --host '0.0.0.0' --port '8000'
+$ flask run --host '0.0.0.0' --port '8000'
 ```
-
 
 Use `PUPPETBOARD_SETTINGS` to change the different settings or patch `default_settings.py` directly.
 Take care not to include your local changes on that file when submitting patches for Puppetboard.
