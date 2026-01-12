@@ -397,7 +397,7 @@ Write decent commit messages. Don't use swear words and refrain from uninformati
 
 The preferred format of a commit message:
 
-    docs/quickstart: Fixed a typo in the Nodes section.
+    Fixed a typo in the Nodes section.
 
     If needed, elaborate further on this commit. Feel free to write a
     complete blog post here if that helps us understand what this is
