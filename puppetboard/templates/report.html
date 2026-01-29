@@ -108,9 +108,9 @@ var logs_table = $('#logs_table').DataTable({
           }
         },
         { data: 'level', name: 'level' },
-        { data: 'source', name: 'source', visible: false },
+        { data: 'source', name: 'source', visible: false, render: DataTable.render.text() },
         { data: 'tags', name: 'tags', visible: false },
-        { data: 'message', name: 'message' },
+        { data: 'message', name: 'message' }, // HTML for this column is sanitized in get_message()
         // see also the comment about these columns in reports.py
         { data: 'location', name: 'location', visible: false },
         { data: 'short_location', name: 'short_location' },
@@ -176,10 +176,10 @@ var events_table = $('#events_table').DataTable({
 
     "data": events,
     'columns': [
-        { data: 'resource' },
+        { data: 'resource', render: DataTable.render.text() },
         { data: 'status' },
-        { data: 'old' },
-        { data: 'new' },
+        { data: 'old', render: DataTable.render.text() },
+        { data: 'new', render: DataTable.render.text() },
     ],
 
     "ordering": false,

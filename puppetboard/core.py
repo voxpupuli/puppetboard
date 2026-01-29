@@ -6,6 +6,7 @@ from importlib.metadata import version
 from flask import Flask
 from flask_caching import Cache
 from flask_apscheduler import APScheduler
+from markupsafe import escape
 from pypuppetdb import connect
 
 from puppetboard.utils import (get_or_abort, jsonprint,
@@ -247,3 +248,20 @@ def to_html(message: str) -> str:
                      r"(file:&nbsp;\1,&nbsp;line:&nbsp;\2)", message)
 
     return message
+
+
+def get_error_html(node_name, source, message, show_error_as):
+
+    # sanitize the data from PuppetDB first,
+    # as we will add some HTML tags in the functions below and don't want these
+    # to be escaped
+    safe_source = escape(source)
+    safe_message = escape(message)
+
+    # enrich the message using HTML
+    if show_error_as == 'friendly':
+        error_html = to_html(get_friendly_error(safe_source, safe_message, node_name))
+    else:
+        error_html = get_raw_error(safe_source, safe_message)
+
+    return error_html
