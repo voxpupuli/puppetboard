@@ -1,5 +1,39 @@
 {% extends 'layout.html' %}
+
+{# Macro to render simple flat list of direct children only (no recursion) #}
+{% macro render_fact_tree(all_children, parent_path, current_env, depth) %}
+  {%- for child in all_children %}
+    <li style="font-size: 90%; list-style: none;">
+      <a href="{{url_for('fact', env=current_env, fact=child.name)}}">
+        <span style="color: #999;">{{ child.name.rsplit('.', 1)[0] }}.</span><span style="font-weight: bold;">{{ child.name.rsplit('.', 1)[1] }}</span>
+      </a>
+    </li>
+  {%- endfor %}
+{% endmacro %}
+
 {% block content %}
+<style>
+  .fact-toggle {
+    cursor: pointer;
+    display: inline-block;
+    width: 16px;
+    text-align: center;
+    margin-right: 4px;
+    user-select: none;
+    color: #666;
+  }
+  .fact-children {
+    margin-top: 4px;
+  }
+  .fact-children.collapsed {
+    display: none;
+  }
+  .fact-parent-container {
+    list-style: none;
+    margin-bottom: 8px;
+  }
+</style>
+
 <div id="fact-list">
   <div class="ui fluid icon input" style="margin-bottom:20px">
     <input autofocus="autofocus" name="filter" placeholder="Type here to filter...">
@@ -10,10 +44,25 @@
       {%- for letter in column %}
         {%- if letter is not none  %}
           <div class="ui segment">
-            <a class="ui darkblue ribbon label">{{ letter[0][0]|upper }}</a>
+            <a class="ui darkblue ribbon label">{{ letter[0].name[0]|upper }}</a>
             <ul>
-              {%- for fact in letter %}
-              <li><a href="{{url_for('fact', env=current_env, fact=fact)}}">{{ fact }}</a></li>
+              {%- for fact_info in letter %}
+              {%- if fact_info.is_parent %}
+              {# Parent fact with collapsible children (lazy-loaded) #}
+              <li class="fact-parent-container">
+                <span class="fact-toggle" onclick="toggleFactChildren(this)" title="Click to expand/collapse">▶</span>
+                <a href="{{url_for('fact', env=current_env, fact=fact_info.name)}}"
+                   class="ui small blue label"
+                   style="cursor: pointer;">{{ fact_info.name }}</a>
+                {# Empty ul for lazy-loaded children #}
+                <ul class="fact-children collapsed"></ul>
+              </li>
+              {%- else %}
+              {# Simple fact - show normally #}
+              <li>
+                <a href="{{url_for('fact', env=current_env, fact=fact_info.name)}}">{{ fact_info.name }}</a>
+              </li>
+              {%- endif %}
               {%- endfor %}
             </ul>
           </div>
@@ -23,4 +72,93 @@
     {%- endfor %}
   </div>
 </div>
+
+<script>
+function toggleFactChildren(toggleIcon) {
+  var container = toggleIcon.parentElement;
+  var childrenList = container.querySelector('.fact-children');
+  var factLink = container.querySelector('a');
+  var factName = factLink ? factLink.getAttribute('href').split('/fact/')[1].split('/')[0] : null;
+
+  if (childrenList) {
+    var isCollapsed = childrenList.classList.contains('collapsed');
+
+    if (isCollapsed) {
+      // Expanding - check if we need to load children
+      if (childrenList.children.length === 0 && factName) {
+        // Lazy load children via AJAX
+        toggleIcon.textContent = '⏳'; // Loading indicator
+
+        fetch('/{{ current_env }}/fact/' + encodeURIComponent(factName) + '/children/json')
+          .then(response => response.json())
+          .then(data => {
+            if (data.children && data.children.length > 0) {
+              // Render children
+              data.children.forEach(child => {
+                var li = document.createElement('li');
+                li.style.fontSize = '90%';
+                li.style.listStyle = 'none';
+
+                if (child.has_children) {
+                  var toggle = document.createElement('span');
+                  toggle.className = 'fact-toggle';
+                  toggle.textContent = '▶';
+                  toggle.title = 'Click to expand/collapse';
+                  toggle.style.fontSize = '10px';
+                  toggle.style.width = '12px';
+                  toggle.style.marginRight = '2px';
+                  toggle.onclick = function() { toggleFactChildren(this); };
+                  li.appendChild(toggle);
+                }
+
+                var link = document.createElement('a');
+                link.href = '/{{ current_env }}/fact/' + child.name;
+                var parts = child.name.split('.');
+                var lastPart = parts[parts.length - 1];
+                var prefix = parts.slice(0, -1).join('.');
+
+                var prefixSpan = document.createElement('span');
+                prefixSpan.style.color = '#999';
+                prefixSpan.textContent = prefix + '.';
+                link.appendChild(prefixSpan);
+
+                var boldSpan = document.createElement('span');
+                boldSpan.style.fontWeight = 'bold';
+                boldSpan.textContent = lastPart;
+                link.appendChild(boldSpan);
+
+                li.appendChild(link);
+
+                if (child.has_children) {
+                  var nestedUl = document.createElement('ul');
+                  nestedUl.className = 'fact-children collapsed';
+                  nestedUl.style.marginTop = '2px';
+                  nestedUl.style.marginLeft = '15px';
+                  li.appendChild(nestedUl);
+                }
+
+                childrenList.appendChild(li);
+              });
+            }
+
+            childrenList.classList.remove('collapsed');
+            toggleIcon.textContent = '▼';
+          })
+          .catch(error => {
+            console.error('Error loading fact children:', error);
+            toggleIcon.textContent = '▶';
+          });
+      } else {
+        // Already loaded, just expand
+        childrenList.classList.remove('collapsed');
+        toggleIcon.textContent = '▼';
+      }
+    } else {
+      // Collapsing
+      childrenList.classList.add('collapsed');
+      toggleIcon.textContent = '▶';
+    }
+  }
+}
+</script>
 {% endblock content %}
