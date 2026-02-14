@@ -72,5 +72,6 @@ def input_data(request):
 @pytest.fixture
 def client():
     app.app.config['TESTING'] = True
+    app.app.config['SECRET_KEY'] = 'test_secret_key_for_testing'
     client = app.app.test_client()
     return client

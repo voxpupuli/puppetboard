@@ -555,10 +555,10 @@ def test_fact_children_ajax_skips_keys_with_dots(client, mocker,
     result_json = json.loads(rv.data.decode('utf-8'))
     assert 'children' in result_json
 
-    # Should only include ValidServiceName, not G1.ActivOneApiDaemon (has dot)
+    # Should only include ValidServiceName, not myco.SomeService (has dot)
     children_names = [c['name'] for c in result_json['children']]
     assert 'myco_services.ValidServiceName' in children_names
-    assert 'myco_services.G1.ActivOneApiDaemon' not in children_names
+    assert 'myco_services.myco.SomeService' not in children_names
 
 
 def test_fact_children_ajax_skips_keys_with_slashes(client, mocker,

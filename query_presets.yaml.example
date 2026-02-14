@@ -1,0 +1,175 @@
+# Example Query Presets File for Puppetboard
+#
+# This file contains preset queries that users can quickly load in the Query tab.
+# Each preset should have the following fields:
+#   - name: (required) Display name shown in the dropdown
+#   - description: (optional) Brief description of what the query does
+#   - query: (required) The actual query string
+#   - endpoint: (optional) PuppetDB API endpoint (default: 'pql')
+#              Options: pql, nodes, resources, facts, factsets, fact-paths,
+#                       fact-contents, reports, events, catalogs, edges, environments
+#   - raw_json: (optional) Boolean to show raw JSON instead of table (default: false)
+#
+# To use this file:
+# 1. Copy this file to your desired location (e.g., /etc/puppetboard/query_presets.yaml)
+# 2. Edit your Puppetboard configuration to set:
+#    QUERY_PRESETS_FILE = '/etc/puppetboard/query_presets.yaml'
+# 3. Restart Puppetboard
+
+# Example presets:
+
+- name: "All Nodes"
+  description: "List all nodes with their certname, catalog timestamp, and facts timestamp"
+  query: 'nodes[certname, catalog_timestamp, facts_timestamp] {}'
+  endpoint: pql
+  raw_json: false
+
+- name: "Failed Nodes"
+  description: "Find nodes with failed runs in the last report"
+  query: 'nodes[certname, latest_report_status] { latest_report_status = "failed" }'
+  endpoint: pql
+  raw_json: false
+
+- name: "Nodes by OS"
+  description: "Group nodes by operating system"
+  query: |
+    inventory[certname, facts.os.name, facts.os.release.full] {
+      facts.os.name ~ ".*"
+    }
+  endpoint: pql
+  raw_json: false
+
+- name: "Failed Events"
+  description: "Show failed events from recent runs"
+  query: |
+    events[certname, resource_type, resource_title, status, timestamp] {
+      status = "failure"
+    }
+  endpoint: pql
+  raw_json: false
+
+- name: "Package Resources"
+  description: "Find all package resources across all nodes"
+  query: |
+    resources[certname, title, parameters] {
+      type = "Package"
+    }
+  endpoint: pql
+  raw_json: false
+
+- name: "Nodes Without Recent Reports"
+  description: "Find nodes ordered by report timestamp (oldest first)"
+  query: |
+    nodes[certname, report_timestamp, catalog_timestamp] {
+      order by report_timestamp
+    }
+  endpoint: pql
+  raw_json: false
+
+- name: "Node Count by Environment"
+  description: "Count nodes grouped by environment"
+  query: |
+    nodes[count(), catalog_environment] {
+      group by catalog_environment
+    }
+  endpoint: pql
+  raw_json: false
+
+- name: "Custom Fact Query"
+  description: "Query specific custom facts (example: role and datacenter)"
+  query: |
+    inventory[certname, facts.role, facts.datacenter] {
+      facts.role is not null
+    }
+  endpoint: pql
+  raw_json: false
+
+- name: "Resource Changes"
+  description: "Find resources that changed in the last run"
+  query: |
+    events[certname, resource_type, resource_title, property, old_value, new_value] {
+      status = "success" and old_value is not null and new_value is not null
+    }
+  endpoint: pql
+  raw_json: false
+
+- name: "File Resources"
+  description: "Find all File resources on nodes"
+  query: |
+    resources[certname, title, parameters] {
+      type = "File"
+    }
+  endpoint: pql
+  raw_json: false
+
+- name: "Service Resources"
+  description: "Find all Service resources on nodes"
+  query: |
+    resources[certname, title, parameters] {
+      type = "Service"
+    }
+  endpoint: pql
+  raw_json: false
+
+- name: "Nodes with Specific Class"
+  description: "Find all nodes with a specific Puppet class (replace 'Apache' with your class)"
+  query: |
+    nodes[certname] {
+      resources {
+        type = "Class" and title = "Apache"
+      }
+    }
+  endpoint: pql
+  raw_json: false
+
+- name: "Inactive Nodes"
+  description: "Find nodes marked as inactive in PuppetDB"
+  query: 'nodes[certname, deactivated] { node_state = "inactive" }'
+  endpoint: pql
+  raw_json: false
+
+- name: "Windows Nodes"
+  description: "Find all Windows nodes"
+  query: 'inventory[certname, facts.os.release.full] { facts.os.name = "windows" }'
+  endpoint: pql
+  raw_json: false
+
+- name: "Corrective Changes"
+  description: "Find nodes that had corrective changes (drift from desired state)"
+  query: |
+    events[certname, resource_type, resource_title] {
+      corrective_change = true
+      group by certname, resource_type, resource_title
+    }
+  endpoint: pql
+  raw_json: false
+
+- name: "Resource Count by Type"
+  description: "Count resources grouped by type"
+  query: |
+    resources[count(), type] {
+      group by type
+      order by count() desc
+    }
+  endpoint: pql
+  raw_json: false
+
+- name: "Unique Domains"
+  description: "Get all unique domain fact values across nodes"
+  query: |
+    facts[value] {
+      name = "domain"
+      group by value
+    }
+  endpoint: pql
+  raw_json: false
+
+- name: "Nodes by OS and Version"
+  description: "Group nodes by OS name and major version"
+  query: |
+    inventory[certname, facts.os.name, facts.os.release.major] {
+      facts.os.name is not null
+      order by certname
+    }
+  endpoint: pql
+  raw_json: false
