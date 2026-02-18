@@ -291,3 +291,176 @@ def test_dot_lookup(lookup, expected):
         }
     }
     assert utils.dot_lookup(os_fact, lookup) == expected
+
+
+def test_flatten_fact_simple():
+    """Test flattening a simple non-dict fact"""
+    result = utils.flatten_fact('hostname', 'server01')
+    assert result == {'hostname': 'server01'}
+
+
+def test_flatten_fact_dict():
+    """Test flattening a structured fact"""
+    os_fact = {
+        'name': 'Ubuntu',
+        'release': {
+            'full': '20.04',
+            'major': '20'
+        }
+    }
+    result = utils.flatten_fact('os', os_fact)
+    # flatten_fact now includes intermediate dict nodes for nested collapsible support
+    expected = {
+        'os': os_fact,  # Root dict node
+        'os.name': 'Ubuntu',
+        'os.release': {'full': '20.04', 'major': '20'},  # Intermediate dict node
+        'os.release.full': '20.04',
+        'os.release.major': '20'
+    }
+    assert result == expected
+
+
+def test_flatten_fact_nested_deep():
+    """Test flattening deeply nested fact"""
+    fact_value = {
+        'a': {
+            'b': {
+                'c': 'value'
+            }
+        }
+    }
+    result = utils.flatten_fact('root', fact_value)
+    # flatten_fact now includes intermediate dict nodes for nested collapsible support
+    expected = {
+        'root': fact_value,
+        'root.a': {'b': {'c': 'value'}},
+        'root.a.b': {'c': 'value'},
+        'root.a.b.c': 'value'
+    }
+    assert result == expected
+
+
+def test_flatten_fact_with_list():
+    """Test flattening a fact containing a list"""
+    fact_value = {
+        'interfaces': ['eth0', 'eth1'],
+        'primary': 'eth0'
+    }
+    result = utils.flatten_fact('network', fact_value)
+    # flatten_fact now includes intermediate dict nodes for nested collapsible support
+    expected = {
+        'network': fact_value,  # Root dict node
+        'network.interfaces': ['eth0', 'eth1'],
+        'network.primary': 'eth0'
+    }
+    assert result == expected
+
+
+def test_flatten_fact_skips_keys_with_slashes():
+    """Test that keys containing slashes are skipped to avoid URL routing issues"""
+    mountpoints_fact = {
+        '/': {'size': '100G', 'filesystem': 'ext4'},
+        '/opt/nomad/alloc/abc-123/private': {'size': '10G', 'filesystem': 'tmpfs'},
+        '/home': {'size': '500G', 'filesystem': 'ext4'},
+        'valid_key': {'size': '50G'}
+    }
+    result = utils.flatten_fact('mountpoints', mountpoints_fact)
+    # Only the valid_key should be included (no slashes)
+    # Keys with slashes (/, /opt/..., /home) should be skipped
+    # Root dict node is also included
+    expected = {
+        'mountpoints': mountpoints_fact,  # Root dict node
+        'mountpoints.valid_key': {'size': '50G'},  # Intermediate dict node
+        'mountpoints.valid_key.size': '50G'
+    }
+    assert result == expected
+
+
+def test_flatten_fact_skips_keys_with_dots():
+    """Test that keys containing dots are skipped to avoid path ambiguity"""
+    myco_services_fact = {
+        'MYCO.FictionalService': {
+            'state': 'Running',
+            'pathname': 'C:\\Program Files\\Myco\\MYCO.FictionalService\\FictionalService.exe',
+            'startmode': 'Auto'
+        },
+        'ValidServiceName': {
+            'state': 'Stopped'
+        }
+    }
+    result = utils.flatten_fact('myco_services', myco_services_fact)
+    # Only ValidServiceName should be included (no dots in key)
+    # MYCO_FictionalService should be skipped (dot in key causes ambiguity)
+    # Root dict node is also included
+    expected = {
+        'myco_services': myco_services_fact,  # Root dict node
+        'myco_services.ValidServiceName': {'state': 'Stopped'},  # Intermediate dict node
+        'myco_services.ValidServiceName.state': 'Stopped'
+    }
+    assert result == expected
+
+
+def test_get_all_fact_paths_simple():
+    """Test getting paths from simple facts"""
+    facts = {
+        'hostname': 'server01',
+        'kernel': 'Linux'
+    }
+    result = utils.get_all_fact_paths(facts)
+    assert result == ['hostname', 'kernel']
+
+
+def test_get_all_fact_paths_structured():
+    """Test getting paths from structured facts"""
+    facts = {
+        'hostname': 'server01',
+        'os': {
+            'name': 'Ubuntu',
+            'release': {
+                'full': '20.04',
+                'major': '20'
+            }
+        }
+    }
+    result = utils.get_all_fact_paths(facts)
+    # Now includes intermediate dict nodes for nested collapsible support
+    expected = ['hostname', 'os', 'os.name', 'os.release', 'os.release.full', 'os.release.major']
+    assert result == expected
+
+
+def test_get_all_fact_paths_mixed():
+    """Test getting paths from mixed simple and structured facts"""
+    facts = {
+        'kernel': 'Linux',
+        'os': {
+            'name': 'Ubuntu'
+        },
+        'uptime': '30 days'
+    }
+    result = utils.get_all_fact_paths(facts)
+    assert 'kernel' in result
+    assert 'os' in result  # Intermediate dict node
+    assert 'os.name' in result
+    assert 'uptime' in result
+    assert len(result) == 4  # Now includes 'os' intermediate node
+
+
+def test_split_fact_path_simple():
+    """Test splitting a simple fact path"""
+    base, sub = utils.split_fact_path('hostname')
+    assert base == 'hostname'
+    assert sub is None
+
+
+def test_split_fact_path_structured():
+    """Test splitting a structured fact path"""
+    base, sub = utils.split_fact_path('os.release.full')
+    assert base == 'os'
+    assert sub == 'release.full'
+
+
+def test_split_fact_path_single_level():
+    """Test splitting a single-level structured fact"""
+    base, sub = utils.split_fact_path('os.name')
+    assert base == 'os'
+    assert sub == 'name'

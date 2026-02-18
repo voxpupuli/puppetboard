@@ -45,7 +45,11 @@ try {
 {% if render_graph %}
 <div id="factChart" width="300" height="300"></div>
 {% endif %}
-<h1>{{ fact }}{% if value %} : <span id="value"></span>{% endif %}</h1>
+<h1>
+  {{ fact }}
+  {% if is_structured %}<span style="color: #999; font-size: 0.7em; font-weight: normal;">(structured fact)</span>{% endif %}
+  {% if value %} : <span id="value"></span>{% endif %}
+</h1>
 <table id="facts_table" class='ui fixed very basic compact table stackable'>
   <thead>
     <tr>

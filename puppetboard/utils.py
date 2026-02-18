@@ -174,3 +174,77 @@ def dot_lookup(_dict: dict[str, Any], lookup: str) -> str | dict | None:
         return _dict.get(key, "")
 
     return dot_lookup(_dict.get(key, {}), ".".join(lookup_parts[1:]))
+
+
+def flatten_fact(fact_name: str, fact_value: Any, prefix: str = "") -> dict[str, Any]:
+    """
+    Recursively flatten a structured fact into dot-notation paths.
+
+    Skips dict keys containing dots or forward slashes to avoid ambiguity and
+    URL routing conflicts. Keys with these characters cannot be reliably used in
+    dot-notation paths since dots are the structural separator and slashes cause
+    URL routing issues.
+
+    Facts with problematic keys (like mountpoints with '/' or myco_services with '.')
+    will only show the parent fact in the facts list. Users can click the parent
+    to view the full JSON.
+
+    :param fact_name: The name of the fact
+    :param fact_value: The value of the fact (can be dict, list, or scalar)
+    :param prefix: Internal prefix for recursion
+    :return: Dictionary mapping dot-notation paths to their values
+    """
+    result = {}
+    current_path = f"{prefix}.{fact_name}" if prefix else fact_name
+
+    if isinstance(fact_value, dict):
+        # For dictionaries, add the path itself (for nested collapsible support)
+        # AND recursively flatten each key
+        result[current_path] = fact_value
+
+        for key, value in fact_value.items():
+            key_str = str(key)
+            # Skip keys with dots (ambiguous with path separator) or slashes (URL routing issues)
+            # Dots: 'MYCO.FictionalServic' would be ambiguous in 'myco_services.MYCO.FictionalService.state'
+            # Slashes: '/opt/nomad' causes Flask routing conflicts (see https://github.com/pallets/flask/issues/900)
+            if '.' not in key_str and '/' not in key_str:
+                result.update(flatten_fact(key, value, current_path))
+    else:
+        # For non-dict values (including lists), store as-is
+        result[current_path] = fact_value
+
+    return result
+
+
+def get_all_fact_paths(facts_dict: dict[str, Any]) -> list[str]:
+    """
+    Get all possible dot-notation paths from a dictionary of facts.
+
+    :param facts_dict: Dictionary of fact names to fact values
+    :return: Sorted list of all fact paths (both top-level and nested)
+    """
+    all_paths: list[str] = []
+
+    for fact_name, fact_value in facts_dict.items():
+        if isinstance(fact_value, dict):
+            # Add structured paths
+            flattened = flatten_fact(fact_name, fact_value)
+            all_paths.extend(flattened.keys())
+        else:
+            # Add simple fact name
+            all_paths.append(fact_name)
+
+    return sorted(all_paths)
+
+
+def split_fact_path(fact_path: str) -> tuple[str, str | None]:
+    """
+    Split a dot-notation fact path into base fact name and sub-path.
+
+    :param fact_path: Fact path like 'os.release.full' or 'hostname'
+    :return: Tuple of (base_fact_name, sub_path) e.g. ('os', 'release.full') or ('hostname', None)
+    """
+    parts = fact_path.split(".", 1)
+    if len(parts) == 1:
+        return parts[0], None
+    return parts[0], parts[1]
