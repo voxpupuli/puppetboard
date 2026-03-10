@@ -36,6 +36,26 @@
 <div class="ui form">
   <form method="POST" id="form" action="{{ url_for('query', env=current_env) }}">
     {{ form.csrf_token }}
+
+    {# Preset Queries Listbox #}
+    {% if query_presets and query_presets|length > 0 %}
+    <div class="field">
+      <label>Load Preset Query</label>
+      <select id="preset-selector" size="8" style="width: 100%; font-family: monospace;">
+        {% for preset in query_presets %}
+        <option value="{{ loop.index0 }}"
+                data-query="{{ preset.query }}"
+                data-endpoint="{{ preset.endpoint }}"
+                data-raw-json="{{ preset.raw_json|lower }}"
+                data-description="{{ preset.description }}">
+          {{ preset.name }}
+        </option>
+        {% endfor %}
+      </select>
+      <small id="preset-description" style="display: block; color: #666; margin-top: 5px; min-height: 1.2em;"></small>
+    </div>
+    {% endif %}
+
     <div class="field {% if form.query.errors %} error {% endif %}">
       {{ form.query(autofocus="autofocus", rows=5, placeholder="nodes { certname = \"hostname\" }") }}
     </div>
@@ -52,6 +72,52 @@
     </div>
   </form>
 </div>
+
+<script type="text/javascript">
+  $(document).ready(function() {
+    // Function to load preset data into form
+    function loadPreset(selectedOption) {
+      const query = selectedOption.data('query');
+      const endpoint = selectedOption.data('endpoint');
+      const rawJson = selectedOption.data('raw-json');
+      const description = selectedOption.data('description');
+
+      if (query) {
+        // Populate form fields
+        $('#query').val(query);
+        $('#endpoints').val(endpoint);
+        $('#rawjson').prop('checked', rawJson === 'true');
+
+        // Save selected preset index to localStorage
+        localStorage.setItem('selectedPresetIndex', selectedOption.val());
+
+        // Show description
+        if (description) {
+          $('#preset-description').text(description);
+        } else {
+          $('#preset-description').text('');
+        }
+      }
+    }
+
+    // Restore previously selected preset from localStorage
+    const savedPresetIndex = localStorage.getItem('selectedPresetIndex');
+    if (savedPresetIndex !== null) {
+      const presetSelector = $('#preset-selector');
+      presetSelector.val(savedPresetIndex);
+      const selectedOption = presetSelector.find('option:selected');
+      if (selectedOption.length > 0 && selectedOption.data('query')) {
+        loadPreset(selectedOption);
+      }
+    }
+
+    // Handle preset selection change
+    $('#preset-selector').on('change', function() {
+      const selectedOption = $(this).find('option:selected');
+      loadPreset(selectedOption);
+    });
+  });
+</script>
 
 {% if result or zero_results or error_text %}
 

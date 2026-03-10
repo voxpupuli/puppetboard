@@ -14,6 +14,8 @@ UNRESPONSIVE_HOURS = 2
 ENABLE_QUERY = True
 # Uncomment to restrict the enabled PuppetDB endpoints in the query page.
 # ENABLED_QUERY_ENDPOINTS = ['facts', 'nodes']
+# Path to YAML file containing preset queries (None to disable)
+QUERY_PRESETS_FILE = None  # Example: '/etc/puppetboard/query_presets.yaml'
 LOCALISE_TIMESTAMP = True
 LOGLEVEL = 'info'
 NORMAL_TABLE_COUNT = 100
