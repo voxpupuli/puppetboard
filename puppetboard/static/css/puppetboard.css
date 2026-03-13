@@ -147,6 +147,14 @@
   border-color: var(--color-border);
 }
 
+[data-theme="dark"] select,
+[data-theme="dark"] .ui.form select {
+  background-color: var(--color-segment-bg);
+  color: var(--color-text);
+  border-color: var(--color-border);
+  border: 1px solid var(--color-border);
+}
+
 [data-theme="dark"] .ui.dropdown,
 [data-theme="dark"] .ui.dropdown .menu {
   background-color: var(--color-dropdown-bg);
@@ -188,6 +196,12 @@
   color: var(--color-text);
 }
 
+/* Failures page dark mode - override Fomantic UI .negative which uses !important */
+[data-theme="dark"] td.negative.error_message {
+  background-color: #4a1515 !important;
+  color: #ffcccc !important;
+}
+
 /* DataTables in dark mode - ensure proper dark styling */
 [data-theme="dark"] .dataTables_wrapper {
   color: var(--color-text);
@@ -212,6 +226,17 @@
   border-color: var(--color-border) !important;
 }
 
+/* Billboard.js chart tooltip - improved readability */
+.bb-tooltip th {
+  background-color: #555;
+  color: #fff;
+}
+
+.bb-tooltip td {
+  color: #222 !important;
+  background-color: #fff !important;
+}
+
 /* Billboard.js chart dark mode */
 [data-theme="dark"] .bb text,
 [data-theme="dark"] .bb-axis text,
@@ -227,6 +252,26 @@
 
 [data-theme="dark"] .bb-legend-item text {
   fill: var(--color-text) !important;
+}
+
+/* Billboard.js chart tooltip - dark mode */
+[data-theme="dark"] .bb-tooltip {
+  background-color: #2a2a2a !important;
+}
+
+[data-theme="dark"] .bb-tooltip tr {
+  border-color: #555 !important;
+}
+
+[data-theme="dark"] .bb-tooltip th {
+  background-color: #444 !important;
+  color: #e0e0e0 !important;
+}
+
+[data-theme="dark"] .bb-tooltip td {
+  background-color: #2a2a2a !important;
+  color: #e0e0e0 !important;
+  border-left-color: #555 !important;
 }
 
 /* DataTables pagination dark mode */
@@ -351,19 +396,19 @@
   color: #fff;
 }
 
-/* Basic labels keep dark text on light background */
+/* Basic labels - muted grey in dark mode */
 [data-theme="dark"] .ui.label.basic,
 [data-theme="dark"] .ui.basic.label {
-  color: #333 !important;
-  background-color: #e0e0e0;
-  border-color: #ccc;
+  color: #ccc !important;
+  background-color: #4e4e4e;
+  border-color: #666;
 }
 
 /* Generic labels (no status color) - like time stamps and zero counts */
 [data-theme="dark"] .ui.label.status:not(.failed):not(.changed):not(.unchanged):not(.unreported):not(.noop):not(.skipped),
 [data-theme="dark"] .ui.label.count:not(.failed):not(.changed):not(.unchanged):not(.unreported):not(.noop):not(.skipped) {
-  color: #333 !important;
-  background-color: #e0e0e0;
+  color: #ccc !important;
+  background-color: #4e4e4e;
 }
 
 [data-theme="dark"] .ui.header {
@@ -431,6 +476,42 @@ h1.ui.header.no-margin-bottom {
 .ui.select-environment.loading.selection.dropdown > i.dropdown.icon {
   padding: 1em 0.5em !important;
   margin: 0 !important;
+}
+
+/* Environment selector - wider for long branch names, grey background in both modes */
+.ui.select-environment.dropdown {
+  min-width: 22em !important;
+}
+
+.ui.select-environment.selection.dropdown {
+  background-color: #4a4a4a !important;
+  color: #f0f0f0 !important;
+  border-color: #666 !important;
+}
+
+.ui.select-environment.selection.dropdown .text,
+.ui.select-environment.selection.dropdown .default.text {
+  color: #f0f0f0 !important;
+}
+
+.ui.select-environment.selection.dropdown .menu {
+  background-color: #3a3a3a !important;
+  border-color: #666 !important;
+}
+
+.ui.select-environment.selection.dropdown .menu .item {
+  color: #f0f0f0 !important;
+  border-color: #555 !important;
+}
+
+.ui.select-environment.selection.dropdown .menu .item:hover {
+  background-color: rgba(255, 255, 255, 0.12) !important;
+}
+
+.ui.select-environment.selection.dropdown .menu .item.active,
+.ui.select-environment.selection.dropdown .menu .item.selected {
+  color: #79c0ff !important;
+  font-weight: 600;
 }
 
 .ui.grid.padding-bottom {
