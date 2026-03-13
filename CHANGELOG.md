@@ -2,7 +2,23 @@
 
 All notable changes to this project will be documented in this file.
 
-## [v7.0.0](https://github.com/voxpupuli/puppetboard/tree/v7.0.0) (2026-03-10)
+## [v7.0.1](https://github.com/voxpupuli/puppetboard/tree/v7.0.1) (2026-03-13)
+
+[Full Changelog](https://github.com/voxpupuli/puppetboard/compare/v7.0.0...v7.0.1)
+
+**Fixed bugs:**
+
+- Add misssing PyYAML dependency [\#1392](https://github.com/voxpupuli/puppetboard/pull/1392) ([yakatz](https://github.com/yakatz))
+
+**Closed issues:**
+
+- Missing module 'yaml' after upgrade to 7.0.0 [\#1391](https://github.com/voxpupuli/puppetboard/issues/1391)
+
+**Merged pull requests:**
+
+- build\(deps\): bump python from 3.15.0a6-alpine to 3.15.0a7-alpine [\#1390](https://github.com/voxpupuli/puppetboard/pull/1390) ([dependabot[bot]](https://github.com/apps/dependabot))
+
+## [v7.0.0](https://github.com/voxpupuli/puppetboard/tree/v7.0.0) (2026-03-12)
 
 [Full Changelog](https://github.com/voxpupuli/puppetboard/compare/v6.0.1...v7.0.0)
 
@@ -26,7 +42,6 @@ We would like to hear about performance (good and bad) in the [Performance Poll]
 
 **Fixed bugs:**
 
-- fomantic-io external font dependencies [\#1344](https://github.com/voxpupuli/puppetboard/issues/1344)
 - Inventory tab feature legacy facts [\#874](https://github.com/voxpupuli/puppetboard/issues/874)
 - Resolve datetime deprecation warnings [\#1269](https://github.com/voxpupuli/puppetboard/pull/1269) ([emmanuel-ferdman](https://github.com/emmanuel-ferdman))
 - Add APPLICATION\_ROOT to docker\_settings.py [\#1206](https://github.com/voxpupuli/puppetboard/pull/1206) ([HielkeJ](https://github.com/HielkeJ))
