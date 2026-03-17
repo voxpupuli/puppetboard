@@ -14,11 +14,15 @@
 {% endwith %}
 
 <script type="text/javascript">
+  // Flag to track if we loaded a query from the URL fragment
+  let urlFragmentQueryPresent = false;
+  
   $(document).ready(function() {
     if (window.location.href.indexOf("#") > -1) {
         const pb_query = document.getElementById("query");
         const hrefArray = window.location.href.split("#");
         pb_query.value = decodeURI(hrefArray[1]);
+        urlFragmentQueryPresent = true;
     }
   });
 </script>
@@ -101,13 +105,16 @@
     }
 
     // Restore previously selected preset from localStorage
-    const savedPresetIndex = localStorage.getItem('selectedPresetIndex');
-    if (savedPresetIndex !== null) {
-      const presetSelector = $('#preset-selector');
-      presetSelector.val(savedPresetIndex);
-      const selectedOption = presetSelector.find('option:selected');
-      if (selectedOption.length > 0 && selectedOption.data('query')) {
-        loadPreset(selectedOption);
+    // (but only if no URL fragment query is present)
+    if (!urlFragmentQueryPresent) {
+      const savedPresetIndex = localStorage.getItem('selectedPresetIndex');
+      if (savedPresetIndex !== null) {
+        const presetSelector = $('#preset-selector');
+        presetSelector.val(savedPresetIndex);
+        const selectedOption = presetSelector.find('option:selected');
+        if (selectedOption.length > 0 && selectedOption.data('query')) {
+          loadPreset(selectedOption);
+        }
       }
     }
 
