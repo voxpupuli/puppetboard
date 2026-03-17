@@ -78,18 +78,21 @@ function toggleFactChildren(toggleIcon) {
   var container = toggleIcon.parentElement;
   var childrenList = container.querySelector('.fact-children');
   var factLink = container.querySelector('a');
-  var factName = factLink ? factLink.getAttribute('href').split('/fact/')[1].split('/')[0] : null;
+  // Use the url_for-generated href directly so PUPPETBOARD_URL_PREFIX is respected
+  var factHref = factLink ? factLink.getAttribute('href') : null;
+  // Derive base path (everything up to and including '/fact/') for building child link hrefs
+  var factBasePath = factHref ? factHref.substring(0, factHref.indexOf('/fact/') + '/fact/'.length) : null;
 
   if (childrenList) {
     var isCollapsed = childrenList.classList.contains('collapsed');
 
     if (isCollapsed) {
       // Expanding - check if we need to load children
-      if (childrenList.children.length === 0 && factName) {
+      if (childrenList.children.length === 0 && factHref) {
         // Lazy load children via AJAX
         toggleIcon.textContent = '⏳'; // Loading indicator
 
-        fetch('/{{ current_env }}/fact/' + encodeURIComponent(factName) + '/children/json')
+        fetch(factHref + '/children/json')
           .then(response => response.json())
           .then(data => {
             if (data.children && data.children.length > 0) {
@@ -112,7 +115,7 @@ function toggleFactChildren(toggleIcon) {
                 }
 
                 var link = document.createElement('a');
-                link.href = '/{{ current_env }}/fact/' + child.name;
+                link.href = factBasePath + child.name;
                 var parts = child.name.split('.');
                 var lastPart = parts[parts.length - 1];
                 var prefix = parts.slice(0, -1).join('.');
