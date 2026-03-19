@@ -2,7 +2,7 @@ import ast
 import json
 import logging
 import sys
-from typing import Any
+from typing import Any, Union
 
 from flask import abort, request, url_for
 from packaging.version import parse
@@ -163,7 +163,7 @@ def is_a_test():
     return running_in_shell or running_in_intellij
 
 
-def dot_lookup(_dict: dict[str, Any], lookup: str) -> str | dict | None:
+def dot_lookup(_dict: dict[str, Any], lookup: str) -> Union[str, dict, None]:
     """Recursively look up a value in a dictionary using dot notation string"""
     lookup_parts = lookup.split(".")
     if not lookup_parts:
@@ -237,7 +237,7 @@ def get_all_fact_paths(facts_dict: dict[str, Any]) -> list[str]:
     return sorted(all_paths)
 
 
-def split_fact_path(fact_path: str) -> tuple[str, str | None]:
+def split_fact_path(fact_path: str) -> tuple[str, Union[str, None]]:
     """
     Split a dot-notation fact path into base fact name and sub-path.
 
