@@ -2,6 +2,31 @@
 
 All notable changes to this project will be documented in this file.
 
+## [v7.0.2](https://github.com/voxpupuli/puppetboard/tree/v7.0.2) (2026-03-19)
+
+[Full Changelog](https://github.com/voxpupuli/puppetboard/compare/v7.0.1...v7.0.2)
+
+**Implemented enhancements:**
+
+- better support structured facts [\#960](https://github.com/voxpupuli/puppetboard/issues/960)
+- save puppet queries/list [\#642](https://github.com/voxpupuli/puppetboard/issues/642)
+- fix a bunch of dark mode color aesthetics: [\#1398](https://github.com/voxpupuli/puppetboard/pull/1398) ([rismoney](https://github.com/rismoney))
+
+**Fixed bugs:**
+
+- Fix Python 3.9 compatibility [\#1404](https://github.com/voxpupuli/puppetboard/pull/1404) ([yakatz](https://github.com/yakatz))
+- fix query bug introduced on issue \#1400 [\#1401](https://github.com/voxpupuli/puppetboard/pull/1401) ([rismoney](https://github.com/rismoney))
+
+**Closed issues:**
+
+- Not showing some nodes in error [\#1402](https://github.com/voxpupuli/puppetboard/issues/1402)
+- 7.0.0 structured facts not enumerating [\#1393](https://github.com/voxpupuli/puppetboard/issues/1393)
+
+**Merged pull requests:**
+
+- build\(deps\): bump the python group across 1 directory with 2 updates [\#1399](https://github.com/voxpupuli/puppetboard/pull/1399) ([dependabot[bot]](https://github.com/apps/dependabot))
+- fix url prefix problem in facts.html [\#1394](https://github.com/voxpupuli/puppetboard/pull/1394) ([rismoney](https://github.com/rismoney))
+
 ## [v7.0.1](https://github.com/voxpupuli/puppetboard/tree/v7.0.1) (2026-03-13)
 
 [Full Changelog](https://github.com/voxpupuli/puppetboard/compare/v7.0.0...v7.0.1)
