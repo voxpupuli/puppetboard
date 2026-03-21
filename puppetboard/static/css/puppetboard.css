@@ -47,49 +47,56 @@
 
 /* ===== CSS Variables - Dark Theme ===== */
 [data-theme="dark"] {
-  /* Status colors - bolder/brighter for dark backgrounds */
-  --color-failed: #ff5555;
-  --color-changed: #5badff;
-  --color-unchanged: #89A54E;
-  --color-unreported: #17a2b8;
-  --color-noop: #ffb86c;
-  --color-skipped: #ffa500;
-  --color-total: #b0b0b0;
+  /* Status colors - muted for comfortable dark-background reading */
+  --color-failed:     #cc5555;   /* muted brick red     (was #ff5555) */
+  --color-changed:    #4d90cc;   /* muted steel blue    (was #5badff) */
+  --color-unchanged:  #7aaa68;   /* muted sage green    (was #89A54E) */
+  --color-unreported: #3d9fae;   /* muted teal          (was #17a2b8) */
+  --color-noop:       #c98040;   /* muted amber         (was #ffb86c) */
+  --color-skipped:    #c88030;   /* muted orange        (was #ffa500) */
+  --color-total:      #888e98;   /* neutral grey        (was #b0b0b0) */
 
-  /* UI colors */
-  --color-darkblue: #1a252f;
-  --color-yellow: #F0E965;
-  --color-link: #79c0ff;
-  --color-bg: #1b1c1d;
-  --color-bg-secondary: #0d1117;
-  --color-text: #e6edf3;
-  --color-text-muted: #a0a0a0;
-  --color-border: #555555;
-  --color-footer-bg: #242526;
+  /* UI colors
+   * Four neutral-grey levels — no colour cast, easy to remember:
+   *   footer  #131315  ← deepest
+   *   body    #1d1d1f  ← base
+   *   surface #252528  ← panels / cards / table rows / dropdowns
+   *   raised  #2e2e32  ← headers / inputs / hover / code boxes
+   *   border  #3c3c40  ← dividers
+   */
+  --color-darkblue:   #162d4a;
+  --color-yellow:     #F0E965;
+  --color-link:       #6ba3c8;
+  --color-bg:               #1d1d1f;  /* level 1 — body */
+  --color-bg-secondary:     #2e2e32;  /* level 3 — hover, alt rows, code boxes */
+  --color-text:             #c4c4ca;  /* primary text */
+  --color-text-muted:       #88888e;  /* secondary text */
+  --color-border:           #3c3c40;  /* dividers */
+  --color-footer-bg:        #131315;  /* level 0 — footer (below body) */
 
   /* Scroll button */
-  --color-scroll-btn: #555;
-  --color-scroll-btn-hover: #666;
-  --color-scroll-btn-text: #EEE;
+  --color-scroll-btn:       #3c3c40;  /* = border */
+  --color-scroll-btn-hover: #48484e;  /* one step above border */
+  --color-scroll-btn-text:  #c4c4ca;  /* = text */
 
-  /* JSON syntax highlighting - brighter for dark bg */
-  --color-json-string: #79c0ff;
-  --color-json-string-hover: #a5d6ff;
-  --color-json-number: #ffb347;
-  --color-json-number-hover: #ffc977;
-  --color-json-boolean: #79c0ff;
-  --color-json-boolean-hover: #a5d6ff;
-  --color-json-key: rgb(158, 185, 101);
-  --color-json-key-hover: rgb(180, 210, 130);
-  --color-json-null: #ff79c6;
+  /* JSON syntax highlighting */
+  --color-json-string:        #6ba3c8;
+  --color-json-string-hover:  #8dbee0;
+  --color-json-number:        #c98040;
+  --color-json-number-hover:  #d99058;
+  --color-json-boolean:       #6ba3c8;
+  --color-json-boolean-hover: #8dbee0;
+  --color-json-key:           #7aaa68;
+  --color-json-key-hover:     #9aca86;
+  --color-json-null:          #c46aa6;
 
-  /* Component colors */
-  --color-segment-bg: #161b22;
-  --color-table-bg: #161b22;
-  --color-table-header-bg: #0d1117;
-  --color-input-bg: #0d1117;
-  --color-dropdown-bg: #161b22;
-  --color-card-bg: #161b22;
+  /* Component surfaces — all at one of the four grey levels */
+  --color-segment-bg:       #252528;  /* level 2 — surface (panels, cards) */
+  --color-table-bg:         #1d1d1f;  /* level 1 — same as body (tables blend in) */
+  --color-card-bg:          #252528;  /* level 2 — surface */
+  --color-dropdown-bg:      #252528;  /* level 2 — surface */
+  --color-table-header-bg:  #1d1d1f;  /* level 1 — same as body */
+  --color-input-bg:         #404046;  /* lighter — filter boxes / inputs */
 }
 
 /* ===== Dark Theme Overrides ===== */
@@ -102,6 +109,26 @@
   background-color: var(--color-segment-bg);
   color: var(--color-text);
   border-color: var(--color-border);
+}
+
+/* Facts page letter-group segments — blend with body background */
+[data-theme="dark"] .factlist .ui.segment {
+  background-color: var(--color-bg);
+  border-color: var(--color-border);
+}
+
+/* Facts page ribbon labels — explicitly match the toolbar colour */
+[data-theme="dark"] .ui.darkblue.label,
+[data-theme="dark"] .ui.darkblue.ribbon.label {
+  background-color: var(--color-darkblue) !important;
+  border-color: var(--color-darkblue) !important;
+}
+
+/* Facts page parent-fact labels — Fomantic .blue is too vivid; align to palette */
+[data-theme="dark"] .ui.blue.label {
+  background-color: var(--color-darkblue) !important;
+  border-color: var(--color-darkblue) !important;
+  color: rgba(255, 255, 255, 0.88) !important;
 }
 
 [data-theme="dark"] .ui.table {
@@ -198,8 +225,15 @@
 
 /* Failures page dark mode - override Fomantic UI .negative which uses !important */
 [data-theme="dark"] td.negative.error_message {
-  background-color: #4a1515 !important;
-  color: #ffcccc !important;
+  background-color: #2e1818 !important;
+  color: #e8b4b4 !important;
+}
+
+/* Ensure nested elements inside error cells inherit the readable colour */
+[data-theme="dark"] td.negative.error_message *,
+[data-theme="dark"] pre.error_message *,
+[data-theme="dark"] td.error_message * {
+  color: inherit !important;
 }
 
 /* DataTables in dark mode - ensure proper dark styling */
@@ -256,22 +290,49 @@
 
 /* Billboard.js chart tooltip - dark mode */
 [data-theme="dark"] .bb-tooltip {
-  background-color: #2a2a2a !important;
+  background-color: var(--color-segment-bg) !important;  /* #252528 surface */
 }
 
 [data-theme="dark"] .bb-tooltip tr {
-  border-color: #555 !important;
+  border-color: var(--color-border) !important;           /* #3c3c40 */
 }
 
 [data-theme="dark"] .bb-tooltip th {
-  background-color: #444 !important;
-  color: #e0e0e0 !important;
+  background-color: var(--color-table-header-bg) !important; /* #2e2e32 raised */
+  color: var(--color-text) !important;
 }
 
 [data-theme="dark"] .bb-tooltip td {
-  background-color: #2a2a2a !important;
-  color: #e0e0e0 !important;
-  border-left-color: #555 !important;
+  background-color: var(--color-segment-bg) !important;   /* #252528 surface */
+  color: var(--color-text) !important;
+  border-left-color: var(--color-border) !important;      /* #3c3c40 */
+}
+
+/* DataTables sorting icons — default opacity 0.125 is invisible on dark headers; raise it */
+[data-theme="dark"] table.dataTable thead > tr > th.sorting::before,
+[data-theme="dark"] table.dataTable thead > tr > th.sorting::after,
+[data-theme="dark"] table.dataTable thead > tr > th.sorting_asc::before,
+[data-theme="dark"] table.dataTable thead > tr > th.sorting_asc::after,
+[data-theme="dark"] table.dataTable thead > tr > th.sorting_desc::before,
+[data-theme="dark"] table.dataTable thead > tr > th.sorting_desc::after,
+[data-theme="dark"] table.dataTable thead > tr > th.sorting_asc_disabled::before,
+[data-theme="dark"] table.dataTable thead > tr > th.sorting_desc_disabled::after,
+[data-theme="dark"] table.dataTable thead > tr > td.sorting::before,
+[data-theme="dark"] table.dataTable thead > tr > td.sorting::after,
+[data-theme="dark"] table.dataTable thead > tr > td.sorting_asc::before,
+[data-theme="dark"] table.dataTable thead > tr > td.sorting_asc::after,
+[data-theme="dark"] table.dataTable thead > tr > td.sorting_desc::before,
+[data-theme="dark"] table.dataTable thead > tr > td.sorting_desc::after {
+  opacity: 0.40 !important;
+  color: var(--color-text) !important;
+}
+
+/* Active sort direction — more prominent */
+[data-theme="dark"] table.dataTable thead > tr > th.sorting_asc::before,
+[data-theme="dark"] table.dataTable thead > tr > th.sorting_desc::after,
+[data-theme="dark"] table.dataTable thead > tr > td.sorting_asc::before,
+[data-theme="dark"] table.dataTable thead > tr > td.sorting_desc::after {
+  opacity: 0.85 !important;
 }
 
 /* DataTables pagination dark mode */
@@ -296,6 +357,75 @@
 [data-theme="dark"] .dataTables_paginate .paginate_button.disabled {
   color: var(--color-text-muted) !important;
   background-color: var(--color-table-bg) !important;
+}
+
+/* List bullet / ordered-list marker visibility in dark mode
+   Fomantic UI resets ul/ol colour to rgba(0,0,0,.87); override that here */
+[data-theme="dark"] ul,
+[data-theme="dark"] ol {
+  color: var(--color-text);
+}
+
+[data-theme="dark"] li::marker {
+  color: var(--color-text-muted);
+}
+
+/* Fomantic UI semantic message box variants in dark mode */
+[data-theme="dark"] .ui.negative.message,
+[data-theme="dark"] .ui.error.message {
+  background-color: #2e1818 !important;
+  color: #e8b4b4 !important;
+  border-color: #5a2828 !important;
+  box-shadow: 0 0 0 1px #5a2828 inset, 0 0 0 0 transparent !important;
+}
+
+[data-theme="dark"] .ui.negative.message .header,
+[data-theme="dark"] .ui.error.message .header {
+  color: #f0c0c0 !important;
+}
+
+[data-theme="dark"] .ui.warning.message {
+  background-color: #2a2010 !important;
+  color: #e0cc90 !important;
+  border-color: #5a4820 !important;
+  box-shadow: 0 0 0 1px #5a4820 inset, 0 0 0 0 transparent !important;
+}
+
+[data-theme="dark"] .ui.warning.message .header {
+  color: #eed8a0 !important;
+}
+
+[data-theme="dark"] .ui.info.message {
+  background-color: var(--color-darkblue) !important;
+  color: #a8c8e0 !important;
+  border-color: #2a4f74 !important;
+  box-shadow: none !important;
+}
+
+[data-theme="dark"] .ui.info.message .header {
+  color: #c0d8ee !important;
+}
+
+[data-theme="dark"] .ui.positive.message,
+[data-theme="dark"] .ui.success.message {
+  background-color: #162516 !important;
+  color: #90c888 !important;
+  border-color: #2e5028 !important;
+  box-shadow: 0 0 0 1px #2e5028 inset, 0 0 0 0 transparent !important;
+}
+
+[data-theme="dark"] .ui.positive.message .header,
+[data-theme="dark"] .ui.success.message .header {
+  color: #a8dca0 !important;
+}
+
+/* Warning / info inline text (non-Fomantic classes) */
+[data-theme="dark"] .warning_message {
+  color: #e0cc90;
+}
+
+[data-theme="dark"] .info_message {
+  color: #9ac0da;
 }
 
 /* DataTables export buttons (Copy, CSV, Excel, etc.) */
@@ -328,10 +458,22 @@
 
 [data-theme="dark"] .ui.checkbox label:before {
   background-color: var(--color-input-bg);
-  border-color: var(--color-border);
+  border-color: #7a7a82;
+}
+
+/* Checkmark glyph — off-white instead of Fomantic's pure white */
+[data-theme="dark"] .ui.checkbox input:checked ~ label:after,
+[data-theme="dark"] .ui.checkbox input:indeterminate ~ label:after {
+  color: rgba(255, 255, 255, 0.82) !important;
 }
 
 [data-theme="dark"] .ui.toggle.checkbox label {
+  color: var(--color-text) !important;
+}
+
+/* Fomantic sets color:rgba(0,0,0,.95)!important on checked state; match its specificity */
+[data-theme="dark"] .ui.toggle.checkbox input:checked ~ label,
+[data-theme="dark"] .ui.toggle.checkbox input:focus ~ label {
   color: var(--color-text) !important;
 }
 
@@ -399,16 +541,16 @@
 /* Basic labels - muted grey in dark mode */
 [data-theme="dark"] .ui.label.basic,
 [data-theme="dark"] .ui.basic.label {
-  color: #ccc !important;
-  background-color: #4e4e4e;
-  border-color: #666;
+  color: var(--color-text) !important;   /* #c4c4ca */
+  background-color: #3c3c40;             /* = border level — visible chip bg */
+  border-color: #48484e;                 /* one step above border */
 }
 
 /* Generic labels (no status color) - like time stamps and zero counts */
 [data-theme="dark"] .ui.label.status:not(.failed):not(.changed):not(.unchanged):not(.unreported):not(.noop):not(.skipped),
 [data-theme="dark"] .ui.label.count:not(.failed):not(.changed):not(.unchanged):not(.unreported):not(.noop):not(.skipped) {
-  color: #ccc !important;
-  background-color: #4e4e4e;
+  color: var(--color-text) !important;   /* #c4c4ca */
+  background-color: #3c3c40;             /* = border level */
 }
 
 [data-theme="dark"] .ui.header {
@@ -484,33 +626,33 @@ h1.ui.header.no-margin-bottom {
 }
 
 .ui.select-environment.selection.dropdown {
-  background-color: #4a4a4a !important;
-  color: #f0f0f0 !important;
-  border-color: #666 !important;
+  background-color: #383840 !important; /* between border and raised — always-dark */
+  color: #c4c4ca !important;
+  border-color: #48484e !important;
 }
 
 .ui.select-environment.selection.dropdown .text,
 .ui.select-environment.selection.dropdown .default.text {
-  color: #f0f0f0 !important;
+  color: #c4c4ca !important;
 }
 
 .ui.select-environment.selection.dropdown .menu {
-  background-color: #3a3a3a !important;
-  border-color: #666 !important;
+  background-color: #2e2e32 !important; /* raised level */
+  border-color: #48484e !important;
 }
 
 .ui.select-environment.selection.dropdown .menu .item {
-  color: #f0f0f0 !important;
-  border-color: #555 !important;
+  color: #c4c4ca !important;
+  border-color: #3c3c40 !important;     /* border level */
 }
 
 .ui.select-environment.selection.dropdown .menu .item:hover {
-  background-color: rgba(255, 255, 255, 0.12) !important;
+  background-color: rgba(255, 255, 255, 0.10) !important;
 }
 
 .ui.select-environment.selection.dropdown .menu .item.active,
 .ui.select-environment.selection.dropdown .menu .item.selected {
-  color: #79c0ff !important;
+  color: #6ba3c8 !important;            /* = --color-link */
   font-weight: 600;
 }
 
@@ -544,8 +686,8 @@ h1.ui.header.no-margin-bottom {
 }
 
 .ui.label.status {
-  color: white;
-  text-shadow: 0 0 1px;
+  color: rgba(255, 255, 255, 0.88);
+  text-shadow: none;
 }
 
 /* Status Colors - Failed */
@@ -628,6 +770,12 @@ h1.ui.header.no-margin-bottom {
 .ui.menu.darkblue {
   background-color: var(--color-darkblue);
   border-radius: 0px !important;
+  min-height: unset;
+}
+
+.ui.menu.darkblue .item {
+  padding-top: 0.6em !important;
+  padding-bottom: 0.6em !important;
 }
 
 .ui.darkblue.header, i.darkblue {
@@ -642,6 +790,10 @@ h1.ui.header.no-margin-bottom {
 
 [data-theme="dark"] .ui.header.darkblue.no-margin-bottom {
   color: var(--color-text);
+}
+
+[data-theme="dark"] i.darkblue {
+  color: var(--color-text-muted);
 }
 
 .ui.labels .darkblue.label::before, .ui.darkblue.labels .label::before, .ui.darkblue.label::before {
