@@ -1,11 +1,37 @@
 {% macro get_facts_sorter_type(fact) -%}
 
   {% set sorter_map = {
-    'kernelrelease': 'natural',
-    'uptime': 'natural-time-delta'
+    'kernelrelease':       'natural',
+    'uptime':              'natural-time-delta',
+    'seconds':             'num-fmt',
+    'hours':               'num-fmt',
+    'days':                'num-fmt',
+    'memoryfree_mb':       'num-fmt',
+    'memorysize_mb':       'num-fmt',
+    'swapfree_mb':         'num-fmt',
+    'swapsize_mb':         'num-fmt',
+    'total_bytes':         'num-fmt',
+    'available_bytes':     'num-fmt',
+    'used_bytes':          'num-fmt',
+    'size_bytes':          'num-fmt',
+    'memoryfree':          'natural-size',
+    'memorysize':          'natural-size',
+    'swapfree':            'natural-size',
+    'swapsize':            'natural-size',
+    'total':               'natural-size',
+    'available':           'natural-size',
+    'used':                'natural-size',
+    'size':                'natural-size',
+    'ip':                  'natural-ip',
+    'ip6':                 'natural-ip',
+    'ipaddress':           'natural-ip',
+    'ipaddress6':          'natural-ip',
   } %}
 
-  {% set sorter = sorter_map.get(fact, None) %}
+  {# Try full fact path first, then fall back to the leaf (last component) #}
+  {% set fact_name = fact|default('', true) %}
+  {% set leaf = fact_name.split('.')[-1] %}
+  {% set sorter = sorter_map.get(fact_name, sorter_map.get(leaf, None)) %}
   {% if sorter != None %}
     "type": "{{ sorter }}",
   {% endif %}
