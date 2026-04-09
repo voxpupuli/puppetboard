@@ -871,7 +871,18 @@ h1.ui.header.no-margin-bottom {
 }
 
 #dailyReportsChartContainer {
-  height: 160px;
+  min-height: 160px;
+}
+
+.daily-reports-chart-toolbar {
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 0.75rem;
+}
+
+.daily-reports-chart-mode-toggle .button.active {
+  background: var(--color-darkblue);
+  color: #fff;
 }
 
 /* JSON Syntax Highlighting */

@@ -76,7 +76,15 @@
   </div>
   {% if config.DAILY_REPORTS_CHART_ENABLED %}
   <div id="dailyReportsChartContainer" class="one column row">
-    <div id="dailyReportsChart"></div>
+    <div class="daily-reports-chart-toolbar">
+      <div class="ui tiny buttons daily-reports-chart-mode-toggle" aria-label="Daily reports chart mode">
+        <button type="button" class="ui button" data-chart-mode-value="stacked">Stacked</button>
+        <button type="button" class="ui button" data-chart-mode-value="split">Split</button>
+      </div>
+    </div>
+    <div id="dailyReportsChart"
+         data-days="{{ config.DAILY_REPORTS_CHART_DAYS }}"
+         data-chart-mode="{{ config.DAILY_REPORTS_CHART_MODE }}"></div>
   </div>
   {% endif %}
   <div class="one column row">
