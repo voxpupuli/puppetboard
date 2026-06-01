@@ -1,3 +1,7 @@
+from mockey.fixture import patch_mock_module
+patch_mock_module()
+
+
 class MockDbQuery(object):
     def __init__(self, responses):
         self.responses = responses
