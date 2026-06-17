@@ -1,4 +1,4 @@
-certifi==2026.5.20
+certifi==2026.6.17
 charset-normalizer==3.4.7
 click==8.1.8
 commonmark==0.9.2
