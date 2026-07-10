@@ -25,8 +25,11 @@
 
 jQuery.extend(jQuery.fn.dataTableExt.oSort,{
     "natural-time-delta-pre" : function(data){
-        // get the non-formatted value from title
-        data = data.match(/title="(.*?)"/)[1].toLowerCase();
+        // DataTables strips HTML before passing to sort functions, so we receive
+        // a plain string like "9 days" or "8:03 hours" directly.
+        // Fall back to title attribute extraction if somehow HTML is passed.
+        var titleMatch = data.match(/title="(.*?)"/);
+        data = (titleMatch ? titleMatch[1] : String(data)).toLowerCase();
 
         var total_duration = 0;
         var pattern = /(\d+\s*decades?\s*)?(\d+\s*years?\s*)?(\d+\s*months?\s*)?(\d+\s*weeks?\s*)?(\d+\s*days?\s*)?(\d+:?\d*?\s*hours?\s*)?(\d+\s*minutes?\s*)?(\d+\s*seconds?\s*)?(\d+\s*milliseconds?\s*)?(\d+\s*microseconds?\s*)?/i
