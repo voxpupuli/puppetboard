@@ -44,6 +44,7 @@ zipp = "^3.21.0"
 pep8 = "^1.7.1"
 coverage = "^7.6.9"
 mock = "^5.1.0"
+mockey = {version = "*", python = ">=3.10"}
 pytest = "^8.3.4"
 pylint = "^3.3.2"
 pytest-cov = ">=6,<8"
