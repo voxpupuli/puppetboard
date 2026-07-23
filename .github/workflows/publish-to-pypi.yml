@@ -11,7 +11,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
       - name: Set up Python 3.12
         uses: actions/setup-python@v6
         with:
@@ -24,7 +24,7 @@ jobs:
           poetry install --with=test
           poetry build
       - name: Publish distribution 📦 to PyPI
-        uses: pypa/gh-action-pypi-publish@v1.13.0
+        uses: pypa/gh-action-pypi-publish@v1.14.0
         with:
           password: ${{ secrets.PYPI_API_TOKEN_PUPPETBOARD }}
           # repository_url: https://test.pypi.org/legacy/
