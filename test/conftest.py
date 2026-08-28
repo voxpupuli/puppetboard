@@ -1,12 +1,21 @@
 import os
 
 import pytest
+from mockey.fixture import MockAutospecFixture
 from pypuppetdb.types import Node
 
 from puppetboard import app
 
 
-@pytest.fixture(autouse=True)
+@pytest.fixture(autouse=True, scope="function")
+def mock_autospec():
+    fixture = MockAutospecFixture()
+    fixture.setUp()
+    yield
+    fixture.cleanUp()
+
+
+@pytest.fixture
 def mock_puppetdb_version(mocker):
     return mocker.patch.object(app.puppetdb, 'current_version',
                                return_value='5.9.999')
@@ -57,7 +66,7 @@ def mock_puppetdb_default_nodes(mocker):
              status_report='unchanged'),
     ]
     return mocker.patch.object(app.puppetdb, 'nodes',
-                               return_value=iter(node_list))
+                               side_effect=lambda *a, **kw: iter(node_list))
 
 
 @pytest.fixture
