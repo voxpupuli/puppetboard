@@ -474,6 +474,4 @@ please see: [RELEASE.md](RELEASE.md)
 
 The app code is licensed under the [Apache License, Version 2.0](./LICENSE).
 
-The favicon has been created based on the icon created by [Jonathan Coutiño](https://thenounproject.com/ralts01/)
-under the [Attribution 3.0 Unported (CC BY 3.0) license](https://creativecommons.org/licenses/by/3.0/),
-downloaded from the [Noun Project](https://thenounproject.com).
+The favicon has been created based on the icon created by [ShellyCoen](https://github.com/ShellyCoen/) under the [Creative Commons Attribution-ShareAlike 4.0 International License](http://creativecommons.org/licenses/by-sa/4.0/), downloaded from the [voxpupuli/logos](https://github.com/voxpupuli/logos), resized and centered.
