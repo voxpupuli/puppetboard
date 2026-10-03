@@ -137,9 +137,8 @@
 - name: "Corrective Changes"
   description: "Find nodes that had corrective changes (drift from desired state)"
   query: |
-    events[certname, resource_type, resource_title] {
-      corrective_change = true
-      group by certname, resource_type, resource_title
+    events [certname, resource_type, resource_title, message] {
+      latest_report? = true
     }
   endpoint: pql
   raw_json: false
