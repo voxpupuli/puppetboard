@@ -51,7 +51,7 @@
 - name: "Package Resources"
   description: "Find all package resources across all nodes"
   query: |
-    resources[certname, title, parameters] {
+    resources[certname, title, parameters.ensure] {
       type = "Package"
     }
   endpoint: pql
@@ -105,7 +105,7 @@
 - name: "Service Resources"
   description: "Find all Service resources on nodes"
   query: |
-    resources[certname, title, parameters] {
+    resources[certname, title, parameters.ensure, parameters.enable] {
       type = "Service"
     }
   endpoint: pql
