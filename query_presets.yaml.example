@@ -88,7 +88,7 @@
   description: "Find resources that changed in the last run"
   query: |
     events[certname, resource_type, resource_title, property, old_value, new_value] {
-      status = "success" and old_value is not null and new_value is not null
+      status = "success" and latest_report? = true
     }
   endpoint: pql
   raw_json: false
