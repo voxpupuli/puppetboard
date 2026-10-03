@@ -149,7 +149,6 @@
   query: |
     resources[count(), type] {
       group by type
-      order by count() desc
     }
   endpoint: pql
   raw_json: false
