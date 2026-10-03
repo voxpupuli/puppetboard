@@ -156,9 +156,8 @@
 - name: "Unique Domains"
   description: "Get all unique domain fact values across nodes"
   query: |
-    facts[value] {
-      name = "domain"
-      group by value
+    inventory[facts.networking.domain] {
+      group by facts.networking.domain
     }
   endpoint: pql
   raw_json: false
