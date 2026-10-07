@@ -2,6 +2,34 @@
 
 All notable changes to this project will be documented in this file.
 
+## [v7.0.3](https://github.com/voxpupuli/puppetboard/tree/v7.0.3) (2026-10-07)
+
+[Full Changelog](https://github.com/voxpupuli/puppetboard/compare/v7.0.2...v7.0.3)
+
+**Fixed bugs:**
+
+- Query form has issues with LocalStorage "selectedPresetIndex" when links to the query page are opened [\#1400](https://github.com/voxpupuli/puppetboard/issues/1400)
+
+**Merged pull requests:**
+
+- build\(deps\): bump the python group across 1 directory with 11 updates [\#1461](https://github.com/voxpupuli/puppetboard/pull/1461) ([dependabot[bot]](https://github.com/apps/dependabot))
+- Fix filtering issue in failures tab [\#1456](https://github.com/voxpupuli/puppetboard/pull/1456) ([marek130](https://github.com/marek130))
+- build\(deps\): bump python from 3.15.0b1-alpine to 3.15.0b2-alpine [\#1435](https://github.com/voxpupuli/puppetboard/pull/1435) ([dependabot[bot]](https://github.com/apps/dependabot))
+- build\(deps\): bump the python group across 1 directory with 2 updates [\#1433](https://github.com/voxpupuli/puppetboard/pull/1433) ([dependabot[bot]](https://github.com/apps/dependabot))
+- build\(deps\): bump idna from 3.16 to 3.17 in the python group [\#1432](https://github.com/voxpupuli/puppetboard/pull/1432) ([dependabot[bot]](https://github.com/apps/dependabot))
+- build\(deps\): bump idna from 3.15 to 3.16 in the python group [\#1430](https://github.com/voxpupuli/puppetboard/pull/1430) ([dependabot[bot]](https://github.com/apps/dependabot))
+- build\(deps\): bump idna from 3.15 to 3.16 in the python group [\#1429](https://github.com/voxpupuli/puppetboard/pull/1429) ([dependabot[bot]](https://github.com/apps/dependabot))
+- build\(deps\): bump packaging from 26.0 to 26.2 in the python group [\#1428](https://github.com/voxpupuli/puppetboard/pull/1428) ([dependabot[bot]](https://github.com/apps/dependabot))
+- build\(deps\): bump the python group across 1 directory with 3 updates [\#1427](https://github.com/voxpupuli/puppetboard/pull/1427) ([dependabot[bot]](https://github.com/apps/dependabot))
+- build\(deps\): bump idna from 3.11 to 3.15 [\#1426](https://github.com/voxpupuli/puppetboard/pull/1426) ([dependabot[bot]](https://github.com/apps/dependabot))
+- build\(deps\): bump python from 3.15.0a8-alpine to 3.15.0b1-alpine [\#1424](https://github.com/voxpupuli/puppetboard/pull/1424) ([dependabot[bot]](https://github.com/apps/dependabot))
+- build\(deps\): bump the python group across 1 directory with 4 updates [\#1422](https://github.com/voxpupuli/puppetboard/pull/1422) ([dependabot[bot]](https://github.com/apps/dependabot))
+- build\(deps\): bump the python group across 1 directory with 3 updates [\#1420](https://github.com/voxpupuli/puppetboard/pull/1420) ([dependabot[bot]](https://github.com/apps/dependabot))
+- build\(deps\): bump python from 3.15.0a7-alpine to 3.15.0a8-alpine [\#1417](https://github.com/voxpupuli/puppetboard/pull/1417) ([dependabot[bot]](https://github.com/apps/dependabot))
+- build\(deps\): bump pytest-cov from 7.0.0 to 7.1.0 in the python group [\#1410](https://github.com/voxpupuli/puppetboard/pull/1410) ([dependabot[bot]](https://github.com/apps/dependabot))
+- build\(deps\): bump the python group across 1 directory with 2 updates [\#1408](https://github.com/voxpupuli/puppetboard/pull/1408) ([dependabot[bot]](https://github.com/apps/dependabot))
+- Improve color palette consistency [\#1406](https://github.com/voxpupuli/puppetboard/pull/1406) ([rismoney](https://github.com/rismoney))
+
 ## [v7.0.2](https://github.com/voxpupuli/puppetboard/tree/v7.0.2) (2026-03-19)
 
 [Full Changelog](https://github.com/voxpupuli/puppetboard/compare/v7.0.1...v7.0.2)
@@ -24,6 +52,7 @@ All notable changes to this project will be documented in this file.
 
 **Merged pull requests:**
 
+- Release 7.0.2 [\#1405](https://github.com/voxpupuli/puppetboard/pull/1405) ([d1nuc0m](https://github.com/d1nuc0m))
 - build\(deps\): bump the python group across 1 directory with 2 updates [\#1399](https://github.com/voxpupuli/puppetboard/pull/1399) ([dependabot[bot]](https://github.com/apps/dependabot))
 - fix url prefix problem in facts.html [\#1394](https://github.com/voxpupuli/puppetboard/pull/1394) ([rismoney](https://github.com/rismoney))
 
