@@ -23,7 +23,7 @@ packages = [
 
 
 [tool.poetry.dependencies]
-python = "^3.10"
+python = "^3.11"
 click = "^8.1.7"
 flask = "^3.1.0"
 commonmark = "^0.9.1"
