@@ -14,7 +14,7 @@ packaging==26.3
 pyparsing==3.3.3
 pypuppetdb==3.2.0
 PyYAML==6.0.3
-requests==2.33.0
+requests==2.34.2
 typing_extensions==4.16.0
 urllib3==2.8.0
 Werkzeug==3.1.9
