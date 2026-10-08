@@ -2,7 +2,21 @@
 
 All notable changes to this project will be documented in this file.
 
-## [v7.0.3](https://github.com/voxpupuli/puppetboard/tree/v7.0.3) (2026-10-07)
+## [v7.0.4](https://github.com/voxpupuli/puppetboard/tree/v7.0.4) (2026-10-08)
+
+[Full Changelog](https://github.com/voxpupuli/puppetboard/compare/v7.0.3...v7.0.4)
+
+**Fixed bugs:**
+
+- Improve query\_pressets examples [\#1464](https://github.com/voxpupuli/puppetboard/pull/1464) ([smortex](https://github.com/smortex))
+
+**Merged pull requests:**
+
+- build\(deps\): bump the python group across 1 directory with 9 updates [\#1466](https://github.com/voxpupuli/puppetboard/pull/1466) ([dependabot[bot]](https://github.com/apps/dependabot))
+- build\(deps-dev\): bump pygments from 2.18.0 to 2.20.0 [\#1459](https://github.com/voxpupuli/puppetboard/pull/1459) ([dependabot[bot]](https://github.com/apps/dependabot))
+- build\(deps\): bump python from 3.15.0b2-alpine to 3.15.0rc2-alpine [\#1457](https://github.com/voxpupuli/puppetboard/pull/1457) ([dependabot[bot]](https://github.com/apps/dependabot))
+
+## [v7.0.3](https://github.com/voxpupuli/puppetboard/tree/v7.0.3) (2026-10-08)
 
 [Full Changelog](https://github.com/voxpupuli/puppetboard/compare/v7.0.2...v7.0.3)
 
