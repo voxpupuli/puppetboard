@@ -2,6 +2,38 @@
 
 All notable changes to this project will be documented in this file.
 
+## [v8.0.0](https://github.com/voxpupuli/puppetboard/tree/v8.0.0) (2026-10-09)
+
+[Full Changelog](https://github.com/voxpupuli/puppetboard/compare/v7.0.4...v8.0.0)
+
+**Breaking changes:**
+
+- Drop EoL Python 3.11 support [\#1482](https://github.com/voxpupuli/puppetboard/pull/1482) ([bastelfreak](https://github.com/bastelfreak))
+- Drop EoL python 3.10 support [\#1472](https://github.com/voxpupuli/puppetboard/pull/1472) ([bastelfreak](https://github.com/bastelfreak))
+- Drop EoL python 3.9 support [\#1471](https://github.com/voxpupuli/puppetboard/pull/1471) ([bastelfreak](https://github.com/bastelfreak))
+
+**Implemented enhancements:**
+
+- update all dependencies [\#1484](https://github.com/voxpupuli/puppetboard/pull/1484) ([bastelfreak](https://github.com/bastelfreak))
+- add ability to stack/split chart on dailychart for easier readability [\#1483](https://github.com/voxpupuli/puppetboard/pull/1483) ([rismoney](https://github.com/rismoney))
+- nodes: add facts timestamp column and place it last [\#1431](https://github.com/voxpupuli/puppetboard/pull/1431) ([tparkercbn](https://github.com/tparkercbn))
+- proposal: change icon to 8bit vox [\#1411](https://github.com/voxpupuli/puppetboard/pull/1411) ([d1nuc0m](https://github.com/d1nuc0m))
+
+**Fixed bugs:**
+
+- fix numerous sort issues relating to ip, disk and mem sizes [\#1409](https://github.com/voxpupuli/puppetboard/pull/1409) ([rismoney](https://github.com/rismoney))
+
+**Merged pull requests:**
+
+- build\(deps\): bump requests from 2.33.0 to 2.34.2 [\#1480](https://github.com/voxpupuli/puppetboard/pull/1480) ([dependabot[bot]](https://github.com/apps/dependabot))
+- build\(deps\): bump pytest from 8.4.2 to 9.0.3 [\#1479](https://github.com/voxpupuli/puppetboard/pull/1479) ([dependabot[bot]](https://github.com/apps/dependabot))
+- build\(deps\): bump requests from 2.32.5 to 2.33.0 [\#1478](https://github.com/voxpupuli/puppetboard/pull/1478) ([dependabot[bot]](https://github.com/apps/dependabot))
+- build\(deps-dev\): bump filelock from 3.20.3 to 4.0.12 [\#1477](https://github.com/voxpupuli/puppetboard/pull/1477) ([dependabot[bot]](https://github.com/apps/dependabot))
+- build\(deps\): bump pytest from 8.4.2 to 9.0.3 [\#1476](https://github.com/voxpupuli/puppetboard/pull/1476) ([dependabot[bot]](https://github.com/apps/dependabot))
+- build\(deps-dev\): bump soupsieve from 2.6 to 2.9 [\#1475](https://github.com/voxpupuli/puppetboard/pull/1475) ([dependabot[bot]](https://github.com/apps/dependabot))
+- build\(deps-dev\): bump filelock from 3.16.1 to 3.20.3 [\#1474](https://github.com/voxpupuli/puppetboard/pull/1474) ([dependabot[bot]](https://github.com/apps/dependabot))
+- build\(deps\): bump requests from 2.32.5 to 2.33.0 [\#1473](https://github.com/voxpupuli/puppetboard/pull/1473) ([dependabot[bot]](https://github.com/apps/dependabot))
+
 ## [v7.0.4](https://github.com/voxpupuli/puppetboard/tree/v7.0.4) (2026-10-08)
 
 [Full Changelog](https://github.com/voxpupuli/puppetboard/compare/v7.0.3...v7.0.4)
