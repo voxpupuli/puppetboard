@@ -37,7 +37,7 @@ pyparsing = "^3.2.0"
 pypuppetdb = "^3.2.0"
 PyYAML = "^6.0"
 typing-extensions = "^4.12.2"
-zipp = "^3.21.0"
+zipp = ">=3.21,<5.0"
 
 
 [tool.poetry.group.test.dependencies]
@@ -45,22 +45,22 @@ pep8 = "^1.7.1"
 coverage = "^7.6.9"
 mock = "^5.1.0"
 pytest = ">=8.3.4,<10.0.0"
-pylint = "^3.3.2"
+pylint = ">=3.3.2,<5.0.0"
 pytest-cov = ">=6,<8"
 pytest-pylint = "^0.21.0"
 pytest-mock = "^3.14.0"
 pytest-mypy = ">=0.10.3,<1.1.0"
-pytest-randomly = ">=3.16,<5.0"
+pytest-randomly = ">=3.16,<6.0"
 cov-core = "^1.15.0"
 bandit = "^1.8.0"
 beautifulsoup4 = "^4"
 types-requests = "^2.32.0.20241016"
-types-setuptools = ">=75.6.0.20241126,<82.0.0.0"
+types-setuptools = ">=75.6.0.20241126,<85.0.0.0"
 types-toml = "^0.10.8.20240310"
 
 
 [tool.poetry.group.docker.dependencies]
-gunicorn = "^23.0.0"
+gunicorn = ">=23,<27"
 
 [build-system]
 requires = ["poetry-core"]
