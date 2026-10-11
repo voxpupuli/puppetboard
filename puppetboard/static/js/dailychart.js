@@ -29,6 +29,11 @@ jQuery(function ($) {
     };
   }
 
+  // Small counts produce fractional ticks; label whole numbers only
+  function integerTick(value) {
+    return Number.isInteger(value) ? value : "";
+  }
+
   function getChartConfig(mode) {
     let splitMode = mode === "split";
 
@@ -69,6 +74,12 @@ jQuery(function ($) {
       point: splitMode ? {
         r: 3,
       } : undefined,
+      spline: {
+        // Monotone keeps the curve from dipping below zero between points
+        interpolation: {
+          type: "monotone-x",
+        },
+      },
       axis: {
         x: {
           type: "category",
@@ -78,8 +89,10 @@ jQuery(function ($) {
             text: "Unchanged",
             position: "outer-middle",
           },
+          min: 0,
+          padding: {bottom: 0},
           tick: {
-            format: function(value) { return Math.round(value); },
+            format: integerTick,
           },
         } : undefined,
         y2: splitMode ? {
@@ -88,8 +101,10 @@ jQuery(function ($) {
             text: "Changed / Failed",
             position: "outer-middle",
           },
+          min: 0,
+          padding: {bottom: 0},
           tick: {
-            format: function(value) { return Math.round(value); },
+            format: integerTick,
           },
         } : undefined,
       },
