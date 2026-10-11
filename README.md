@@ -28,7 +28,7 @@ See [more screenshots here](#more-screenshots).
 
 * PuppetDB v. 5.2-8.*
   * (**Note**: PuppetDB 8.1.0 is not supported because of [this bug](https://github.com/puppetlabs/puppetdb/issues/3866). Please update to 8.1.1+.)
-* Python 3.9-3.13 or Docker
+* Python 3.12-3.14 or Docker
 
 ## Installation<a id="installation"></a>
 
@@ -299,6 +299,7 @@ Other settings that might be interesting, in no particular order:
     of a CDN. Defaults to `False`.
 - `DAILY_REPORTS_CHART_ENABLED`: Enable the use of daily chart graphs when looking at dashboard and node view.
 - `DAILY_REPORTS_CHART_DAYS`: Number of days to show history for on the daily report graphs.
+- `DAILY_REPORTS_CHART_MODE`: Default layout of the daily report graphs, `'stacked'` or `'split'`.
 - `DISPLAYED_METRICS`: Metrics to show when displaying node summary. Example: `'resources.total'`, `'events.noop'`.
 - `TABLE_COUNT_SELECTOR`: Configure the dropdown to limit number of hosts to show per page.
 - `LITTLE_TABLE_COUNT`: Default number of reports to show when when looking at a node.
