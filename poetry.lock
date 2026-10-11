@@ -598,6 +598,23 @@ files = [
 ]
 
 [[package]]
+name = "fixtures"
+version = "4.3.2"
+description = "Fixtures, reusable state for writing clean tests and more."
+optional = false
+python-versions = ">=3.10"
+groups = ["test"]
+files = [
+    {file = "fixtures-4.3.2-py3-none-any.whl", hash = "sha256:c71ad55a9139bd20b3265c1d44c1a67fefb9efdddd79614096f538de63fbf4d8"},
+    {file = "fixtures-4.3.2.tar.gz", hash = "sha256:b7db64014732513f23d12b0c49ae527ba0c0c1f2667ec97d9136d67157ebce5d"},
+]
+
+[package.extras]
+docs = ["docutils"]
+streams = ["testtools"]
+test = ["testtools"]
+
+[[package]]
 name = "flask"
 version = "3.1.3"
 description = "A simple framework for building complex web applications."
@@ -1141,6 +1158,21 @@ files = [
 build = ["blurb", "twine", "wheel"]
 docs = ["sphinx"]
 test = ["pytest", "pytest-cov"]
+
+[[package]]
+name = "mockey"
+version = "0.3.0"
+description = "A fixture that enforces correct mock.patch autospec behaviour, surfacing signature violations that the standard mock library silently ignores."
+optional = false
+python-versions = "<4.0,>=3.10"
+groups = ["test"]
+files = [
+    {file = "mockey-0.3.0-py3-none-any.whl", hash = "sha256:6acaa7680bb40deece1dd50570e289120e2f9ff63d54d8a0a42940254e116b79"},
+    {file = "mockey-0.3.0.tar.gz", hash = "sha256:8a9f87183faec754d047996c8c1b44c080b743680dd6ef703dd55aa4b72d0014"},
+]
+
+[package.dependencies]
+fixtures = "*"
 
 [[package]]
 name = "mypy"
@@ -1827,4 +1859,4 @@ type = ["pytest-mypy"]
 [metadata]
 lock-version = "2.1"
 python-versions = "^3.12"
-content-hash = "20f4a8faecc25acac486f42b3a5a6219434125c779be3bb5d63867443ed966c4"
+content-hash = "476af582a4ed85bfc5aa9965a00cd3ba617d9d601d970dd9661ef3c11c14926a"

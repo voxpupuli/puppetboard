@@ -73,11 +73,6 @@ def test_get():
 
 
 @pytest.fixture
-def mock_log(mocker):
-    return mocker.patch('logging.log')
-
-
-@pytest.fixture
 def mock_info_log(mocker):
     logger = logging.getLogger('puppetboard.utils')
     return mocker.patch.object(logger, 'info')
@@ -89,7 +84,13 @@ def mock_err_log(mocker):
     return mocker.patch.object(logger, 'error')
 
 
-def test_http_error(mock_log):
+@pytest.fixture
+def mock_warn_log(mocker):
+    logger = logging.getLogger('puppetboard.utils')
+    return mocker.patch.object(logger, 'warning')
+
+
+def test_http_error(mock_err_log):
     err = "NotFound"
 
     def raise_http_error():
@@ -100,10 +101,10 @@ def test_http_error(mock_log):
 
     with pytest.raises(NotFound):
         utils.get_or_abort(raise_http_error)
-        mock_log.error.assert_called_once_with(err)
+    mock_err_log.assert_called_once()
 
 
-def test_http_error_reraised_as_client_side(mock_log):
+def test_http_error_reraised_as_client_side(mock_warn_log):
     err = "The request is invalid because ..."
 
     def raise_http_400_error():
@@ -114,10 +115,10 @@ def test_http_error_reraised_as_client_side(mock_log):
 
     with pytest.raises(HTTPError):
         utils.get_or_abort_except_client_errors(raise_http_400_error)
-        mock_log.warning.assert_called_once_with(err)
+    mock_warn_log.assert_called_once()
 
 
-def test_http_connection_error(mock_log):
+def test_http_connection_error(mock_err_log):
     err = "ConnectionError"
 
     def connection_error():
@@ -128,10 +129,10 @@ def test_http_connection_error(mock_log):
 
     with pytest.raises(InternalServerError):
         utils.get_or_abort(connection_error)
-        mock_log.error.assert_called_with(err)
+    mock_err_log.assert_called_once()
 
 
-def test_basic_exception(mock_log):
+def test_basic_exception(mock_err_log):
     err = "Exception"
 
     def exception_error():
@@ -139,10 +140,9 @@ def test_basic_exception(mock_log):
         x.reason = err
         raise Exception(err)
 
-    with pytest.raises(Exception) as exception:
-        utils.get_or_abort(exception_error())
-        mock_log.error.assert_called_with(err)
-        assert exception.status_code == 500
+    with pytest.raises(Exception):
+        utils.get_or_abort(exception_error)
+    mock_err_log.assert_called_once()
 
 
 @pytest.mark.parametrize(
