@@ -14,12 +14,12 @@ jobs:
     strategy:
       max-parallel: 6
       matrix:
-        python-version: [3.9, '3.10', 3.11, 3.12, 3.13, 3.14]
+        python-version: [3.12, 3.13, 3.14]
 
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
       - name: Set up Python ${{ matrix.python-version }}
-        uses: actions/setup-python@v6
+        uses: actions/setup-python@v7
         with:
           python-version: ${{ matrix.python-version }}
       - name: Install dependencies
@@ -32,7 +32,7 @@ jobs:
           poetry run pytest --cov=. --cov-report=xml --strict-markers --mypy -v puppetboard test
           poetry run pylint --errors-only puppetboard test
       - name: Upload coverage to Codecov
-        uses: codecov/codecov-action@v6.0.1
+        uses: codecov/codecov-action@v7.1.1
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
           fail_ci_if_error: true
@@ -47,7 +47,7 @@ jobs:
       contents: read
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
       - name: Build Docker image
         uses: docker/build-push-action@v7
         with:
@@ -57,9 +57,9 @@ jobs:
   security-tests:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
       - name: Set up Python 3.13
-        uses: actions/setup-python@v6
+        uses: actions/setup-python@v7
         with:
           python-version: 3.13
       - name: Run bandit

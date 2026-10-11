@@ -51,7 +51,7 @@
 - name: "Package Resources"
   description: "Find all package resources across all nodes"
   query: |
-    resources[certname, title, parameters] {
+    resources[certname, title, parameters.ensure] {
       type = "Package"
     }
   endpoint: pql
@@ -88,7 +88,7 @@
   description: "Find resources that changed in the last run"
   query: |
     events[certname, resource_type, resource_title, property, old_value, new_value] {
-      status = "success" and old_value is not null and new_value is not null
+      status = "success" and latest_report? = true
     }
   endpoint: pql
   raw_json: false
@@ -105,7 +105,7 @@
 - name: "Service Resources"
   description: "Find all Service resources on nodes"
   query: |
-    resources[certname, title, parameters] {
+    resources[certname, title, parameters.ensure, parameters.enable] {
       type = "Service"
     }
   endpoint: pql
@@ -137,9 +137,8 @@
 - name: "Corrective Changes"
   description: "Find nodes that had corrective changes (drift from desired state)"
   query: |
-    events[certname, resource_type, resource_title] {
-      corrective_change = true
-      group by certname, resource_type, resource_title
+    events [certname, resource_type, resource_title, message] {
+      latest_report? = true
     }
   endpoint: pql
   raw_json: false
@@ -149,7 +148,6 @@
   query: |
     resources[count(), type] {
       group by type
-      order by count() desc
     }
   endpoint: pql
   raw_json: false
@@ -157,9 +155,8 @@
 - name: "Unique Domains"
   description: "Get all unique domain fact values across nodes"
   query: |
-    facts[value] {
-      name = "domain"
-      group by value
+    inventory[facts.networking.domain] {
+      group by facts.networking.domain
     }
   endpoint: pql
   raw_json: false

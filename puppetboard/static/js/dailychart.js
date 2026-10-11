@@ -1,7 +1,13 @@
 jQuery(function ($) {
+  const chartElement = $("#dailyReportsChart");
+  const toggleButtons = $(".daily-reports-chart-mode-toggle button");
+  const chartModeStorageKey = "dailyReportsChartMode";
   let url = "daily_reports_chart.json";
-  let certname = $("#dailyReportsChart").data("certname");
-  let days = parseInt($("#dailyReportsChart").data("days"));
+  let certname = chartElement.data("certname");
+  let days = parseInt(chartElement.data("days"));
+  let chartMode = localStorage.getItem(chartModeStorageKey) || chartElement.data("chart-mode") || "stacked";
+  let chart = null;
+  let chartData = null;
   let defaultJSON = []
 
   for (let index = days-1; index >= 0; index--) {
@@ -23,27 +29,90 @@ jQuery(function ($) {
     };
   }
 
-  let chart = bb.generate({
-    bindto: "#dailyReportsChart",
-    data: {
-      type: "bar",
-      json: defaultJSON,
-      keys: {
-        x: "day",
-        value: ["failed", "changed", "unchanged"],
+  function getChartConfig(mode) {
+    let splitMode = mode === "split";
+
+    return {
+      bindto: "#dailyReportsChart",
+      data: {
+        json: defaultJSON,
+        keys: {
+          x: "day",
+          value: ["failed", "changed", "unchanged"],
+        },
+        type: splitMode ? undefined : "bar",
+        types: splitMode ? {
+          unchanged: "bar",
+          changed: "spline",
+          failed: "spline",
+        } : undefined,
+        groups: splitMode ? undefined : [["failed", "changed", "unchanged"]],
+        axes: splitMode ? {
+          unchanged: "y",
+          changed: "y2",
+          failed: "y2",
+        } : undefined,
+        labels: splitMode ? {
+          format: function(value, id) {
+            if ((id === "changed" || id === "failed") && value > 0 && value < 1000) {
+              return Math.round(value);
+            }
+
+            return "";
+          },
+        } : undefined,
+        colors: getChartColors(),
       },
-      groups: [["failed", "changed", "unchanged"]],
-      colors: getChartColors(),
-    },
-    size: {
-      height: 160,
-    },
-    axis: {
-      x: {
-        type: "category",
+      size: {
+        height: splitMode ? 220 : 160,
       },
-    },
-  });
+      point: splitMode ? {
+        r: 3,
+      } : undefined,
+      axis: {
+        x: {
+          type: "category",
+        },
+        y: splitMode ? {
+          label: {
+            text: "Unchanged",
+            position: "outer-middle",
+          },
+          tick: {
+            format: function(value) { return Math.round(value); },
+          },
+        } : undefined,
+        y2: splitMode ? {
+          show: true,
+          label: {
+            text: "Changed / Failed",
+            position: "outer-middle",
+          },
+          tick: {
+            format: function(value) { return Math.round(value); },
+          },
+        } : undefined,
+      },
+      legend: {
+        show: true,
+      },
+    };
+  }
+
+  function updateModeButtons(mode) {
+    toggleButtons.removeClass("active");
+    toggleButtons.filter("[data-chart-mode-value='" + mode + "']").addClass("active");
+  }
+
+  function renderChart(mode, data) {
+    if (chart) {
+      chart.destroy();
+    }
+
+    chart = bb.generate(getChartConfig(mode));
+    chart.load({json: data || defaultJSON});
+    updateModeButtons(mode);
+  }
 
   if (typeof certname !== typeof undefined && certname !== false) {
     // truncate /node/certname from URL, to determine path to json
@@ -53,7 +122,16 @@ jQuery(function ($) {
       certname
   }
 
+  toggleButtons.on("click", function() {
+    chartMode = $(this).data("chart-mode-value");
+    localStorage.setItem(chartModeStorageKey, chartMode);
+    renderChart(chartMode, chartData || defaultJSON);
+  });
+
+  renderChart(chartMode, defaultJSON);
+
   $.getJSON(url, function(data) {
-    chart.load({json: data.result})
+    chartData = data.result;
+    renderChart(chartMode, chartData);
   });
 })

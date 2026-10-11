@@ -2,6 +2,80 @@
 
 All notable changes to this project will be documented in this file.
 
+## [v8.0.0](https://github.com/voxpupuli/puppetboard/tree/v8.0.0) (2026-10-09)
+
+[Full Changelog](https://github.com/voxpupuli/puppetboard/compare/v7.0.4...v8.0.0)
+
+**Breaking changes:**
+
+- Drop EoL Python 3.11 support [\#1482](https://github.com/voxpupuli/puppetboard/pull/1482) ([bastelfreak](https://github.com/bastelfreak))
+- Drop EoL python 3.10 support [\#1472](https://github.com/voxpupuli/puppetboard/pull/1472) ([bastelfreak](https://github.com/bastelfreak))
+- Drop EoL python 3.9 support [\#1471](https://github.com/voxpupuli/puppetboard/pull/1471) ([bastelfreak](https://github.com/bastelfreak))
+
+**Implemented enhancements:**
+
+- update all dependencies [\#1484](https://github.com/voxpupuli/puppetboard/pull/1484) ([bastelfreak](https://github.com/bastelfreak))
+- add ability to stack/split chart on dailychart for easier readability [\#1483](https://github.com/voxpupuli/puppetboard/pull/1483) ([rismoney](https://github.com/rismoney))
+- nodes: add facts timestamp column and place it last [\#1431](https://github.com/voxpupuli/puppetboard/pull/1431) ([tparkercbn](https://github.com/tparkercbn))
+- proposal: change icon to 8bit vox [\#1411](https://github.com/voxpupuli/puppetboard/pull/1411) ([d1nuc0m](https://github.com/d1nuc0m))
+
+**Fixed bugs:**
+
+- fix numerous sort issues relating to ip, disk and mem sizes [\#1409](https://github.com/voxpupuli/puppetboard/pull/1409) ([rismoney](https://github.com/rismoney))
+
+**Merged pull requests:**
+
+- build\(deps\): bump requests from 2.33.0 to 2.34.2 [\#1480](https://github.com/voxpupuli/puppetboard/pull/1480) ([dependabot[bot]](https://github.com/apps/dependabot))
+- build\(deps\): bump pytest from 8.4.2 to 9.0.3 [\#1479](https://github.com/voxpupuli/puppetboard/pull/1479) ([dependabot[bot]](https://github.com/apps/dependabot))
+- build\(deps\): bump requests from 2.32.5 to 2.33.0 [\#1478](https://github.com/voxpupuli/puppetboard/pull/1478) ([dependabot[bot]](https://github.com/apps/dependabot))
+- build\(deps-dev\): bump filelock from 3.20.3 to 4.0.12 [\#1477](https://github.com/voxpupuli/puppetboard/pull/1477) ([dependabot[bot]](https://github.com/apps/dependabot))
+- build\(deps\): bump pytest from 8.4.2 to 9.0.3 [\#1476](https://github.com/voxpupuli/puppetboard/pull/1476) ([dependabot[bot]](https://github.com/apps/dependabot))
+- build\(deps-dev\): bump soupsieve from 2.6 to 2.9 [\#1475](https://github.com/voxpupuli/puppetboard/pull/1475) ([dependabot[bot]](https://github.com/apps/dependabot))
+- build\(deps-dev\): bump filelock from 3.16.1 to 3.20.3 [\#1474](https://github.com/voxpupuli/puppetboard/pull/1474) ([dependabot[bot]](https://github.com/apps/dependabot))
+- build\(deps\): bump requests from 2.32.5 to 2.33.0 [\#1473](https://github.com/voxpupuli/puppetboard/pull/1473) ([dependabot[bot]](https://github.com/apps/dependabot))
+
+## [v7.0.4](https://github.com/voxpupuli/puppetboard/tree/v7.0.4) (2026-10-08)
+
+[Full Changelog](https://github.com/voxpupuli/puppetboard/compare/v7.0.3...v7.0.4)
+
+**Fixed bugs:**
+
+- Improve query\_pressets examples [\#1464](https://github.com/voxpupuli/puppetboard/pull/1464) ([smortex](https://github.com/smortex))
+
+**Merged pull requests:**
+
+- build\(deps\): bump the python group across 1 directory with 9 updates [\#1466](https://github.com/voxpupuli/puppetboard/pull/1466) ([dependabot[bot]](https://github.com/apps/dependabot))
+- build\(deps-dev\): bump pygments from 2.18.0 to 2.20.0 [\#1459](https://github.com/voxpupuli/puppetboard/pull/1459) ([dependabot[bot]](https://github.com/apps/dependabot))
+- build\(deps\): bump python from 3.15.0b2-alpine to 3.15.0rc2-alpine [\#1457](https://github.com/voxpupuli/puppetboard/pull/1457) ([dependabot[bot]](https://github.com/apps/dependabot))
+
+## [v7.0.3](https://github.com/voxpupuli/puppetboard/tree/v7.0.3) (2026-10-08)
+
+[Full Changelog](https://github.com/voxpupuli/puppetboard/compare/v7.0.2...v7.0.3)
+
+**Fixed bugs:**
+
+- Query form has issues with LocalStorage "selectedPresetIndex" when links to the query page are opened [\#1400](https://github.com/voxpupuli/puppetboard/issues/1400)
+
+**Merged pull requests:**
+
+- build\(deps\): bump the python group across 1 directory with 11 updates [\#1461](https://github.com/voxpupuli/puppetboard/pull/1461) ([dependabot[bot]](https://github.com/apps/dependabot))
+- Fix filtering issue in failures tab [\#1456](https://github.com/voxpupuli/puppetboard/pull/1456) ([marek130](https://github.com/marek130))
+- build\(deps\): bump python from 3.15.0b1-alpine to 3.15.0b2-alpine [\#1435](https://github.com/voxpupuli/puppetboard/pull/1435) ([dependabot[bot]](https://github.com/apps/dependabot))
+- build\(deps\): bump the python group across 1 directory with 2 updates [\#1433](https://github.com/voxpupuli/puppetboard/pull/1433) ([dependabot[bot]](https://github.com/apps/dependabot))
+- build\(deps\): bump idna from 3.16 to 3.17 in the python group [\#1432](https://github.com/voxpupuli/puppetboard/pull/1432) ([dependabot[bot]](https://github.com/apps/dependabot))
+- build\(deps\): bump idna from 3.15 to 3.16 in the python group [\#1430](https://github.com/voxpupuli/puppetboard/pull/1430) ([dependabot[bot]](https://github.com/apps/dependabot))
+- build\(deps\): bump idna from 3.15 to 3.16 in the python group [\#1429](https://github.com/voxpupuli/puppetboard/pull/1429) ([dependabot[bot]](https://github.com/apps/dependabot))
+- build\(deps\): bump packaging from 26.0 to 26.2 in the python group [\#1428](https://github.com/voxpupuli/puppetboard/pull/1428) ([dependabot[bot]](https://github.com/apps/dependabot))
+- build\(deps\): bump the python group across 1 directory with 3 updates [\#1427](https://github.com/voxpupuli/puppetboard/pull/1427) ([dependabot[bot]](https://github.com/apps/dependabot))
+- build\(deps\): bump idna from 3.11 to 3.15 [\#1426](https://github.com/voxpupuli/puppetboard/pull/1426) ([dependabot[bot]](https://github.com/apps/dependabot))
+- build\(deps\): bump python from 3.15.0a8-alpine to 3.15.0b1-alpine [\#1424](https://github.com/voxpupuli/puppetboard/pull/1424) ([dependabot[bot]](https://github.com/apps/dependabot))
+- build\(deps\): bump the python group across 1 directory with 4 updates [\#1422](https://github.com/voxpupuli/puppetboard/pull/1422) ([dependabot[bot]](https://github.com/apps/dependabot))
+- build\(deps\): bump the python group across 1 directory with 3 updates [\#1420](https://github.com/voxpupuli/puppetboard/pull/1420) ([dependabot[bot]](https://github.com/apps/dependabot))
+- build\(deps\): bump python from 3.15.0a7-alpine to 3.15.0a8-alpine [\#1417](https://github.com/voxpupuli/puppetboard/pull/1417) ([dependabot[bot]](https://github.com/apps/dependabot))
+- build\(deps\): bump pytest-cov from 7.0.0 to 7.1.0 in the python group [\#1410](https://github.com/voxpupuli/puppetboard/pull/1410) ([dependabot[bot]](https://github.com/apps/dependabot))
+- build\(deps\): bump the python group across 1 directory with 2 updates [\#1408](https://github.com/voxpupuli/puppetboard/pull/1408) ([dependabot[bot]](https://github.com/apps/dependabot))
+- Improve color palette consistency [\#1406](https://github.com/voxpupuli/puppetboard/pull/1406) ([rismoney](https://github.com/rismoney))
+
 ## [v7.0.2](https://github.com/voxpupuli/puppetboard/tree/v7.0.2) (2026-03-19)
 
 [Full Changelog](https://github.com/voxpupuli/puppetboard/compare/v7.0.1...v7.0.2)
@@ -24,6 +98,7 @@ All notable changes to this project will be documented in this file.
 
 **Merged pull requests:**
 
+- Release 7.0.2 [\#1405](https://github.com/voxpupuli/puppetboard/pull/1405) ([d1nuc0m](https://github.com/d1nuc0m))
 - build\(deps\): bump the python group across 1 directory with 2 updates [\#1399](https://github.com/voxpupuli/puppetboard/pull/1399) ([dependabot[bot]](https://github.com/apps/dependabot))
 - fix url prefix problem in facts.html [\#1394](https://github.com/voxpupuli/puppetboard/pull/1394) ([rismoney](https://github.com/rismoney))
 

@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "puppetboard"
-version = "7.0.2"
+version = "8.0.0"
 description = "Web frontend for PuppetDB"
 authors = ["Vox Pupuli <voxpupuli@groups.io>"]
 license = "Apache-2.0"
@@ -23,7 +23,7 @@ packages = [
 
 
 [tool.poetry.dependencies]
-python = "^3.9"
+python = "^3.12"
 click = "^8.1.7"
 flask = "^3.1.0"
 commonmark = "^0.9.1"
@@ -45,7 +45,7 @@ pep8 = "^1.7.1"
 coverage = "^7.6.9"
 mock = "^5.1.0"
 mockey = {version = "*", python = ">=3.10"}
-pytest = "^8.3.4"
+pytest = ">=8.3.4,<10.0.0"
 pylint = "^3.3.2"
 pytest-cov = ">=6,<8"
 pytest-pylint = "^0.21.0"
