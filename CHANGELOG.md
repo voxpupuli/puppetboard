@@ -2,6 +2,26 @@
 
 All notable changes to this project will be documented in this file.
 
+## [v8.1.0](https://github.com/voxpupuli/puppetboard/tree/v8.1.0) (2026-10-12)
+
+[Full Changelog](https://github.com/voxpupuli/puppetboard/compare/v8.0.0...v8.1.0)
+
+**Implemented enhancements:**
+
+- Stacked/Split views [\#1418](https://github.com/voxpupuli/puppetboard/issues/1418)
+
+**Fixed bugs:**
+
+- fix split mode axes and curve overshoot on dailychart [\#1489](https://github.com/voxpupuli/puppetboard/pull/1489) ([vchepkov](https://github.com/vchepkov))
+
+**Merged pull requests:**
+
+- docs: document DAILY\_REPORTS\_CHART\_MODE and update supported python versions [\#1490](https://github.com/voxpupuli/puppetboard/pull/1490) ([vchepkov](https://github.com/vchepkov))
+- build\(deps\): bump types-toml from 0.10.8.20240310 to 0.10.8.20260518 [\#1488](https://github.com/voxpupuli/puppetboard/pull/1488) ([dependabot[bot]](https://github.com/apps/dependabot))
+- build\(deps\): bump the python group across 1 directory with 13 updates [\#1487](https://github.com/voxpupuli/puppetboard/pull/1487) ([dependabot[bot]](https://github.com/apps/dependabot))
+- build\(deps\): bump python from 3.15.0rc2-alpine to 3.15.0rc3-alpine [\#1486](https://github.com/voxpupuli/puppetboard/pull/1486) ([dependabot[bot]](https://github.com/apps/dependabot))
+- test: add mockey autospec enforcement and fix silent mock bugs [\#1434](https://github.com/voxpupuli/puppetboard/pull/1434) ([anisia19](https://github.com/anisia19))
+
 ## [v8.0.0](https://github.com/voxpupuli/puppetboard/tree/v8.0.0) (2026-10-09)
 
 [Full Changelog](https://github.com/voxpupuli/puppetboard/compare/v7.0.4...v8.0.0)
