@@ -975,3 +975,7 @@ td.code {
 #theme-toggle i {
   margin: 0;
 }
+
+.puppetboard-export-buttons {
+  margin-bottom: 1em;
+}

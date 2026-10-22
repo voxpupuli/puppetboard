@@ -20,6 +20,7 @@ See [more screenshots here](#more-screenshots).
 * [Requirements](#requirements)
 * [Installation](#installation)
 * [Configuration](#configuration)
+* [Exporting data](#exporting-data)
 * [Getting Help](#getting-help)
 * [Contributing](#contributing)
 * [Legal](#legal)
@@ -29,6 +30,38 @@ See [more screenshots here](#more-screenshots).
 * PuppetDB v. 5.2-8.*
   * (**Note**: PuppetDB 8.1.0 is not supported because of [this bug](https://github.com/puppetlabs/puppetdb/issues/3866). Please update to 8.1.1+.)
 * Python 3.12-3.14 or Docker
+
+## Exporting data
+
+Use **Download as CSV** above a data table to export its visible data columns.
+Exports include **all rows matching the current filters**, across all pages, in
+the current sort order. This includes nodes, inventory, fact values, classes,
+catalogs, reports, report logs/events/metrics, and tabular query results.
+Action-only columns (such as catalog comparison buttons) are omitted.
+
+For server-paginated tables, Puppetboard fetches the matching rows in batches
+without changing the displayed page or filters. Large report exports may take
+some time and make additional requests to PuppetDB; narrow the filters first
+when exporting a large history. If an export fails, an error appears above the
+table and no partial CSV is downloaded.
+
+CSV files use UTF-8 with a BOM for spreadsheet compatibility, quote special
+characters, preserve structured fact values as JSON, and prefix formula-like
+cells with an apostrophe to prevent spreadsheet formula execution. Export works
+in `OFFLINE_MODE` without additional libraries or configuration. Existing query
+XLSX export remains available.
+
+### CSV browser tests
+
+The optional browser regression suite uses the bundled JavaScript libraries and
+mocked table responses; it does not require PuppetDB or internet access at runtime.
+In your development environment, install Playwright and its browser, then run:
+
+```bash
+pip install playwright
+python -m playwright install --with-deps chromium
+pytest test/browser/test_export.py
+```
 
 ## Installation<a id="installation"></a>
 
