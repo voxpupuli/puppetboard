@@ -61,11 +61,6 @@
     {% if table_html_id == 'query_table' -%}
     "buttons": [
       {
-        extend: 'csv',
-        filename: 'Puppetboard_query',
-        text: 'Download as CSV',
-      },
-      {
         extend: 'excel',
         filename: 'Puppetboard_query',
         text: 'Download as XLSX',
@@ -110,6 +105,8 @@
       "render": function (data, type, full, meta) {
         data = JSON.parse(data)
 
+        if (type === 'export') return data[1];
+
         url = data[0]
         to_show = pretty_print(data[1])
 
@@ -122,6 +119,7 @@
       "targets": -1,
       "data:": null,
       "render": function (data, type, full, meta) {
+        if (type === 'export') return data;
         shorta = data.toString().replace(/[{},]/g, "<br />");
         shortb = shorta.replace(/u'/g, " ");
         shortc = shortb.replace(/'/g, " ");
