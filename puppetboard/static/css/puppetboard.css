@@ -254,6 +254,34 @@
   background-color: transparent;
 }
 
+/* Report > Logs: per-level row colouring in dark mode */
+[data-theme="dark"] table.dataTable tbody tr.error,
+[data-theme="dark"] table.dataTable tbody tr.error:hover {
+  background-color: #2e1818 !important;
+}
+
+[data-theme="dark"] table.dataTable tbody tr.error td {
+  color: #e8b4b4 !important;
+}
+
+[data-theme="dark"] table.dataTable tbody tr.warning,
+[data-theme="dark"] table.dataTable tbody tr.warning:hover {
+  background-color: #2a2010 !important;
+}
+
+[data-theme="dark"] table.dataTable tbody tr.warning td {
+  color: #e0cc90 !important;
+}
+
+[data-theme="dark"] table.dataTable tbody tr.positive,
+[data-theme="dark"] table.dataTable tbody tr.positive:hover {
+  background-color: #162516 !important;
+}
+
+[data-theme="dark"] table.dataTable tbody tr.positive td {
+  color: #90c888 !important;
+}
+
 [data-theme="dark"] table.dataTable thead th {
   background-color: var(--color-table-header-bg) !important;
   color: var(--color-text) !important;
