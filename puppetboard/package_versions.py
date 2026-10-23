@@ -4,7 +4,10 @@ Ports of dpkg's verrevcmp (lib/dpkg/version.c) and rpm's rpmvercmp
 (rpmio/rpmvercmp.c). Digit runs are compared as strings (length, then
 lexically) so that agent-reported versions can never make int() blow up.
 """
+import logging
 import re
+
+log = logging.getLogger(__name__)
 
 # ponytail: provider names assumed from Puppet's package providers, extend
 # when real PuppetDB data shows others (unknown providers get no verdict).
@@ -13,7 +16,7 @@ FAMILIES = {
     'yum': 'rpm', 'dnf': 'rpm', 'rpm': 'rpm', 'zypper': 'rpm', 'up2date': 'rpm',
 }
 THRESHOLD_MAX_LENGTH = 128
-THRESHOLD_RE = re.compile(r'^(\d+:)?\d[A-Za-z0-9.+~^_-]*$')
+THRESHOLD_RE = re.compile(r'^([0-9]+:)?[0-9][A-Za-z0-9.+~^_-]*$')
 DIGITS = '0123456789'
 # Row statuses, from the most to the least severe
 STATUSES = ('below', 'none', 'ok')
@@ -190,10 +193,12 @@ def status(installed, provider, threshold):
     fam = family(provider)
     if not (fam and threshold and installed):
         return 'none'
-    epoch, _ = _split_epoch(installed)
-    if epoch and _split_epoch(threshold)[0] is None:
-        threshold = f'{epoch}:{threshold}'
     try:
+        epoch, _ = _split_epoch(installed)
+        if epoch and _split_epoch(threshold)[0] is None:
+            threshold = f'{epoch}:{threshold}'
         return 'below' if compare(installed, threshold, fam) < 0 else 'ok'
     except Exception:  # never let one odd agent-reported version break the page
+        log.warning('Cannot compare version %r with threshold %r', installed, threshold,
+                    exc_info=True)
         return 'none'

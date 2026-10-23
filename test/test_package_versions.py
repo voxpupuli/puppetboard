@@ -44,6 +44,14 @@ def test_compare_deb(a, b, expected):
     ('1_0', '1.0', 0),
     ('3.0.7-27.el9', '3.0.7', 0),
     ('1:3.0.7-27.el9', '0:3.0.7-28.el9', 1),
+    ('1.0rc1', '1.0rc2', -1),
+    ('3.0.7-27.el9_2', '3.0.7-27.el9_3', -1),
+    ('1-1.el8', '1-1.el9', -1),
+    ('1.0~rc1', '1.0~rc2', -1),
+    ('1.0~~', '1.0~', -1),
+    ('1.0^a', '1.0^b', -1),
+    ('1.0^', '1.0', 1),
+    ('1.0^git1', '1.0^git2', -1),
 ])
 def test_compare_rpm(a, b, expected):
     assert compare(a, b, 'rpm') == expected
@@ -75,8 +83,12 @@ def test_status(installed, provider, threshold, expected):
     assert status(installed, provider, threshold) == expected
 
 
-def test_status_bad_installed_version_is_no_verdict():
+def test_status_missing_installed_version_is_no_verdict():
     assert status(None, 'apt', '1.0') == 'none'
+
+
+def test_status_odd_installed_version_is_no_verdict():
+    assert status(123, 'apt', '1.0') == 'none'
 
 
 @pytest.mark.parametrize('raw,expected', [
@@ -90,6 +102,7 @@ def test_status_bad_installed_version_is_no_verdict():
     ('<3.0', (None, True)),
     ('v1.2', (None, True)),
     ('1.0 2.0', (None, True)),
+    ('\uff11.0', (None, True)),
     ('1' * 200, (None, True)),
 ])
 def test_parse_threshold(raw, expected):

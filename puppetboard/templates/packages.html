@@ -87,12 +87,12 @@
       {%- for g in results.groups %}
       <tr>
         <th scope="row">{{ g.label }}</th>
-        <td>{{ g.total }}</td>
+        <td>{% if error %}–{% else %}{{ at_least }}{{ g.total }}{% endif %}</td>
         <td>
           {%- if g.has_field %}
           <div class="field{% if g.invalid %} error{% endif %}">
             <input id="threshold_{{ loop.index }}" name="{{ g.param }}" value="{{ g.raw }}"
-                   aria-label="Threshold for {{ g.label }} ({{ g.total }} servers)"
+                   aria-label="Threshold for {{ g.label }}{% if not error %} ({{ g.total }} servers){% endif %}"
                    aria-describedby="threshold_help{% if g.invalid %} threshold_{{ loop.index }}_error{% endif %}"
                    {% if g.invalid %}aria-invalid="true"{% endif %}
                    placeholder="{{ g.example or 'version' }}">
@@ -102,18 +102,19 @@
             </div>
             {%- endif %}
           </div>
-          {%- elif g.label == 'Unknown OS' %}
+          {%- elif g.unknown %}
           No threshold: OS facts missing
           {%- else %}
           No threshold: no Debian/RPM package
           {%- endif %}
         </td>
-        <td>{% if g.threshold %}{{ at_least }}{{ g.counts['below'] }}{% else %}–{% endif %}</td>
-        <td>{% if g.threshold %}{{ at_least }}{{ g.counts['ok'] }}{% else %}–{% endif %}</td>
-        <td>{{ at_least }}{{ g.counts['none'] }}</td>
+        <td>{% if g.threshold and not error %}{{ at_least }}{{ g.counts['below'] }}{% else %}–{% endif %}</td>
+        <td>{% if g.threshold and not error %}{{ at_least }}{{ g.counts['ok'] }}{% else %}–{% endif %}</td>
+        <td>{% if error %}–{% else %}{{ at_least }}{{ g.counts['none'] }}{% endif %}</td>
       </tr>
       {%- endfor %}
     </tbody>
+    {%- if not error %}
     <tfoot>
       <tr>
         <th scope="row">Total</th>
@@ -124,6 +125,7 @@
         <th>{{ at_least }}{{ results.totals['none'] }}</th>
       </tr>
     </tfoot>
+    {%- endif %}
   </table>
   <p id="threshold_help" class="helper">
     A threshold applies to all the selected packages of this OS. Servers with a version lower than it are

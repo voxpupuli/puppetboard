@@ -94,7 +94,7 @@ def parse_thresholds(args):
     for key, value in args.items():
         label = key[len(THRESHOLD_PREFIX):]
         if (key.startswith(THRESHOLD_PREFIX) and label and label != UNKNOWN_OS
-                and len(label) <= MAX_OS_LABEL_LENGTH
+                and value.strip() and len(label) <= MAX_OS_LABEL_LENGTH
                 and len(thresholds) < MAX_THRESHOLDS):
             thresholds[label] = value
     return thresholds
@@ -123,13 +123,18 @@ def query_package_rows(names, env):
     ])
 
 
-def query_nodes(env):
-    # dotted projections come back as flat keys, e.g. row['facts.os.name']
-    extract = ['extract',
-               ['certname', 'timestamp', 'facts.os.name', 'facts.os.release.major']]
+def query_nodes(names, env):
+    filters = ['in', 'certname',
+               ['from', 'package_inventory',
+                ['extract', 'certname', ['in', 'package_name', ['array', names]]]]]
     if env != '*':
-        extract.append(['=', 'environment', env])
-    return query(['from', 'inventory', extract])
+        filters = ['and', ['=', 'environment', env], filters]
+    # dotted projections come back as flat keys, e.g. row['facts.os.name']
+    return query([
+        'from', 'inventory',
+        ['extract', ['certname', 'timestamp', 'facts.os.name', 'facts.os.release.major'],
+         filters],
+    ])
 
 
 def build_results(package_rows, nodes, thresholds):
@@ -145,6 +150,7 @@ def build_results(package_rows, nodes, thresholds):
             threshold, invalid = parse_threshold(raw)
             groups[label] = {
                 'label': label,
+                'unknown': label == UNKNOWN_OS,
                 'param': THRESHOLD_PREFIX + label,
                 'raw': raw,
                 'threshold': threshold,
@@ -161,7 +167,7 @@ def build_results(package_rows, nodes, thresholds):
         if node is None:
             continue
         g = group(os_label(node))
-        if family(row['provider']) and g['label'] != UNKNOWN_OS:
+        if family(row['provider']) and not g['unknown']:
             g['comparable'] = True
             g['example'] = g['example'] or row['version']
         code = status(row['version'], row['provider'], g['threshold'])
@@ -178,13 +184,13 @@ def build_results(package_rows, nodes, thresholds):
     for g in groups.values():
         g['counts'] = Counter(g['servers'].values())
         g['total'] = len(g['servers'])
-        g['has_field'] = g['label'] != UNKNOWN_OS and (g['comparable'] or not g['total'])
+        g['has_field'] = not g['unknown'] and (g['comparable'] or not g['total'])
         totals.update(g['counts'])
 
     rows.sort(key=lambda r: (STATUSES.index(r[0]), r[1], r[3], r[4]))
     return {
         'groups': sorted(groups.values(),
-                         key=lambda g: (g['label'] == UNKNOWN_OS, not g['total'],
+                         key=lambda g: (g['unknown'], not g['total'],
                                         -g['total'], g['label'])),
         'rows': rows,
         'totals': totals,
@@ -211,7 +217,7 @@ def packages(env):
     if names:
         try:
             package_rows = query_package_rows(names, env)
-            nodes = query_nodes(env)
+            nodes = query_nodes(names, env) if package_rows else []
         except (RequestException, EmptyResponseError) as e:
             log.error('Packages search failed: %s', e)
             package_rows, nodes = [], []
@@ -219,7 +225,15 @@ def packages(env):
                      if isinstance(e, HTTPError) and e.response is not None
                      else True)
         truncated = len(package_rows) > MAX_ROWS
-        results = build_results(package_rows[:MAX_ROWS], nodes, thresholds)
+        if truncated:
+            # rows are ordered by certname: drop the server cut in the middle
+            # of its rows, its status would be computed on part of them
+            kept = package_rows[:MAX_ROWS]
+            last = kept[-1]['certname']
+            if package_rows[MAX_ROWS]['certname'] == last and kept[0]['certname'] != last:
+                kept = [row for row in kept if row['certname'] != last]
+            package_rows = kept
+        results = build_results(package_rows, nodes, thresholds)
 
     return render_template(
         'packages.html',

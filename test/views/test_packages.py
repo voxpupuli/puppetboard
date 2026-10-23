@@ -142,8 +142,11 @@ def test_parse_names():
 
 
 def test_parse_thresholds():
-    args = {'t_Ubuntu 22.04': '1.0', 't_Unknown OS': '1.0', 't_': '1.0', 'pkg': 'a'}
+    args = {'t_Ubuntu 22.04': '1.0', 't_Unknown OS': '1.0', 't_': '1.0', 'pkg': 'a',
+            't_Debian 12': ' ', 't_' + 'x' * 101: '1.0'}
     assert packages_view.parse_thresholds(args) == {'Ubuntu 22.04': '1.0'}
+    many = {f't_os{i}': '1.0' for i in range(60)}
+    assert len(packages_view.parse_thresholds(many)) == packages_view.MAX_THRESHOLDS
 
 
 # --- routes ---
@@ -178,6 +181,7 @@ def test_names_autocomplete(client, mocker, enabled):
         {'name': 'libssl3', 'value': 'libssl3'}, {'name': 'openssl', 'value': 'openssl'}]}
     ast = fake.query('packages')
     assert ['~', 'package_name', '(?i)SSL'] in ast[2]
+    assert ['limit', packages_view.MAX_SUGGESTIONS] in ast
 
     # served from the cache the second time, case-insensitively
     client.get('/packages/names/json?q=ssl')
@@ -198,26 +202,35 @@ def test_names_autocomplete_escapes_regex(client, mocker, enabled):
 
 
 def test_names_autocomplete_error(client, mocker, enabled):
-    fake_db(mocker, error=Timeout('slow'))
+    fake = fake_db(mocker, error=Timeout('slow'))
     rv = client.get('/packages/names/json?q=ssl')
     assert rv.status_code == 502
     assert json.loads(rv.data)['success'] is False
+    # errors are not cached
+    client.get('/packages/names/json?q=ssl')
+    assert len(fake.queries) == 2
 
 
 def test_search_queries_filter_environment(client, mocker, mock_puppetdb_environments, enabled):
     fake = fake_db(mocker, rows=ROWS, nodes=NODES)
+    names_filter = ['in', 'package_name', ['array', ['openssl', 'libssl3', 'openssl-libs']]]
+    with_packages = ['in', 'certname',
+                     ['from', 'package_inventory', ['extract', 'certname', names_filter]]]
+
     client.get('/staging' + SEARCH)
-    packages_filter = fake.query('package_inventory')[2][2]
-    assert packages_filter[0] == 'and'
-    assert ['in', 'package_name', ['array', ['openssl', 'libssl3', 'openssl-libs']]] in packages_filter
-    assert ['in', 'certname', ['from', 'inventory', ['extract', 'certname',
-                                                      ['=', 'environment', 'staging']]]] in packages_filter
-    assert fake.query('inventory')[2][2] == ['=', 'environment', 'staging']
+    packages_ast = fake.query('package_inventory')
+    assert packages_ast[2][2] == [
+        'and', names_filter,
+        ['in', 'certname', ['from', 'inventory', ['extract', 'certname',
+                                                  ['=', 'environment', 'staging']]]]]
+    assert ['order_by', ['certname', 'package_name', 'version']] in packages_ast
+    assert ['limit', packages_view.MAX_ROWS + 1] in packages_ast
+    assert fake.query('inventory')[2][2] == ['and', ['=', 'environment', 'staging'], with_packages]
 
     fake.queries.clear()
     client.get('/*' + SEARCH)
-    assert fake.query('package_inventory')[2][2][0] == 'in'
-    assert len(fake.query('inventory')[2]) == 2
+    assert fake.query('package_inventory')[2][2] == names_filter
+    assert fake.query('inventory')[2][2] == with_packages
 
 
 def test_search_page(client, mocker, mock_puppetdb_environments, enabled):
@@ -288,22 +301,39 @@ def test_search_error_keeps_form(client, mocker, mock_puppetdb_environments, ena
     assert rv.status_code == 200
     soup = BeautifulSoup(rv.data, 'html.parser')
     assert 'PuppetDB returned an error.' in soup.text
+    assert 'has these packages' not in soup.text
     assert soup.find('input', {'name': 't_Ubuntu 22.04'})['value'] == '3.0.2-0ubuntu1.15'
     assert soup.find('input', {'name': 'pkg'})['value'] == 'openssl,libssl3,openssl-libs'
+    # no count is shown as if it were data
+    row = [c.text.strip() for c in soup.find('th', string='Ubuntu 22.04').parent.find_all('td')]
+    assert row[0] == '–'
+    assert row[2:] == ['–', '–', '–']
+    assert soup.find('tfoot') is None
 
 
-def test_search_http_error(client, mocker, mock_puppetdb_environments, enabled):
-    fake_db(mocker, error=HTTPError(response=MockHTTPResponse(400, 'bad query')))
+@pytest.mark.parametrize('status,message', [
+    (400, 'PuppetDB returned an error (400).'),
+    (None, 'PuppetDB returned an error.'),
+])
+def test_search_http_error(client, mocker, mock_puppetdb_environments, enabled, status, message):
+    error = HTTPError('bad query')
+    if status:
+        error.response = MockHTTPResponse(status, 'bad query')
+    fake_db(mocker, error=error)
     rv = client.get(SEARCH)
     assert rv.status_code == 200
-    assert 'PuppetDB returned an error (400).' in BeautifulSoup(rv.data, 'html.parser').text
+    soup = BeautifulSoup(rv.data, 'html.parser')
+    assert message in soup.text
+    assert 'has these packages' not in soup.text
 
 
 def test_search_zero_servers(client, mocker, mock_puppetdb_environments, enabled):
-    fake_db(mocker, rows=[], nodes=NODES)
+    fake = fake_db(mocker, rows=[], nodes=NODES)
     soup = BeautifulSoup(client.get('/staging/packages?pkg=openssl').data, 'html.parser')
     assert 'No server in staging has these packages.' in soup.text
     assert soup.find('a', string='Search all environments') is not None
+    # no node query when no package matched
+    assert [q[1] for q in fake.queries] == ['package_inventory']
 
     soup = BeautifulSoup(client.get('/*/packages?pkg=openssl').data, 'html.parser')
     assert 'No server has these packages.' in soup.text
@@ -316,6 +346,21 @@ def test_search_truncated(client, mocker, mock_puppetdb_environments, enabled):
     html = client.get(SEARCH).data.decode()
     assert 'Results truncated at 2 rows' in html
     assert 'at least 1' in html
+
+
+def test_search_truncation_drops_split_server(client, mocker, mock_puppetdb_environments, enabled):
+    rows = [
+        {'certname': 'u1', 'package_name': 'openssl', 'version': '3.0.2-0ubuntu1.12', 'provider': 'apt'},
+        {'certname': 'u2', 'package_name': 'libssl3', 'version': '3.0.2-0ubuntu1.15', 'provider': 'apt'},
+        # cut here: u2 would look up to date without this row
+        {'certname': 'u2', 'package_name': 'openssl', 'version': '3.0.2-0ubuntu1.12', 'provider': 'apt'},
+    ]
+    mocker.patch.object(packages_view, 'MAX_ROWS', 2)
+    fake_db(mocker, rows=rows, nodes=NODES)
+    soup = BeautifulSoup(client.get(SEARCH).data, 'html.parser')
+    row = [c.text.strip() for c in soup.find('th', string='Ubuntu 22.04').parent.find_all('td')]
+    assert row[0] == 'at least 1'
+    assert row[2:] == ['at least 1', 'at least 0', 'at least 0']
 
 
 def test_search_too_many_names(client, mocker, mock_puppetdb_environments, enabled):
