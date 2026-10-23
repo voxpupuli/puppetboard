@@ -313,7 +313,8 @@ Other settings that might be interesting, in no particular order:
     The resource events are grouped by their status ('failure', 'success', 'noop').
 - `CLASS_EVENTS_STATUS_COLUMNS`: A mapping between the status of the resource events and the name of the columns of the table to display.
 - `ENABLE_PACKAGES`: If set to `True` adds a Packages page to find which nodes have some packages installed and whether
-    their version is below a threshold set per OS (e.g. to check exposure to a CVE). Defaults to `False`.
+    their version is below a threshold set per OS (e.g. to check exposure to a CVE), and lists the installed packages
+    on each node page. Defaults to `False`.
     It requires the PuppetDB package inventory, fed by the `_puppet_inventory_1` fact of the nodes.
     The page lists installed packages, not what is running (a service may not have been restarted, an older kernel may
     still be booted). Versions are compared with the Debian (apt, dpkg) and RPM (yum, dnf, rpm, zypper) rules only;

@@ -19,6 +19,25 @@
 {% endmacro %}
 {{ macros.datatable_init(table_html_id="reports_table", ajax_url=url_for('reports_ajax', env=current_env, node_name=node.name), data=None, default_length=config.LITTLE_TABLE_COUNT, length_selector=config.TABLE_COUNT_SELECTOR, extra_options=extra_options) }}
 {{ macros.datatable_init(table_html_id="facts_table", ajax_url=url_for('fact_ajax', env=current_env, node=node.name), data=None, default_length=config.LITTLE_TABLE_COUNT, length_selector=config.TABLE_COUNT_SELECTOR, extra_options=facts_extra_options) }}
+{%- if config.ENABLE_PACKAGES %}
+// Not datatable_init: it rebinds every search box of the page to the last table
+$('#node_packages_table').DataTable({
+  ajax: {
+    url: {{ url_for('node_packages', env=current_env, node_name=node.name)|tojson }},
+    dataSrc: function (json) {
+      if (json.error) {
+        $('#node_packages_error').text(json.error).show();
+      }
+      return json.data;
+    }
+  },
+  columnDefs: [{targets: '_all', render: $.fn.dataTable.render.text()}],
+  deferRender: true,
+  pageLength: {{ config.LITTLE_TABLE_COUNT }},
+  lengthMenu: {{ config.TABLE_COUNT_SELECTOR }},
+  language: {emptyTable: 'No package inventory for this node.'}
+});
+{%- endif %}
 {% endblock onload_script %}
 
 {% block content %}
@@ -76,6 +95,24 @@
       </table>
       <a href="{{url_for('reports', env=current_env, node_name=node.name)}}">Show All</a>
     </div>
+    {%- if config.ENABLE_PACKAGES %}
+    <div class='row' style="padding-top: 2em;">
+      <h1>Packages</h1>
+      <div id="node_packages_error" class="ui negative message" style="display: none"></div>
+      <table id="node_packages_table" class='ui very basic very compact table stackable'>
+        <thead>
+          <tr>
+            <th>Package</th>
+            <th>Version</th>
+            <th>Provider</th>
+          </tr>
+        </thead>
+        <tbody>
+        </tbody>
+      </table>
+      <a href="{{url_for('packages', env=current_env)}}">Search packages on all servers</a>
+    </div>
+    {%- endif %}
   </div>
   <div class='column'>
     <h1>Facts</h1>

@@ -233,6 +233,37 @@ def test_names_autocomplete_error(client, mocker, enabled):
     assert fake.queries[0] == fake.queries[1]
 
 
+def test_node_packages_disabled(client, mock_puppetdb_environments):
+    app.app.config['ENABLE_PACKAGES'] = False
+    assert client.get('/node/u1/packages/json').status_code == 403
+
+
+def test_node_packages(client, mocker, enabled):
+    fake = fake_db(mocker, rows=[{'package_name': 'openssl', 'version': '3.0.2', 'provider': 'apt'}])
+    rv = client.get('/staging/node/u1/packages/json')
+    assert json.loads(rv.data) == {'data': [['openssl', '3.0.2', 'apt']]}
+    ast = fake.query('package_inventory')
+    assert ast[2][2] == ['=', 'certname', 'u1']
+    assert ['order_by', ['package_name', 'version']] in ast
+
+
+def test_node_packages_error(client, mocker, enabled):
+    fake_db(mocker, error=Timeout('slow'))
+    data = json.loads(client.get('/node/u1/packages/json').data)
+    assert data['data'] == []
+    assert 'PuppetDB returned an error' in data['error']
+
+
+@pytest.mark.parametrize('flag', [True, False])
+def test_node_page_packages_section(client, mock_puppetdb_environments,
+                                    mock_puppetdb_default_nodes, flag):
+    app.app.config['ENABLE_PACKAGES'] = flag
+    soup = BeautifulSoup(client.get('/node/node-failed').data, 'html.parser')
+    app.app.config['ENABLE_PACKAGES'] = False
+    assert (soup.find('table', id='node_packages_table') is not None) is flag
+    assert (soup.find('a', string='Search packages on all servers') is not None) is flag
+
+
 def test_search_queries_filter_environment(client, mocker, mock_puppetdb_environments, enabled):
     fake = fake_db(mocker, rows=ROWS, nodes=NODES)
     names_filter = ['in', 'package_name', ['array', ['openssl', 'libssl3', 'openssl-libs']]]

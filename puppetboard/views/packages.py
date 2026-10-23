@@ -86,6 +86,25 @@ def packages_names():
                    results=[{'name': name, 'value': name} for name in names])
 
 
+@app.route('/node/<node_name>/packages/json',
+           defaults={'env': app.config['DEFAULT_ENVIRONMENT']})
+@app.route('/<env>/node/<node_name>/packages/json')
+def node_packages(env, node_name):
+    """Packages installed on a node, for the table of the node page."""
+    check_enabled()
+    try:
+        rows = query([
+            'from', 'package_inventory',
+            ['extract', ['package_name', 'version', 'provider'], ['=', 'certname', node_name]],
+            ['order_by', ['package_name', 'version']],
+        ])
+    except (RequestException, EmptyResponseError) as e:
+        log.error('Packages of %s failed: %s', node_name, e)
+        return jsonify(data=[], error='PuppetDB returned an error, try again in a moment.')
+    return jsonify(data=[[row['package_name'], row['version'], row['provider']]
+                         for row in rows])
+
+
 def parse_names(raw):
     """Returns (names, too_many) from the comma-separated `pkg` parameter."""
     names = []
