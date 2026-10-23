@@ -45,6 +45,17 @@ def query(ast):
     return puppetdb._query('pql', query=json.dumps(ast))
 
 
+def suggest_names(pattern):
+    rows = query([
+        'from', 'packages',
+        ['extract', ['package_name'], ['~', 'package_name', pattern],
+         ['group_by', 'package_name']],
+        ['order_by', ['package_name']],
+        ['limit', MAX_SUGGESTIONS],
+    ])
+    return [row['package_name'] for row in rows]
+
+
 @app.route('/packages/names/json')
 def packages_names():
     """Package names of the whole fleet matching a fragment, for the
@@ -57,21 +68,18 @@ def packages_names():
     key = 'packages_names_' + hashlib.sha256(fragment.lower().encode()).hexdigest()
     names = cache.get(key)
     if names is None:
+        escaped = re.escape(fragment)
         try:
-            rows = query([
-                'from', 'packages',
-                ['extract', ['package_name'],
-                 ['~', 'package_name', '(?i)' + re.escape(fragment)],
-                 ['group_by', 'package_name']],
-                ['order_by', ['package_name']],
-                ['limit', MAX_SUGGESTIONS],
-            ])
+            # names starting with the fragment first, so that a short exact
+            # name is not pushed out of the list by longer ones containing it
+            names = suggest_names('(?i)^' + escaped)
+            if len(names) < MAX_SUGGESTIONS:
+                names += suggest_names('(?i)' + escaped)
         except (RequestException, EmptyResponseError) as e:
             log.error('Package names search failed: %s', e)
             return jsonify(success=False, results=[]), 502
         # commas separate the names in the page URL
-        names = [name for name in dict.fromkeys(row['package_name'] for row in rows)
-                 if ',' not in name]
+        names = [name for name in dict.fromkeys(names) if ',' not in name][:MAX_SUGGESTIONS]
         cache.set(key, names, timeout=SUGGESTIONS_CACHE_TIMEOUT)
 
     return jsonify(success=True,

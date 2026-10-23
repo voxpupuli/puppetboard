@@ -179,12 +179,33 @@ def test_names_autocomplete(client, mocker, enabled):
     assert rv.status_code == 200
     assert json.loads(rv.data) == {'success': True, 'results': [
         {'name': 'libssl3', 'value': 'libssl3'}, {'name': 'openssl', 'value': 'openssl'}]}
-    ast = fake.query('packages')
-    assert ['~', 'package_name', '(?i)SSL'] in ast[2]
-    assert ['limit', packages_view.MAX_SUGGESTIONS] in ast
+    prefix, contains = fake.queries
+    assert ['~', 'package_name', '(?i)^SSL'] in prefix[2]
+    assert ['~', 'package_name', '(?i)SSL'] in contains[2]
+    assert ['limit', packages_view.MAX_SUGGESTIONS] in prefix
 
     # served from the cache the second time, case-insensitively
     client.get('/packages/names/json?q=ssl')
+    assert len(fake.queries) == 2
+
+
+def test_names_autocomplete_prefix_first(client, mocker, enabled):
+    def answer(endpoint, query=None, **kwargs):
+        pattern = json.loads(query)[2][2][2]
+        if pattern.startswith('(?i)^'):
+            return [{'package_name': 'perl'}]
+        return [{'package_name': 'libperl5'}, {'package_name': 'perl'}]
+
+    mocker.patch.object(app.puppetdb, '_query', side_effect=answer)
+    rv = client.get('/packages/names/json?q=perl')
+    assert [r['name'] for r in json.loads(rv.data)['results']] == ['perl', 'libperl5']
+
+
+def test_names_autocomplete_full_prefix_page(client, mocker, enabled):
+    mocker.patch.object(packages_view, 'MAX_SUGGESTIONS', 1)
+    fake = fake_db(mocker, names=[{'package_name': 'perl'}])
+    rv = client.get('/packages/names/json?q=perl')
+    assert [r['name'] for r in json.loads(rv.data)['results']] == ['perl']
     assert len(fake.queries) == 1
 
 
@@ -198,7 +219,7 @@ def test_names_autocomplete_short_fragment(client, mocker, enabled):
 def test_names_autocomplete_escapes_regex(client, mocker, enabled):
     fake = fake_db(mocker)
     client.get('/packages/names/json?q=libstdc%2B%2B')
-    assert ['~', 'package_name', '(?i)libstdc\\+\\+'] in fake.query('packages')[2]
+    assert ['~', 'package_name', '(?i)^libstdc\\+\\+'] in fake.query('packages')[2]
 
 
 def test_names_autocomplete_error(client, mocker, enabled):
@@ -209,6 +230,7 @@ def test_names_autocomplete_error(client, mocker, enabled):
     # errors are not cached
     client.get('/packages/names/json?q=ssl')
     assert len(fake.queries) == 2
+    assert fake.queries[0] == fake.queries[1]
 
 
 def test_search_queries_filter_environment(client, mocker, mock_puppetdb_environments, enabled):

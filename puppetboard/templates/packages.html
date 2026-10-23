@@ -171,6 +171,17 @@
       maxSelections: 'At most {maxCount} packages.'
     }
   });
+  // Enter only picks a suggestion matching what was typed: suggestions of a
+  // previous query, or none yet, must neither be picked nor submit the form
+  $('#pkg_search').on('keydown', function (e) {
+    var typed = this.value.trim().toLowerCase();
+    if (e.which !== 13 || !typed) return;
+    var hit = String($('#pkg_dropdown .menu .item.selected:not(.filtered)').attr('data-value') || '');
+    if (hit.toLowerCase().indexOf(typed) === -1) {
+      e.preventDefault();
+      e.stopPropagation();
+    }
+  });
 
 {%- if results and results.rows %}
   var STATUS = {
