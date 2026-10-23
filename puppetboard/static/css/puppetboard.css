@@ -981,7 +981,8 @@ h2#packages_focus:focus {
   outline: none;
 }
 
-[data-theme="dark"] .ui.form .field > label {
+[data-theme="dark"] .ui.form .field > label,
+[data-theme="dark"] .ui.search.dropdown > input.search {
   color: var(--color-text);
 }
 
