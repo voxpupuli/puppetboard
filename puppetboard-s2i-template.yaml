@@ -120,6 +120,8 @@ objects:
                 value: ${CODE_PREFIX_TO_REMOVE}
               - name: ENABLE_CLASS
                 value: ${ENABLE_CLASS}
+              - name: ENABLE_PACKAGES
+                value: ${ENABLE_PACKAGES}
               - name: CACHE_DEFAULT_TIMEOUT
                 value: ${CACHE_DEFAULT_TIMEOUT}
               - name: CACHE_TYPE
@@ -276,6 +278,11 @@ parameters:
 - description: If set to `True` allows the user to view the number of resource events (number of changed resources in the last report) grouped by class.
   displayName: ENABLE_CLASS
   name: ENABLE_CLASS
+  type: boolean
+  value: "false"
+- description: If set to `True` adds a Packages page to find which nodes have some packages installed below a version threshold.
+  displayName: ENABLE_PACKAGES
+  name: ENABLE_PACKAGES
   type: boolean
   value: "false"
 - description: If `ENABLE_QUERY` is `True`, allow to fine tune the endpoints of PuppetDB APIs that

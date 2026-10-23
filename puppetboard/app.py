@@ -26,6 +26,8 @@ import puppetboard.views.metrics  # noqa: F401
 # noinspection PyUnresolvedReferences
 import puppetboard.views.nodes  # noqa: F401
 # noinspection PyUnresolvedReferences
+import puppetboard.views.packages  # noqa: F401
+# noinspection PyUnresolvedReferences
 import puppetboard.views.query  # noqa: F401
 # noinspection PyUnresolvedReferences
 import puppetboard.views.radiator  # noqa: F401
@@ -58,6 +60,7 @@ menu_entries = [
     ('reports', 'Reports'),
     ('metrics', 'Metrics'),
     ('inventory', 'Inventory'),
+    ('packages', 'Packages'),
     ('catalogs', 'Catalogs'),
     ('classes', 'Classes'),
     ('radiator', 'Radiator'),
@@ -72,6 +75,9 @@ if not app.config.get('ENABLE_CATALOG'):
 
 if not app.config.get('ENABLE_CLASS'):
     menu_entries.remove(('classes', 'Classes'))
+
+if not app.config.get('ENABLE_PACKAGES'):
+    menu_entries.remove(('packages', 'Packages'))
 
 app.jinja_env.globals.update(menu_entries=menu_entries)
 

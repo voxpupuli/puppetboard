@@ -159,6 +159,9 @@ FAVORITE_ENVS = [x.strip() for x in os.getenv('FAVORITE_ENVS', FAVORITE_ENVS_DEF
 # by status and class)
 ENABLE_CLASS = coerce_bool(os.getenv('ENABLE_CLASS'), False)
 
+# Enable packages view (which nodes have a package, below a version threshold)
+ENABLE_PACKAGES = coerce_bool(os.getenv('ENABLE_PACKAGES'), False)
+
 # Use caching if classes view is enabled
 CACHE_DEFAULT_TIMEOUT = int(os.getenv('CACHE_DEFAULT_TIMEOUT', '3600'))
 CACHE_TYPE = os.getenv('CACHE_TYPE', 'SimpleCache')
