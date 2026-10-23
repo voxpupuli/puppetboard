@@ -312,6 +312,14 @@ Other settings that might be interesting, in no particular order:
 - `ENABLE_CLASS`: If set to `True` allows the user to view the number of resource events (number of changed resources in the last report) grouped by class.
     The resource events are grouped by their status ('failure', 'success', 'noop').
 - `CLASS_EVENTS_STATUS_COLUMNS`: A mapping between the status of the resource events and the name of the columns of the table to display.
+- `ENABLE_PACKAGES`: If set to `True` adds a Packages page to find which nodes have some packages installed and whether
+    their version is below a threshold set per OS (e.g. to check exposure to a CVE), and lists the installed packages
+    on each node page. Defaults to `False`.
+    It requires the PuppetDB package inventory, fed by the `_puppet_inventory_1` fact of the nodes.
+    The page lists installed packages, not what is running (a service may not have been restarted, an older kernel may
+    still be booted). Versions are compared with the Debian (apt, dpkg) and RPM (yum, dnf, rpm, zypper) rules only;
+    packages of other providers are listed without a verdict. A threshold without epoch takes the epoch of the
+    installed package.
 - `CACHE_TYPE`: Specifies which type of caching object to use when `SCHEDULER_ENABLED` is set to `True`.
     The cache is used for the classes view (`ENABLE_CLASS` is set to `True`) which requires parsing the events of all the latest reports to group them by Puppet class.
     If the last report is present in the cache, we do not parse the events, which avoids unnecessary processing.

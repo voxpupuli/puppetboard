@@ -1,0 +1,230 @@
+{% extends 'layout.html' %}
+{% import '_macros.html' as macros %}
+{% block content %}
+{% set at_least = 'at least ' if truncated else '' %}
+<h1>Packages</h1>
+<form class="ui form" method="get" action="{{ url_for('packages', env=current_env) }}">
+  <div class="field">
+    <label for="pkg_search">Packages</label>
+    <div id="pkg_dropdown" class="ui fluid multiple search selection dropdown">
+      <input type="hidden" name="pkg" value="{{ names|join(',') }}">
+      <i class="dropdown icon"></i>
+      <input class="search" id="pkg_search" autocomplete="off" aria-describedby="pkg_help">
+      <div class="default text">Type at least 2 characters of a package name</div>
+      <div class="menu">
+        {%- for name in names %}
+        <div class="item" data-value="{{ name }}">{{ name }}</div>
+        {%- endfor %}
+      </div>
+    </div>
+    <p id="pkg_help" class="helper">
+      Up to {{ max_names }} names. The same software can have another package name on each OS
+      (e.g. openssl, libssl3, openssl-libs).
+    </p>
+  </div>
+
+  {%- if not names %}
+  <div class="ui info message">Pick one or more package names, then press Search.</div>
+  {%- endif %}
+  {%- if too_many %}
+  <div class="ui warning message">Only the first {{ max_names }} packages are searched.</div>
+  {%- endif %}
+  {%- if error %}
+  <div class="ui negative message">
+    PuppetDB returned an error{% if error is not sameas true %} ({{ error }}){% endif %}.
+    Your search is kept: try again in a moment, or check that the PuppetDB package inventory is available.
+  </div>
+  {%- endif %}
+  {%- if truncated %}
+  <div class="ui warning message">
+    Results truncated at {{ max_rows }} rows: the counts below are incomplete.
+    Select fewer packages to see every server.
+  </div>
+  {%- endif %}
+  {%- if results and results.any_invalid %}
+  <div class="ui negative message" id="packages_focus" tabindex="-1">
+    <div class="header">Some thresholds are not versions, they are ignored</div>
+    <ul class="list">
+      {%- for g in results.groups %}
+      {%- if g.invalid %}
+      <li><a href="#threshold_{{ loop.index }}">{{ g.label }}</a></li>
+      {%- endif %}
+      {%- endfor %}
+    </ul>
+  </div>
+  {%- endif %}
+  {%- if results and not results.servers and not error %}
+  <div class="ui info message">
+    {%- if current_env == '*' %}
+    No server has these packages.
+    {%- else %}
+    No server in {{ current_env }} has these packages.
+    <a href="{{ all_envs_url }}">Search all environments</a>
+    {%- endif %}
+  </div>
+  {%- endif %}
+  {%- if results and results.servers and not results.any_threshold %}
+  <div class="ui info message">
+    No threshold set yet. Enter the fixed version for each OS below, then press Search,
+    to see which servers are below it.
+  </div>
+  {%- endif %}
+
+  {%- if results and results.groups %}
+  <h2 {% if not results.any_invalid %}id="packages_focus" tabindex="-1"{% endif %}>Servers by OS</h2>
+  <table id="os_table" class="ui compact very basic table">
+    <thead>
+      <tr>
+        <th scope="col">OS</th>
+        <th scope="col">Servers</th>
+        <th scope="col">Threshold</th>
+        <th scope="col">Below threshold</th>
+        <th scope="col">Up to date</th>
+        <th scope="col">No verdict</th>
+      </tr>
+    </thead>
+    <tbody>
+      {%- for g in results.groups %}
+      <tr>
+        <th scope="row">{{ g.label }}</th>
+        <td>{% if error %}–{% else %}{{ at_least }}{{ g.total }}{% endif %}</td>
+        <td>
+          {%- if g.has_field %}
+          <div class="field{% if g.invalid %} error{% endif %}">
+            <input id="threshold_{{ loop.index }}" name="{{ g.param }}" value="{{ g.raw }}"
+                   aria-label="Threshold for {{ g.label }}{% if not error %} ({{ g.total }} servers){% endif %}"
+                   aria-describedby="threshold_help{% if g.invalid %} threshold_{{ loop.index }}_error{% endif %}"
+                   {% if g.invalid %}aria-invalid="true"{% endif %}
+                   placeholder="{{ g.example or 'version' }}">
+            {%- if g.invalid %}
+            <div class="ui pointing red basic label" id="threshold_{{ loop.index }}_error">
+              Enter only the version, e.g. {{ g.example or '3.0.7-28.el9' }}: no package name, architecture or operator.
+            </div>
+            {%- endif %}
+          </div>
+          {%- elif g.unknown %}
+          No threshold: OS facts missing
+          {%- else %}
+          No threshold: no Debian/RPM package
+          {%- endif %}
+        </td>
+        <td>{% if g.threshold and not error %}{{ at_least }}{{ g.counts['below'] }}{% else %}–{% endif %}</td>
+        <td>{% if g.threshold and not error %}{{ at_least }}{{ g.counts['ok'] }}{% else %}–{% endif %}</td>
+        <td>{% if error %}–{% else %}{{ at_least }}{{ g.counts['none'] }}{% endif %}</td>
+      </tr>
+      {%- endfor %}
+    </tbody>
+    {%- if not error %}
+    <tfoot>
+      <tr>
+        <th scope="row">Total</th>
+        <th>{{ at_least }}{{ results.servers }}</th>
+        <th></th>
+        <th>{% if results.any_threshold %}{{ at_least }}{{ results.totals['below'] }}{% else %}–{% endif %}</th>
+        <th>{% if results.any_threshold %}{{ at_least }}{{ results.totals['ok'] }}{% else %}–{% endif %}</th>
+        <th>{{ at_least }}{{ results.totals['none'] }}</th>
+      </tr>
+    </tfoot>
+    {%- endif %}
+  </table>
+  <p id="threshold_help" class="helper">
+    A threshold applies to all the selected packages of this OS. Servers with a version lower than it are
+    "Below threshold". Without epoch, the epoch of the installed package is used. Only Debian and RPM
+    packages get a verdict.
+  </p>
+  {%- endif %}
+
+  <button class="ui primary button" type="submit">Search</button>
+</form>
+
+{%- if results and results.rows %}
+<h2>Packages found</h2>
+<table id="packages_table" class="ui compact very basic table stackable">
+  <thead>
+    <tr>
+      <th>Status</th>
+      <th>Server</th>
+      <th>OS</th>
+      <th>Package</th>
+      <th>Version</th>
+      <th>Provider</th>
+      <th>Facts updated</th>
+    </tr>
+  </thead>
+  <tbody>
+  </tbody>
+</table>
+{%- endif %}
+{% endblock content %}
+
+{% block onload_script %}
+  $('#pkg_dropdown').dropdown({
+    apiSettings: {url: {{ url_for('packages_names')|tojson }} + '?q={query}'},
+    minCharacters: 2,
+    maxSelections: {{ max_names }},
+    preserveHTML: false,
+    filterRemoteData: false,
+    saveRemoteData: false,
+    message: {
+      noResults: 'No package matches this search.',
+      serverError: 'The package search is unavailable.',
+      maxSelections: 'At most {maxCount} packages.'
+    }
+  });
+  // Enter only picks a suggestion matching what was typed: suggestions of a
+  // previous query, or none yet, must neither be picked nor submit the form
+  $('#pkg_search').on('keydown', function (e) {
+    var typed = this.value.trim().toLowerCase();
+    if (e.which !== 13 || !typed) return;
+    var hit = String($('#pkg_dropdown .menu .item.selected:not(.filtered)').attr('data-value') || '');
+    if (hit.toLowerCase().indexOf(typed) === -1) {
+      e.preventDefault();
+      e.stopPropagation();
+    }
+  });
+
+{%- if results and results.rows %}
+  var STATUS = {
+    below: {rank: 0, text: 'Below threshold', cls: 'failed'},
+    none: {rank: 1, text: 'No verdict', cls: 'unreported'},
+    ok: {rank: 2, text: 'Up to date', cls: 'unchanged'}
+  };
+  var NODE_URL = {{ url_for('node', env=current_env, node_name='')|tojson }};
+  {% macro extra_options(caller) %}
+  'columns': [
+    {'render': function (data, type) {
+      var s = STATUS[data] || STATUS.none;
+      if (type === 'sort' || type === 'type') return s.rank;
+      if (type === 'filter') return s.text;
+      return '<span class="ui small label status ' + s.cls + '">' + s.text + '</span>';
+    }},
+    {'render': function (data, type) {
+      if (type !== 'display') return data;
+      return $('<a>').attr('href', NODE_URL + encodeURIComponent(data)).text(data).prop('outerHTML');
+    }},
+    {'render': $.fn.dataTable.render.text()},
+    {'render': $.fn.dataTable.render.text()},
+    {'render': $.fn.dataTable.render.text()},
+    {'render': $.fn.dataTable.render.text()},
+    {'render': function (data, type) {
+      if (type !== 'display' || !data) return data || '';
+      return $('<span>').attr('data-localise', '{{ config.LOCALISE_TIMESTAMP|lower }}').text(data).prop('outerHTML');
+    }},
+  ],
+  'order': [[0, 'asc']],
+  'serverSide': false,
+  'deferRender': true,
+  'autoWidth': false,
+  'pageLength': {{ config.NORMAL_TABLE_COUNT }},
+  'lengthMenu': {{ config.TABLE_COUNT_SELECTOR }},
+  {% endmacro %}
+  {{ macros.datatable_init(table_html_id="packages_table", ajax_url=None, data=results.rows|tojson, default_length=config.NORMAL_TABLE_COUNT, length_selector=config.TABLE_COUNT_SELECTOR, extra_options=extra_options) }}
+  // the first draw happens before the macro listens to draw events
+  $('#packages_table [data-localise]').transformDatetime();
+{%- endif %}
+
+  var focusTarget = document.getElementById('packages_focus');
+  if (focusTarget) {
+    focusTarget.focus();
+  }
+{% endblock onload_script %}

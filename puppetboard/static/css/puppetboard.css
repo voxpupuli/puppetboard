@@ -975,3 +975,25 @@ td.code {
 #theme-toggle i {
   margin: 0;
 }
+
+/* Packages: the results heading only receives focus programmatically */
+h2#packages_focus:focus {
+  outline: none;
+}
+
+[data-theme="dark"] .ui.form .field > label,
+[data-theme="dark"] .ui.search.dropdown > input.search {
+  color: var(--color-text);
+}
+
+[data-theme="dark"] .ui.table tfoot th {
+  background-color: var(--color-table-bg);
+  color: var(--color-text);
+  border-color: var(--color-border);
+}
+
+[data-theme="dark"] .ui.form .field .ui.basic.red.label {
+  background-color: var(--color-table-bg) !important;
+  color: var(--color-text) !important;
+  border-color: var(--color-failed) !important;
+}
