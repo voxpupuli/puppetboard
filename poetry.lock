@@ -1464,14 +1464,14 @@ dev = ["pre-commit", "pytest-asyncio", "tox"]
 
 [[package]]
 name = "pytest-mypy"
-version = "1.0.1"
+version = "1.1.0"
 description = "A Pytest Plugin for Mypy"
 optional = false
-python-versions = ">=3.8"
+python-versions = ">=3.10"
 groups = ["test"]
 files = [
-    {file = "pytest_mypy-1.0.1-py3-none-any.whl", hash = "sha256:ad7133c9b92c802e032f2596590ebede7eea7c418e61d60d5cdd571b55c72056"},
-    {file = "pytest_mypy-1.0.1.tar.gz", hash = "sha256:3f5fcaff75c80dccc6b68cf5ecc28e1bbe71e95309469eb7a28bf408ce55c074"},
+    {file = "pytest_mypy-1.1.0-py3-none-any.whl", hash = "sha256:4f0e3cc7be0825188a427811a8fd0fd83afc010b0ea167a273180b81fbd7d8b5"},
+    {file = "pytest_mypy-1.1.0.tar.gz", hash = "sha256:b9f4237c0311eec507c48986dde2d776f399c98fdb92dae5c93f96c19bcae0e4"},
 ]
 
 [package.dependencies]
@@ -1857,4 +1857,4 @@ type = ["pytest-mypy (>=1.0.1) ; platform_python_implementation != \"PyPy\""]
 [metadata]
 lock-version = "2.1"
 python-versions = "^3.12"
-content-hash = "467a9612992c3720f4ee4a7a5871e522238a384312b2164914265d6b16624bb9"
+content-hash = "8e4ace3d16e8035683d28ef3f8bb679fd7f8033eb9266895dbdb8b3ca4e948ee"
