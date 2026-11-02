@@ -1,4 +1,4 @@
-certifi==2026.7.22
+certifi==2026.10.23
 charset-normalizer==3.5.2
 click==8.5.0
 commonmark==0.9.2
@@ -18,5 +18,5 @@ requests==2.34.2
 typing_extensions==4.16.0
 urllib3==2.8.0
 Werkzeug==3.1.9
-WTForms==3.2.2
-zipp==3.23.1
+WTForms==3.3.1
+zipp==4.1.2
