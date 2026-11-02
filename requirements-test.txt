@@ -4,7 +4,7 @@ coverage==7.16.2
 mock==5.2.0
 mockey
 pytest==9.1.1
-pylint==3.3.9
+pylint==4.0.9
 pytest-pylint==0.21.0
 pytest-cov==7.1.0
 pytest-mock==3.16.0
