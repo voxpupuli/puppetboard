@@ -98,12 +98,15 @@
         data-searching="false"
         data-paging="false"
         data-info="false"
-        data-order='[[ 2, "desc" ]]'
+        data-order='[[ {{ 3 if current_env == "*" else 2 }}, "desc" ]]'
       >
         <thead>
           <tr>
             <th>Status</th>
             <th>Certname</th>
+            {% if current_env == '*' %}
+            <th>Environment</th>
+            {% endif %}
             <th>Report</th>
             <th class="collapsing" data-orderable="false"></th>
           </tr>
@@ -122,6 +125,9 @@
             <td>
               <a href="{{url_for('node', env=current_env, node_name=node.name)}}">{{ node.name }}</a>
             </td>
+            {% if current_env == '*' %}
+            <td>{{ node.catalog_environment }}</td>
+            {% endif %}
             <td data-order="{{ node.report_timestamp | default('', true) }}">
               {% if node.report_timestamp %}
                 <a href="{{url_for('report', env=current_env, node_name=node.name, report_id=node.latest_report_hash)}}" data-localise="{{ config.LOCALISE_TIMESTAMP|lower }}">{{ node.report_timestamp }}</a>
