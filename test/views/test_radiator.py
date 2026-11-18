@@ -16,7 +16,8 @@ def test_radiator_view(client, mocker,
 
     dbquery = MockDbQuery(query_data)
 
-    mocker.patch.object(app.puppetdb, '_query', side_effect=dbquery.get)
+    query_mock = mocker.patch.object(app.puppetdb, '_query',
+                                     side_effect=dbquery.get)
 
     rv = client.get('/radiator')
 
@@ -29,52 +30,25 @@ def test_radiator_view(client, mocker,
 
     assert '10' in total.text
 
+    query_mock.assert_called_once()
+    assert query_mock.call_args.args == ('nodes',)
+    assert str(query_mock.call_args.kwargs['query']) == (
+        '["extract", [["function", "count"]], '
+        '["and", ["=", "catalog_environment", "production"]]]')
+
 
 def test_radiator_view_all(client, mocker,
                            mock_puppetdb_environments,
                            mock_puppetdb_default_nodes):
-    # starting with v6.9.1 they changed the metric API to v2
-    # and a totally different format
-    base_str = 'puppetlabs.puppetdb.population:'
     query_data = {
-        'version': [{'version': '6.9.1'}],
-        'metrics': [
-            {
-                'validate': {
-                    'data': {
-                        'value': {'Value': '50'}
-                    },
-                    'checks': {
-                        'path': '%sname=num-nodes' % base_str
-                    }
-                }
-            },
-            {
-                'validate': {
-                    'data': {
-                        'value': {'Value': '60'}
-                    },
-                    'checks': {
-                        'path': '%sname=num-resources' % base_str
-                    }
-                }
-            },
-            {
-                'validate': {
-                    'data': {
-                        'value': {'Value': 60.3}
-                    },
-                    'checks': {
-                        'path': '%sname=avg-resources-per-node' % base_str
-                    }
-                }
-            }
-        ]
+        'nodes': [[{'count': 50}]],
+        'resources': [[{'count': 60}]],
     }
 
     dbquery = MockDbQuery(query_data)
 
-    mocker.patch.object(app.puppetdb, '_query', side_effect=dbquery.get)
+    query_mock = mocker.patch.object(app.puppetdb, '_query',
+                                     side_effect=dbquery.get)
 
     rv = client.get('/%2A/radiator')
 
@@ -86,6 +60,11 @@ def test_radiator_view_all(client, mocker,
     total = soup.find(class_='total')
 
     assert '50' in total.text
+
+    query_mock.assert_called_once()
+    assert query_mock.call_args.args == ('nodes',)
+    assert str(query_mock.call_args.kwargs['query']) == (
+        '["extract", [["function", "count"]]]')
 
 
 def test_radiator_view_json(client, mocker,
