@@ -927,6 +927,7 @@ td.error_message,
 td.code {
   font-family: "Cousine", monospace;
   font-size: 1rem;
+  white-space: pre-wrap;
 }
 
 .warning_message,
