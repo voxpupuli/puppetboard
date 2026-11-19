@@ -39,6 +39,7 @@
       <th>Certname</th>
       <th>Catalog</th>
       <th>Report</th>
+      <th>Facts</th>
       <th class="collapsing" data-orderable="false"></th>
     </tr>
   </thead>
@@ -63,6 +64,13 @@
       <td data-order="{{ node.report_timestamp | default('', true) }}">
         {% if node.report_timestamp %}
           <a href="{{url_for('report', env=current_env, node_name=node.name, report_id=node.latest_report_hash)}}"  data-localise="{{ config.LOCALISE_TIMESTAMP|lower }}">{{ node.report_timestamp }}</a>
+        {% else %}
+          <i class="large darkblue ban icon"></i>
+        {% endif %}
+      </td>
+      <td data-order="{{ node.facts_timestamp | default('', true) }}">
+        {% if node.facts_timestamp %}
+          <a href="{{url_for('node', env=current_env, node_name=node.name)}}" data-localise="{{ config.LOCALISE_TIMESTAMP|lower }}">{{ node.facts_timestamp }}</a>
         {% else %}
           <i class="large darkblue ban icon"></i>
         {% endif %}

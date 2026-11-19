@@ -1,0 +1,352 @@
+apiVersion: template.openshift.io/v1
+kind: Template
+metadata:
+  name: puppetboard-template
+objects:
+- kind: ImageStream
+  apiVersion: image.openshift.io/v1
+  metadata:
+    annotations:
+    labels:
+      app: ${PUPPETBOARD_SERVICE_NAME}
+    name: ${PUPPETBOARD_SERVICE_NAME}
+  spec:
+    lookupPolicy:
+      local: false
+- kind: "BuildConfig"
+  apiVersion: build.openshift.io/v1
+  metadata:
+    name: "${PUPPETBOARD_SERVICE_NAME}" 
+    generation: 2
+    labels:
+      app: ${PUPPETBOARD_SERVICE_NAME}
+  spec:
+    failedBuildsHistoryLimit: 5
+    nodeSelector: null
+    runPolicy: "Serial" 
+    triggers: 
+      - type: "GitHub"
+        github:
+          secret: "secret101"
+      - type: "Generic"
+        generic:
+          secret: "secret101"
+      - type: "ConfigChange"
+      - type: "ImageChange"
+        imageChange: {}
+    source: 
+      git:
+        uri: ${PUPPETBOARD_SOURCE_REPOSITORY_URL}
+        ref: ${PUPPETBOARD_SOURCE_REPOSITORY_REF}
+      type: Git
+    strategy: 
+      dockerStragegy:
+        from:
+          kind: "ImageStreamTag"
+          name: python:3.12-alpine
+      type: Docker
+    output: 
+      to:
+        kind: "ImageStreamTag"
+        name: "${PUPPETBOARD_SERVICE_NAME}:latest"
+    successfulBuildsHistoryLimit: 5
+- kind: "DeploymentConfig"
+  apiVersion: "v1"
+  metadata:
+    name: "${PUPPETBOARD_SERVICE_NAME}"
+    labels:
+      app: ${PUPPETBOARD_SERVICE_NAME}
+  spec:
+    template: 
+      metadata:
+        labels:
+          name: "${PUPPETBOARD_SERVICE_NAME}"
+          app: ${PUPPETBOARD_SERVICE_NAME}
+      spec:
+        containers:
+          - name: "${PUPPETBOARD_SERVICE_NAME}"
+            imagePullPolicy: Always
+            ports:
+              - containerPort: ${{PUPPETDB_PORT}}
+                protocol: "TCP"
+            env:
+              - name: PUPPETDB_HOST
+                value: ${PUPPETDB_HOST}
+              - name: PUPPETDB_PORT
+                value: ${PUPPETDB_PORT}
+              - name: SECRET_KEY
+                value: ${PUPPETBOARD_SECRET_KEY}
+              - name: PUPPETBOARD_PORT
+                value: ${PUPPETBOARD_PORT}
+              - name: UNRESPONSIVE_HOURS
+                value: ${UNRESPONSIVE_HOURS}
+              - name: PUPPETDB_SSL_VERIFY
+                value: ${PUPPETDB_SSL_VERIFY}
+              - name: PUPPETDB_TIMEOUT
+                value: ${PUPPETDB_TIMEOUT}
+              - name: DEFAULT_ENVIRONMENT
+                value: ${DEFAULT_ENVIRONMENT}
+              - name: ENABLED_QUERY_ENDPOINTS
+                value: ${ENABLED_QUERY_ENDPOINTS}
+              - name: ENABLE_QUERY
+                value: ${ENABLE_QUERY}
+              - name: LOCALISE_TIMESTAMP
+                value: ${LOCALISE_TIMESTAMP}
+              - name: LOGLEVEL
+                value: ${LOGLEVEL}
+              - name: REPORTS_COUNT
+                value: ${REPORTS_COUNT}
+              - name: LITTLE_TABLE_COUNT
+                value: ${LITTLE_TABLE_COUNT}
+              - name: OFFLINE_MODE
+                value: ${OFFLINE_MODE}
+              - name: ENABLE_CATALOG
+                value: ${ENABLE_CATALOG}
+              - name: PAGE_TITLE
+                value: ${PAGE_TITLE}
+              - name: GRAPH_TYPE
+                value: ${GRAPH_TYPE}
+              - name: REFRESH_RATE
+                value: ${REFRESH_RATE}
+              - name: DAILY_REPORTS_CHART_ENABLED
+                value: ${DAILY_REPORTS_CHART_ENABLED}
+              - name: DAILY_REPORTS_CHART_DAYS
+                value: ${DAILY_REPORTS_CHART_DAYS}
+              - name: WITH_EVENT_NUMBERS
+                value: ${WITH_EVENT_NUMBERS}
+              - name: SHOW_ERROR_AS
+                value: ${SHOW_ERROR_AS}
+              - name: CODE_PREFIX_TO_REMOVE
+                value: ${CODE_PREFIX_TO_REMOVE}
+              - name: ENABLE_CLASS
+                value: ${ENABLE_CLASS}
+              - name: CACHE_DEFAULT_TIMEOUT
+                value: ${CACHE_DEFAULT_TIMEOUT}
+              - name: CACHE_TYPE
+                value: ${CACHE_TYPE}
+              - name: SCHEDULER_ENABLED
+                value: ${SCHEDULER_ENABLED}
+        restartPolicy: Always
+    replicas: 3 
+    triggers:
+      - type: "ConfigChange" 
+      - type: "ImageChange" 
+        imageChangeParams:
+          automatic: true
+          containerNames:
+            - "${PUPPETBOARD_SERVICE_NAME}"
+          from:
+            kind: "ImageStreamTag"
+            name: "${PUPPETBOARD_SERVICE_NAME}:latest"
+    strategy: 
+      type: "Rolling"
+    paused: false 
+    revisionHistoryLimit: 2 
+    minReadySeconds: 0 
+- kind: Service
+  apiVersion: v1
+  metadata:
+    annotations:
+    name: ${PUPPETBOARD_SERVICE_NAME}
+    labels:
+      app: ${PUPPETBOARD_SERVICE_NAME}
+  spec:
+    ports:
+    # TODO:  This is kinda confusing.
+    - name: "${SERVICE_PORT}-tcp"
+      protocol: TCP
+      port: ${{SERVICE_PORT}}
+      targetPort: ${{PUPPETBOARD_PORT}}
+    selector:
+      app: ${PUPPETBOARD_SERVICE_NAME}
+    type: ClusterIP
+    sessionAffinity: None
+- kind: Route
+  apiVersion: route.openshift.io/v1
+  metadata:
+    name: ${PUPPETBOARD_SERVICE_NAME}
+    labels:
+      app: ${PUPPETBOARD_SERVICE_NAME}
+    annotations:
+  spec:
+    to:
+      kind: Service
+      name: ${PUPPETBOARD_SERVICE_NAME}
+      weight: 100
+    port:
+      targetPort: "${SERVICE_PORT}-tcp"
+    tls:
+      termination: edge
+  wildcardPolicy: None  
+
+parameters:
+# These values are passed to the Docker container.  They are not
+# used in the building of the OpenShift app.  They are passed via environment
+# variables in the DeploymentConfig section above.
+- description: The name of the OpenShift Service exposed for Puppetboard.
+  displayName: Puppetboard Service Name
+  name: PUPPETBOARD_SERVICE_NAME
+  type: string
+  value: puppetboard 
+- description: Remote server where PuppetDB is running.
+  name: PUPPETDB_HOST
+  displayName: PuppetDB Remote Server
+  type: string
+  from: '[a-zA-Z0-9]'
+  required: true
+  value: puppetdb
+- description: The remote port on the PuppetDB server where Postgresql is listening.
+  displayName: PuppetDB port 
+  name: PUPPETDB_PORT
+  type: integer
+  value: "8080"
+- description: Secret Key for the Puppetboard.
+  displayName: Puppetboard Secret Key
+  type: string
+  from: '[a-zA-Z0-9]'
+  name: PUPPETBOARD_SECRET_KEY
+  value: "Secr3t_K3y"
+- description: The port on which the Puppetboard server offers up the web interface.
+  displayName: Puppetboard Port
+  name: PUPPETBOARD_PORT
+  value: "1024"
+  type: integer
+- description: The port on which OpenShift offers the Puppetboard service.
+  displayName: OpenShift Service Port
+  name: SERVICE_PORT
+  required: true
+  value: "80"
+  type: integer
+- description: The URL of the repository with the Puppetboard application code.
+  displayName: Puppetboard Repository URL 
+  name: PUPPETBOARD_SOURCE_REPOSITORY_URL
+  required: true
+  value: https://github.com/voxpupuli/puppetboard.git
+- description: The branch name, tag or other ref of the PUPPETBOARD_SOURCE_REPOSITORY_URL.
+  displayName: Puppetboard Repository Ref
+  name: PUPPETBOARD_SOURCE_REPOSITORY_REF
+  required: true
+  value: "master"
+- description: The amount of hours after which Puppetboard will display the node as unreported if it hasn't checked in.
+  displayName: Puppetboard UNRESPONSIVE_HOURS
+  name: UNRESPONSIVE_HOURS
+  required: true
+  value: "2"
+  type: integer
+- description: Verify/Require SSL connectivity
+  displayName: PUPPETDB_SSL_VERIFY
+  name: PUPPETDB_SSL_VERIFY
+  type: boolean
+  value: "true"
+- description: Cache lifetime in seconds
+  displayName: CACHE_DEFAULT_TIMEOUT
+  name: CACHE_DEFAULT_TIMEOUT
+  type: integer
+  value: "3600"
+- description: Specifies which type of caching object to use when `SCHEDULER_ENABLED` is set to `True`.
+  displayName: CACHE_TYPE
+  name: CACHE_TYPE
+  type: string
+  value: "SimpleCache"
+- description: What code path that should be shortened in "Friendly errors" to "…" for readability.
+  displayName: CODE_PREFIX_TO_REMOVE
+  name: CODE_PREFIX_TO_REMOVE
+  type: string
+  value: "/etc/puppetlabs/code/environments"
+- description: Number of days to show history for on the daily report graphs.
+  displayName: DAILY_REPORTS_CHART_DAYS
+  name: DAILY_REPORTS_CHART_DAYS
+  type: integer
+  value: "8"
+- description: Enable the use of daily chart graphs when looking at dashboard and node view.
+  displayName: DAILY_REPORTS_CHART_ENABLED
+  name: DAILY_REPORTS_CHART_ENABLED
+  type: boolean
+  value: "true"
+- description: Defaults to `'production'`, as the name suggests, load all information filtered by this
+  displayName: DEFAULT_ENVIRONMENT
+  name: DEFAULT_ENVIRONMENT
+  type: string
+  value: "production"
+- description: If set to `True` allows the user to view a node's latest catalog. This includes all managed
+  displayName: ENABLE_CATALOG
+  name: ENABLE_CATALOG
+  type: boolean
+  value: "false"
+- description: If set to `True` allows the user to view the number of resource events (number of changed resources in the last report) grouped by class.
+  displayName: ENABLE_CLASS
+  name: ENABLE_CLASS
+  type: boolean
+  value: "false"
+- description: If `ENABLE_QUERY` is `True`, allow to fine tune the endpoints of PuppetDB APIs that
+  displayName: ENABLED_QUERY_ENDPOINTS
+  name: ENABLED_QUERY_ENDPOINTS
+  type: boolean
+  value: "true"
+- description: Defaults to `True` causing a Query tab to show up in the web interface allowing users to write and execute arbitrary queries against a set of endpoints in PuppetDB
+  displayName: ENABLE_QUERY
+  name: ENABLE_QUERY
+  type: boolean
+- description: Specify the type of graph to display.
+  displayName: GRAPH_TYPE
+  name: GRAPH_TYPE
+  type: string
+  value: "pie"
+- description: Default number of reports to show when when looking at a node.
+  displayName: LITTLE_TABLE_COUNT
+  name: LITTLE_TABLE_COUNT
+  type: integer
+  value: "10"
+- description: If set to `True` then timestamps are shown using your browser's timezone. Otherwise UTC is used. Defaults to `True`.
+  displayName: LOCALISE_TIMESTAMP
+  name: LOCALISE_TIMESTAMP
+  type: boolean
+  value: "true"
+- description: A string representing the loglevel. It defaults to `'info'` but can be changed to `'warning'` or
+  displayName: LOGLEVEL
+  name: LOGLEVEL
+  type: string
+  value: "info"
+- description: If set to `True` load static assets (jquery, semantic-ui, etc) from the local web server instead
+  displayName: OFFLINE_MODE
+  name: OFFLINE_MODE
+  type: boolean
+  value: "false"
+- description: The title of the main page.
+  displayName: PAGE_TITLE
+  name: PAGE_TITLE
+  required: false
+  value: "Puppetboard"
+  type: string
+- description: Defaults to 20 seconds, but you might need to increase this value.
+  displayName: PUPPETDB_TIMEOUT
+  required: false
+  type: integer
+  name: PUPPETDB_TIMEOUT
+  value: "20"
+  type: integer
+- description: The number of seconds to wait until the index page is automatically refreshed.
+  displayName: REFRESH_RATE
+  name: REFRESH_RATE
+  type: integer
+  value: "30"
+- description: The limit of the number of reports to load on the node or any reports page.
+  displayName: REPORTS_COUNT
+  name: REPORTS_COUNT
+  type: integer
+  value: "100"
+- description: If set to `True` then a scheduler instance is created in order to execute scheduled jobs.
+  displayName: SCHEDULER_ENABLED
+  name: SCHEDULER_ENABLED
+  type: boolean
+  value: "false"
+- description:  Show errors as friendly or raw output.
+  displayName: SHOW_ERROR_AS
+  name: SHOW_ERROR_AS
+  type: string
+  value: "friendly"
+- description: If set to `True` then Overview and Nodes list shows exact number of changed resources
+  displayName: WITH_EVENT_NUMBERS
+  name: WITH_EVENT_NUMBERS
+  type: boolean
+  value: "true"

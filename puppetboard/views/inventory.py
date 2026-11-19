@@ -1,3 +1,4 @@
+from collections import defaultdict
 from flask import (
     render_template, request, render_template_string
 )
@@ -5,7 +6,7 @@ from pypuppetdb.QueryBuilder import (AndOperator,
                                      EqualsOperator, OrOperator)
 
 from puppetboard.core import get_app, get_puppetdb, environments
-from puppetboard.utils import (check_env)
+from puppetboard.utils import (check_env, dot_lookup)
 
 app = get_app()
 puppetdb = get_puppetdb()
@@ -62,7 +63,8 @@ def inventory_ajax(env):
 
     query = AndOperator()
     fact_query = OrOperator()
-    fact_query.add([EqualsOperator("name", name) for name in fact_names])
+    fact_name_bases = {name.split(".")[0] for name in fact_names}
+    fact_query.add([EqualsOperator("name", name) for name in fact_name_bases])
     query.add(fact_query)
 
     if env != '*':
@@ -70,22 +72,24 @@ def inventory_ajax(env):
 
     facts = puppetdb.facts(query=query)
 
-    fact_data = {}
+    facts_by_node = defaultdict(dict)
     for fact in facts:
-        if fact.node not in fact_data:
-            fact_data[fact.node] = {}
+        facts_by_node[fact.node][fact.name] = fact.value
 
-        fact_value = fact.value
+    fact_data = defaultdict(dict)
+    for node, facts in facts_by_node.items():
+        for name in fact_names:
+            # If the fact name is in dot notation, we need to resolve it
+            fact_value = dot_lookup(facts, name) if "." in name else facts.get(name, "")
 
-        if fact.name in fact_templates:
-            fact_template = fact_templates[fact.name]
-            fact_value = render_template_string(
-                fact_template,
-                current_env=env,
-                value=fact_value,
-            )
-
-        fact_data[fact.node][fact.name] = fact_value
+            if name in fact_templates:
+                fact_template = fact_templates[name]
+                fact_value = render_template_string(
+                    fact_template,
+                    current_env=env,
+                    value=fact_value,
+                )
+            fact_data[node][name] = fact_value
 
     total = len(fact_data)
 

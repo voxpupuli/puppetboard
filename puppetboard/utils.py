@@ -2,6 +2,7 @@ import ast
 import json
 import logging
 import sys
+from typing import Any, Union
 
 from flask import abort, request, url_for
 from packaging.version import parse
@@ -49,25 +50,11 @@ def check_db_version(puppetdb):
 
 
 def check_secret_key(secret_key_value):
-    """
-    Check if the secret key value is set to a default value, that will stop
-    being accepted in v5.x of the app.
-    """
-
-    if type(secret_key_value) is str and secret_key_value.startswith("default-"):
-        log.warning(
-            "Leaving SECRET_KEY set to a default value WILL cause issues"
-            " when the app is restarted or has more than 1 replica"
-            " (f.e. uWSGI workers, k8s replicas etc.) and some features"
-            " (in particular: queries) are used.\n"
-            "Please set SECRET_KEY to your own value, the same for all app"
-            " replicas.\n"
-            "This will be REQUIRED starting with Puppetboard 5.x which"
-            " will NOT contain the default value anymore.\n"
-            "Please see"
-            " https://github.com/voxpupuli/puppetboard/issues/721"
-            " for more info."
-        )
+    if not secret_key_value:
+        log.critical('Please set SECRET_KEY to a long, random string,'
+                     ' **the same for each application replica**,'
+                     ' and do not share it.')
+        sys.exit(1)
 
 
 def parse_python(value: str):
@@ -174,3 +161,90 @@ def is_a_test():
     )
     running_in_intellij = any("_jb_pytest_runner.py" in arg for arg in sys.argv)
     return running_in_shell or running_in_intellij
+
+
+def dot_lookup(_dict: dict[str, Any], lookup: str) -> Union[str, dict, None]:
+    """Recursively look up a value in a dictionary using dot notation string"""
+    lookup_parts = lookup.split(".")
+    if not lookup_parts:
+        return None
+
+    key = lookup_parts[0]
+    if len(lookup_parts) == 1:
+        return _dict.get(key, "")
+
+    return dot_lookup(_dict.get(key, {}), ".".join(lookup_parts[1:]))
+
+
+def flatten_fact(fact_name: str, fact_value: Any, prefix: str = "") -> dict[str, Any]:
+    """
+    Recursively flatten a structured fact into dot-notation paths.
+
+    Skips dict keys containing dots or forward slashes to avoid ambiguity and
+    URL routing conflicts. Keys with these characters cannot be reliably used in
+    dot-notation paths since dots are the structural separator and slashes cause
+    URL routing issues.
+
+    Facts with problematic keys (like mountpoints with '/' or myco_services with '.')
+    will only show the parent fact in the facts list. Users can click the parent
+    to view the full JSON.
+
+    :param fact_name: The name of the fact
+    :param fact_value: The value of the fact (can be dict, list, or scalar)
+    :param prefix: Internal prefix for recursion
+    :return: Dictionary mapping dot-notation paths to their values
+    """
+    result = {}
+    current_path = f"{prefix}.{fact_name}" if prefix else fact_name
+
+    if isinstance(fact_value, dict):
+        # For dictionaries, add the path itself (for nested collapsible support)
+        # AND recursively flatten each key
+        result[current_path] = fact_value
+
+        for key, value in fact_value.items():
+            key_str = str(key)
+            # Skip keys with dots (ambiguous with path separator) or slashes (URL routing issues)
+            # Dots: 'MYCO.FictionalServic' would be ambiguous in 'myco_services.MYCO.FictionalService.state'
+            # Slashes: '/opt/nomad' causes Flask routing conflicts (see https://github.com/pallets/flask/issues/900)
+            if '.' not in key_str and '/' not in key_str:
+                result.update(flatten_fact(key, value, current_path))
+    else:
+        # For non-dict values (including lists), store as-is
+        result[current_path] = fact_value
+
+    return result
+
+
+def get_all_fact_paths(facts_dict: dict[str, Any]) -> list[str]:
+    """
+    Get all possible dot-notation paths from a dictionary of facts.
+
+    :param facts_dict: Dictionary of fact names to fact values
+    :return: Sorted list of all fact paths (both top-level and nested)
+    """
+    all_paths: list[str] = []
+
+    for fact_name, fact_value in facts_dict.items():
+        if isinstance(fact_value, dict):
+            # Add structured paths
+            flattened = flatten_fact(fact_name, fact_value)
+            all_paths.extend(flattened.keys())
+        else:
+            # Add simple fact name
+            all_paths.append(fact_name)
+
+    return sorted(all_paths)
+
+
+def split_fact_path(fact_path: str) -> tuple[str, Union[str, None]]:
+    """
+    Split a dot-notation fact path into base fact name and sub-path.
+
+    :param fact_path: Fact path like 'os.release.full' or 'hostname'
+    :return: Tuple of (base_fact_name, sub_path) e.g. ('os', 'release.full') or ('hostname', None)
+    """
+    parts = fact_path.split(".", 1)
+    if len(parts) == 1:
+        return parts[0], None
+    return parts[0], parts[1]

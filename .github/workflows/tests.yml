@@ -1,12 +1,8 @@
 name: tests (unit)
 
-# trigger on pushes to master OR PRs to master
-# to prevent double tests on PRs within this repo
 on:
+  pull_request: {}
   push:
-    branches:
-      - master
-  pull_request:
     branches:
       - master
 
@@ -16,49 +12,66 @@ jobs:
     runs-on: ubuntu-latest
 
     strategy:
-      max-parallel: 5
+      max-parallel: 6
       matrix:
-        python-version: [3.7, 3.8, 3.9, '3.10', 3.11]
+        python-version: [3.12, 3.13, 3.14]
 
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v7
       - name: Set up Python ${{ matrix.python-version }}
-        uses: actions/setup-python@v4
+        uses: actions/setup-python@v7
         with:
           python-version: ${{ matrix.python-version }}
       - name: Install dependencies
         run: |
-          pip install --upgrade wheel setuptools
-          python setup.py develop
-          pip install -r requirements-test.txt
-          mypy --install-types --non-interactive puppetboard/ test/
+          sudo apt install python3-poetry
+          poetry install --with=test
+          poetry run mypy --install-types --non-interactive puppetboard/ test/
       - name: Test
         run: |
-          pytest --cov=. --cov-report=xml --strict-markers --mypy -v puppetboard test
-          pylint --errors-only puppetboard test
+          poetry run pytest --cov=. --cov-report=xml --strict-markers --mypy -v puppetboard test
+          poetry run pylint --errors-only puppetboard test
       - name: Upload coverage to Codecov
-        uses: codecov/codecov-action@v3.1.4
+        uses: codecov/codecov-action@v7.1.1
         with:
+          token: ${{ secrets.CODECOV_TOKEN }}
           fail_ci_if_error: true
+      - name: Build
+        run: |
+          poetry build -v
+
+  build_docker_image:
+    name: 'Test building a container'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v7
+      - name: Build Docker image
+        uses: docker/build-push-action@v7
+        with:
+          context: .
+          push: false
 
   security-tests:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
-      - name: Set up Python 3.11
-        uses: actions/setup-python@v4
+      - uses: actions/checkout@v7
+      - name: Set up Python 3.13
+        uses: actions/setup-python@v7
         with:
-          python-version: 3.11
-      - name: Install dependencies
-        run: |
-          pip install bandit
+          python-version: 3.13
       - name: Run bandit
         run: |
-          bandit -r puppetboard
+          sudo apt install python3-poetry
+          poetry install --with=test
+          poetry run bandit -r puppetboard
 
   tests:
     needs:
       - test
+      - build_docker_image
       - security-tests
     runs-on: ubuntu-latest
     name: Test suite

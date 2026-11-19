@@ -8,11 +8,14 @@ PUPPETDB_KEY = None
 PUPPETDB_CERT = None
 PUPPETDB_TIMEOUT = 20
 DEFAULT_ENVIRONMENT = 'production'
-SECRET_KEY = f"default-{secrets.token_hex(32)}"
+# this empty string has to be changed, we validate it with check_secret_key()
+SECRET_KEY = ''  # nosec
 UNRESPONSIVE_HOURS = 2
 ENABLE_QUERY = True
 # Uncomment to restrict the enabled PuppetDB endpoints in the query page.
 # ENABLED_QUERY_ENDPOINTS = ['facts', 'nodes']
+# Path to YAML file containing preset queries (None to disable)
+QUERY_PRESETS_FILE = None  # Example: '/etc/puppetboard/query_presets.yaml'
 LOCALISE_TIMESTAMP = True
 LOGLEVEL = 'info'
 NORMAL_TABLE_COUNT = 100
@@ -41,9 +44,9 @@ GRAPH_FACTS = ['architecture',
                'puppetversion',
                'processorcount']
 INVENTORY_FACTS = [('Hostname', 'trusted'),
-                   ('IP Address', 'ipaddress'),
-                   ('OS', 'os'),
-                   ('Architecture', 'hardwaremodel'),
+                   ('IP Address', 'networking.ip'),
+                   ('OS', 'os.name'),
+                   ('Architecture', 'os.architecture'),
                    ('Kernel Version', 'kernelrelease'),
                    ('Puppet Version', 'puppetversion'), ]
 
@@ -58,6 +61,7 @@ INVENTORY_FACT_TEMPLATES = {
 REFRESH_RATE = 30
 DAILY_REPORTS_CHART_ENABLED = True
 DAILY_REPORTS_CHART_DAYS = 8
+DAILY_REPORTS_CHART_MODE = 'stacked'
 WITH_EVENT_NUMBERS = True
 SHOW_ERROR_AS = 'friendly'  # or 'raw'
 CODE_PREFIX_TO_REMOVE = '/etc/puppetlabs/code/environments(/.*?/modules)?'
@@ -78,7 +82,7 @@ CLASS_EVENTS_STATUS_COLUMNS = [
     ('noop', 'Noop'),
 ]
 # Type of caching object to use when `SCHEDULER_ENABLED` is set to `True`.
-# If more than one worker, use a shared backend (e.g. `MemcachedCache`) 
+# If more than one worker, use a shared backend (e.g. `MemcachedCache`)
 # to allow the sharing of the cache between the processes.
 CACHE_TYPE = 'SimpleCache'
 # Cache litefime in second

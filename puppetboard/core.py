@@ -1,12 +1,13 @@
 import logging
 import re
 import socket
+from importlib.metadata import version
 
-import pkg_resources
 from flask import Flask
 from flask_caching import Cache
 from flask_apscheduler import APScheduler
 from markupsafe import escape
+from werkzeug.middleware.proxy_fix import ProxyFix
 from pypuppetdb import connect
 
 from puppetboard.utils import (get_or_abort, jsonprint,
@@ -53,6 +54,9 @@ def get_app():
         app.jinja_env.globals['url_for_field'] = url_for_field
         app.jinja_env.globals['quote_columns_data'] = quote_columns_data
         app.jinja_env.add_extension('jinja2.ext.do')
+        # Trust one level of proxy headers (e.g. X-Forwarded-Proto from Traefik)
+        # so Flask generates correct https:// URLs and doesn't issue http:// redirects
+        app.wsgi_app = ProxyFix(app.wsgi_app, x_for=1, x_proto=1, x_host=1, x_prefix=1)
         APP = app
 
     return APP
@@ -71,7 +75,7 @@ def get_puppetdb():
                            timeout=app.config['PUPPETDB_TIMEOUT'],
                            protocol=app.config['PUPPETDB_PROTO'], )
 
-        requests_version = pkg_resources.get_distribution("requests").version
+        requests_version = version("requests")
         user_agent_header = {
             "user-agent": f"puppetboard/{own_version} (r/{requests_version})",
         }

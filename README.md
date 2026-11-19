@@ -26,8 +26,9 @@ See [more screenshots here](#more-screenshots).
 
 ## Requirements<a id="requirements"></a>
 
-* PuppetDB v. 5.2-7.*
-* Python 3.7-3.11 or Docker
+* PuppetDB v. 5.2-8.*
+  * (**Note**: PuppetDB 8.1.0 is not supported because of [this bug](https://github.com/puppetlabs/puppetdb/issues/3866). Please update to 8.1.1+.)
+* Python 3.12-3.14 or Docker
 
 ## Installation<a id="installation"></a>
 
@@ -43,7 +44,9 @@ To see how to get it working with RedHat/Centos 7 check out these [docs](https:/
 
 ### Using Docker
 
-We provide [an official Docker image in the GitHub Container Registry](https://github.com/orgs/voxpupuli/packages/container/package/puppetboard).
+We provide an official Docker image in:
+* [GitHub Container Registry](https://github.com/orgs/voxpupuli/packages/container/package/puppetboard),
+* [Dockerhub](https://hub.docker.com/r/voxpupuli/puppetboard).
 
 You can run the app on your PuppetDB host with this command:
 
@@ -51,9 +54,11 @@ You can run the app on your PuppetDB host with this command:
 docker run -it \
   -e PUPPETDB_HOST=localhost \
   -e PUPPETDB_PORT=8080 \
+  -e SECRET_KEY=XXXXXXXX \
   --net=host \
   ghcr.io/voxpupuli/puppetboard
 ```
+Note: you must provide a secret key! Generate one for example by running `ruby -e "require 'securerandom'; puts SecureRandom.hex(32)"`.
 
 Optionally you can set `PUPPETBOARD_URL_PREFIX` env variable to a value like `/puppetboard` to run the app under a URL prefix.
 
@@ -70,15 +75,101 @@ docker::run { 'puppetboard':
     'PUPPETDB_HOST=127.0.0.1',
     'PUPPETDB_PORT=8080',
     'PUPPETBOARD_PORT=8088',
+    'SECRET_KEY=XXXXXXXX',
   ],
   net   => 'host',
 }
 ```
 
+If you want to have all features enabled, you must use SSL talking to PuppetDB:
+
+```puppet
+file { '/etc/puppetboard':
+  ensure => directory,
+}
+file { '/etc/puppetboard/key.pem':
+  ensure => file,
+  mode   => '0644',
+  source => "/etc/puppetlabs/puppet/ssl/private_keys/${facts['networking']['fqdn']}.pem",
+}
+file { '/etc/puppetboard/cert.pem':
+  ensure => file,
+  mode   => '0644',
+  source => "/etc/puppetlabs/puppet/ssl/certs/${facts['networking']['fqdn']}.pem",
+}
+
+include docker
+
+docker::image { 'ghcr.io/voxpupuli/puppetboard': }
+
+docker::run { 'puppetboard':
+  image   => 'ghcr.io/voxpupuli/puppetboard',
+  volumes => ['/etc/puppetboard:/etc/puppetboard:ro'],
+  env     => [
+    'PUPPETDB_HOST=puppet', # this must be the certname or DNS_ALT_NAME of the PuppetDB host
+    'PUPPETDB_PORT=8081',
+    'PUPPETBOARD_PORT=8080',
+    'ENABLE_CATALOG=true',
+    'PUPPETDB_SSL_VERIFY=false',
+    'PUPPETDB_KEY=/etc/puppetboard/key.pem',
+    'PUPPETDB_CERT=/etc/puppetboard/cert.pem',
+    'SECRET_KEY=XXXXXXXX',
+    'DEFAULT_ENVIRONMENT=*',
+  ],
+  net     => 'host',
+}
+```
+
+Within an air gapped environment you want to load all content from your local puppetboard web service.
+Add: `'OFFLINE_MODE=true',` to the `env` parameter list of the `docker::run` Puppet type.
+
 We also provide the Dockerfile, so you can build the image yourself:
 ```bash
 docker build -t puppetboard .
 ```
+
+### Using Red Hat OpenShift
+
+The included OpenShift template file helps in the creation of the Puppetboard web interface by adopting a source-to-image methodology.
+
+You can run the app on your OpenShift environment with these commands:
+
+```bash
+# Import the template into OpenShift
+oc create -f puppetboard-s2i-template.yaml 
+
+# Create the Puppetboard application and supporting Pods.
+oc new-app -p PUPPETDB_HOST=puppetdb.fqdn.com \
+           --template=puppetboard-template
+```
+
+This will build a puppetboard application that queries a PuppetDB database at puppetdb.fqdn.com.
+
+Optionally you can set other environment variables to fit your needs:
+
+```bash
+oc new-app -p PUPPETDB_HOST=puppetdb.fqdn.com \
+           -p PUPPETDB_PORT=3456 \
+           -p PUPPETBOARD_SOURCE_REPOSITORY_REF="v5.4.0" \
+           -p PUPPETBOARD_SERVICE_NAME=prod_puppetboard \
+           --template=puppetboard-template
+```
+
+This will build Puppetboard version v5.4.0 that queries the PuppetDB server on TCP/3456.
+
+The following is a list of OpenShift parameters that you can pass to the ``oc`` command to customize the application:
+
+- `PUPPETBOARD_SERVICE_NAME`: This is the name that will be used for application.  Deployment Configs, Build Configs 
+    Services, Routes and Pods will use this value for their names as well.  You can instantiate multiple applications
+    by using different names in ``oc new-app``.  Defaults to 'puppetboard'.
+- `PUPPETDB_HOST`: This is the name of the PuppetDB host that Puppetboard will query for its reports.  Defaults to 'puppetdb'.
+- `PUPPETDB_PORT`: This is tcp port on the `PUPPETDB_HOST` for queries.  Defaults to '8080'.
+- `PUPPETBOARD_SECRET_KEY`: Identical to `SECRET_KEY` (below).  Defaults to 'Secr3t_K3y'.
+- `PUPPETBOARD_PORT`: The TCP port on which the Puppetboard docker image presents the web interface.  This is not the
+    user-facing web interface.  Rather, it's the port that the OpenShift route forwards **to**.  
+- `SERVICE_PORT`: The TCP port on which the Puppetboard service offers its user-facing web interface on OpenShift.  Defaults to '80'.
+- `PUPPETBOARD_SOURCE_REPOSITORY_URL`: The URL to the Puppetboard repository.  Defaults to 'https://github.com/voxpupuli/puppetboard.git'.
+- `PUPPETBOARD_SOURCE_REPOSITORY_REF`: The branch/tag/ref for Puppetboard.  Defaults to 'master'.
 
 ### From a package
 
@@ -143,7 +234,7 @@ Assuming your webserver and PuppetDB machine are not identical you will at least
 By default PuppetDB requires SSL to be used when a non-local client wants to connect. Therefore you'll also have to
 supply the following settings:
 
--   `PUPPETDB_SSL_VERIFY = /path/to/ca/keyfile.pem`
+-   `PUPPETDB_SSL_VERIFY = True`
 -   `PUPPETDB_KEY = /path/to/private/keyfile.pem`
 -   `PUPPETDB_CERT = /path/to/public/keyfile.crt`
 
@@ -167,6 +258,9 @@ to explicitly specify the protocol to be used setting the `PUPPETDB_PROTO` varia
 
 Other settings that might be interesting, in no particular order:
 
+- `SECRET_KEY`: set this to a long string, **the same for each application replica**, and keep it secret. Refer to
+    [Flask documentation](https://flask.palletsprojects.com/en/2.1.x/quickstart/#sessions), section
+    "How to generate good secret keys" for more info. Cannot be an empty string, which is the default.
 - `FAVORITE_ENVS`: an ordered list of Puppet environment names that will be shown immediately after "All Environments"
     and before other environments (which are sorted by name) in the dropdown for choosing the environment shown
     in the top-right of the UI. Environments listed here that do not really exist in your deployment are silently ignored.
@@ -175,8 +269,6 @@ Other settings that might be interesting, in no particular order:
     Defaults to `friendly`.
 - `CODE_PREFIX_TO_REMOVE`: what code path that should be shortened in "Friendly errors" to "…" for readability.
     A regexp. Defaults to `/etc/puppetlabs/code/environments(/.*?/modules)?`.
-- `SECRET_KEY`: Refer to [Flask documentation](https://flask.palletsprojects.com/en/2.0.x/quickstart/#sessions),
-    section "How to generate good secret keys" for more info. Defaults to a random 64-char string generated by `secrets.token_hex(32)`, prepended with a `default-` string. **Warning** Leaving SECRET_KEY set to a default value WILL cause issues when the app is restarted or has more than 1 replica (f.e. uWSGI workers, k8s replicas etc.) and some features (in particular: queries) are used. Please set SECRET_KEY to your own value, the same for all app replicas. This will be REQUIRED starting with Puppetboard 5.x which will NOT contain the default value anymore. Please see [#721](https://github.com/voxpupuli/puppetboard/issues/721) for more info.
 - `PUPPETDB_TIMEOUT`: Defaults to 20 seconds, but you might need to increase this value. It depends on how big the
     results are when querying PuppetDB. This behaviour will change in a future release when pagination will be introduced.
 - `UNRESPONSIVE_HOURS`: The amount of hours since the last check-in after which a node is considered unresponsive.
@@ -190,7 +282,7 @@ Other settings that might be interesting, in no particular order:
     See the `QUERY_ENDPOINTS` constant in the `puppetboard.app` module for a list of the available endpoints.
 - `GRAPH_TYPE`: Specify the type of graph to display.   Default is
     pie, other good option is donut.   Other choices can be found here:
-    \_C3JS\_documentation\`
+    [C3.js documentation](https://c3js.org/examples.html#chart)
 - `GRAPH_FACTS`: A list of fact names to tell PuppetBoard to generate a pie-chart on the fact page. With some fact
     values being unique per node, like ipaddress, uuid, and serial number, as well as structured facts it was no longer
     feasible to generate a graph for everything.
@@ -201,12 +293,13 @@ Other settings that might be interesting, in no particular order:
     resources, their file-system locations and their relationships, if available. Defaults to `False`.
 - `REFRESH_RATE`: Defaults to `30` the number of seconds to wait until the index page is automatically refreshed.
 - `DEFAULT_ENVIRONMENT`: Defaults to `'production'`, as the name suggests, load all information filtered by this
-    environment value.
+    environment value, for All Environments use `'*'`.
 - `REPORTS_COUNT`: Defaults to `10` the limit of the number of reports to load on the node or any reports page.
 - `OFFLINE_MODE`: If set to `True` load static assets (jquery, semantic-ui, etc) from the local web server instead
     of a CDN. Defaults to `False`.
 - `DAILY_REPORTS_CHART_ENABLED`: Enable the use of daily chart graphs when looking at dashboard and node view.
 - `DAILY_REPORTS_CHART_DAYS`: Number of days to show history for on the daily report graphs.
+- `DAILY_REPORTS_CHART_MODE`: Default layout of the daily report graphs, `'stacked'` or `'split'`.
 - `DISPLAYED_METRICS`: Metrics to show when displaying node summary. Example: `'resources.total'`, `'events.noop'`.
 - `TABLE_COUNT_SELECTOR`: Configure the dropdown to limit number of hosts to show per page.
 - `LITTLE_TABLE_COUNT`: Default number of reports to show when when looking at a node.
@@ -217,7 +310,7 @@ Other settings that might be interesting, in no particular order:
     to `False` gives performance benefits, especially in big Puppet environments (more than few hundreds of nodes).
     Defaults to `True`.
 - `ENABLE_CLASS`: If set to `True` allows the user to view the number of resource events (number of changed resources in the last report) grouped by class.
-    The resource events are grouped by their status ('failure', 'success', 'noop'). 
+    The resource events are grouped by their status ('failure', 'success', 'noop').
 - `CLASS_EVENTS_STATUS_COLUMNS`: A mapping between the status of the resource events and the name of the columns of the table to display.
 - `CACHE_TYPE`: Specifies which type of caching object to use when `SCHEDULER_ENABLED` is set to `True`.
     The cache is used for the classes view (`ENABLE_CLASS` is set to `True`) which requires parsing the events of all the latest reports to group them by Puppet class.
@@ -228,7 +321,7 @@ Other settings that might be interesting, in no particular order:
 - `CACHE_DEFAULT_TIMEOUT`: Cache lifetime in second. Defaults to `3600`.
 - `SCHEDULER_ENABLED`: If set to `True` then a scheduler instance is created in order to execute scheduled jobs. Defaults to `False`.
 - `SCHEDULER_JOBS`: List of the scheduled jobs to trigger within a worker.
-    A job can for example be used to compute a result to be cached. This is the case for the classes view which uses a job to pre-compute at regular intervals the results to be displayed. 
+    A job can for example be used to compute a result to be cached. This is the case for the classes view which uses a job to pre-compute at regular intervals the results to be displayed.
     Each scheduled job must contain the following fields: `id`, `func`, `trigger`, `seconds`.
 - `SCHEDULER_LOCK_BIND_PORT`: Specifies an available port that allows a single worker to listen on it.
     This allows to configure scheduled jobs in a single worker. Defaults to `49100`.
@@ -244,44 +337,48 @@ For questions or bug reports you can file an [issue](https://github.com/voxpupul
 Puppetboard relies on the [pypuppetdb](https://pypi.org/project/pypuppetdb/) library to fetch data from PuppetDB
 and is built with the help of the [Flask](https://flask.palletsprojects.com) microframework.
 
-If you wish to hack on Puppetboard you should fork/clone the Github repository and then install the requirements through:
-
+The recommended way to hack on Puppetboard is to:
+1. fork/clone the Github repository;
+2. create a work virtualenv;
 ```bash
-pip install --upgrade wheel setuptools
-python setup.py develop
-pip install --upgrade -r requirements-test.txt
-mypy --install-types --non-interactive puppetboard/ test/
+$ python -m venv venv
+$ . venv/bin/activate # run `deactivate` to exit the virtualenv
+```
+3. install requirements.
+```bash
+$ pip install --upgrade wheel setuptools
+$ pip install -e .
+$ pip install --upgrade -r requirements-test.txt
+$ mypy --install-types --non-interactive puppetboard/ test/
 ```
 
-You're advised to do this inside a virtualenv specifically created to work on Puppetboard as to not pollute your global Python installation.
-
-You can run the tests with:
+You can then run the tests with:
 ```bash
 pytest --cov=. --cov-report=xml --strict-markers --mypy puppetboard test
 pylint --errors-only puppetboard test
 ```
 
-You can run the app it in development mode by simply executing:
+And you can run the app by executing:
 
 ```bash
-flask run
+$ export PUPPETBOARD_SETTINGS=$PWD/settings.py # See bellow
+$ flask run
 ```
 
 You can specify listening host and port with environment variables or command line otions:
 
 ```bash
-export FLASK_RUN_HOST=0.0.0.0
-export FLASK_RUN_PORT=8000
+$ export FLASK_RUN_HOST=0.0.0.0
+$ export FLASK_RUN_PORT=8000
 
-flask run
+$ flask run
 ```
 
 or
 
 ```bash
-flask run --host '0.0.0.0' --port '8000'
+$ flask run --host '0.0.0.0' --port '8000'
 ```
-
 
 Use `PUPPETBOARD_SETTINGS` to change the different settings or patch `default_settings.py` directly.
 Take care not to include your local changes on that file when submitting patches for Puppetboard.
@@ -301,7 +398,7 @@ Write decent commit messages. Don't use swear words and refrain from uninformati
 
 The preferred format of a commit message:
 
-    docs/quickstart: Fixed a typo in the Nodes section.
+    Fixed a typo in the Nodes section.
 
     If needed, elaborate further on this commit. Feel free to write a
     complete blog post here if that helps us understand what this is
@@ -311,6 +408,10 @@ The preferred format of a commit message:
 
 If you'd like a more elaborate guide on how to write and format your commit messages have a look at [this post
 by Tim Pope](https://tbaggery.com/2008/04/19/a-note-about-git-commit-messages.html).
+
+### Build a release
+
+please see: [RELEASE.md](RELEASE.md)
 
 ## More Screenshots<a id="more-screenshots"></a>
 
@@ -362,7 +463,7 @@ by Tim Pope](https://tbaggery.com/2008/04/19/a-note-about-git-commit-messages.ht
 
 ![Inventory view](https://raw.githubusercontent.com/voxpupuli/puppetboard/master/screenshots/inventory.png)
 
-* Classes view, group the resource events of the last reports by Puppet class 
+* Classes view, group the resource events of the last reports by Puppet class
 
 ![Classes view](https://raw.githubusercontent.com/voxpupuli/puppetboard/master/screenshots/classes.png)
 
@@ -374,6 +475,4 @@ by Tim Pope](https://tbaggery.com/2008/04/19/a-note-about-git-commit-messages.ht
 
 The app code is licensed under the [Apache License, Version 2.0](./LICENSE).
 
-The favicon has been created based on the icon created by [Jonathan Coutiño](https://thenounproject.com/ralts01/)
-under the [Attribution 3.0 Unported (CC BY 3.0) license](https://creativecommons.org/licenses/by/3.0/),
-downloaded from the [Noun Project](https://thenounproject.com).
+The favicon has been created based on the icon created by [ShellyCoen](https://github.com/ShellyCoen/) under the [Creative Commons Attribution-ShareAlike 4.0 International License](http://creativecommons.org/licenses/by-sa/4.0/), downloaded from the [voxpupuli/logos](https://github.com/voxpupuli/logos), resized and centered.

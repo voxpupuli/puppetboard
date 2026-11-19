@@ -2,4 +2,5 @@
 # Puppetboard version module
 #
 
-__version__ = '4.3.0'
+import importlib.metadata
+__version__ = importlib.metadata.version('puppetboard')

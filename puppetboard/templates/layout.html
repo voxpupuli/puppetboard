@@ -1,6 +1,15 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="light">
   <head>
+    <script>
+      // Initialize theme immediately to prevent flash
+      (function() {
+        var stored = localStorage.getItem('theme');
+        var systemDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+        var theme = stored || (systemDark ? 'dark' : 'light');
+        document.documentElement.setAttribute('data-theme', theme);
+      })();
+    </script>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{{config.PAGE_TITLE}}</title>
     <link rel="icon" href="{{ url_for('static', filename='favicon.ico')}}" sizes="any"/>
@@ -66,6 +75,11 @@
             {%- endfor %}
           </div>
         </div>
+        <div class="item">
+          <button id="theme-toggle" title="Toggle dark mode">
+            <i id="theme-icon" class="moon icon"></i>
+          </button>
+        </div>
         <div class="item"><a href="https://github.com/voxpupuli/puppetboard" target="_blank">{{ version() }}</a></div>
       </div>
     </div>
@@ -81,5 +95,27 @@
       <i class="large arrow up icon"></i>
     </div>
 
+    <script>
+      // Theme toggle handler
+      (function() {
+        var toggle = document.getElementById('theme-toggle');
+        var icon = document.getElementById('theme-icon');
+
+        function updateIcon(theme) {
+          icon.className = theme === 'dark' ? 'sun icon' : 'moon icon';
+        }
+
+        // Set initial icon state
+        updateIcon(document.documentElement.getAttribute('data-theme'));
+
+        toggle.addEventListener('click', function() {
+          var current = document.documentElement.getAttribute('data-theme');
+          var newTheme = current === 'dark' ? 'light' : 'dark';
+          document.documentElement.setAttribute('data-theme', newTheme);
+          localStorage.setItem('theme', newTheme);
+          updateIcon(newTheme);
+        });
+      })();
+    </script>
   </body>
 </html>

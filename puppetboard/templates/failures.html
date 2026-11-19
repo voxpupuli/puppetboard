@@ -2,7 +2,7 @@
 {% import '_macros.html' as macros %}
 {% block content %}
 <div class="ui fluid icon input hide" style="margin-bottom:20px">
-  <input if="main-table-search" autofocus="autofocus" placeholder="Type here to filter...">
+  <input id="main-table-search" autofocus="autofocus" placeholder="Type here to filter...">
 </div>
 {{ macros.checkbox_toggle("friendly", current_show_error_as, "friendly", "raw", "Friendly error messages") }}
 <table

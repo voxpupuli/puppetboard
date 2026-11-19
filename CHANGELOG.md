@@ -1,7 +1,444 @@
-Changelog
-=========
+# Changelog
 
-This is the changelog for Puppetboard.
+All notable changes to this project will be documented in this file.
+
+## [v8.1.0](https://github.com/voxpupuli/puppetboard/tree/v8.1.0) (2026-10-12)
+
+[Full Changelog](https://github.com/voxpupuli/puppetboard/compare/v8.0.0...v8.1.0)
+
+**Implemented enhancements:**
+
+- Stacked/Split views [\#1418](https://github.com/voxpupuli/puppetboard/issues/1418)
+
+**Fixed bugs:**
+
+- fix split mode axes and curve overshoot on dailychart [\#1489](https://github.com/voxpupuli/puppetboard/pull/1489) ([vchepkov](https://github.com/vchepkov))
+
+**Merged pull requests:**
+
+- docs: document DAILY\_REPORTS\_CHART\_MODE and update supported python versions [\#1490](https://github.com/voxpupuli/puppetboard/pull/1490) ([vchepkov](https://github.com/vchepkov))
+- build\(deps\): bump types-toml from 0.10.8.20240310 to 0.10.8.20260518 [\#1488](https://github.com/voxpupuli/puppetboard/pull/1488) ([dependabot[bot]](https://github.com/apps/dependabot))
+- build\(deps\): bump the python group across 1 directory with 13 updates [\#1487](https://github.com/voxpupuli/puppetboard/pull/1487) ([dependabot[bot]](https://github.com/apps/dependabot))
+- build\(deps\): bump python from 3.15.0rc2-alpine to 3.15.0rc3-alpine [\#1486](https://github.com/voxpupuli/puppetboard/pull/1486) ([dependabot[bot]](https://github.com/apps/dependabot))
+- test: add mockey autospec enforcement and fix silent mock bugs [\#1434](https://github.com/voxpupuli/puppetboard/pull/1434) ([anisia19](https://github.com/anisia19))
+
+## [v8.0.0](https://github.com/voxpupuli/puppetboard/tree/v8.0.0) (2026-10-09)
+
+[Full Changelog](https://github.com/voxpupuli/puppetboard/compare/v7.0.4...v8.0.0)
+
+**Breaking changes:**
+
+- Drop EoL Python 3.11 support [\#1482](https://github.com/voxpupuli/puppetboard/pull/1482) ([bastelfreak](https://github.com/bastelfreak))
+- Drop EoL python 3.10 support [\#1472](https://github.com/voxpupuli/puppetboard/pull/1472) ([bastelfreak](https://github.com/bastelfreak))
+- Drop EoL python 3.9 support [\#1471](https://github.com/voxpupuli/puppetboard/pull/1471) ([bastelfreak](https://github.com/bastelfreak))
+
+**Implemented enhancements:**
+
+- update all dependencies [\#1484](https://github.com/voxpupuli/puppetboard/pull/1484) ([bastelfreak](https://github.com/bastelfreak))
+- add ability to stack/split chart on dailychart for easier readability [\#1483](https://github.com/voxpupuli/puppetboard/pull/1483) ([rismoney](https://github.com/rismoney))
+- nodes: add facts timestamp column and place it last [\#1431](https://github.com/voxpupuli/puppetboard/pull/1431) ([tparkercbn](https://github.com/tparkercbn))
+- proposal: change icon to 8bit vox [\#1411](https://github.com/voxpupuli/puppetboard/pull/1411) ([d1nuc0m](https://github.com/d1nuc0m))
+
+**Fixed bugs:**
+
+- fix numerous sort issues relating to ip, disk and mem sizes [\#1409](https://github.com/voxpupuli/puppetboard/pull/1409) ([rismoney](https://github.com/rismoney))
+
+**Merged pull requests:**
+
+- build\(deps\): bump requests from 2.33.0 to 2.34.2 [\#1480](https://github.com/voxpupuli/puppetboard/pull/1480) ([dependabot[bot]](https://github.com/apps/dependabot))
+- build\(deps\): bump pytest from 8.4.2 to 9.0.3 [\#1479](https://github.com/voxpupuli/puppetboard/pull/1479) ([dependabot[bot]](https://github.com/apps/dependabot))
+- build\(deps\): bump requests from 2.32.5 to 2.33.0 [\#1478](https://github.com/voxpupuli/puppetboard/pull/1478) ([dependabot[bot]](https://github.com/apps/dependabot))
+- build\(deps-dev\): bump filelock from 3.20.3 to 4.0.12 [\#1477](https://github.com/voxpupuli/puppetboard/pull/1477) ([dependabot[bot]](https://github.com/apps/dependabot))
+- build\(deps\): bump pytest from 8.4.2 to 9.0.3 [\#1476](https://github.com/voxpupuli/puppetboard/pull/1476) ([dependabot[bot]](https://github.com/apps/dependabot))
+- build\(deps-dev\): bump soupsieve from 2.6 to 2.9 [\#1475](https://github.com/voxpupuli/puppetboard/pull/1475) ([dependabot[bot]](https://github.com/apps/dependabot))
+- build\(deps-dev\): bump filelock from 3.16.1 to 3.20.3 [\#1474](https://github.com/voxpupuli/puppetboard/pull/1474) ([dependabot[bot]](https://github.com/apps/dependabot))
+- build\(deps\): bump requests from 2.32.5 to 2.33.0 [\#1473](https://github.com/voxpupuli/puppetboard/pull/1473) ([dependabot[bot]](https://github.com/apps/dependabot))
+
+## [v7.0.4](https://github.com/voxpupuli/puppetboard/tree/v7.0.4) (2026-10-08)
+
+[Full Changelog](https://github.com/voxpupuli/puppetboard/compare/v7.0.3...v7.0.4)
+
+**Fixed bugs:**
+
+- Improve query\_pressets examples [\#1464](https://github.com/voxpupuli/puppetboard/pull/1464) ([smortex](https://github.com/smortex))
+
+**Merged pull requests:**
+
+- build\(deps\): bump the python group across 1 directory with 9 updates [\#1466](https://github.com/voxpupuli/puppetboard/pull/1466) ([dependabot[bot]](https://github.com/apps/dependabot))
+- build\(deps-dev\): bump pygments from 2.18.0 to 2.20.0 [\#1459](https://github.com/voxpupuli/puppetboard/pull/1459) ([dependabot[bot]](https://github.com/apps/dependabot))
+- build\(deps\): bump python from 3.15.0b2-alpine to 3.15.0rc2-alpine [\#1457](https://github.com/voxpupuli/puppetboard/pull/1457) ([dependabot[bot]](https://github.com/apps/dependabot))
+
+## [v7.0.3](https://github.com/voxpupuli/puppetboard/tree/v7.0.3) (2026-10-08)
+
+[Full Changelog](https://github.com/voxpupuli/puppetboard/compare/v7.0.2...v7.0.3)
+
+**Fixed bugs:**
+
+- Query form has issues with LocalStorage "selectedPresetIndex" when links to the query page are opened [\#1400](https://github.com/voxpupuli/puppetboard/issues/1400)
+
+**Merged pull requests:**
+
+- build\(deps\): bump the python group across 1 directory with 11 updates [\#1461](https://github.com/voxpupuli/puppetboard/pull/1461) ([dependabot[bot]](https://github.com/apps/dependabot))
+- Fix filtering issue in failures tab [\#1456](https://github.com/voxpupuli/puppetboard/pull/1456) ([marek130](https://github.com/marek130))
+- build\(deps\): bump python from 3.15.0b1-alpine to 3.15.0b2-alpine [\#1435](https://github.com/voxpupuli/puppetboard/pull/1435) ([dependabot[bot]](https://github.com/apps/dependabot))
+- build\(deps\): bump the python group across 1 directory with 2 updates [\#1433](https://github.com/voxpupuli/puppetboard/pull/1433) ([dependabot[bot]](https://github.com/apps/dependabot))
+- build\(deps\): bump idna from 3.16 to 3.17 in the python group [\#1432](https://github.com/voxpupuli/puppetboard/pull/1432) ([dependabot[bot]](https://github.com/apps/dependabot))
+- build\(deps\): bump idna from 3.15 to 3.16 in the python group [\#1430](https://github.com/voxpupuli/puppetboard/pull/1430) ([dependabot[bot]](https://github.com/apps/dependabot))
+- build\(deps\): bump idna from 3.15 to 3.16 in the python group [\#1429](https://github.com/voxpupuli/puppetboard/pull/1429) ([dependabot[bot]](https://github.com/apps/dependabot))
+- build\(deps\): bump packaging from 26.0 to 26.2 in the python group [\#1428](https://github.com/voxpupuli/puppetboard/pull/1428) ([dependabot[bot]](https://github.com/apps/dependabot))
+- build\(deps\): bump the python group across 1 directory with 3 updates [\#1427](https://github.com/voxpupuli/puppetboard/pull/1427) ([dependabot[bot]](https://github.com/apps/dependabot))
+- build\(deps\): bump idna from 3.11 to 3.15 [\#1426](https://github.com/voxpupuli/puppetboard/pull/1426) ([dependabot[bot]](https://github.com/apps/dependabot))
+- build\(deps\): bump python from 3.15.0a8-alpine to 3.15.0b1-alpine [\#1424](https://github.com/voxpupuli/puppetboard/pull/1424) ([dependabot[bot]](https://github.com/apps/dependabot))
+- build\(deps\): bump the python group across 1 directory with 4 updates [\#1422](https://github.com/voxpupuli/puppetboard/pull/1422) ([dependabot[bot]](https://github.com/apps/dependabot))
+- build\(deps\): bump the python group across 1 directory with 3 updates [\#1420](https://github.com/voxpupuli/puppetboard/pull/1420) ([dependabot[bot]](https://github.com/apps/dependabot))
+- build\(deps\): bump python from 3.15.0a7-alpine to 3.15.0a8-alpine [\#1417](https://github.com/voxpupuli/puppetboard/pull/1417) ([dependabot[bot]](https://github.com/apps/dependabot))
+- build\(deps\): bump pytest-cov from 7.0.0 to 7.1.0 in the python group [\#1410](https://github.com/voxpupuli/puppetboard/pull/1410) ([dependabot[bot]](https://github.com/apps/dependabot))
+- build\(deps\): bump the python group across 1 directory with 2 updates [\#1408](https://github.com/voxpupuli/puppetboard/pull/1408) ([dependabot[bot]](https://github.com/apps/dependabot))
+- Improve color palette consistency [\#1406](https://github.com/voxpupuli/puppetboard/pull/1406) ([rismoney](https://github.com/rismoney))
+
+## [v7.0.2](https://github.com/voxpupuli/puppetboard/tree/v7.0.2) (2026-03-19)
+
+[Full Changelog](https://github.com/voxpupuli/puppetboard/compare/v7.0.1...v7.0.2)
+
+**Implemented enhancements:**
+
+- better support structured facts [\#960](https://github.com/voxpupuli/puppetboard/issues/960)
+- save puppet queries/list [\#642](https://github.com/voxpupuli/puppetboard/issues/642)
+- fix a bunch of dark mode color aesthetics: [\#1398](https://github.com/voxpupuli/puppetboard/pull/1398) ([rismoney](https://github.com/rismoney))
+
+**Fixed bugs:**
+
+- Fix Python 3.9 compatibility [\#1404](https://github.com/voxpupuli/puppetboard/pull/1404) ([yakatz](https://github.com/yakatz))
+- fix query bug introduced on issue \#1400 [\#1401](https://github.com/voxpupuli/puppetboard/pull/1401) ([rismoney](https://github.com/rismoney))
+
+**Closed issues:**
+
+- Not showing some nodes in error [\#1402](https://github.com/voxpupuli/puppetboard/issues/1402)
+- 7.0.0 structured facts not enumerating [\#1393](https://github.com/voxpupuli/puppetboard/issues/1393)
+
+**Merged pull requests:**
+
+- Release 7.0.2 [\#1405](https://github.com/voxpupuli/puppetboard/pull/1405) ([d1nuc0m](https://github.com/d1nuc0m))
+- build\(deps\): bump the python group across 1 directory with 2 updates [\#1399](https://github.com/voxpupuli/puppetboard/pull/1399) ([dependabot[bot]](https://github.com/apps/dependabot))
+- fix url prefix problem in facts.html [\#1394](https://github.com/voxpupuli/puppetboard/pull/1394) ([rismoney](https://github.com/rismoney))
+
+## [v7.0.1](https://github.com/voxpupuli/puppetboard/tree/v7.0.1) (2026-03-13)
+
+[Full Changelog](https://github.com/voxpupuli/puppetboard/compare/v7.0.0...v7.0.1)
+
+**Fixed bugs:**
+
+- Add misssing PyYAML dependency [\#1392](https://github.com/voxpupuli/puppetboard/pull/1392) ([yakatz](https://github.com/yakatz))
+
+**Closed issues:**
+
+- Missing module 'yaml' after upgrade to 7.0.0 [\#1391](https://github.com/voxpupuli/puppetboard/issues/1391)
+
+**Merged pull requests:**
+
+- build\(deps\): bump python from 3.15.0a6-alpine to 3.15.0a7-alpine [\#1390](https://github.com/voxpupuli/puppetboard/pull/1390) ([dependabot[bot]](https://github.com/apps/dependabot))
+
+## [v7.0.0](https://github.com/voxpupuli/puppetboard/tree/v7.0.0) (2026-03-12)
+
+[Full Changelog](https://github.com/voxpupuli/puppetboard/compare/v6.0.1...v7.0.0)
+
+This release of Puppetboard makes significant changes to the fact filtering views to support structured/nested facts.
+Filtering structured facts is done in memory in this application instead of in the database query.
+This has been tested, but could result in performance implications in large environments.
+We would like to hear about performance (good and bad) in the [Performance Poll](https://github.com/orgs/voxpupuli/discussions/94).
+
+**Breaking changes:**
+
+- Add structured facts support with hierarchical display [\#1374](https://github.com/voxpupuli/puppetboard/pull/1374) ([rismoney](https://github.com/rismoney))
+
+**Implemented enhancements:**
+
+- The PUPPETBOARD\_URL\_PREFIX does not set flask's APPLICATION\_ROOT [\#1092](https://github.com/voxpupuli/puppetboard/issues/1092)
+- Add OpenShift Template to build Puppetboard [\#1071](https://github.com/voxpupuli/puppetboard/issues/1071)
+- Darkmode [\#1384](https://github.com/voxpupuli/puppetboard/pull/1384) ([rismoney](https://github.com/rismoney))
+- Add Query Presets feature [\#1383](https://github.com/voxpupuli/puppetboard/pull/1383) ([rismoney](https://github.com/rismoney))
+- Add UNRESPONSIVE\_HOURS parameter to OpenShift template. [\#1346](https://github.com/voxpupuli/puppetboard/pull/1346) ([bschonec](https://github.com/bschonec))
+- Support nested facts in inventory view [\#1291](https://github.com/voxpupuli/puppetboard/pull/1291) ([nikolaik](https://github.com/nikolaik))
+
+**Fixed bugs:**
+
+- Inventory tab feature legacy facts [\#874](https://github.com/voxpupuli/puppetboard/issues/874)
+- Resolve datetime deprecation warnings [\#1269](https://github.com/voxpupuli/puppetboard/pull/1269) ([emmanuel-ferdman](https://github.com/emmanuel-ferdman))
+- Add APPLICATION\_ROOT to docker\_settings.py [\#1206](https://github.com/voxpupuli/puppetboard/pull/1206) ([HielkeJ](https://github.com/HielkeJ))
+
+**Merged pull requests:**
+
+- build\(deps\): bump the python group across 1 directory with 2 updates [\#1389](https://github.com/voxpupuli/puppetboard/pull/1389) ([dependabot[bot]](https://github.com/apps/dependabot))
+- test: add Python 3.14 checks [\#1386](https://github.com/voxpupuli/puppetboard/pull/1386) ([d1nuc0m](https://github.com/d1nuc0m))
+- template: add raw number to tooltip [\#1382](https://github.com/voxpupuli/puppetboard/pull/1382) ([rismoney](https://github.com/rismoney))
+- build\(deps\): bump the python group across 1 directory with 2 updates [\#1381](https://github.com/voxpupuli/puppetboard/pull/1381) ([dependabot[bot]](https://github.com/apps/dependabot))
+- build\(deps\): bump flask from 3.1.2 to 3.1.3 [\#1379](https://github.com/voxpupuli/puppetboard/pull/1379) ([dependabot[bot]](https://github.com/apps/dependabot))
+- build\(deps\): bump the python group across 1 directory with 3 updates [\#1378](https://github.com/voxpupuli/puppetboard/pull/1378) ([dependabot[bot]](https://github.com/apps/dependabot))
+- build\(deps\): bump python from 3.15.0a5-alpine to 3.15.0a6-alpine [\#1373](https://github.com/voxpupuli/puppetboard/pull/1373) ([dependabot[bot]](https://github.com/apps/dependabot))
+- build\(deps\): bump the python group with 3 updates [\#1370](https://github.com/voxpupuli/puppetboard/pull/1370) ([dependabot[bot]](https://github.com/apps/dependabot))
+- build\(deps\): bump the python group across 1 directory with 3 updates [\#1369](https://github.com/voxpupuli/puppetboard/pull/1369) ([dependabot[bot]](https://github.com/apps/dependabot))
+- Fix development instructions [\#1366](https://github.com/voxpupuli/puppetboard/pull/1366) ([smortex](https://github.com/smortex))
+- build\(deps\): bump werkzeug from 3.1.4 to 3.1.5 [\#1365](https://github.com/voxpupuli/puppetboard/pull/1365) ([dependabot[bot]](https://github.com/apps/dependabot))
+- build\(deps\): bump types-requests from 2.32.4.20250809 to 2.32.4.20260107 [\#1364](https://github.com/voxpupuli/puppetboard/pull/1364) ([dependabot[bot]](https://github.com/apps/dependabot))
+- build\(deps\): bump urllib3 from 2.6.2 to 2.6.3 [\#1363](https://github.com/voxpupuli/puppetboard/pull/1363) ([dependabot[bot]](https://github.com/apps/dependabot))
+- build\(deps\): bump types-setuptools from 80.9.0.20250822 to 80.9.0.20251223 [\#1362](https://github.com/voxpupuli/puppetboard/pull/1362) ([dependabot[bot]](https://github.com/apps/dependabot))
+- build\(deps\): bump types-requests from 2.32.4.20250809 to 2.32.4.20260107 [\#1361](https://github.com/voxpupuli/puppetboard/pull/1361) ([dependabot[bot]](https://github.com/apps/dependabot))
+- build\(deps\): bump types-setuptools from 80.9.0.20250822 to 80.9.0.20251223 [\#1360](https://github.com/voxpupuli/puppetboard/pull/1360) ([dependabot[bot]](https://github.com/apps/dependabot))
+- build\(deps\): bump pyparsing from 3.2.4 to 3.3.1 in the python group [\#1359](https://github.com/voxpupuli/puppetboard/pull/1359) ([dependabot[bot]](https://github.com/apps/dependabot))
+- build\(deps\): bump the python group across 1 directory with 8 updates [\#1358](https://github.com/voxpupuli/puppetboard/pull/1358) ([dependabot[bot]](https://github.com/apps/dependabot))
+- build\(deps\): bump python from 3.13.7-alpine to 3.14.2-alpine [\#1357](https://github.com/voxpupuli/puppetboard/pull/1357) ([dependabot[bot]](https://github.com/apps/dependabot))
+- build\(deps\): bump the python group across 1 directory with 10 updates [\#1350](https://github.com/voxpupuli/puppetboard/pull/1350) ([dependabot[bot]](https://github.com/apps/dependabot))
+- Add most \(but not all\) parameters to the OpenShift template. [\#1347](https://github.com/voxpupuli/puppetboard/pull/1347) ([bschonec](https://github.com/bschonec))
+- Cleanup github code scanning [\#1336](https://github.com/voxpupuli/puppetboard/pull/1336) ([bastelfreak](https://github.com/bastelfreak))
+- build\(deps\): bump mypy from 1.18.1 to 1.18.2 in the python group [\#1334](https://github.com/voxpupuli/puppetboard/pull/1334) ([dependabot[bot]](https://github.com/apps/dependabot))
+- build\(deps\): bump the python group with 3 updates [\#1333](https://github.com/voxpupuli/puppetboard/pull/1333) ([dependabot[bot]](https://github.com/apps/dependabot))
+- build\(deps\): bump the python group across 1 directory with 3 updates [\#1332](https://github.com/voxpupuli/puppetboard/pull/1332) ([dependabot[bot]](https://github.com/apps/dependabot))
+- build\(deps\): bump types-requests from 2.32.4.20250809 to 2.32.4.20250913 [\#1330](https://github.com/voxpupuli/puppetboard/pull/1330) ([dependabot[bot]](https://github.com/apps/dependabot))
+- build\(deps\): bump mypy from 1.17.1 to 1.18.1 in the python group [\#1328](https://github.com/voxpupuli/puppetboard/pull/1328) ([dependabot[bot]](https://github.com/apps/dependabot))
+- build\(deps\): bump the python group with 2 updates [\#1327](https://github.com/voxpupuli/puppetboard/pull/1327) ([dependabot[bot]](https://github.com/apps/dependabot))
+- build\(deps\): bump the python group across 1 directory with 5 updates [\#1326](https://github.com/voxpupuli/puppetboard/pull/1326) ([dependabot[bot]](https://github.com/apps/dependabot))
+- build\(deps\): bump the python group across 1 directory with 3 updates [\#1324](https://github.com/voxpupuli/puppetboard/pull/1324) ([dependabot[bot]](https://github.com/apps/dependabot))
+- build\(deps\): bump the python group with 3 updates [\#1318](https://github.com/voxpupuli/puppetboard/pull/1318) ([dependabot[bot]](https://github.com/apps/dependabot))
+- build\(deps\): bump the python group with 3 updates [\#1317](https://github.com/voxpupuli/puppetboard/pull/1317) ([dependabot[bot]](https://github.com/apps/dependabot))
+- build\(deps\): bump types-setuptools from 80.9.0.20250809 to 80.9.0.20250822 [\#1316](https://github.com/voxpupuli/puppetboard/pull/1316) ([dependabot[bot]](https://github.com/apps/dependabot))
+- build\(deps\): bump types-setuptools from 80.9.0.20250809 to 80.9.0.20250822 [\#1315](https://github.com/voxpupuli/puppetboard/pull/1315) ([dependabot[bot]](https://github.com/apps/dependabot))
+- build\(deps\): bump flask from 3.1.1 to 3.1.2 in the python group [\#1313](https://github.com/voxpupuli/puppetboard/pull/1313) ([dependabot[bot]](https://github.com/apps/dependabot))
+- build\(deps\): bump the python group with 4 updates [\#1312](https://github.com/voxpupuli/puppetboard/pull/1312) ([dependabot[bot]](https://github.com/apps/dependabot))
+- build\(deps\): bump types-requests from 2.32.4.20250611 to 2.32.4.20250809 [\#1311](https://github.com/voxpupuli/puppetboard/pull/1311) ([dependabot[bot]](https://github.com/apps/dependabot))
+- build\(deps\): bump types-setuptools from 80.9.0.20250801 to 80.9.0.20250809 [\#1310](https://github.com/voxpupuli/puppetboard/pull/1310) ([dependabot[bot]](https://github.com/apps/dependabot))
+- build\(deps\): bump the python group across 1 directory with 4 updates [\#1309](https://github.com/voxpupuli/puppetboard/pull/1309) ([dependabot[bot]](https://github.com/apps/dependabot))
+- build\(deps\): bump python from 3.13-alpine to 3.13.7-alpine [\#1308](https://github.com/voxpupuli/puppetboard/pull/1308) ([dependabot[bot]](https://github.com/apps/dependabot))
+- build\(deps\): bump types-setuptools from 80.9.0.20250801 to 80.9.0.20250809 [\#1307](https://github.com/voxpupuli/puppetboard/pull/1307) ([dependabot[bot]](https://github.com/apps/dependabot))
+- build\(deps\): bump types-requests from 2.32.4.20250611 to 2.32.4.20250809 [\#1305](https://github.com/voxpupuli/puppetboard/pull/1305) ([dependabot[bot]](https://github.com/apps/dependabot))
+- build\(deps\): bump the python group with 10 updates [\#1303](https://github.com/voxpupuli/puppetboard/pull/1303) ([dependabot[bot]](https://github.com/apps/dependabot))
+- build\(deps\): bump the python group across 1 directory with 13 updates [\#1301](https://github.com/voxpupuli/puppetboard/pull/1301) ([dependabot[bot]](https://github.com/apps/dependabot))
+- Document all environments option for `DEFAULT_ENVIRONMENT` [\#1298](https://github.com/voxpupuli/puppetboard/pull/1298) ([markeganfuller](https://github.com/markeganfuller))
+- build\(deps\): bump types-setuptools from 80.3.0.20250505 to 80.4.0.20250511 in the python group across 1 directory [\#1281](https://github.com/voxpupuli/puppetboard/pull/1281) ([dependabot[bot]](https://github.com/apps/dependabot))
+- build\(deps\): bump the python group across 1 directory with 3 updates [\#1279](https://github.com/voxpupuli/puppetboard/pull/1279) ([dependabot[bot]](https://github.com/apps/dependabot))
+- build\(deps\): bump flask from 3.1.0 to 3.1.1 in the pip group [\#1278](https://github.com/voxpupuli/puppetboard/pull/1278) ([dependabot[bot]](https://github.com/apps/dependabot))
+- build\(deps\): bump flask from 3.1.0 to 3.1.1 in the pip group [\#1277](https://github.com/voxpupuli/puppetboard/pull/1277) ([dependabot[bot]](https://github.com/apps/dependabot))
+- build\(deps\): bump the python group across 1 directory with 4 updates [\#1274](https://github.com/voxpupuli/puppetboard/pull/1274) ([dependabot[bot]](https://github.com/apps/dependabot))
+- build\(deps\): bump types-requests from 2.32.0.20250306 to 2.32.0.20250328 [\#1272](https://github.com/voxpupuli/puppetboard/pull/1272) ([dependabot[bot]](https://github.com/apps/dependabot))
+- build\(deps\): bump the python group with 6 updates [\#1270](https://github.com/voxpupuli/puppetboard/pull/1270) ([dependabot[bot]](https://github.com/apps/dependabot))
+- build\(deps\): bump the python group across 1 directory with 10 updates [\#1268](https://github.com/voxpupuli/puppetboard/pull/1268) ([dependabot[bot]](https://github.com/apps/dependabot))
+- build\(deps\): bump types-requests from 2.32.0.20250306 to 2.32.0.20250328 [\#1263](https://github.com/voxpupuli/puppetboard/pull/1263) ([dependabot[bot]](https://github.com/apps/dependabot))
+- build\(deps\): bump the python group across 1 directory with 6 updates [\#1261](https://github.com/voxpupuli/puppetboard/pull/1261) ([dependabot[bot]](https://github.com/apps/dependabot))
+- build\(deps\): bump the python group across 1 directory with 2 updates [\#1256](https://github.com/voxpupuli/puppetboard/pull/1256) ([dependabot[bot]](https://github.com/apps/dependabot))
+- build\(deps\): bump types-requests from 2.32.0.20241016 to 2.32.0.20250306 [\#1254](https://github.com/voxpupuli/puppetboard/pull/1254) ([dependabot[bot]](https://github.com/apps/dependabot))
+- build\(deps\): bump types-requests from 2.32.0.20241016 to 2.32.0.20250306 [\#1253](https://github.com/voxpupuli/puppetboard/pull/1253) ([dependabot[bot]](https://github.com/apps/dependabot))
+- build\(deps\): bump the python group with 5 updates [\#1252](https://github.com/voxpupuli/puppetboard/pull/1252) ([dependabot[bot]](https://github.com/apps/dependabot))
+- Bump the python group across 1 directory with 6 updates [\#1251](https://github.com/voxpupuli/puppetboard/pull/1251) ([dependabot[bot]](https://github.com/apps/dependabot))
+
+## [v6.0.1](https://github.com/voxpupuli/puppetboard/tree/v6.0.1) (2025-02-13)
+
+[Full Changelog](https://github.com/voxpupuli/puppetboard/compare/v6.0.0...v6.0.1)
+
+There were some pipeline issues for the 6.0.0, so it's not available on pypi. The 6.0.1 release is almost identical, it just updates some dependencies and switches to poetry (which fixed the CI).
+
+**Closed issues:**
+
+- Unable to establish SSL connection to PuppetDB [\#1236](https://github.com/voxpupuli/puppetboard/issues/1236)
+
+**Merged pull requests:**
+
+- Bump coverage from 7.6.9 to 7.6.12 in the python group [\#1244](https://github.com/voxpupuli/puppetboard/pull/1244) ([dependabot[bot]](https://github.com/apps/dependabot))
+- Release 6.0.1 [\#1242](https://github.com/voxpupuli/puppetboard/pull/1242) ([rwaffen](https://github.com/rwaffen))
+- Bump the python group across 1 directory with 7 updates [\#1241](https://github.com/voxpupuli/puppetboard/pull/1241) ([dependabot[bot]](https://github.com/apps/dependabot))
+- Bump the python group across 1 directory with 12 updates [\#1239](https://github.com/voxpupuli/puppetboard/pull/1239) ([dependabot[bot]](https://github.com/apps/dependabot))
+- Bump jinja2 from 3.1.4 to 3.1.5 in the pip group [\#1224](https://github.com/voxpupuli/puppetboard/pull/1224) ([dependabot[bot]](https://github.com/apps/dependabot))
+- Add a test build to CI [\#1214](https://github.com/voxpupuli/puppetboard/pull/1214) ([jstraw](https://github.com/jstraw))
+- Make pyproject.toml the source of version [\#1213](https://github.com/voxpupuli/puppetboard/pull/1213) ([jstraw](https://github.com/jstraw))
+- Convert to pyproject.toml/poetry [\#1212](https://github.com/voxpupuli/puppetboard/pull/1212) ([jstraw](https://github.com/jstraw))
+- Bump the python group across 1 directory with 4 updates [\#1210](https://github.com/voxpupuli/puppetboard/pull/1210) ([dependabot[bot]](https://github.com/apps/dependabot))
+- Adding OpenShift Template [\#1070](https://github.com/voxpupuli/puppetboard/pull/1070) ([bschonec](https://github.com/bschonec))
+
+## [v6.0.0](https://github.com/voxpupuli/puppetboard/tree/v6.0.0) (2024-11-26)
+
+[Full Changelog](https://github.com/voxpupuli/puppetboard/compare/v5.4.0...v6.0.0)
+
+**Breaking changes:**
+
+- Drop support for python 3.8 [\#1184](https://github.com/voxpupuli/puppetboard/pull/1184) ([TheMeier](https://github.com/TheMeier))
+
+**Implemented enhancements:**
+
+- Add support for python 3.13 [\#1186](https://github.com/voxpupuli/puppetboard/pull/1186) ([TheMeier](https://github.com/TheMeier))
+- Add official support for Python 3.12 [\#1084](https://github.com/voxpupuli/puppetboard/pull/1084) ([gdubicki](https://github.com/gdubicki))
+- try to group dependabot updates together [\#1067](https://github.com/voxpupuli/puppetboard/pull/1067) ([rwaffen](https://github.com/rwaffen))
+
+**Fixed bugs:**
+
+- Sort kernelrelease fact [\#1139](https://github.com/voxpupuli/puppetboard/pull/1139) ([ArthurWuTW](https://github.com/ArthurWuTW))
+- Align structured facts with tops of cells [\#1086](https://github.com/voxpupuli/puppetboard/pull/1086) ([yakatz](https://github.com/yakatz))
+- Don't run app as root in Docker container [\#1085](https://github.com/voxpupuli/puppetboard/pull/1085) ([gdubicki](https://github.com/gdubicki))
+
+**Merged pull requests:**
+
+- Bump the python group across 1 directory with 4 updates [\#1201](https://github.com/voxpupuli/puppetboard/pull/1201) ([dependabot[bot]](https://github.com/apps/dependabot))
+- Bump types-requests from 2.32.0.20240712 to 2.32.0.20241016 [\#1188](https://github.com/voxpupuli/puppetboard/pull/1188) ([dependabot[bot]](https://github.com/apps/dependabot))
+- Bump the python group across 1 directory with 20 updates [\#1185](https://github.com/voxpupuli/puppetboard/pull/1185) ([dependabot[bot]](https://github.com/apps/dependabot))
+- Bump types-setuptools from 71.1.0.20240726 to 71.1.0.20240806 [\#1142](https://github.com/voxpupuli/puppetboard/pull/1142) ([dependabot[bot]](https://github.com/apps/dependabot))
+- Bump the python group across 1 directory with 2 updates [\#1141](https://github.com/voxpupuli/puppetboard/pull/1141) ([dependabot[bot]](https://github.com/apps/dependabot))
+- Bump the python group across 1 directory with 4 updates [\#1138](https://github.com/voxpupuli/puppetboard/pull/1138) ([dependabot[bot]](https://github.com/apps/dependabot))
+- Bump types-requests from 2.32.0.20240622 to 2.32.0.20240712 [\#1132](https://github.com/voxpupuli/puppetboard/pull/1132) ([dependabot[bot]](https://github.com/apps/dependabot))
+- Bump the python group across 1 directory with 3 updates [\#1131](https://github.com/voxpupuli/puppetboard/pull/1131) ([dependabot[bot]](https://github.com/apps/dependabot))
+- Bump the python group across 1 directory with 3 updates [\#1126](https://github.com/voxpupuli/puppetboard/pull/1126) ([dependabot[bot]](https://github.com/apps/dependabot))
+- Bump types-requests from 2.32.0.20240602 to 2.32.0.20240622 [\#1121](https://github.com/voxpupuli/puppetboard/pull/1121) ([dependabot[bot]](https://github.com/apps/dependabot))
+- Bump coverage from 7.5.3 to 7.5.4 in the python group [\#1120](https://github.com/voxpupuli/puppetboard/pull/1120) ([dependabot[bot]](https://github.com/apps/dependabot))
+- Bump urllib3 from 2.2.1 to 2.2.2 in the python group [\#1119](https://github.com/voxpupuli/puppetboard/pull/1119) ([dependabot[bot]](https://github.com/apps/dependabot))
+- Bump bandit from 1.7.8 to 1.7.9 in the python group [\#1116](https://github.com/voxpupuli/puppetboard/pull/1116) ([dependabot[bot]](https://github.com/apps/dependabot))
+- Bump the python group across 1 directory with 15 updates [\#1114](https://github.com/voxpupuli/puppetboard/pull/1114) ([dependabot[bot]](https://github.com/apps/dependabot))
+- Bump gunicorn from 21.2.0 to 22.0.0 in the pip group [\#1089](https://github.com/voxpupuli/puppetboard/pull/1089) ([dependabot[bot]](https://github.com/apps/dependabot))
+- Bump types-requests from 2.31.0.20240403 to 2.31.0.20240406 [\#1088](https://github.com/voxpupuli/puppetboard/pull/1088) ([dependabot[bot]](https://github.com/apps/dependabot))
+- Bump types-setuptools from 69.2.0.20240317 to 69.5.0.20240415 in the python group [\#1087](https://github.com/voxpupuli/puppetboard/pull/1087) ([dependabot[bot]](https://github.com/apps/dependabot))
+- Update README [\#1082](https://github.com/voxpupuli/puppetboard/pull/1082) ([gdubicki](https://github.com/gdubicki))
+- Bump idna from 3.6 to 3.7 [\#1081](https://github.com/voxpupuli/puppetboard/pull/1081) ([dependabot[bot]](https://github.com/apps/dependabot))
+- Bump the python group with 3 updates [\#1080](https://github.com/voxpupuli/puppetboard/pull/1080) ([dependabot[bot]](https://github.com/apps/dependabot))
+- Bump the python group with 2 updates [\#1076](https://github.com/voxpupuli/puppetboard/pull/1076) ([dependabot[bot]](https://github.com/apps/dependabot))
+- Also group major updates [\#1074](https://github.com/voxpupuli/puppetboard/pull/1074) ([rwaffen](https://github.com/rwaffen))
+- Bump types-requests from 2.31.0.20240218 to 2.31.0.20240403 [\#1073](https://github.com/voxpupuli/puppetboard/pull/1073) ([dependabot[bot]](https://github.com/apps/dependabot))
+- Bump the python group with 9 updates [\#1072](https://github.com/voxpupuli/puppetboard/pull/1072) ([dependabot[bot]](https://github.com/apps/dependabot))
+- Bump types-toml from 0.10.8.7 to 0.10.8.20240310 [\#1059](https://github.com/voxpupuli/puppetboard/pull/1059) ([dependabot[bot]](https://github.com/apps/dependabot))
+- Bump pytest from 8.0.2 to 8.1.0 [\#1051](https://github.com/voxpupuli/puppetboard/pull/1051) ([dependabot[bot]](https://github.com/apps/dependabot))
+- Bump types-setuptools from 69.1.0.20240301 to 69.1.0.20240302 [\#1050](https://github.com/voxpupuli/puppetboard/pull/1050) ([dependabot[bot]](https://github.com/apps/dependabot))
+
+## [v5.4.0](https://github.com/voxpupuli/puppetboard/tree/v5.4.0) (2024-03-01)
+
+[Full Changelog](https://github.com/voxpupuli/puppetboard/compare/v5.3.0...v5.4.0)
+
+**Merged pull requests:**
+
+- Bump types-setuptools from 69.0.0.20240125 to 69.1.0.20240301 [\#1048](https://github.com/voxpupuli/puppetboard/pull/1048) ([dependabot[bot]](https://github.com/apps/dependabot))
+- Bump pylint from 3.0.3 to 3.1.0 [\#1043](https://github.com/voxpupuli/puppetboard/pull/1043) ([dependabot[bot]](https://github.com/apps/dependabot))
+- Bump coverage from 7.4.1 to 7.4.3 [\#1042](https://github.com/voxpupuli/puppetboard/pull/1042) ([dependabot[bot]](https://github.com/apps/dependabot))
+- Bump pytest from 8.0.0 to 8.0.2 [\#1041](https://github.com/voxpupuli/puppetboard/pull/1041) ([dependabot[bot]](https://github.com/apps/dependabot))
+- Bump typing-extensions from 4.9.0 to 4.10.0 [\#1040](https://github.com/voxpupuli/puppetboard/pull/1040) ([dependabot[bot]](https://github.com/apps/dependabot))
+- Bump types-requests from 2.31.0.20240125 to 2.31.0.20240218 [\#1036](https://github.com/voxpupuli/puppetboard/pull/1036) ([dependabot[bot]](https://github.com/apps/dependabot))
+- Bump urllib3 from 2.2.0 to 2.2.1 [\#1033](https://github.com/voxpupuli/puppetboard/pull/1033) ([dependabot[bot]](https://github.com/apps/dependabot))
+
+## [v5.3.0](https://github.com/voxpupuli/puppetboard/tree/v5.3.0) (2024-02-07)
+
+[Full Changelog](https://github.com/voxpupuli/puppetboard/compare/v5.2.0...v5.3.0)
+
+**Implemented enhancements:**
+
+- Add favicon to radiator [\#1023](https://github.com/voxpupuli/puppetboard/pull/1023) ([surdaft](https://github.com/surdaft))
+
+**Merged pull requests:**
+
+- Bump markupsafe from 2.1.3 to 2.1.5 [\#1022](https://github.com/voxpupuli/puppetboard/pull/1022) ([dependabot[bot]](https://github.com/apps/dependabot))
+- Bump flask from 2.3.3 to 3.0.2 [\#1021](https://github.com/voxpupuli/puppetboard/pull/1021) ([dependabot[bot]](https://github.com/apps/dependabot))
+- Bump certifi from 2023.11.17 to 2024.2.2 [\#1019](https://github.com/voxpupuli/puppetboard/pull/1019) ([dependabot[bot]](https://github.com/apps/dependabot))
+- Bump urllib3 from 2.1.0 to 2.2.0 [\#1016](https://github.com/voxpupuli/puppetboard/pull/1016) ([dependabot[bot]](https://github.com/apps/dependabot))
+- Bump pytest from 7.4.4 to 8.0.0 [\#1015](https://github.com/voxpupuli/puppetboard/pull/1015) ([dependabot[bot]](https://github.com/apps/dependabot))
+- Bump coverage from 7.4.0 to 7.4.1 [\#1014](https://github.com/voxpupuli/puppetboard/pull/1014) ([dependabot[bot]](https://github.com/apps/dependabot))
+- Bump types-setuptools from 69.0.0.20240115 to 69.0.0.20240125 [\#1012](https://github.com/voxpupuli/puppetboard/pull/1012) ([dependabot[bot]](https://github.com/apps/dependabot))
+- Bump types-requests from 2.31.0.20240106 to 2.31.0.20240125 [\#1011](https://github.com/voxpupuli/puppetboard/pull/1011) ([dependabot[bot]](https://github.com/apps/dependabot))
+- Bump bandit from 1.7.6 to 1.7.7 [\#1009](https://github.com/voxpupuli/puppetboard/pull/1009) ([dependabot[bot]](https://github.com/apps/dependabot))
+- Bump beautifulsoup4 from 4.12.2 to 4.12.3 [\#1006](https://github.com/voxpupuli/puppetboard/pull/1006) ([dependabot[bot]](https://github.com/apps/dependabot))
+- Bump types-setuptools from 69.0.0.0 to 69.0.0.20240115 [\#1003](https://github.com/voxpupuli/puppetboard/pull/1003) ([dependabot[bot]](https://github.com/apps/dependabot))
+- Bump jinja2 from 3.1.2 to 3.1.3 [\#1002](https://github.com/voxpupuli/puppetboard/pull/1002) ([dependabot[bot]](https://github.com/apps/dependabot))
+- Bump wtforms from 3.1.1 to 3.1.2 [\#1000](https://github.com/voxpupuli/puppetboard/pull/1000) ([dependabot[bot]](https://github.com/apps/dependabot))
+- Bump types-requests from 2.31.0.8 to 2.31.0.20240106 [\#999](https://github.com/voxpupuli/puppetboard/pull/999) ([dependabot[bot]](https://github.com/apps/dependabot))
+- Bump pytest from 7.4.3 to 7.4.4 [\#997](https://github.com/voxpupuli/puppetboard/pull/997) ([dependabot[bot]](https://github.com/apps/dependabot))
+- Bump coverage from 7.3.3 to 7.4.0 [\#996](https://github.com/voxpupuli/puppetboard/pull/996) ([dependabot[bot]](https://github.com/apps/dependabot))
+- Bump mypy from 1.7.1 to 1.8.0 [\#995](https://github.com/voxpupuli/puppetboard/pull/995) ([dependabot[bot]](https://github.com/apps/dependabot))
+
+## [v5.2.0](https://github.com/voxpupuli/puppetboard/tree/v5.2.0) (2024-01-17)
+
+[Full Changelog](https://github.com/voxpupuli/puppetboard/compare/v5.1.0...v5.2.0)
+
+**Implemented enhancements:**
+
+- Update README for SECRET\_KEY and SSL Setup [\#985](https://github.com/voxpupuli/puppetboard/pull/985) ([tuxmea](https://github.com/tuxmea))
+
+**Fixed bugs:**
+
+- Facts only showing RedHat [\#961](https://github.com/voxpupuli/puppetboard/issues/961)
+
+**Closed issues:**
+
+- Make it More Apparent that SECRET\_KEY cannot be blank [\#978](https://github.com/voxpupuli/puppetboard/issues/978)
+
+**Merged pull requests:**
+
+- also push to hub.docker.com [\#1004](https://github.com/voxpupuli/puppetboard/pull/1004) ([rwaffen](https://github.com/rwaffen))
+- Bump coverage from 7.3.2 to 7.3.3 [\#993](https://github.com/voxpupuli/puppetboard/pull/993) ([dependabot[bot]](https://github.com/apps/dependabot))
+- Bump pylint from 3.0.2 to 3.0.3 [\#992](https://github.com/voxpupuli/puppetboard/pull/992) ([dependabot[bot]](https://github.com/apps/dependabot))
+- Bump bandit from 1.7.5 to 1.7.6 [\#991](https://github.com/voxpupuli/puppetboard/pull/991) ([dependabot[bot]](https://github.com/apps/dependabot))
+- Bump typing-extensions from 4.8.0 to 4.9.0 [\#990](https://github.com/voxpupuli/puppetboard/pull/990) ([dependabot[bot]](https://github.com/apps/dependabot))
+- Bump idna from 3.4 to 3.6 [\#987](https://github.com/voxpupuli/puppetboard/pull/987) ([dependabot[bot]](https://github.com/apps/dependabot))
+- Bump certifi from 2023.7.22 to 2023.11.17 [\#986](https://github.com/voxpupuli/puppetboard/pull/986) ([dependabot[bot]](https://github.com/apps/dependabot))
+- Bump types-setuptools from 68.2.0.0 to 69.0.0.0 [\#984](https://github.com/voxpupuli/puppetboard/pull/984) ([dependabot[bot]](https://github.com/apps/dependabot))
+- Bump mypy from 1.6.1 to 1.7.1 [\#981](https://github.com/voxpupuli/puppetboard/pull/981) ([dependabot[bot]](https://github.com/apps/dependabot))
+- README: note that `SECRET_KEY` can't be empty [\#979](https://github.com/voxpupuli/puppetboard/pull/979) ([kenyon](https://github.com/kenyon))
+- Bump urllib3 from 2.0.7 to 2.1.0 [\#977](https://github.com/voxpupuli/puppetboard/pull/977) ([dependabot[bot]](https://github.com/apps/dependabot))
+- Bump flask-apscheduler from 1.13.0 to 1.13.1 [\#974](https://github.com/voxpupuli/puppetboard/pull/974) ([dependabot[bot]](https://github.com/apps/dependabot))
+- Bump wtforms from 3.1.0 to 3.1.1 [\#973](https://github.com/voxpupuli/puppetboard/pull/973) ([dependabot[bot]](https://github.com/apps/dependabot))
+- Bump charset-normalizer from 3.3.1 to 3.3.2 [\#972](https://github.com/voxpupuli/puppetboard/pull/972) ([dependabot[bot]](https://github.com/apps/dependabot))
+- Bump pytest from 7.4.2 to 7.4.3 [\#971](https://github.com/voxpupuli/puppetboard/pull/971) ([dependabot[bot]](https://github.com/apps/dependabot))
+- Bump werkzeug from 3.0.0 to 3.0.1 [\#970](https://github.com/voxpupuli/puppetboard/pull/970) ([dependabot[bot]](https://github.com/apps/dependabot))
+- Bump pylint from 3.0.1 to 3.0.2 [\#968](https://github.com/voxpupuli/puppetboard/pull/968) ([dependabot[bot]](https://github.com/apps/dependabot))
+- Bump charset-normalizer from 3.3.0 to 3.3.1 [\#967](https://github.com/voxpupuli/puppetboard/pull/967) ([dependabot[bot]](https://github.com/apps/dependabot))
+- Bump pytest-mock from 3.11.1 to 3.12.0 [\#966](https://github.com/voxpupuli/puppetboard/pull/966) ([dependabot[bot]](https://github.com/apps/dependabot))
+- Add link to C3.js documentation [\#965](https://github.com/voxpupuli/puppetboard/pull/965) ([mpesari](https://github.com/mpesari))
+- Bump mypy from 1.6.0 to 1.6.1 [\#964](https://github.com/voxpupuli/puppetboard/pull/964) ([dependabot[bot]](https://github.com/apps/dependabot))
+- Bump urllib3 from 2.0.6 to 2.0.7 [\#962](https://github.com/voxpupuli/puppetboard/pull/962) ([dependabot[bot]](https://github.com/apps/dependabot))
+- Bump mypy from 1.5.1 to 1.6.0 [\#958](https://github.com/voxpupuli/puppetboard/pull/958) ([dependabot[bot]](https://github.com/apps/dependabot))
+- Bump wtforms from 3.0.1 to 3.1.0 [\#957](https://github.com/voxpupuli/puppetboard/pull/957) ([dependabot[bot]](https://github.com/apps/dependabot))
+
+## [v5.1.0](https://github.com/voxpupuli/puppetboard/tree/v5.1.0) (2023-10-08)
+
+[Full Changelog](https://github.com/voxpupuli/puppetboard/compare/v5.0.0...v5.1.0)
+
+**Merged pull requests:**
+
+- pypuppetdb: Update 3.1.0-\>3.2.0 [\#954](https://github.com/voxpupuli/puppetboard/pull/954) ([bastelfreak](https://github.com/bastelfreak))
+- Bump python from 3.11-alpine to 3.12-alpine [\#953](https://github.com/voxpupuli/puppetboard/pull/953) ([dependabot[bot]](https://github.com/apps/dependabot))
+- Bump flask-caching from 2.0.2 to 2.1.0 [\#952](https://github.com/voxpupuli/puppetboard/pull/952) ([dependabot[bot]](https://github.com/apps/dependabot))
+- CI: Run on PRs and merges; Add dependabot for Dockerfile [\#951](https://github.com/voxpupuli/puppetboard/pull/951) ([bastelfreak](https://github.com/bastelfreak))
+- Bump pytest-pylint from 0.19.0 to 0.21.0 [\#950](https://github.com/voxpupuli/puppetboard/pull/950) ([dependabot[bot]](https://github.com/apps/dependabot))
+- Bump pylint from 2.17.7 to 3.0.1 [\#949](https://github.com/voxpupuli/puppetboard/pull/949) ([dependabot[bot]](https://github.com/apps/dependabot))
+- Bump types-requests from 2.31.0.7 to 2.31.0.8 [\#948](https://github.com/voxpupuli/puppetboard/pull/948) ([dependabot[bot]](https://github.com/apps/dependabot))
+- Bump coverage from 7.3.1 to 7.3.2 [\#947](https://github.com/voxpupuli/puppetboard/pull/947) ([dependabot[bot]](https://github.com/apps/dependabot))
+- Bump urllib3 from 2.0.4 to 2.0.6 [\#945](https://github.com/voxpupuli/puppetboard/pull/945) ([dependabot[bot]](https://github.com/apps/dependabot))
+- Bump werkzeug from 2.3.7 to 3.0.0 [\#944](https://github.com/voxpupuli/puppetboard/pull/944) ([dependabot[bot]](https://github.com/apps/dependabot))
+- Bump charset-normalizer from 3.2.0 to 3.3.0 [\#943](https://github.com/voxpupuli/puppetboard/pull/943) ([dependabot[bot]](https://github.com/apps/dependabot))
+- Bump packaging from 23.1 to 23.2 [\#941](https://github.com/voxpupuli/puppetboard/pull/941) ([dependabot[bot]](https://github.com/apps/dependabot))
+- Bump pylint from 2.17.5 to 2.17.7 [\#940](https://github.com/voxpupuli/puppetboard/pull/940) ([dependabot[bot]](https://github.com/apps/dependabot))
+- Bump flask-wtf from 1.1.1 to 1.2.1 [\#939](https://github.com/voxpupuli/puppetboard/pull/939) ([dependabot[bot]](https://github.com/apps/dependabot))
+- Bump types-requests from 2.31.0.2 to 2.31.0.7 [\#938](https://github.com/voxpupuli/puppetboard/pull/938) ([dependabot[bot]](https://github.com/apps/dependabot))
+- Bump zipp from 3.16.2 to 3.17.0 [\#932](https://github.com/voxpupuli/puppetboard/pull/932) ([dependabot[bot]](https://github.com/apps/dependabot))
+- Bump flask-apscheduler from 1.12.4 to 1.13.0 [\#931](https://github.com/voxpupuli/puppetboard/pull/931) ([dependabot[bot]](https://github.com/apps/dependabot))
+- Bump typing-extensions from 4.7.1 to 4.8.0 [\#930](https://github.com/voxpupuli/puppetboard/pull/930) ([dependabot[bot]](https://github.com/apps/dependabot))
+- Bump pytest from 7.4.1 to 7.4.2 [\#928](https://github.com/voxpupuli/puppetboard/pull/928) ([dependabot[bot]](https://github.com/apps/dependabot))
+- Bump types-setuptools from 68.1.0.1 to 68.2.0.0 [\#927](https://github.com/voxpupuli/puppetboard/pull/927) ([dependabot[bot]](https://github.com/apps/dependabot))
+- Bump coverage from 7.3.0 to 7.3.1 [\#926](https://github.com/voxpupuli/puppetboard/pull/926) ([dependabot[bot]](https://github.com/apps/dependabot))
+- Bump pytest from 7.4.0 to 7.4.1 [\#924](https://github.com/voxpupuli/puppetboard/pull/924) ([dependabot[bot]](https://github.com/apps/dependabot))
+- update gha [\#923](https://github.com/voxpupuli/puppetboard/pull/923) ([rwaffen](https://github.com/rwaffen))
+- Bump types-setuptools from 68.1.0.0 to 68.1.0.1 [\#922](https://github.com/voxpupuli/puppetboard/pull/922) ([dependabot[bot]](https://github.com/apps/dependabot))
+- Bump flask from 2.2.5 to 2.3.3 [\#920](https://github.com/voxpupuli/puppetboard/pull/920) ([dependabot[bot]](https://github.com/apps/dependabot))
+- Bump click from 8.1.6 to 8.1.7 [\#919](https://github.com/voxpupuli/puppetboard/pull/919) ([dependabot[bot]](https://github.com/apps/dependabot))
+- Bump mypy from 1.5.0 to 1.5.1 [\#918](https://github.com/voxpupuli/puppetboard/pull/918) ([dependabot[bot]](https://github.com/apps/dependabot))
+- Bump pytest-randomly from 3.14.0 to 3.15.0 [\#917](https://github.com/voxpupuli/puppetboard/pull/917) ([dependabot[bot]](https://github.com/apps/dependabot))
+- Bump types-setuptools from 68.0.0.3 to 68.1.0.0 [\#916](https://github.com/voxpupuli/puppetboard/pull/916) ([dependabot[bot]](https://github.com/apps/dependabot))
+- Bump pytest-randomly from 3.13.0 to 3.14.0 [\#915](https://github.com/voxpupuli/puppetboard/pull/915) ([dependabot[bot]](https://github.com/apps/dependabot))
+- Bump werkzeug from 2.3.6 to 2.3.7 [\#914](https://github.com/voxpupuli/puppetboard/pull/914) ([dependabot[bot]](https://github.com/apps/dependabot))
+- Bump coverage from 7.2.7 to 7.3.0 [\#913](https://github.com/voxpupuli/puppetboard/pull/913) ([dependabot[bot]](https://github.com/apps/dependabot))
+- Bump mypy from 1.4.1 to 1.5.0 [\#911](https://github.com/voxpupuli/puppetboard/pull/911) ([dependabot[bot]](https://github.com/apps/dependabot))
+- Bump pyparsing from 3.1.0 to 3.1.1 [\#910](https://github.com/voxpupuli/puppetboard/pull/910) ([dependabot[bot]](https://github.com/apps/dependabot))
+
+## [v5.0.0](https://github.com/voxpupuli/puppetboard/tree/v5.0.0) (2023-07-27)
+
+* Stop setting `SECRET_KEY` value to a random string by default. This has caused issues in deployments with more than one app replica or when the app was restarted. Please set this to your own long, random string, **the same for each application replica**. Implements [#721](https://github.com/voxpupuli/puppetboard/issues/721).
+* Drop support for Python 3.7 (end-of-life in June 2023). PR [#899](https://github.com/voxpupuli/puppetboard/pull/899)
+* Fix broken links in Classes view. PR [#868](https://github.com/voxpupuli/puppetboard/pull/868), fixes [#816](https://github.com/voxpupuli/puppetboard/issues/816).
+* Fix if fact is `None` (default for full node view). PR [#908](https://github.com/voxpupuli/puppetboard/pull/908), fixes [#907](https://github.com/voxpupuli/puppetboard/issues/907).
+* Dependencies update.
+
+Thanks to the following contributors of this release:
+* [Louis Charreau](https://github.com/lcharreau)
+* [Yehuda Katz](https://github.com/yakatz)
 
 4.3.0
 -----
@@ -473,3 +910,6 @@ We've also added a few new features:
 
 Initial release.
 
+
+
+\* *This Changelog was automatically generated by [github_changelog_generator](https://github.com/github-changelog-generator/github-changelog-generator)*

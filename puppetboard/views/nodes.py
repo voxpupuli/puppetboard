@@ -41,7 +41,7 @@ def nodes(env):
     if status_arg in ['failed', 'changed', 'unchanged']:
         query.add(EqualsOperator('latest_report_status', status_arg))
     elif status_arg == 'unreported':
-        unreported = datetime.utcnow()
+        unreported = datetime.now()
         unreported = (unreported -
                       timedelta(hours=app.config['UNRESPONSIVE_HOURS']))
         unreported = unreported.replace(microsecond=0).isoformat()

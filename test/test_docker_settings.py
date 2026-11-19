@@ -114,7 +114,7 @@ def test_invtory_facts_custom(cleanup_env):
 
 def test_inventory_fact_tempaltes_default(cleanup_env):
     assert isinstance(docker_settings.INVENTORY_FACT_TEMPLATES, dict)
-    assert len(docker_settings.INVENTORY_FACT_TEMPLATES) == 3
+    assert len(docker_settings.INVENTORY_FACT_TEMPLATES) == 2
 
 
 def test_inventory_fact_tempaltes_custom(cleanup_env):

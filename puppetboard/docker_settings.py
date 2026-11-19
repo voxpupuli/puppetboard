@@ -45,6 +45,7 @@ def coerce_bool(v, default):
         return False
     return default
 
+APPLICATION_ROOT = os.getenv('PUPPETBOARD_URL_PREFIX','/')
 
 PUPPETDB_HOST = os.getenv('PUPPETDB_HOST', 'puppetdb')
 PUPPETDB_PORT = int(os.getenv('PUPPETDB_PORT', '8080'))
@@ -60,7 +61,8 @@ PUPPETDB_CERT = cert_to_file(os.getenv('PUPPETDB_CERT', None))
 PUPPETDB_PROTO = os.getenv('PUPPETDB_PROTO', None)
 PUPPETDB_TIMEOUT = int(os.getenv('PUPPETDB_TIMEOUT', '20'))
 DEFAULT_ENVIRONMENT = os.getenv('DEFAULT_ENVIRONMENT', 'production')
-SECRET_KEY = os.getenv('SECRET_KEY', f"default-{secrets.token_hex(32)}")
+# this empty string has to be changed, we validate it with check_secret_key()
+SECRET_KEY = os.getenv('SECRET_KEY', '')  # nosec
 UNRESPONSIVE_HOURS = int(os.getenv('UNRESPONSIVE_HOURS', '2'))
 ENABLE_QUERY = coerce_bool(os.getenv('ENABLE_QUERY'), True)
 # Uncomment to restrict the enabled PuppetDB endpoints in the query page.
@@ -104,9 +106,9 @@ GRAPH_TYPE = os.getenv('GRAPH_TYPE', 'pie')
 # Define default array of of strings, this code is a bit neater than having
 # a large string
 INVENTORY_FACTS_DEFAULT = ','.join(['Hostname', 'trusted',
-                                    'IP Address', 'networking',
-                                    'OS', 'os',
-                                    'Architecture', 'hardwaremodel',
+                                    'IP Address', 'networking.ip',
+                                    'OS', 'os.name',
+                                    'Architecture', 'os.architecture',
                                     'Kernel Version', 'kernelrelease',
                                     'Puppet Version', 'puppetversion'])
 
@@ -121,7 +123,6 @@ INVENTORY_FACT_TEMPLATES = {
         """{{value.hostname}}"""
         """</a>"""
     ),
-    'networking': """{{ value.ip }}""",
     'os': "{{ fact_os_detection(value) }}",
 }
 
@@ -139,6 +140,7 @@ REFRESH_RATE = int(os.getenv('REFRESH_RATE', '30'))
 
 DAILY_REPORTS_CHART_ENABLED = coerce_bool(os.getenv('DAILY_REPORTS_CHART_ENABLED'), True)
 DAILY_REPORTS_CHART_DAYS = int(os.getenv('DAILY_REPORTS_CHART_DAYS', '8'))
+DAILY_REPORTS_CHART_MODE = os.getenv('DAILY_REPORTS_CHART_MODE', 'stacked')
 
 WITH_EVENT_NUMBERS = coerce_bool(os.getenv('WITH_EVENT_NUMBERS'), True)
 
@@ -177,7 +179,7 @@ CLASS_EVENTS_STATUS_COLUMNS_STR = os.getenv('CLASS_EVENTS_STATUS_COLUMNS', CLASS
 CLASS_EVENTS_STATUS_COLUMNS = [(CLASS_EVENTS_STATUS_COLUMNS_STR[i].strip(),
                                 CLASS_EVENTS_STATUS_COLUMNS_STR[i + 1].strip()) for i in range(0, len(CLASS_EVENTS_STATUS_COLUMNS_STR), 2)]
 
-# Enabled a scheduler instance to trigger jobs in background. 
+# Enabled a scheduler instance to trigger jobs in background.
 SCHEDULER_ENABLED = coerce_bool(os.getenv('SCHEDULER_ENABLED'), False)
 
 # Tuples are hard to express as an environment variable, so here
