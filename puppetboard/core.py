@@ -10,7 +10,7 @@ from markupsafe import escape
 from werkzeug.middleware.proxy_fix import ProxyFix
 from pypuppetdb import connect
 
-from puppetboard.utils import (get_or_abort, jsonprint,
+from puppetboard.utils import (get_or_abort, jsonprint, escape_strings,
                                url_for_field, quote_columns_data)
 from puppetboard.version import __version__ as own_version
 
@@ -51,6 +51,7 @@ def get_app():
         app.jinja_env.trim_blocks = True
         app.jinja_env.lstrip_blocks = True
         app.jinja_env.filters['jsonprint'] = jsonprint
+        app.jinja_env.filters['escape_strings'] = escape_strings
         app.jinja_env.globals['url_for_field'] = url_for_field
         app.jinja_env.globals['quote_columns_data'] = quote_columns_data
         app.jinja_env.add_extension('jinja2.ext.do')

@@ -464,3 +464,12 @@ def test_split_fact_path_single_level():
     base, sub = utils.split_fact_path('os.name')
     assert base == 'os'
     assert sub == 'name'
+
+
+def test_escape_strings():
+    assert utils.escape_strings('<b>"x"</b>') == \
+        '&lt;b&gt;&#34;x&#34;&lt;/b&gt;'
+    assert utils.escape_strings(['<a>', 1, None]) == ['&lt;a&gt;', 1, None]
+    assert utils.escape_strings({'<k>': {'n': '<a>'}}) == \
+        {'&lt;k&gt;': {'n': '&lt;a&gt;'}}
+    assert utils.escape_strings(True) is True

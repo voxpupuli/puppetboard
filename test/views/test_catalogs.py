@@ -88,3 +88,21 @@ def test_catalogs_json_compare(client, mocker,
                      "action": "/catalogs/compare/node-unreported...node-%s" %
                                found_status})
         assert len(val) == 1
+
+
+def test_catalogs_json_compare_escapes_compare(client, mocker,
+                                               mock_puppetdb_environments,
+                                               mock_puppetdb_default_nodes):
+    app.app.config['ENABLE_CATALOG'] = True
+    app.puppetdb.last_total = 0
+
+    rv = client.get('/catalogs/compare/"><img src=x onerror=alert(1)>/json')
+    assert rv.status_code == 200
+
+    result_json = json.loads(rv.data.decode('utf-8'))
+    assert len(result_json['data']) > 0
+    for line in result_json['data']:
+        soup = BeautifulSoup(line[2], 'html.parser')
+        assert soup.find('img') is None
+        assert soup.find('input')['value'] == \
+            'Compare with "><img src=x onerror=alert(1)>'

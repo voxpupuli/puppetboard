@@ -6,7 +6,7 @@ from pypuppetdb.QueryBuilder import (AndOperator,
                                      EqualsOperator, OrOperator)
 
 from puppetboard.core import get_app, get_puppetdb, environments
-from puppetboard.utils import (check_env, dot_lookup)
+from puppetboard.utils import (check_env, dot_lookup, escape_strings)
 
 app = get_app()
 puppetdb = get_puppetdb()
@@ -89,6 +89,8 @@ def inventory_ajax(env):
                     current_env=env,
                     value=fact_value,
                 )
+            else:
+                fact_value = escape_strings(fact_value)
             fact_data[node][name] = fact_value
 
     total = len(fact_data)

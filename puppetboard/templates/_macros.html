@@ -113,7 +113,7 @@
         url = data[0]
         to_show = pretty_print(data[1])
 
-        return `<a title="${data[1]}" href="${url}">${to_show}</a>`
+        return `<a title="${escape_html(data[1])}" href="${escape_html(url)}">${to_show}</a>`
       },
       {{ facts_sorter.get_facts_sorter_type(fact) }}
     },

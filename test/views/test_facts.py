@@ -85,6 +85,17 @@ def test_fact_value_view(client, mocker,
     assert len(vals) == 0
 
 
+def test_fact_value_view_not_double_escaped(client, mocker,
+                                            mock_puppetdb_environments,
+                                            mock_puppetdb_default_nodes):
+    rv = client.get('/fact/architecture/a<b')
+    assert rv.status_code == 200
+
+    page = rv.data.decode('utf-8')
+    assert 'pretty_print("a\\u003cb")' in page
+    assert 'a&lt;b' not in page
+
+
 def test_fact_value_view_complex(client, mocker,
                                  mock_puppetdb_environments,
                                  mock_puppetdb_default_nodes):
@@ -654,3 +665,45 @@ def test_facts_page_shows_structured_facts_as_parents(client, mocker,
     hostname_parent = hostname_link.parent
     hostname_toggle = hostname_parent.find('span', {'class': 'fact-toggle'})
     assert hostname_toggle is None
+
+
+def test_node_facts_json_escapes_fact_name(client, mocker,
+                                           mock_puppetdb_environments,
+                                           mock_puppetdb_default_nodes):
+    query_data = {'facts': [[{
+        'certname': 'node-failed',
+        'name': '<i>fact</i>',
+        'value': 'x',
+        'environment': 'production'
+    }]]}
+
+    dbquery = MockDbQuery(query_data)
+    mocker.patch.object(app.puppetdb, '_query', side_effect=dbquery.get)
+
+    rv = client.get('/node/node-failed/facts/json')
+    assert rv.status_code == 200
+
+    line = json.loads(rv.data.decode('utf-8'))['data'][0]
+    assert line[0] == '&lt;i&gt;fact&lt;/i&gt;'
+
+
+def test_fact_json_escapes_node_name(client, mocker,
+                                     mock_puppetdb_environments,
+                                     mock_puppetdb_default_nodes):
+    query_data = {'facts': [[{
+        'certname': '<b>node</b>',
+        'name': 'some_fact',
+        'value': 'x',
+        'environment': 'production'
+    }]]}
+
+    dbquery = MockDbQuery(query_data)
+    mocker.patch.object(app.puppetdb, '_query', side_effect=dbquery.get)
+
+    rv = client.get('/fact/some_fact/json')
+    assert rv.status_code == 200
+
+    line = json.loads(rv.data.decode('utf-8'))['data'][0]
+    link = BeautifulSoup(line[0], 'html.parser').find('a')
+    assert link.find('b') is None
+    assert link.text == '<b>node</b>'

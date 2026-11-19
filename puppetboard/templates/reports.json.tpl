@@ -12,15 +12,15 @@
         {%- for column in columns -%}
           {%- if not loop.first %},{%- endif -%}
           {%- if column.type == 'datetime' -%}
-            "<span data-localise=\"{{ config.LOCALISE_TIMESTAMP|lower }}\">{{ report[column.attr] }}</span>"
+            {% filter jsonprint %}<span data-localise="{{ config.LOCALISE_TIMESTAMP|lower }}">{{ report[column.attr]|e }}</span>{% endfilter %}
           {%- elif column.type == 'status' -%}
             {% filter jsonprint -%}
               {{ macros.report_status(status=report.status, node_name=report.node, metrics=metrics[report.hash_], report_hash=report.hash_, current_env=current_env) }}
             {%- endfilter %}
           {%- elif column.type == 'node' -%}
-            {% filter jsonprint %}<a href="{{url_for('node', env=current_env, node_name=report.node)}}">{{ report.node }}</a>{% endfilter %}
+            {% filter jsonprint %}<a href="{{url_for('node', env=current_env, node_name=report.node)}}">{{ report.node|e }}</a>{% endfilter %}
           {%- else -%}
-            {{ report[column.attr] | jsonprint }}
+            {{ report[column.attr] | escape_strings | jsonprint }}
           {%- endif -%}
         {%- endfor -%}
       ]

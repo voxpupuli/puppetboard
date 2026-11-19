@@ -10,7 +10,7 @@
         {%- for column in columns -%}
           {%- if not loop.first %},{%- endif -%}
           {%- if column in ['fqdn', 'hostname'] -%}
-            {% filter jsonprint %}<a href="{{ url_for('node', env=current_env, node_name=node) }}">{{ node }}</a>{% endfilter %}
+            {% filter jsonprint %}<a href="{{ url_for('node', env=current_env, node_name=node) }}">{{ node|e }}</a>{% endfilter %}
           {%- elif fact_data[node][column] -%}
             {{ fact_data[node][column] | jsonprint }}
           {%- else -%}

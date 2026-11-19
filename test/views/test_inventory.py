@@ -259,3 +259,18 @@ def test_inventory_json(
     assert len(result_json["data"]) == 3
     assert result_json["data"][0][3] == "amd64"
     assert result_json["data"][0][1] == "192.168.0.2"
+
+
+def test_inventory_json_escapes_fact_values(client, mocker,
+                                            mock_puppetdb_environments):
+    facts_list = [
+        Fact(node='node-1', environment='production',
+             name='kernelrelease', value='<img src=x onerror=alert(1)>'),
+    ]
+    mocker.patch.object(app.puppetdb, "facts", return_value=iter(facts_list))
+
+    rv = client.get("/inventory/json")
+    assert rv.status_code == 200
+
+    result_json = json.loads(rv.data.decode("utf-8"))
+    assert result_json["data"][0][4] == '&lt;img src=x onerror=alert(1)&gt;'

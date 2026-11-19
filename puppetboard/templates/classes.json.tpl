@@ -7,7 +7,7 @@
     {% for class in classes_data -%}
       {%- if not loop.first %},{%- endif -%}
       [
-        {% filter jsonprint %}<a href="{{ url_for('class_resource', env=current_env, class_name=class) }}">{{ class }}</a>{% endfilter %},
+        {% filter jsonprint %}<a href="{{ url_for('class_resource', env=current_env, class_name=class) }}">{{ class|e }}</a>{% endfilter %},
         {% filter jsonprint %}<span class="ui small count label nodes total">{{ classes_data[class]['nb_nodes'] }}</span>{% endfilter %},
         {%- for column in columns -%}
           {%- if not loop.first %},{%- endif -%}

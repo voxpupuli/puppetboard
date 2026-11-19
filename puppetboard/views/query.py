@@ -9,7 +9,7 @@ from requests.exceptions import HTTPError
 
 from puppetboard.core import get_app, get_puppetdb, environments
 from puppetboard.forms import ENABLED_QUERY_ENDPOINTS, QueryForm
-from puppetboard.utils import (check_env)
+from puppetboard.utils import (check_env, escape_strings)
 from puppetboard.utils import (get_or_abort_except_client_errors)
 
 app = get_app()
@@ -138,7 +138,7 @@ def query(env):
                 if not zero_results:
                     columns = result[0].keys()
                     for items in result:
-                        rows.append(list(items.values()))
+                        rows.append(escape_strings(list(items.values())))
                 else:
                     columns = []
 
