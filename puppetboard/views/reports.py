@@ -233,7 +233,9 @@ def report(env, node_name, report_id, show_error_as):
     if show_error_as not in ['friendly', 'raw']:
         abort(404)
 
-    report.version = commonmark.commonmark(report.version)
+    # drop raw HTML and unsafe links, the version comes from the agent
+    report.version = commonmark.HtmlRenderer({'safe': True}).render(
+        commonmark.Parser().parse(report.version))
 
     events = [{
         'resource': f"{event.item['type']}[{event.item['title']}]",
