@@ -179,8 +179,6 @@ def get_short_location(location: str) -> str:
     return location
 
 
-
-
 @app.route('/report/<node_name>/<report_id>',
            defaults={'env': app.config['DEFAULT_ENVIRONMENT'],
                      'show_error_as': app.config['SHOW_ERROR_AS']})
