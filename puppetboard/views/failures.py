@@ -1,8 +1,8 @@
 from flask import Response, stream_with_context, abort
 from pypuppetdb.QueryBuilder import AndOperator, EqualsOperator
 
-from puppetboard.core import get_app, get_puppetdb, environments, stream_template, to_html, \
-    get_friendly_error, get_raw_error
+from puppetboard.core import get_app, get_puppetdb, environments, \
+    stream_template, get_error_html
 from puppetboard.utils import check_env, yield_or_stop
 
 app = get_app()
@@ -55,12 +55,9 @@ def failures(env: str, show_error_as: str):
                     break
 
         if source and message:
-            if show_error_as == 'friendly':
-                error = to_html(get_friendly_error(source, message, node.name))
-            else:
-                error = get_raw_error(source, message)
+            error = get_error_html(node.name, source, message, show_error_as)
         else:
-            error = to_html(f'Node {node.name} is failing but we could not find the errors')
+            error = f'Node {node.name} is failing but we could not find the errors'
 
         failure = {
             'certname': node.name,
