@@ -74,6 +74,7 @@ FAVORITE_ENVS = [
 ]
 
 ENABLE_CLASS = False
+ENABLE_PACKAGES = False
 # mapping between the status of the events (from PuppetDB) and the columns of the table to display
 CLASS_EVENTS_STATUS_COLUMNS = [
     # ('skipped', 'Skipped'),
