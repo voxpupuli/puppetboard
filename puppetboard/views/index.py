@@ -27,53 +27,38 @@ def index(env):
     if env != app.config['DEFAULT_ENVIRONMENT']:
         check_env(env, envs)
 
+    # PQL counts, since the metrics API is often unreachable remotely
+    num_nodes_query = ExtractOperator()
+    num_nodes_query.add_field(FunctionOperator('count'))
+    num_resources_query = ExtractOperator()
+    num_resources_query.add_field(FunctionOperator('count'))
+
     if env == '*':
         query = app.config['OVERVIEW_FILTER']
-
-        prefix = 'puppetlabs.puppetdb.population'
-        num_nodes = get_or_abort(puppetdb.metric, f"{prefix}:name=num-nodes")
-        num_resources = get_or_abort(puppetdb.metric, f"{prefix}:name=num-resources")
-
-        metrics['num_nodes'] = num_nodes['Value']
-        metrics['num_resources'] = num_resources['Value']
-        try:
-            # Compute our own average because avg_resources_node['Value']
-            # returns a string of the format "num_resources/num_nodes"
-            # example: "1234/9" instead of doing the division itself.
-            metrics['avg_resources_node'] = "{0:10.0f}".format(
-                (num_resources['Value'] / num_nodes['Value']))
-        except ZeroDivisionError:
-            metrics['avg_resources_node'] = 0
     else:
         query = AndOperator()
         query.add(EqualsOperator('catalog_environment', env))
-
-        num_nodes_query = ExtractOperator()
-        num_nodes_query.add_field(FunctionOperator('count'))
         num_nodes_query.add_query(query)
+        num_resources_query.add_query(EqualsOperator("environment", env))
 
         if app.config['OVERVIEW_FILTER'] is not None:
             query.add(app.config['OVERVIEW_FILTER'])
 
-        num_resources_query = ExtractOperator()
-        num_resources_query.add_field(FunctionOperator('count'))
-        num_resources_query.add_query(EqualsOperator("environment", env))
-
-        num_nodes = get_or_abort(
-            puppetdb._query,
-            'nodes',
-            query=num_nodes_query)
-        num_resources = get_or_abort(
-            puppetdb._query,
-            'resources',
-            query=num_resources_query)
-        metrics['num_nodes'] = num_nodes[0]['count']
-        metrics['num_resources'] = num_resources[0]['count']
-        try:
-            metrics['avg_resources_node'] = "{0:10.0f}".format(
-                (num_resources[0]['count'] / num_nodes[0]['count']))
-        except ZeroDivisionError:
-            metrics['avg_resources_node'] = 0
+    num_nodes = get_or_abort(
+        puppetdb._query,
+        'nodes',
+        query=num_nodes_query)
+    num_resources = get_or_abort(
+        puppetdb._query,
+        'resources',
+        query=num_resources_query)
+    metrics['num_nodes'] = num_nodes[0]['count']
+    metrics['num_resources'] = num_resources[0]['count']
+    try:
+        metrics['avg_resources_node'] = "{0:10.0f}".format(
+            (num_resources[0]['count'] / num_nodes[0]['count']))
+    except ZeroDivisionError:
+        metrics['avg_resources_node'] = 0
 
     nodes = get_or_abort(puppetdb.nodes,
                          query=query,
