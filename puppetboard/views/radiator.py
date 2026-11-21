@@ -1,11 +1,16 @@
+import logging
+
 from flask import (
     render_template, request, jsonify
 )
 from pypuppetdb.QueryBuilder import (ExtractOperator, AndOperator,
                                      EqualsOperator, FunctionOperator)
+from pypuppetdb.errors import DoesNotComputeError
 
 from puppetboard.core import get_app, get_puppetdb, environments
 from puppetboard.utils import get_or_abort, check_env
+
+log = logging.getLogger(__name__)
 
 app = get_app()
 puppetdb = get_puppetdb()
@@ -23,11 +28,29 @@ def radiator(env):
     # TODO: deduplicate. this already implemented in index().
     if env == '*':
         query = None
-        metrics = get_or_abort(
-            puppetdb.metric,
-            'puppetlabs.puppetdb.population:name=num-nodes',
-        )
-        num_nodes = metrics['Value']
+        try:
+            metric_result = puppetdb.metric(
+                'puppetlabs.puppetdb.population:name=num-nodes',
+            )
+            num_nodes = metric_result['Value']
+        except DoesNotComputeError as e:
+            # The Jolokia metrics endpoint is unavailable or broken
+            # (e.g. OpenVox-DB 8.14.0+ where the Jolokia serializer service
+            # was removed). Fall back to counting nodes via PQL.
+            log.warning(
+                "Jolokia metrics endpoint failed (%s); "
+                "falling back to PQL count query for all-environments "
+                "radiator view.",
+                e,
+            )
+            count_query = ExtractOperator()
+            count_query.add_field(FunctionOperator('count'))
+            count_result = get_or_abort(
+                puppetdb._query,
+                'nodes',
+                query=count_query)
+            num_nodes = count_result[0]['count']
+
     else:
         query = AndOperator()
         metric_query = ExtractOperator()
