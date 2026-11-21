@@ -164,7 +164,7 @@ The following is a list of OpenShift parameters that you can pass to the ``oc`` 
     by using different names in ``oc new-app``.  Defaults to 'puppetboard'.
 - `PUPPETDB_HOST`: This is the name of the PuppetDB host that Puppetboard will query for its reports.  Defaults to 'puppetdb'.
 - `PUPPETDB_PORT`: This is tcp port on the `PUPPETDB_HOST` for queries.  Defaults to '8080'.
-- `PUPPETBOARD_SECRET_KEY`: Identical to `SECRET_KEY` (below).  Defaults to 'Secr3t_K3y'.
+- `PUPPETBOARD_SECRET_KEY`: Identical to `SECRET_KEY` (below).  Defaults to a random 40 character string.
 - `PUPPETBOARD_PORT`: The TCP port on which the Puppetboard docker image presents the web interface.  This is not the
     user-facing web interface.  Rather, it's the port that the OpenShift route forwards **to**.  
 - `SERVICE_PORT`: The TCP port on which the Puppetboard service offers its user-facing web interface on OpenShift.  Defaults to '80'.
