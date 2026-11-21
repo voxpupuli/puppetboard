@@ -32,6 +32,7 @@ jobs:
           poetry run pytest --cov=. --cov-report=xml --strict-markers --mypy -v puppetboard test
           poetry run pylint --errors-only puppetboard test
       - name: Upload coverage to Codecov
+        if: github.repository_owner == 'voxpupuli'
         uses: codecov/codecov-action@v7.1.1
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
