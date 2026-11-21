@@ -90,3 +90,21 @@ def test_metric_v2_api(client, mocker,
     assert cols[1].string == '50'
 
     assert rv.status_code == 200
+
+
+def test_metric_v2_api_long_name_escaped(client, mocker,
+                                         mock_puppetdb_environments,
+                                         mock_puppetdb_default_nodes):
+    metric_name = 'x:name=<img src=x onerror=alert(1)>' + 'a' * 60
+    query_data = {
+        'version': [{'version': '6.9.1'}],
+        'metrics': [{'value': {'Value': 50}}],
+    }
+    dbquery = MockDbQuery(query_data)
+    mocker.patch.object(app.puppetdb, '_query', side_effect=dbquery.get)
+    rv = client.get('/metric/' + metric_name)
+    assert rv.status_code == 200
+
+    soup = BeautifulSoup(rv.data, 'html.parser')
+    assert soup.find('img') is None
+    assert soup.find('small').string == metric_name[:75] + '…'
