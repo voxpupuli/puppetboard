@@ -40,6 +40,8 @@ def reports_ajax(env, node_name):
     order_filter = REPORTS_COLUMNS[order_column].get(
         'filter', REPORTS_COLUMNS[order_column]['attr'])
     order_dir = request.args.get('order[0][dir]', 'desc')
+    if order_dir not in ('asc', 'desc'):
+        abort(400)
     order_args = '[{"field": "%s", "order": "%s"}]' % (order_filter, order_dir)
     status_args = request.args.get('columns[1][search][value]', '').split('|')
     date_args = request.args.get('columns[0][search][value]', '')
