@@ -1,8 +1,14 @@
+import logging
+
 from flask import render_template
-from pypuppetdb.QueryBuilder import AndOperator, EqualsOperator, FunctionOperator, ExtractOperator
+from pypuppetdb.QueryBuilder import (AndOperator, EqualsOperator,
+                                     FunctionOperator, ExtractOperator)
+from pypuppetdb.errors import DoesNotComputeError
 
 from puppetboard.core import get_app, get_puppetdb, environments
 from puppetboard.utils import get_or_abort, check_env
+
+log = logging.getLogger(__name__)
 
 app = get_app()
 puppetdb = get_puppetdb()
@@ -31,19 +37,52 @@ def index(env):
         query = app.config['OVERVIEW_FILTER']
 
         prefix = 'puppetlabs.puppetdb.population'
-        num_nodes = get_or_abort(puppetdb.metric, f"{prefix}:name=num-nodes")
-        num_resources = get_or_abort(puppetdb.metric, f"{prefix}:name=num-resources")
-
-        metrics['num_nodes'] = num_nodes['Value']
-        metrics['num_resources'] = num_resources['Value']
         try:
-            # Compute our own average because avg_resources_node['Value']
-            # returns a string of the format "num_resources/num_nodes"
-            # example: "1234/9" instead of doing the division itself.
-            metrics['avg_resources_node'] = "{0:10.0f}".format(
-                (num_resources['Value'] / num_nodes['Value']))
-        except ZeroDivisionError:
-            metrics['avg_resources_node'] = 0
+            num_nodes = puppetdb.metric(f"{prefix}:name=num-nodes")
+            num_resources = puppetdb.metric(f"{prefix}:name=num-resources")
+
+            metrics['num_nodes'] = num_nodes['Value']
+            metrics['num_resources'] = num_resources['Value']
+            try:
+                # Compute our own average because avg_resources_node['Value']
+                # returns a string of the format "num_resources/num_nodes"
+                # example: "1234/9" instead of doing the division itself.
+                metrics['avg_resources_node'] = "{0:10.0f}".format(
+                    (num_resources['Value'] / num_nodes['Value']))
+            except ZeroDivisionError:
+                metrics['avg_resources_node'] = 0
+        except DoesNotComputeError as e:
+            # The Jolokia metrics endpoint is unavailable or broken
+            # (e.g. OpenVox-DB 8.14.0+ where the Jolokia serializer service
+            # was removed). Fall back to counting nodes and resources via PQL.
+            log.warning(
+                "Jolokia metrics endpoint failed (%s); "
+                "falling back to PQL count queries for all-environments view.",
+                e,
+            )
+            num_nodes_count_query = ExtractOperator()
+            num_nodes_count_query.add_field(FunctionOperator('count'))
+
+            num_resources_count_query = ExtractOperator()
+            num_resources_count_query.add_field(FunctionOperator('count'))
+
+            num_nodes_result = get_or_abort(
+                puppetdb._query,
+                'nodes',
+                query=num_nodes_count_query)
+            num_resources_result = get_or_abort(
+                puppetdb._query,
+                'resources',
+                query=num_resources_count_query)
+            metrics['num_nodes'] = num_nodes_result[0]['count']
+            metrics['num_resources'] = num_resources_result[0]['count']
+            try:
+                metrics['avg_resources_node'] = "{0:10.0f}".format(
+                    (num_resources_result[0]['count'] /
+                     num_nodes_result[0]['count']))
+            except ZeroDivisionError:
+                metrics['avg_resources_node'] = 0
+
     else:
         query = AndOperator()
         query.add(EqualsOperator('catalog_environment', env))
