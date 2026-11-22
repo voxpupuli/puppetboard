@@ -102,3 +102,37 @@ def test_index_division_by_zero(client, mocker,
                          {"class": "ui header darkblue no-margin-bottom"})
     assert len(vals) == 3
     assert vals[2].string == '0'
+
+
+def test_index_environment_column_hidden(client, mocker,
+                                         mock_puppetdb_environments,
+                                         mock_puppetdb_default_nodes):
+    mocker.patch.object(app.puppetdb, '_query', return_value=[{'count': 10}])
+
+    rv = client.get('/')
+
+    assert rv.status_code == 200
+    soup = BeautifulSoup(rv.data, 'html.parser')
+    table = soup.find(id='main-table')
+    headers = [th.text for th in table.find_all('th')]
+    assert 'Environment' not in headers
+    assert table['data-order'] == '[[ 2, "desc" ]]'
+
+
+def test_index_all_environment_column(client, mocker,
+                                      mock_puppetdb_environments,
+                                      mock_puppetdb_default_nodes):
+    # totals are not under test, so mock both ways they can be fetched
+    mocker.patch.object(app.puppetdb, 'metric', return_value={'Value': 10})
+    mocker.patch.object(app.puppetdb, '_query', return_value=[{'count': 10}])
+
+    rv = client.get('/%2A/')
+
+    assert rv.status_code == 200
+    soup = BeautifulSoup(rv.data, 'html.parser')
+    table = soup.find(id='main-table')
+    headers = [th.text for th in table.find_all('th')]
+    assert headers.index('Environment') == 2
+    assert table['data-order'] == '[[ 3, "desc" ]]'
+    cells = table.tbody.find('tr').find_all('td')
+    assert cells[2].text == 'production'
