@@ -5,6 +5,7 @@ import sys
 from typing import Any, Union
 
 from flask import abort, request, url_for
+from markupsafe import escape
 from packaging.version import parse
 from pypuppetdb.errors import EmptyResponseError
 from requests.exceptions import ConnectionError, HTTPError
@@ -21,6 +22,17 @@ def url_for_field(field, value):
 
 def jsonprint(value):
     return json.dumps(value, indent=2, separators=(",", ": "))
+
+
+def escape_strings(value):
+    """HTML-escape all the strings in a value, also inside lists and dicts."""
+    if isinstance(value, str):
+        return str(escape(value))
+    if isinstance(value, list):
+        return [escape_strings(v) for v in value]
+    if isinstance(value, dict):
+        return {escape_strings(k): escape_strings(v) for k, v in value.items()}
+    return value
 
 
 def check_db_version(puppetdb):

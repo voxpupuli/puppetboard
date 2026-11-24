@@ -44,7 +44,7 @@ table.on('xhr', function(e, settings, json){
 try {
     $("#value").html(pretty_print(JSON.parse({{ value_json | tojson }})));
 } catch (e) {
-    $("#value").html(pretty_print('{{ value_json }}'));
+    $("#value").html(pretty_print({{ value_json | tojson }}));
 }
 {% endif %}
 

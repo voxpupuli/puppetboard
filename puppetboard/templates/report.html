@@ -103,17 +103,17 @@ var logs_table = $('#logs_table').DataTable({
           // and we already show the full date in the "Summary" section
           render: function ( data, type, row, meta ) {
               parsed_date = moment(data);
-              if (!parsed_date.isValid()) return data;
+              if (!parsed_date.isValid()) return DataTable.render.text().display(data);
               return parsed_date.format('HH:mm:ss');
           }
         },
-        { data: 'level', name: 'level' },
+        { data: 'level', name: 'level', render: DataTable.render.text() },
         { data: 'source', name: 'source', visible: false, render: DataTable.render.text() },
-        { data: 'tags', name: 'tags', visible: false },
-        { data: 'message', name: 'message' }, // HTML for this column is sanitized in get_message()
+        { data: 'tags', name: 'tags', visible: false, render: DataTable.render.text() },
+        { data: 'message', name: 'message' }, // escaped in get_error_html()
         // see also the comment about these columns in reports.py
-        { data: 'location', name: 'location', visible: false },
-        { data: 'short_location', name: 'short_location' },
+        { data: 'location', name: 'location', visible: false, render: DataTable.render.text() },
+        { data: 'short_location', name: 'short_location', render: DataTable.render.text() },
     ],
 
     "paging": false,
@@ -177,7 +177,7 @@ var events_table = $('#events_table').DataTable({
     "data": events,
     'columns': [
         { data: 'resource', render: DataTable.render.text() },
-        { data: 'status' },
+        { data: 'status', render: DataTable.render.text() },
         { data: 'old', render: DataTable.render.text() },
         { data: 'new', render: DataTable.render.text() },
     ],

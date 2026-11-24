@@ -1,3 +1,4 @@
+import json
 import tempfile
 import os
 
@@ -56,6 +57,34 @@ def test_query__some_response__table(client, mocker,
     vals = soup.find_all('table', {"id": "query_table"})
     assert len(vals) == 1
     # we can't test more here as the content of this table is generated with JavaScript...
+
+
+def test_query__table_escapes_values(client, mocker,
+                                     mock_puppetdb_environments,
+                                     mock_puppetdb_default_nodes):
+    app.app.config['WTF_CSRF_ENABLED'] = False
+
+    xss = '<img src=x onerror=alert(1)>'
+    result = [
+        {'certname': xss, 'value': {'<k>': xss}},
+    ]
+    mocker.patch.object(app.puppetdb, '_query', return_value=result)
+
+    query_data = {
+        'query': 'facts[certname, value] {}',
+        'endpoints': 'pql',
+    }
+    rv = client.post(
+        '/query',
+        data=query_data,
+        content_type='application/x-www-form-urlencoded',
+    )
+    assert rv.status_code == 200
+
+    page = rv.data.decode('utf-8')
+    data = json.loads(page.split('var data = ')[1].split(';\n')[0])
+    assert data == [['&lt;img src=x onerror=alert(1)&gt;',
+                     {'&lt;k&gt;': '&lt;img src=x onerror=alert(1)&gt;'}]]
 
 
 def test_query__some_response__json(client, mocker,

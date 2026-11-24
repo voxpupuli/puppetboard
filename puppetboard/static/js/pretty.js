@@ -1,9 +1,15 @@
+function escape_html(text) {
+    return String(text)
+        .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+}
+
 function pretty_print(to_show) {
 
     if (Object.prototype.toString.call(to_show) === "[object String]") {
 
         // Print plain string as-is to avoid making it surrounded with ""
-        to_show = '<span class="string">' + to_show + '</span>';
+        to_show = '<span class="string">' + escape_html(to_show) + '</span>';
 
     } else {
 

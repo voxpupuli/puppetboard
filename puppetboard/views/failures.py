@@ -1,4 +1,5 @@
 from flask import Response, stream_with_context, abort
+from markupsafe import escape
 from pypuppetdb.QueryBuilder import AndOperator, EqualsOperator
 
 from puppetboard.core import get_app, get_puppetdb, environments, \
@@ -57,7 +58,7 @@ def failures(env: str, show_error_as: str):
         if source and message:
             error = get_error_html(node.name, source, message, show_error_as)
         else:
-            error = f'Node {node.name} is failing but we could not find the errors'
+            error = escape(f'Node {node.name} is failing but we could not find the errors')
 
         failure = {
             'certname': node.name,

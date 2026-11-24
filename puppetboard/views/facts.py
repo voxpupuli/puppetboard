@@ -4,6 +4,7 @@ from urllib.parse import quote_plus
 from flask import (
     request, render_template, url_for, jsonify
 )
+from markupsafe import escape
 from pypuppetdb.QueryBuilder import (AndOperator,
                                      EqualsOperator)
 
@@ -129,11 +130,11 @@ def fact_ajax(env, node, fact, value):
     for fact_h in filtered_facts:
         line = []
         if fact is None:
-            line.append(fact_h.name)
+            line.append(str(escape(fact_h.name)))
         if node is None:
             line.append('<a href="{0}">{1}</a>'.format(
                 url_for('node', env=env, node_name=fact_h.node),
-                fact_h.node))
+                escape(fact_h.node)))
         if value is None:
             if isinstance(fact_h.value, str):
                 # https://github.com/voxpupuli/puppetboard/issues/706

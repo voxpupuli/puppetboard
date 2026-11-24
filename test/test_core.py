@@ -2,7 +2,7 @@ from textwrap import dedent
 
 import pytest
 
-from puppetboard.core import get_friendly_error
+from puppetboard.core import get_friendly_error, get_error_html
 
 
 @pytest.mark.parametrize("raw_message,friendly_message", [
@@ -39,3 +39,12 @@ def test_get_friendly_error(raw_message, friendly_message):
     raw_message = dedent(raw_message)
     friendly_message = dedent(friendly_message).strip()
     assert get_friendly_error("Puppet", raw_message, "foo.bar.com") == friendly_message
+
+
+@pytest.mark.parametrize("show_error_as", ['friendly', 'raw'])
+def test_get_error_html_escapes(show_error_as):
+    html = get_error_html("foo.bar.com", "<img src=x onerror=alert(1)>",
+                          "<script>alert(1)</script>\nsecond line", show_error_as)
+    assert '<script>' not in html
+    assert '<img' not in html
+    assert '&lt;script&gt;alert(1)&lt;/script&gt;' in html
