@@ -21,26 +21,20 @@ def radiator(env):
     check_env(env, envs)
 
     # TODO: deduplicate. this already implemented in index().
+    metric_query = ExtractOperator()
+    metric_query.add_field(FunctionOperator('count'))
     if env == '*':
         query = None
-        metrics = get_or_abort(
-            puppetdb.metric,
-            'puppetlabs.puppetdb.population:name=num-nodes',
-        )
-        num_nodes = metrics['Value']
     else:
         query = AndOperator()
-        metric_query = ExtractOperator()
-
         query.add(EqualsOperator("catalog_environment", env))
-        metric_query.add_field(FunctionOperator('count'))
         metric_query.add_query(query)
 
-        metrics = get_or_abort(
-            puppetdb._query,
-            'nodes',
-            query=metric_query)
-        num_nodes = metrics[0]['count']
+    metrics = get_or_abort(
+        puppetdb._query,
+        'nodes',
+        query=metric_query)
+    num_nodes = metrics[0]['count']
 
     nodes = puppetdb.nodes(
         query=query,
