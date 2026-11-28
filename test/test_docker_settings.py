@@ -181,6 +181,25 @@ def test_enable_class_false(cleanup_env):
     reload(docker_settings)
     assert docker_settings.ENABLE_CLASS is False
 
+
+def test_enable_packages_default(cleanup_env):
+    assert docker_settings.ENABLE_PACKAGES is False
+
+
+def test_enable_packages_true(cleanup_env):
+    os.environ['ENABLE_PACKAGES'] = 'True'
+    reload(docker_settings)
+    assert docker_settings.ENABLE_PACKAGES is True
+    os.environ['ENABLE_PACKAGES'] = 'true'
+    reload(docker_settings)
+    assert docker_settings.ENABLE_PACKAGES is True
+
+
+def test_enable_packages_false(cleanup_env):
+    os.environ['ENABLE_PACKAGES'] = 'False'
+    reload(docker_settings)
+    assert docker_settings.ENABLE_PACKAGES is False
+
     
 def test_cache_timeout_default(cleanup_env):
     assert 3600 == docker_settings.CACHE_DEFAULT_TIMEOUT
