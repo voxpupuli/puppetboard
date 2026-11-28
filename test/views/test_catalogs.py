@@ -88,3 +88,11 @@ def test_catalogs_json_compare(client, mocker,
                      "action": "/catalogs/compare/node-unreported...node-%s" %
                                found_status})
         assert len(val) == 1
+
+
+def test_catalogs_json_bad_order_dir(client, mocker,
+                                     mock_puppetdb_environments,
+                                     mock_puppetdb_default_nodes):
+    app.app.config['ENABLE_CATALOG'] = True
+    rv = client.get('/catalogs/json?order[0][dir]=asc"}]')
+    assert rv.status_code == 400

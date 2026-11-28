@@ -63,6 +63,8 @@ def catalogs_ajax(env, compare):
     order_filter = CATALOGS_COLUMNS[order_column].get(
         'filter', CATALOGS_COLUMNS[order_column]['attr'])
     order_dir = request.args.get('order[0][dir]', 'asc')
+    if order_dir not in ('asc', 'desc'):
+        abort(400)
     order_args = '[{"field": "%s", "order": "%s"}]' % (order_filter, order_dir)
 
     envs = environments()

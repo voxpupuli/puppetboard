@@ -137,3 +137,8 @@ def test_reports__a_report_escapes_version(client, mocker,
     assert 'javascript:' not in rv.data.decode('utf-8')
     # markdown formatting is still rendered
     assert soup.find('strong').text == 'abc123'
+
+
+def test_json_report_bad_order_dir(client, mock_puppetdb_environments):
+    rv = client.get('/reports/json?order[0][dir]=desc"}]')
+    assert rv.status_code == 400
