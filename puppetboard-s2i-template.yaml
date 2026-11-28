@@ -203,9 +203,9 @@ parameters:
 - description: Secret Key for the Puppetboard.
   displayName: Puppetboard Secret Key
   type: string
-  from: '[a-zA-Z0-9]'
+  generate: expression
+  from: '[a-zA-Z0-9]{40}'
   name: PUPPETBOARD_SECRET_KEY
-  value: "Secr3t_K3y"
 - description: The port on which the Puppetboard server offers up the web interface.
   displayName: Puppetboard Port
   name: PUPPETBOARD_PORT
