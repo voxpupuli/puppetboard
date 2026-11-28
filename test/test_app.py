@@ -1,3 +1,5 @@
+import re
+
 from bs4 import BeautifulSoup
 
 from puppetboard import app
@@ -82,6 +84,8 @@ def test_offline_static(client):
             assert 'Content-Type' in rv.headers
             assert content_type in rv.headers['Content-Type']
             assert rv.status_code == 200
+            if content_type == 'css':
+                assert re.search(rb'@import\s+(url\()?\s*[\'"]?(https?:)?//', rv.data) is None
 
 
 def test_health_status(client):
