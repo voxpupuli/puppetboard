@@ -68,7 +68,7 @@
 </table>
 
 <h1 id="metrics">Metrics</h1>
-<table class="ui basic table compact">
+<table id="metrics_table" class="ui basic table compact">
   <thead>
     <tr>
       <th>Category</th>
@@ -102,6 +102,7 @@ var logs_table = $('#logs_table').DataTable({
           // don't show the date as puppet runs (almost never) span across multiple days
           // and we already show the full date in the "Summary" section
           render: function ( data, type, row, meta ) {
+              if (type === 'export') return data;
               parsed_date = moment(data);
               if (!parsed_date.isValid()) return data;
               return parsed_date.format('HH:mm:ss');
@@ -162,8 +163,9 @@ var logs_table = $('#logs_table').DataTable({
         ">",
 });
 
-// on any button click show the clicked button as active and all other button(s) as inactive
+// Keep only the selected column preset active.
 logs_table.on( 'buttons-action', function ( e, button, dataTable, node, config ) {
+    if (config.extend !== 'colvisGroup') return;
     dataTable.buttons().active(false);
     button.active(true);
 } );

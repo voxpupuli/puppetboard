@@ -5,7 +5,7 @@
   <thead>
     <tr>
       {% for column in columns %}
-      <th>{{ column.name }}</th>
+      <th{% if column.attr == 'form' %} class="no-export"{% endif %}>{{ column.name }}</th>
       {% endfor %}
     </tr>
   </thead>

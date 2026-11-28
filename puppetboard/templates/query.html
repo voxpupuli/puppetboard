@@ -187,6 +187,7 @@
             "title": "{{ quote_columns_data(column) }}",
     {% if column in ['node', 'certname'] %}
             "render": function (data, type, full, meta) {
+                if (type === 'export') return data;
                 return `<a href='{{ url_for("node", node_name="") }}${data}'>${data}</a>`
             },
     {% endif %}
